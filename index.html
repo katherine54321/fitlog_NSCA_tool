@@ -6119,7 +6119,8 @@
         window.addEventListener("load", () => {
           navigator.serviceWorker
             .register("./sw.js")
-            .then(() => {
+            .then((registration) => {
+              registration.update().catch(() => {});
               appStatus.textContent = "APP 模式就绪";
             })
             .catch(() => {

@@ -1,4 +1,5 @@
-import { cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = process.cwd();
@@ -39,5 +40,21 @@ if (usesBuildTimeRuntime) {
     `window.FITLOG_RUNTIME = ${JSON.stringify(runtime, null, 2)};\n`,
   );
 }
+
+const cacheInputs = [
+  "index.html",
+  "manifest.webmanifest",
+  "config/fitlog-runtime.js",
+  "sync/fitlog-sync.js",
+  "data/exercises-v1.json",
+  "data/exercise-library-data.js",
+];
+const cacheDigest = createHash("sha256")
+  .update((await Promise.all(cacheInputs.map((file) => readFile(resolve(output, file))))).join(""))
+  .digest("hex")
+  .slice(0, 12);
+const workerPath = resolve(output, "sw.js");
+const worker = await readFile(workerPath, "utf8");
+await writeFile(workerPath, worker.replace(/fitlog-app-v\d+/, `fitlog-app-${cacheDigest}`));
 
 console.log(`FitLog PWA build complete: ${output}`);

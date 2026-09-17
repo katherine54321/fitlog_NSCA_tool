@@ -15,10 +15,11 @@ test("release build includes PWA runtime and exercise assets", async () => {
 });
 
 test("PWA document declares installable and offline delivery assets", async () => {
-  const [html, manifest, serviceWorker] = await Promise.all([
+  const [html, manifest, serviceWorker, releaseWorker] = await Promise.all([
     readFile(new URL("index.html", root), "utf8"),
     readFile(new URL("manifest.webmanifest", root), "utf8"),
     readFile(new URL("sw.js", root), "utf8"),
+    readFile(new URL("sw.js", output), "utf8"),
   ]);
   assert.match(html, /<meta name="apple-mobile-web-app-capable" content="yes"/);
   assert.match(html, /src="\.\/sync\/fitlog-sync\.js"/);
@@ -28,4 +29,6 @@ test("PWA document declares installable and offline delivery assets", async () =
   assert.equal(JSON.parse(manifest).scope, "./");
   assert.match(serviceWorker, /manifest\.webmanifest/);
   assert.match(serviceWorker, /self\.registration\.scope/);
+  assert.match(html, /registration\.update\(\)\.catch/);
+  assert.match(releaseWorker, /const CACHE_NAME = "fitlog-app-[a-f0-9]{12}"/);
 });
