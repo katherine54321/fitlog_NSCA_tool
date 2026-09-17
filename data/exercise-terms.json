@@ -1,0 +1,829 @@
+{
+  "terms": {
+    "chest": "胸部",
+    "lats": "背阔肌",
+    "middle back": "中背部",
+    "lower back": "下背部",
+    "shoulders": "肩部",
+    "biceps": "肱二头肌",
+    "triceps": "肱三头肌",
+    "forearms": "前臂",
+    "traps": "斜方肌",
+    "abductors": "髋外展肌群",
+    "adductors": "髋内收肌群",
+    "quadriceps": "股四头肌",
+    "hamstrings": "腘绳肌",
+    "glutes": "臀肌",
+    "abdominals": "腹部肌群",
+    "calves": "小腿",
+    "barbell": "杠铃",
+    "dumbbell": "哑铃",
+    "body only": "徒手",
+    "cable": "绳索器械",
+    "machine": "固定器械",
+    "bands": "弹力带",
+    "exercise ball": "健身球",
+    "medicine ball": "药球",
+    "e-z curl bar": "曲杆",
+    "other": "其他",
+    "beginner": "初级",
+    "intermediate": "中级",
+    "expert": "高级",
+    "push": "推",
+    "pull": "拉",
+    "static": "静态",
+    "compound": "复合动作",
+    "isolation": "孤立动作",
+    "strength": "力量训练"
+  },
+  "exercises": {
+    "barbell-bench-press": {
+      "match": ["barbell bench press", "barbell bench press - medium grip"],
+      "nameZh": "杠铃卧推",
+      "category": "胸部",
+      "instructionsZh": ["平躺于卧推凳，双脚稳定踩地，眼睛位于杠铃下方。", "肩胛向后下方收紧，以略宽于肩的握距稳定握住杠铃。", "控制杠铃下放至中下胸，再平稳推回；全程避免耸肩和臀部离凳。"]
+    },
+    "incline-dumbbell-press": {
+      "match": ["incline dumbbell press"],
+      "nameZh": "上斜哑铃卧推",
+      "category": "胸部",
+      "instructionsZh": ["将靠背调至约 20-35 度，双脚踩稳，哑铃位于上胸两侧。", "肩胛后收下沉，沿略向内的轨迹推起哑铃。", "控制下放到舒适深度，避免肩部前移或腰部过度反弓。"]
+    },
+    "push-up": {
+      "match": ["push-ups", "pushups", "pushup", "push up"],
+      "nameZh": "俯卧撑",
+      "category": "胸部",
+      "instructionsZh": ["双手略宽于肩置于地面，身体从头到脚跟保持一条直线。", "屈肘下降，肘部约与躯干呈 30-60 度角。", "胸部接近地面后推回起始位，保持腹部收紧，避免塌腰。"]
+    },
+    "lat-pulldown": {
+      "match": ["lat pulldown", "close-grip front lat pulldown"],
+      "nameZh": "高位下拉",
+      "category": "背部",
+      "instructionsZh": ["调整座椅和腿垫，坐稳后以略宽于肩的握距抓住横杆。", "先轻微下沉肩胛，再将横杆拉向锁骨附近。", "控制横杆回到头顶上方，避免颈部前伸或大幅后仰借力。"]
+    },
+    "bent-over-barbell-row": {
+      "match": ["bent over barbell row", "barbell bent-over row"],
+      "nameZh": "杠铃俯身划船",
+      "category": "背部",
+      "instructionsZh": ["双脚与髋同宽，髋向后折叠，躯干稳定并保持背部自然中立。", "握住杠铃，让杠铃自然悬于膝前。", "用肘部向后带动杠铃拉向下腹部，再缓慢控制下放。"]
+    },
+    "seated-cable-row": {
+      "match": ["seated cable rows", "seated cable row"],
+      "nameZh": "坐姿绳索划船",
+      "category": "背部",
+      "instructionsZh": ["坐稳并将双脚抵住踏板，膝盖微屈，躯干保持直立。", "先让肩胛后收，再将把手拉向腹部。", "回放时手臂平稳伸展，避免耸肩或让躯干大幅摆动。"]
+    },
+    "one-arm-dumbbell-row": {
+      "match": ["one-arm dumbbell row", "one arm dumbbell row"],
+      "nameZh": "单臂哑铃划船",
+      "category": "背部",
+      "instructionsZh": ["一手一膝支撑在凳上，另一脚踩稳地面，脊柱保持中立。", "让哑铃自然垂于肩下，肩胛不要耸起。", "将手肘朝髋部方向拉动，顶端短暂停顿后控制下降。"]
+    },
+    "dumbbell-shoulder-press": {
+      "match": ["dumbbell shoulder press", "seated dumbbell press"],
+      "nameZh": "哑铃肩推",
+      "category": "肩部",
+      "instructionsZh": ["坐姿或站姿保持躯干稳定，双手将哑铃置于肩部两侧。", "收紧腹部，沿身体略前方的轨迹向上推举。", "推至耳朵上方后缓慢下降，避免腰椎后仰和耸肩。"]
+    },
+    "side-lateral-raise": {
+      "match": ["side lateral raise", "dumbbell lateral raise"],
+      "nameZh": "哑铃侧平举",
+      "category": "肩部",
+      "instructionsZh": ["站稳后双手持轻哑铃置于身体两侧，手肘微屈。", "以肩部带动上臂向两侧抬起，至接近肩高即可。", "缓慢回到起始位，避免用躯干摆动或耸肩带动重量。"]
+    },
+    "barbell-curl": {
+      "match": ["barbell curl"],
+      "nameZh": "杠铃弯举",
+      "category": "手臂",
+      "instructionsZh": ["站姿握住杠铃，上臂自然贴近躯干，手腕保持中立。", "固定上臂，只通过屈肘将杠铃弯举至接近肩前。", "缓慢降低杠铃并维持张力，避免后仰或摆动借力。"]
+    },
+    "dumbbell-hammer-curl": {
+      "match": ["dumbbell hammer curl", "hammer curls"],
+      "nameZh": "哑铃锤式弯举",
+      "category": "手臂",
+      "instructionsZh": ["双手中立握持哑铃，上臂保持贴近躯干。", "以屈肘将哑铃向肩部抬起，掌心始终相对。", "控制下降，避免耸肩或身体摇晃。"]
+    },
+    "triceps-pushdown": {
+      "match": ["triceps pushdown", "triceps pushdowns"],
+      "nameZh": "绳索下压",
+      "category": "手臂",
+      "instructionsZh": ["面对高位滑轮站稳，双手握住把手，手肘固定于身体两侧。", "保持上臂不动，向下伸直手肘直至肱三头肌收紧。", "缓慢回到起始位，避免肩部向前移动或借助躯干。"]
+    },
+    "barbell-squat": {
+      "match": ["barbell squat", "barbell full squat"],
+      "nameZh": "杠铃深蹲",
+      "category": "腿部",
+      "instructionsZh": ["将杠铃稳定置于上背部，双脚与肩同宽，脚掌均匀受力。", "髋和膝同步下屈，膝盖沿脚尖方向移动。", "在无痛且躯干稳定的深度停下，再通过髋膝伸展平稳站起。"]
+    },
+    "leg-press": {
+      "match": ["leg press"],
+      "nameZh": "腿举",
+      "category": "腿部",
+      "instructionsZh": ["坐稳后将腰背和臀部贴紧靠垫，双脚置于踏板中部。", "解锁后缓慢屈膝下放，保持膝盖沿脚尖方向移动。", "在骨盆不卷起的范围内推回，避免在顶端锁死膝盖。"]
+    },
+    "romanian-deadlift": {
+      "match": ["romanian deadlift"],
+      "nameZh": "罗马尼亚硬拉",
+      "category": "腿部",
+      "instructionsZh": ["站姿持杠铃或哑铃，膝盖微屈，重量贴近大腿。", "向后推髋并保持背部自然中立，让重量沿腿部下降。", "感到腘绳肌拉伸后，以臀部发力将髋带回站立位。"]
+    },
+    "lying-leg-curls": {
+      "match": ["lying leg curls", "lying leg curl"],
+      "nameZh": "俯卧腿弯举",
+      "category": "腿部",
+      "instructionsZh": ["俯卧于器械上，使膝关节与器械转轴对齐，骨盆贴稳靠垫。", "以脚跟向臀部方向卷起滚轮。", "缓慢回到起始位，全程避免抬臀或甩动重量。"]
+    },
+    "barbell-hip-thrust": {
+      "match": ["barbell hip thrust", "barbell glute bridge"],
+      "nameZh": "杠铃臀推",
+      "category": "臀部",
+      "instructionsZh": ["上背靠稳凳缘，双脚踩地，杠铃横置于髋部并做好缓冲。", "收紧腹部与臀部，将髋向上推至躯干与大腿接近一线。", "顶端短暂停顿后控制下放，避免腰椎过度伸展。"]
+    },
+    "cable-kickback": {
+      "match": ["cable kickback", "one-legged cable kickback", "cable hip extension"],
+      "nameZh": "绳索后踢腿",
+      "category": "臀部",
+      "instructionsZh": ["将脚踝绑带连接低位滑轮，扶稳器械并保持骨盆朝前。", "保持躯干稳定，向后伸髋带动工作腿后踢。", "在臀部收紧处短暂停顿，缓慢回到起始位，避免腰部代偿。"]
+    },
+    "cable-crunch": {
+      "match": ["cable crunch"],
+      "nameZh": "绳索卷腹",
+      "category": "核心",
+      "instructionsZh": ["跪于高位滑轮前，双手将绳索固定在头部两侧。", "保持髋部相对稳定，用肋骨向骨盆靠近的方式卷曲躯干。", "缓慢回到起始位，不要只靠手臂将绳索拉下。"]
+    },
+    "weighted-sit-up": {
+      "match": ["weighted sit-ups", "weighted sit up", "weighted crunches"],
+      "nameZh": "负重卷腹",
+      "category": "核心",
+      "instructionsZh": ["仰卧屈膝，双手将杠铃片或哑铃稳定放在胸前。", "从腹部发力卷起躯干，避免猛拉颈部。", "缓慢下降回到起始位；腰部不适时改用绳索或器械卷腹。"]
+    },
+    "dumbbell-bench-press": {
+      "match": ["dumbbell bench press"],
+      "nameZh": "哑铃平板卧推",
+      "category": "胸部",
+      "instructionsZh": ["平躺于凳面，双脚稳踩地面，哑铃置于胸部两侧。", "肩胛轻微后收下沉，沿稳定轨迹将哑铃推至胸前上方。", "控制下放至上臂接近躯干平齐，避免耸肩或反弹。"]
+    },
+    "decline-dumbbell-bench-press": {
+      "match": ["decline dumbbell bench press"],
+      "nameZh": "下斜哑铃卧推",
+      "category": "胸部",
+      "instructionsZh": ["固定双腿并躺稳下斜凳，哑铃从下胸两侧开始。", "保持肩胛稳定，向上推举至手臂接近伸直。", "缓慢下放并始终保持哑铃路径可控。"]
+    },
+    "cable-crossover": {
+      "match": ["cable crossover"],
+      "nameZh": "绳索夹胸",
+      "category": "胸部",
+      "instructionsZh": ["双脚前后站稳，双手握住高位滑轮把手，手肘微屈。", "以胸部发力将双手沿弧线向身体前下方合拢。", "顶端短暂停顿，再控制回放，不让肩部前冲。"]
+    },
+    "chest-dips": {
+      "match": ["dips - chest version"],
+      "nameZh": "双杠臂屈伸",
+      "category": "胸部",
+      "instructionsZh": ["双手支撑双杠，肩胛下沉，身体轻微前倾。", "屈肘下降至肩部舒适深度，躯干保持稳定。", "用胸部和肱三头肌平稳推回，避免耸肩。"]
+    },
+    "incline-dumbbell-flyes": {
+      "match": ["incline dumbbell flyes"],
+      "nameZh": "上斜哑铃飞鸟",
+      "category": "胸部",
+      "instructionsZh": ["将凳面调至约 20-35 度，双手持哑铃于胸前上方。", "保持肘部微屈，向两侧缓慢打开至胸部有拉伸感。", "用胸部收缩将哑铃沿弧线带回，避免完全锁肘。"]
+    },
+    "cable-chest-press": {
+      "match": ["cable chest press"],
+      "nameZh": "绳索推胸",
+      "category": "胸部",
+      "instructionsZh": ["站在滑轮中间，双手握把，前后站姿稳定躯干。", "从胸前将把手向前推出，同时保持肋骨不过度外翻。", "缓慢回到胸侧起始位，维持绳索张力。"]
+    },
+    "pullups": {
+      "match": ["pullups"],
+      "nameZh": "引体向上",
+      "category": "背部",
+      "instructionsZh": ["双手略宽于肩握杠，先下沉肩胛并收紧躯干。", "以肘部向下向后带动身体，拉至下巴接近单杠。", "控制下降至手臂伸直，避免摆动借力。"]
+    },
+    "wide-grip-lat-pulldown": {
+      "match": ["wide-grip lat pulldown"],
+      "nameZh": "宽握高位下拉",
+      "category": "背部",
+      "instructionsZh": ["坐稳并固定大腿，双手宽握横杆，胸廓自然抬起。", "先下沉肩胛，再将横杆拉向上胸位置。", "缓慢回放至手臂接近伸直，避免颈部前伸。"]
+    },
+    "lying-tbar-row": {
+      "match": ["lying t-bar row"],
+      "nameZh": "胸托 T 杠划船",
+      "category": "背部",
+      "instructionsZh": ["胸部贴稳支撑垫，双手握住把手，颈部保持中立。", "先让肩胛后收，再用肘部将把手拉向下胸。", "顶端停顿后控制下放，避免耸肩。"]
+    },
+    "rope-straight-arm-pulldown": {
+      "match": ["rope straight-arm pulldown"],
+      "nameZh": "绳索直臂下拉",
+      "category": "背部",
+      "instructionsZh": ["面对高位滑轮站稳，双手握住绳索，手肘保持轻微弯曲。", "固定肘角度，以肩关节发力将绳索拉向大腿。", "缓慢回到起始位，避免躯干后仰。"]
+    },
+    "back-extension": {
+      "match": ["hyperextensions (back extensions)"],
+      "nameZh": "罗马椅挺身",
+      "category": "背部",
+      "instructionsZh": ["将骨盆稳放在罗马椅垫上，双脚固定，脊柱保持自然中立。", "从髋部前屈下降到舒适范围，不圆背下坠。", "收紧臀部和背部回到身体成一直线，避免过度后伸。"]
+    },
+    "arnold-dumbbell-press": {
+      "match": ["arnold dumbbell press"],
+      "nameZh": "阿诺德推举",
+      "category": "肩部",
+      "instructionsZh": ["坐姿持哑铃于肩前，掌心朝向身体，核心收紧。", "推举时同步向外旋转手腕，至哑铃位于头顶上方。", "反向旋转并缓慢下降，避免腰椎后仰。"]
+    },
+    "barbell-shoulder-press": {
+      "match": ["barbell shoulder press"],
+      "nameZh": "杠铃肩推",
+      "category": "肩部",
+      "instructionsZh": ["站姿或坐姿将杠铃置于锁骨上方，双手略宽于肩。", "收紧腹部，将杠铃沿面部前方垂直推向头顶。", "控制下降回锁骨附近，避免耸肩和后仰。"]
+    },
+    "front-dumbbell-raise": {
+      "match": ["front dumbbell raise"],
+      "nameZh": "哑铃前平举",
+      "category": "肩部",
+      "instructionsZh": ["站稳后双手持轻哑铃置于大腿前，手肘微屈。", "以肩前束带动哑铃向前抬至接近肩高。", "缓慢下降，避免借助躯干摆动。"]
+    },
+    "cable-rear-delt-fly": {
+      "match": ["cable rear delt fly"],
+      "nameZh": "绳索反向飞鸟",
+      "category": "肩部",
+      "instructionsZh": ["站在双滑轮之间，交叉握住对侧把手，手肘微屈。", "保持躯干稳定，向两侧打开手臂并带动肩胛轻微后收。", "控制回到起始位，避免耸肩。"]
+    },
+    "face-pull": {
+      "match": ["face pull"],
+      "nameZh": "绳索面拉",
+      "category": "肩部",
+      "instructionsZh": ["将绳索设在面部高度，双手握绳并向后退一步站稳。", "向面部方向拉绳，同时让肘部向外打开。", "顶端轻收肩胛后控制回放，避免腰部借力。"]
+    },
+    "upright-barbell-row": {
+      "match": ["upright barbell row"],
+      "nameZh": "杠铃直立划船",
+      "category": "肩部",
+      "instructionsZh": ["窄握杠铃置于大腿前，肩胛自然下沉。", "沿身体前侧向上拉起杠铃，肘部带动并保持略高于手腕。", "在肩部舒适高度停下，再平稳下放。"]
+    },
+    "preacher-curl": {
+      "match": ["preacher curl"],
+      "nameZh": "牧师凳弯举",
+      "category": "手臂",
+      "instructionsZh": ["上臂贴稳牧师凳垫，双手握住曲杆或杠铃。", "固定上臂，屈肘将重量弯举至肱二头肌收紧。", "缓慢下降，底部保留微屈避免关节冲击。"]
+    },
+    "concentration-curl": {
+      "match": ["concentration curls"],
+      "nameZh": "哑铃集中弯举",
+      "category": "手臂",
+      "instructionsZh": ["坐姿分腿，工作侧上臂抵住同侧大腿内侧。", "只通过屈肘将哑铃弯举向肩部。", "顶端收紧后缓慢下降，躯干保持稳定。"]
+    },
+    "cable-overhead-triceps-extension": {
+      "match": ["cable rope overhead triceps extension"],
+      "nameZh": "绳索过顶臂屈伸",
+      "category": "手臂",
+      "instructionsZh": ["背对高位滑轮站稳，双手握绳置于头后，上臂靠近耳侧。", "固定上臂，向前上方伸肘直至肱三头肌收紧。", "缓慢屈肘回到头后，避免腰部后仰。"]
+    },
+    "lying-triceps-press": {
+      "match": ["lying triceps press"],
+      "nameZh": "仰卧臂屈伸",
+      "category": "手臂",
+      "instructionsZh": ["平躺于凳上，将曲杆举于胸前上方，上臂保持垂直。", "只屈肘让曲杆缓慢下降至额头上方或头后舒适位置。", "伸肘推回起始位，避免肩部大幅前后移动。"]
+    },
+    "bench-dips": {
+      "match": ["bench dips"],
+      "nameZh": "凳上臂屈伸",
+      "category": "手臂",
+      "instructionsZh": ["双手撑于凳缘，手指朝前，双脚向前伸出并保持臀部靠近凳面。", "屈肘下降至肩部舒适范围，保持胸廓自然抬起。", "伸肘推回，避免肩部耸起或过度前移。"]
+    },
+    "cable-hammer-curl": {
+      "match": ["cable hammer curls - rope attachment"],
+      "nameZh": "绳索锤式弯举",
+      "category": "手臂",
+      "instructionsZh": ["面对低位滑轮站稳，双手中立握住绳索两端。", "固定上臂，以屈肘将绳索拉向肩前。", "缓慢下降，避免身体后仰或甩动。"]
+    },
+    "dumbbell-lunges": {
+      "match": ["dumbbell lunges"],
+      "nameZh": "哑铃箭步蹲",
+      "category": "腿部",
+      "instructionsZh": ["双手持哑铃站稳，向前迈出一大步，保持躯干直立。", "前后膝同时下屈，前膝与脚尖方向一致。", "通过前脚全掌发力回到站姿，换边完成。"]
+    },
+    "barbell-lunge": {
+      "match": ["barbell lunge"],
+      "nameZh": "杠铃箭步蹲",
+      "category": "腿部",
+      "instructionsZh": ["将杠铃稳放在上背部，站稳后向前迈步。", "控制身体下沉，保持骨盆稳定和前膝对线。", "以前脚发力站起并回到起始位。"]
+    },
+    "leg-extensions": {
+      "match": ["leg extensions"],
+      "nameZh": "腿屈伸",
+      "category": "腿部",
+      "instructionsZh": ["调整靠垫和转轴，使膝关节与器械轴心对齐。", "收紧股四头肌，平稳伸膝将小腿抬起。", "顶端短暂停顿后缓慢下降，不甩重量。"]
+    },
+    "seated-leg-curl": {
+      "match": ["seated leg curl"],
+      "nameZh": "坐姿腿弯举",
+      "category": "腿部",
+      "instructionsZh": ["调整座椅和压腿垫，臀部和背部贴稳靠垫。", "以脚跟向下后方卷动滚轮，完成屈膝。", "缓慢回放，保持腘绳肌张力。"]
+    },
+    "standing-calf-raises": {
+      "match": ["standing calf raises"],
+      "nameZh": "站姿提踵",
+      "category": "腿部",
+      "instructionsZh": ["前脚掌踩稳踏板，肩部置于垫下，膝盖保持轻微放松。", "通过踝关节跖屈抬起脚跟至最高点。", "顶端停顿后缓慢下降至小腿拉伸位置。"]
+    },
+    "dumbbell-step-ups": {
+      "match": ["dumbbell step ups"],
+      "nameZh": "哑铃登台阶",
+      "category": "腿部",
+      "instructionsZh": ["双手持哑铃，选择稳定且高度合适的台阶。", "一脚全掌踩上台阶，通过踩台腿发力站直。", "控制下台并换边，避免借助后脚猛蹬。"]
+    },
+    "hack-squat": {
+      "match": ["hack squat"],
+      "nameZh": "哈克深蹲",
+      "category": "腿部",
+      "instructionsZh": ["背部和肩部贴稳器械，双脚置于踏板合适位置。", "解除安全锁后屈膝下放，保持膝盖沿脚尖方向移动。", "在骨盆稳定的深度后平稳蹬回，避免锁死膝盖。"]
+    },
+    "single-leg-glute-bridge": {
+      "match": ["single leg glute bridge"],
+      "nameZh": "单腿臀桥",
+      "category": "臀部",
+      "instructionsZh": ["仰卧屈一侧膝，另一腿抬起伸直，骨盆保持水平。", "通过支撑脚跟和臀部发力抬髋。", "顶端收紧臀部后缓慢下放，避免腰椎过伸。"]
+    },
+    "glute-ham-raise": {
+      "match": ["glute ham raise"],
+      "nameZh": "臀腿挺身",
+      "category": "臀部",
+      "instructionsZh": ["将脚踝固定于器械，身体从肩到膝保持一条直线。", "控制身体前倾，保持髋部不过度屈曲。", "收紧臀腿和腘绳肌将身体拉回起始位。"]
+    },
+    "sumo-deadlift": {
+      "match": ["sumo deadlift"],
+      "nameZh": "相扑硬拉",
+      "category": "臀部",
+      "instructionsZh": ["双脚宽站，脚尖外开，双手在双腿之间握住杠铃。", "保持背部中立，向下蹬地并伸髋将杠铃贴身拉起。", "控制杠铃沿腿部下放，保持髋膝协调。"]
+    },
+    "glute-bridge": {
+      "match": ["butt lift (bridge)"],
+      "nameZh": "徒手臀桥",
+      "category": "臀部",
+      "instructionsZh": ["仰卧屈膝，双脚与髋同宽踩稳地面。", "收紧腹部和臀部，将髋抬至躯干与大腿接近一线。", "顶端停顿后缓慢下放，避免用腰部顶起。"]
+    },
+    "ab-crunch-machine": {
+      "match": ["ab crunch machine"],
+      "nameZh": "器械卷腹",
+      "category": "核心",
+      "instructionsZh": ["调整座椅与靠垫，让器械转轴贴合身体自然卷曲方向。", "收紧腹部，使肋骨向骨盆靠近完成卷腹。", "缓慢回放，避免用手臂拉动把手。"]
+    },
+    "ab-roller": {
+      "match": ["ab roller"],
+      "nameZh": "健腹轮",
+      "category": "核心",
+      "instructionsZh": ["跪姿握住健腹轮，肩膀位于手腕上方，收紧腹部。", "缓慢向前滚动，在能保持腰背稳定的范围内停止。", "用腹部和背部控制将滚轮拉回，避免塌腰。"]
+    },
+    "barbell-ab-rollout": {
+      "match": ["barbell ab rollout - on knees"],
+      "nameZh": "跪姿杠铃滚轮",
+      "category": "核心",
+      "instructionsZh": ["跪姿双手握杠铃，杠铃两侧应使用稳定杠铃片。", "收紧腹部后缓慢向前滚动，控制躯干不下坠。", "在稳定范围内拉回起始位，避免腰椎塌陷。"]
+    },
+    "cable-russian-twist": {
+      "match": ["cable russian twists"],
+      "nameZh": "绳索俄罗斯转体",
+      "category": "核心",
+      "instructionsZh": ["侧对滑轮站稳，双手握把于胸前，髋部保持相对稳定。", "以胸椎带动躯干向远离滑轮一侧旋转。", "控制回到中间，避免只甩动手臂。"]
+    },
+    "cable-reverse-crunch": {
+      "match": ["cable reverse crunch"],
+      "nameZh": "绳索反向卷腹",
+      "category": "核心",
+      "instructionsZh": ["仰卧并将脚踝连接低位绳索，双手扶稳固定物。", "收紧下腹，将膝盖向胸部方向卷起并轻抬骨盆。", "缓慢回到起始位，避免借助惯性摆动。"]
+    },
+    "russian-twist": {
+      "match": ["russian twist"],
+      "nameZh": "俄罗斯转体",
+      "category": "核心",
+      "instructionsZh": ["坐姿屈膝，躯干后倾至稳定角度，双手置于胸前。", "保持骨盆相对稳定，以胸椎带动躯干左右转动。", "全程控制速度，腰部不适时减小后倾和幅度。"]
+    },
+    "barbell-incline-bench-press": {
+      "match": ["barbell incline bench press - medium grip"],
+      "nameZh": "杠铃上斜卧推",
+      "category": "胸部",
+      "instructionsZh": ["将靠背调至约 30 度，双脚踩稳，肩胛后收下沉。", "将杠铃控制下放至上胸位置。", "沿稳定轨迹推回起始位，避免耸肩和臀部离凳。"]
+    },
+    "decline-barbell-bench-press": {
+      "match": ["decline barbell bench press"],
+      "nameZh": "杠铃下斜卧推",
+      "category": "胸部",
+      "instructionsZh": ["固定双腿并躺稳下斜凳，握距略宽于肩。", "控制杠铃下放至下胸位置。", "平稳推起杠铃，保持肩胛稳定。"]
+    },
+    "dumbbell-flyes": {
+      "match": ["dumbbell flyes"],
+      "nameZh": "哑铃平板飞鸟",
+      "category": "胸部",
+      "instructionsZh": ["仰卧凳上，双手持哑铃举于胸前，手肘微屈。", "以弧线向两侧缓慢打开，感受胸部拉伸。", "保持肘角不变，用胸部收缩将哑铃带回。"]
+    },
+    "butterfly-machine": {
+      "match": ["butterfly"],
+      "nameZh": "蝴蝶机夹胸",
+      "category": "胸部",
+      "instructionsZh": ["调整座椅，使把手与胸部中线接近齐平。", "肩胛保持稳定，向中间合拢手柄。", "顶端收紧胸部后缓慢回放。"]
+    },
+    "leverage-chest-press": {
+      "match": ["leverage chest press"],
+      "nameZh": "器械推胸",
+      "category": "胸部",
+      "instructionsZh": ["坐稳并调整座椅，让把手对准胸部中段。", "保持肩胛后收，平稳向前推起手柄。", "控制回到起始位，不要让重量片撞击。"]
+    },
+    "low-cable-crossover": {
+      "match": ["low cable crossover"],
+      "nameZh": "低位绳索夹胸",
+      "category": "胸部",
+      "instructionsZh": ["站在低位滑轮之间，双脚前后错开站稳。", "双臂沿向上内收的弧线把手柄带至胸前。", "缓慢回放，保持胸部与肩胛稳定。"]
+    },
+    "incline-cable-chest-press": {
+      "match": ["incline cable chest press"],
+      "nameZh": "上斜绳索推胸",
+      "category": "胸部",
+      "instructionsZh": ["面对低位滑轮，采用前后站姿固定躯干。", "从上胸两侧向前上方推起把手。", "控制回放，避免腰部后仰。"]
+    },
+    "decline-smith-press": {
+      "match": ["decline smith press"],
+      "nameZh": "史密斯机下斜卧推",
+      "category": "胸部",
+      "instructionsZh": ["固定双腿并让肩胛贴稳凳面。", "控制杠铃下降至下胸附近。", "平稳推回，避免肘部完全锁死。"]
+    },
+    "hammer-grip-incline-db-press": {
+      "match": ["hammer grip incline db bench press"],
+      "nameZh": "中立握上斜哑铃卧推",
+      "category": "胸部",
+      "instructionsZh": ["上斜凳坐稳，掌心相对持哑铃于上胸两侧。", "以中立握向上推举至手臂接近伸直。", "缓慢下放，保持肩胛后收。"]
+    },
+    "bent-over-two-dumbbell-row": {
+      "match": ["bent over two-dumbbell row"],
+      "nameZh": "双哑铃俯身划船",
+      "category": "背部",
+      "instructionsZh": ["屈髋俯身并保持脊柱中立，双哑铃自然下垂。", "双肘向后拉，将哑铃带向髋部两侧。", "轻收肩胛后控制下放。"]
+    },
+    "tbar-row-handle": {
+      "match": ["t-bar row with handle"],
+      "nameZh": "T 杠划船",
+      "category": "背部",
+      "instructionsZh": ["采用稳定站姿俯身握住把手，核心收紧。", "用肘部向后带动把手拉向下腹。", "缓慢下放，避免圆背或耸肩。"]
+    },
+    "reverse-grip-bent-over-row": {
+      "match": ["reverse grip bent-over rows"],
+      "nameZh": "反握杠铃俯身划船",
+      "category": "背部",
+      "instructionsZh": ["反握杠铃并屈髋俯身，背部保持中立。", "将杠铃拉向下腹，肘部贴近躯干。", "控制下放，避免躯干摆动。"]
+    },
+    "leverage-high-row": {
+      "match": ["leverage high row"],
+      "nameZh": "高位器械划船",
+      "category": "背部",
+      "instructionsZh": ["调整座椅和胸垫，胸部贴稳支撑。", "向后下方拉动把手，带动肩胛后收。", "缓慢回放，保持颈部放松。"]
+    },
+    "smith-machine-bent-over-row": {
+      "match": ["smith machine bent over row"],
+      "nameZh": "史密斯机俯身划船",
+      "category": "背部",
+      "instructionsZh": ["站在杠下屈髋俯身，双手正握固定杠铃。", "将杠铃沿稳定轨迹拉向腹部。", "停顿后控制下降，躯干不借力摆动。"]
+    },
+    "vbar-pulldown": {
+      "match": ["v-bar pulldown"],
+      "nameZh": "V 把高位下拉",
+      "category": "背部",
+      "instructionsZh": ["坐稳并固定大腿，双手握住 V 把。", "先下沉肩胛，再将把手拉向上胸。", "控制回放至手臂接近伸直。"]
+    },
+    "kneeling-high-pulley-row": {
+      "match": ["kneeling high pulley row"],
+      "nameZh": "跪姿高位绳索划船",
+      "category": "背部",
+      "instructionsZh": ["面对高位滑轮跪稳，双手握住把手。", "将肘部向身体两侧和后方拉动。", "收紧背部后缓慢回到起始位。"]
+    },
+    "seated-one-arm-cable-row": {
+      "match": ["seated one-arm cable pulley rows"],
+      "nameZh": "单臂坐姿绳索划船",
+      "category": "背部",
+      "instructionsZh": ["坐稳并保持躯干正对前方，单手握住把手。", "将手肘向髋部方向拉回。", "控制手臂伸展，避免身体扭转。"]
+    },
+    "straight-arm-pulldown": {
+      "match": ["straight-arm pulldown"],
+      "nameZh": "直臂下拉",
+      "category": "背部",
+      "instructionsZh": ["面对高位滑轮站稳，手肘保持微屈。", "固定肘角度，将直杆拉向大腿前侧。", "缓慢回放，避免躯干后仰。"]
+    },
+    "alternating-cable-shoulder-press": {
+      "match": ["alternating cable shoulder press"],
+      "nameZh": "交替绳索肩推",
+      "category": "肩部",
+      "instructionsZh": ["站在滑轮间，核心收紧，将把手置于肩侧。", "单侧向上推举，保持躯干不侧倾。", "控制下降后换侧完成。"]
+    },
+    "barbell-rear-delt-row": {
+      "match": ["barbell rear delt row"],
+      "nameZh": "杠铃后束划船",
+      "category": "肩部",
+      "instructionsZh": ["俯身握杠，手肘向两侧打开。", "将杠铃拉向上腹部，感受肩后束收缩。", "缓慢下放，保持颈部放松。"]
+    },
+    "bent-over-dumbbell-rear-delt-raise": {
+      "match": ["bent over dumbbell rear delt raise with head on bench"],
+      "nameZh": "俯身哑铃后束飞鸟",
+      "category": "肩部",
+      "instructionsZh": ["额头轻贴凳面支撑，双哑铃自然下垂。", "保持手肘微屈，向两侧抬起哑铃。", "在肩后束收紧处停顿后控制下放。"]
+    },
+    "cable-seated-lateral-raise": {
+      "match": ["cable seated lateral raise"],
+      "nameZh": "坐姿绳索侧平举",
+      "category": "肩部",
+      "instructionsZh": ["坐稳并从身体侧方握住低位滑轮把手。", "以肩部带动手臂向侧上方抬起至接近肩高。", "缓慢下放，避免耸肩。"]
+    },
+    "cable-shoulder-press": {
+      "match": ["cable shoulder press"],
+      "nameZh": "绳索肩推",
+      "category": "肩部",
+      "instructionsZh": ["双手握低位滑轮把手置于肩侧，站姿稳定。", "向上推举至头顶上方。", "控制回到肩侧，保持肋骨不过度外翻。"]
+    },
+    "dumbbell-scaptation": {
+      "match": ["dumbbell scaption"],
+      "nameZh": "哑铃肩胛面举",
+      "category": "肩部",
+      "instructionsZh": ["双手持轻哑铃站稳，手臂位于身体前侧约 30 度。", "沿肩胛面平稳抬起至肩高附近。", "缓慢下降，保持肩胛自然上旋。"]
+    },
+    "one-arm-dumbbell-shoulder-press": {
+      "match": ["dumbbell one-arm shoulder press"],
+      "nameZh": "单臂哑铃肩推",
+      "category": "肩部",
+      "instructionsZh": ["坐姿或站姿将哑铃置于单侧肩旁，核心收紧。", "沿稳定轨迹向上推举。", "缓慢回到起始位，完成后换侧。"]
+    },
+    "front-cable-raise": {
+      "match": ["front cable raise"],
+      "nameZh": "绳索前平举",
+      "category": "肩部",
+      "instructionsZh": ["背对低位滑轮站稳，双手握把置于大腿前。", "以肩前束将把手向前抬至接近肩高。", "控制下降，不用躯干甩动。"]
+    },
+    "alternate-incline-dumbbell-curl": {
+      "match": ["alternate incline dumbbell curl"],
+      "nameZh": "上斜交替哑铃弯举",
+      "category": "手臂",
+      "instructionsZh": ["坐在上斜凳上，双臂自然下垂，掌心向前。", "单侧屈肘将哑铃弯向肩部。", "缓慢下降后换侧，保持上臂稳定。"]
+    },
+    "cable-preacher-curl": {
+      "match": ["cable preacher curl"],
+      "nameZh": "绳索牧师凳弯举",
+      "category": "手臂",
+      "instructionsZh": ["上臂贴稳牧师凳垫并握住低位绳索把手。", "固定上臂完成屈肘弯举。", "缓慢伸肘回放，底部保留微屈。"]
+    },
+    "cross-body-hammer-curl": {
+      "match": ["cross body hammer curl"],
+      "nameZh": "交叉锤式弯举",
+      "category": "手臂",
+      "instructionsZh": ["站姿中立握哑铃，手臂置于身体两侧。", "将一侧哑铃斜向弯举至对侧肩前。", "控制下放后换侧，避免躯干借力。"]
+    },
+    "dumbbell-alternate-bicep-curl": {
+      "match": ["dumbbell alternate bicep curl"],
+      "nameZh": "交替哑铃弯举",
+      "category": "手臂",
+      "instructionsZh": ["站稳后双手持哑铃，手臂自然下垂。", "单侧屈肘并旋转掌心向上完成弯举。", "缓慢下降后换侧，保持上臂贴近身体。"]
+    },
+    "ez-bar-curl": {
+      "match": ["ez-bar curl"],
+      "nameZh": "曲杆弯举",
+      "category": "手臂",
+      "instructionsZh": ["双手握曲杆站稳，肘部贴近躯干。", "只通过屈肘将曲杆弯举至胸前。", "平稳下放，避免后仰甩动。"]
+    },
+    "machine-bicep-curl": {
+      "match": ["machine bicep curl"],
+      "nameZh": "器械二头弯举",
+      "category": "手臂",
+      "instructionsZh": ["调整座椅，让上臂贴稳器械垫。", "屈肘拉起把手，感受肱二头肌收缩。", "控制回放，不让重量片撞击。"]
+    },
+    "high-cable-curls": {
+      "match": ["high cable curls"],
+      "nameZh": "高位绳索弯举",
+      "category": "手臂",
+      "instructionsZh": ["站在双高位滑轮之间，双臂张开握住把手。", "固定上臂，向头部方向屈肘弯举。", "顶端收紧后缓慢伸肘。"]
+    },
+    "close-grip-barbell-bench-press": {
+      "match": ["close-grip barbell bench press"],
+      "nameZh": "窄握杠铃卧推",
+      "category": "手臂",
+      "instructionsZh": ["平躺凳上，双手以略窄于肩的握距握杠。", "控制杠铃下放至下胸附近，肘部贴近躯干。", "以肱三头肌发力推回起始位。"]
+    },
+    "machine-triceps-extension": {
+      "match": ["machine triceps extension"],
+      "nameZh": "器械三头伸展",
+      "category": "手臂",
+      "instructionsZh": ["调整座椅并固定上臂于支撑垫。", "伸肘推开手柄至肱三头肌收紧。", "缓慢屈肘回放，避免耸肩。"]
+    },
+    "barbell-hack-squat": {
+      "match": ["barbell hack squat"],
+      "nameZh": "杠铃哈克深蹲",
+      "category": "腿部",
+      "instructionsZh": ["杠铃置于身体后方，双脚站稳并保持背部自然中立。", "屈膝屈髋下蹲，让杠铃沿小腿后侧下降。", "通过脚掌发力站起，避免膝盖内扣。"]
+    },
+    "barbell-walking-lunge": {
+      "match": ["barbell walking lunge"],
+      "nameZh": "杠铃行走箭步蹲",
+      "category": "腿部",
+      "instructionsZh": ["将杠铃稳放在上背，向前迈出一大步。", "控制下沉至双膝弯曲，前膝保持对线。", "通过前脚发力站起并连续向前换腿。"]
+    },
+    "dumbbell-rear-lunge": {
+      "match": ["dumbbell rear lunge"],
+      "nameZh": "哑铃后撤箭步蹲",
+      "category": "腿部",
+      "instructionsZh": ["双手持哑铃站稳，一脚向后撤步。", "前腿屈膝下沉，保持躯干直立。", "通过前脚全掌发力回到站姿并换边。"]
+    },
+    "dumbbell-squat": {
+      "match": ["dumbbell squat"],
+      "nameZh": "哑铃深蹲",
+      "category": "腿部",
+      "instructionsZh": ["双手持哑铃于身体两侧，双脚与肩同宽。", "屈髋屈膝下蹲，膝盖跟随脚尖方向。", "保持躯干稳定，蹬地站回起始位。"]
+    },
+    "front-squat-clean-grip": {
+      "match": ["front squat (clean grip)"],
+      "nameZh": "杠铃前蹲",
+      "category": "腿部",
+      "instructionsZh": ["将杠铃置于前三角肌，采用翻腕握法保持肘部抬高。", "保持胸廓自然抬起，屈髋屈膝下蹲。", "通过全脚掌发力站起，避免膝盖内扣。"]
+    },
+    "good-morning": {
+      "match": ["good morning"],
+      "nameZh": "杠铃早安式",
+      "category": "腿部",
+      "instructionsZh": ["将轻杠铃置于上背，膝盖保持微屈。", "向后送髋并让躯干前倾，背部保持中立。", "收紧臀腿伸髋站起，避免圆背。"]
+    },
+    "barbell-step-ups": {
+      "match": ["barbell step ups"],
+      "nameZh": "杠铃登台阶",
+      "category": "腿部",
+      "instructionsZh": ["杠铃稳放在上背，选择牢固且高度合适的台阶。", "一脚全掌踩上台阶，通过踩台腿发力站直。", "控制下台，完成后换侧。"]
+    },
+    "smith-machine-squat": {
+      "match": ["smith machine squat"],
+      "nameZh": "史密斯机深蹲",
+      "category": "腿部",
+      "instructionsZh": ["肩背贴稳杠铃，双脚置于杠前的舒适位置。", "沿固定轨迹控制下蹲，膝盖跟随脚尖方向。", "蹬地站起，保持骨盆与躯干稳定。"]
+    },
+    "seated-calf-raise": {
+      "match": ["seated calf raise"],
+      "nameZh": "坐姿提踵",
+      "category": "腿部",
+      "instructionsZh": ["前脚掌踩稳踏板，膝盖置于压垫下。", "抬起脚跟至小腿充分收缩。", "缓慢下降到舒适拉伸位置。"]
+    },
+    "calf-press": {
+      "match": ["calf press on the leg press machine"],
+      "nameZh": "腿举机提踵",
+      "category": "腿部",
+      "instructionsZh": ["在腿举机上仅以前脚掌踩住踏板，膝盖保持微屈。", "通过踝关节跖屈推起踏板。", "缓慢回到小腿拉伸位置，避免锁死膝盖。"]
+    },
+    "barbell-hip-thrust": {
+      "match": ["barbell hip thrust"],
+      "nameZh": "杠铃臀推",
+      "category": "臀部",
+      "instructionsZh": ["上背靠稳凳缘，杠铃横置于髋部并垫好保护垫。", "脚跟发力伸髋，顶端让躯干与大腿接近一线。", "收紧臀部后缓慢下放，避免腰椎过伸。"]
+    },
+    "cable-pull-through": {
+      "match": ["pull through"],
+      "nameZh": "绳索拉臀",
+      "category": "臀部",
+      "instructionsZh": ["背对低位滑轮站稳，双手从两腿间握住绳索。", "向后送髋感受臀腿拉伸，再伸髋站直。", "顶端收紧臀部，避免用腰部后仰。"]
+    },
+    "kneeling-squat": {
+      "match": ["kneeling squat"],
+      "nameZh": "跪姿杠铃深蹲",
+      "category": "臀部",
+      "instructionsZh": ["跪姿将杠铃稳放在上背，双膝置于软垫上。", "控制髋部向后坐，保持躯干稳定。", "通过臀部伸髋回到直立跪姿。"]
+    },
+    "glute-kickback": {
+      "match": ["glute kickback"],
+      "nameZh": "徒手臀部后踢",
+      "category": "臀部",
+      "instructionsZh": ["四点跪姿，双手位于肩下，核心轻收紧。", "屈膝将一侧腿向后上方伸髋。", "臀部收紧后控制回到起始位并换边。"]
+    },
+    "hip-extension-bands": {
+      "match": ["hip extension with bands"],
+      "nameZh": "弹力带髋伸展",
+      "category": "臀部",
+      "instructionsZh": ["将弹力带固定在脚踝和身后低位固定点之间。", "保持骨盆朝前，将工作腿向后伸展。", "臀部收紧后缓慢回位并换边。"]
+    },
+    "hip-lift-band": {
+      "match": ["hip lift with band"],
+      "nameZh": "弹力带臀桥",
+      "category": "臀部",
+      "instructionsZh": ["仰卧屈膝，将弹力带置于膝盖上方。", "保持膝盖轻向外推，同时抬髋。", "顶端收紧臀部后缓慢下放。"]
+    },
+    "physioball-hip-bridge": {
+      "match": ["physioball hip bridge"],
+      "nameZh": "健身球臀桥",
+      "category": "臀部",
+      "instructionsZh": ["仰卧将小腿置于健身球上，双臂平放保持稳定。", "通过脚跟和臀部发力抬起髋部。", "保持球不滚动，控制下放回起始位。"]
+    },
+    "barbell-ab-rollout": {
+      "match": ["barbell ab rollout"],
+      "nameZh": "杠铃腹肌滚轮",
+      "category": "核心",
+      "instructionsZh": ["双手握住装有稳定杠铃片的杠铃，起始时核心收紧。", "缓慢向前滚动，在能保持腰背稳定的范围内停住。", "用腹部控制将杠铃拉回，避免塌腰。"]
+    },
+    "barbell-side-bend": {
+      "match": ["barbell side bend"],
+      "nameZh": "杠铃侧屈",
+      "category": "核心",
+      "instructionsZh": ["单手或背部稳定杠铃，双脚站稳。", "仅从躯干侧向缓慢屈曲，保持髋部稳定。", "以侧腹发力回到中立，不借助摆动。"]
+    },
+    "cable-seated-crunch": {
+      "match": ["cable seated crunch"],
+      "nameZh": "坐姿绳索卷腹",
+      "category": "核心",
+      "instructionsZh": ["坐稳后双手固定绳索于头部两侧。", "让肋骨向骨盆靠近，完成躯干卷曲。", "缓慢回放，避免用手臂猛拉。"]
+    },
+    "dumbbell-side-bend": {
+      "match": ["dumbbell side bend"],
+      "nameZh": "哑铃侧屈",
+      "category": "核心",
+      "instructionsZh": ["单手持哑铃站稳，另一手可置于髋部。", "向持铃侧缓慢侧屈，保持身体在同一平面。", "用侧腹控制回到直立，完成后换边。"]
+    },
+    "pallof-press": {
+      "match": ["pallof press"],
+      "nameZh": "帕洛夫抗旋转推",
+      "category": "核心",
+      "instructionsZh": ["侧对绳索站稳，双手在胸前握住把手。", "向前推出把手并抵抗绳索带来的旋转。", "停顿后控制收回，躯干保持正对前方。"]
+    },
+    "kneeling-cable-oblique-crunch": {
+      "match": ["kneeling cable crunch with alternating oblique twists"],
+      "nameZh": "跪姿绳索交替侧卷腹",
+      "category": "核心",
+      "instructionsZh": ["跪于高位滑轮前，双手将绳索置于头侧。", "卷腹时交替向左右侧带动胸廓转动。", "控制回到中间，避免只用手臂拉动。"]
+    },
+    "landmine-180": {
+      "match": ["landmine 180's"],
+      "nameZh": "地雷管 180 度转体",
+      "category": "核心",
+      "instructionsZh": ["双手握住地雷管杠铃端，双脚与肩同宽站稳。", "控制杠铃端在身体两侧画弧移动。", "让胸椎带动旋转，保持髋部稳定。"]
+    },
+    "bosu-cable-crunch-side-bend": {
+      "match": ["bosu ball cable crunch with side bends"],
+      "nameZh": "平衡球绳索侧卷腹",
+      "category": "核心",
+      "instructionsZh": ["在平衡球上稳定坐好并握住绳索。", "先卷腹再向一侧轻微侧屈，动作保持可控。", "回到中间后换侧，避免失去平衡。"]
+    },
+    "barbell-glute-bridge": {
+      "match": ["barbell glute bridge"],
+      "nameZh": "杠铃臀桥",
+      "category": "臀部",
+      "instructionsZh": ["仰卧屈膝，将杠铃横置于髋部并垫好保护垫。", "以脚跟和臀部发力抬髋至舒适高度。", "顶部收紧臀部后缓慢下放，避免腰部代偿。"]
+    },
+    "barbell-ab-rollout-knees": {
+      "match": ["barbell ab rollout - on knees"],
+      "nameZh": "跪姿杠铃滚轮",
+      "category": "核心",
+      "instructionsZh": ["跪姿双手握住装有稳定杠铃片的杠铃，收紧腹部。", "缓慢向前滚动，在腰背能保持稳定的范围内停止。", "控制杠铃拉回起始位，避免腰椎塌陷。"]
+    },
+    "arm-circles": {
+      "match": ["arm circles"],
+      "nameZh": "手臂绕环",
+      "category": "热身",
+      "libraryType": "warmup",
+      "instructionsZh": ["站立并让双脚与髋同宽，双臂自然张开至身体两侧。", "以肩关节为轴向前画小圆，逐渐增加幅度。", "换方向重复，动作平稳，避免耸肩或甩动躯干。"]
+    },
+    "standing-hip-circles": {
+      "match": ["standing hip circles"],
+      "nameZh": "站姿髋绕环",
+      "category": "热身",
+      "libraryType": "warmup",
+      "instructionsZh": ["单脚站稳，可轻扶固定物保持平衡。", "抬起另一侧膝盖，以髋关节为轴缓慢画圈。", "完成一侧后换边，保持骨盆稳定，不追求过大幅度。"]
+    },
+    "knee-circles": {
+      "match": ["knee circles"],
+      "nameZh": "膝关节绕环",
+      "category": "热身",
+      "libraryType": "warmup",
+      "instructionsZh": ["双脚并拢站立，膝盖微屈，双手轻扶膝部。", "让双膝在舒适范围内缓慢画小圆。", "完成一个方向后换方向，始终保持脚掌稳定贴地。"]
+    },
+    "ankle-circles": {
+      "match": ["ankle circles"],
+      "nameZh": "踝关节绕环",
+      "category": "热身",
+      "libraryType": "warmup",
+      "instructionsZh": ["坐姿或扶墙站姿，让一侧脚离地。", "以踝关节为轴缓慢画圈，保持小腿稳定。", "完成一个方向后换方向，再练习另一侧。"]
+    },
+    "triceps-stretch": {
+      "match": ["triceps stretch"],
+      "nameZh": "肱三头肌拉伸",
+      "category": "拉伸",
+      "libraryType": "stretch",
+      "instructionsZh": ["一侧手臂抬过头顶并屈肘，让手掌靠近上背部。", "另一只手轻扶肘部，向内下方施加轻柔压力。", "感到上臂后侧与背阔肌轻微牵拉时保持 20-30 秒，再换侧。"]
+    },
+    "upper-back-stretch": {
+      "match": ["upper back stretch"],
+      "nameZh": "上背部拉伸",
+      "category": "拉伸",
+      "libraryType": "stretch",
+      "instructionsZh": ["双手在胸前相扣并向前伸直，膝盖微屈站稳。", "轻轻向前推手，让肩胛骨自然分开。", "保持颈部放松、正常呼吸，感到上背部轻微牵拉即可。"]
+    },
+    "kneeling-hip-flexor": {
+      "match": ["kneeling hip flexor"],
+      "nameZh": "半跪髋屈肌拉伸",
+      "category": "拉伸",
+      "libraryType": "stretch",
+      "instructionsZh": ["一膝跪地，另一脚踩稳在前，骨盆保持正对前方。", "轻收紧跪地侧臀部，让骨盆轻微后倾后缓慢前移。", "感到髋前侧轻微牵拉时保持 20-30 秒，再换边。"]
+    },
+    "standing-hamstring-calf-stretch": {
+      "match": ["standing hamstring and calf stretch"],
+      "nameZh": "站姿腘绳肌与小腿拉伸",
+      "category": "拉伸",
+      "libraryType": "stretch",
+      "instructionsZh": ["将一侧脚跟放在低台或稳定支撑物上，脚尖朝上。", "保持背部自然延长，从髋部轻轻前倾。", "感到大腿后侧和小腿轻微牵拉时保持 20-30 秒，再换边。"]
+    }
+  }
+}

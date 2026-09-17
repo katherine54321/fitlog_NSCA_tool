@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">FitLog</title>
+  <desc id="desc">An open book and a dumbbell, representing exercise knowledge and practice.</desc>
+  <rect width="512" height="512" rx="104" fill="#667f4c"/>
+  <path d="M124 226c45-8 85 2 120 28v112c-35-24-75-34-120-26z" fill="#ffffff"/>
+  <path d="M388 226c-45-8-85 2-120 28v112c35-24 75-34 120-26z" fill="#e2edcf"/>
+  <path d="M152 279c23 0 43 5 62 14M152 306c23 0 43 5 62 14" fill="none" stroke="#667f4c" stroke-width="10" stroke-linecap="round"/>
+  <path d="M298 293c19-9 39-14 62-14M298 320c19-9 39-14 62-14" fill="none" stroke="#667f4c" stroke-width="10" stroke-linecap="round"/>
+  <g fill="#ffffff">
+    <rect x="148" y="147" width="24" height="44" rx="8"/>
+    <rect x="180" y="128" width="32" height="82" rx="10"/>
+    <rect x="208" y="158" width="96" height="22" rx="5"/>
+    <rect x="300" y="128" width="32" height="82" rx="10"/>
+    <rect x="340" y="147" width="24" height="44" rx="8"/>
+  </g>
+</svg>

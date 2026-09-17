@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "fitlog-science-fitness",
+  "main": "worker/pwa-static.ts",
+  "compatibility_date": "2026-09-17",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./dist-pwa",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  }
+}
