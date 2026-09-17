@@ -75,7 +75,7 @@
     const response = await fetch(api("/auth/v1/otp"), {
       method: "POST",
       headers: headers(null, { "Content-Type": "application/json" }),
-      body: JSON.stringify({ email, create_user: true, options: { emailRedirectTo: redirectTo } }),
+      body: JSON.stringify({ email, create_user: true, email_redirect_to: redirectTo }),
     });
     if (!response.ok) throw new Error("登录链接发送失败，请稍后重试。");
   }

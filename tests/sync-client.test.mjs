@@ -32,3 +32,8 @@ test("sync client supports Supabase token-hash email callbacks without exposing 
   assert.match(source, /token_hash: verification\.tokenHash/);
   assert.match(html, /authQuery\.has\("token_hash"\) && authQuery\.get\("type"\) === "email"/);
 });
+
+test("magic-link requests use the Supabase REST redirect field", () => {
+  assert.match(source, /email_redirect_to: redirectTo/);
+  assert.doesNotMatch(source, /options: \{ emailRedirectTo: redirectTo \}/);
+});
