@@ -77,7 +77,11 @@
       headers: headers(null, { "Content-Type": "application/json" }),
       body: JSON.stringify({ email, create_user: true, email_redirect_to: redirectTo }),
     });
-    if (!response.ok) throw new Error("登录链接发送失败，请稍后重试。");
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => null);
+      const detail = errorBody?.msg || errorBody?.message || errorBody?.error_description;
+      throw new Error(detail ? `登录链接发送失败：${String(detail).slice(0, 160)}` : "登录链接发送失败，请稍后重试。");
+    }
   }
 
   function captureHashSession(url = window.location.href) {
