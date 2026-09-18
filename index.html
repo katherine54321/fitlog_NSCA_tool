@@ -2,9 +2,9 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>FitLog 科学健身助手 | NSCA-CPT 训练知识库</title>
-    <meta name="theme-color" content="#667f4c" />
+    <meta name="theme-color" content="#1b1d20" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="FitLog" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -921,7 +921,7 @@
         padding: 12px;
         border: 1px solid var(--line);
         border-radius: 8px;
-        background: #fbfcfa;
+        background: var(--surface-soft);
       }
 
       .plan-input-grid label span {
@@ -2252,7 +2252,7 @@
         height: 44px;
         min-height: 44px;
         padding: 10px 12px;
-        font-size: 14px;
+        font-size: 16px;
         line-height: 22px;
       }
 
@@ -5084,6 +5084,75 @@
         .completed-training-head { align-items: flex-start; flex-direction: column; }
         .completed-training-head select { width: 100%; }
       }
+
+      /* Keep fixed navigation outside the query container and reserve its safe area. */
+      :root {
+        color-scheme: dark;
+        --bottom-nav-height: calc(64px + env(safe-area-inset-bottom, 0px));
+      }
+
+      html {
+        scroll-padding-bottom: calc(var(--bottom-nav-height) + 16px);
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      body { padding-bottom: 0; }
+
+      .app {
+        overflow: clip;
+        padding-bottom: calc(var(--bottom-nav-height) + 16px);
+      }
+
+      .mobile-nav {
+        position: fixed;
+        inset: auto 0 0;
+        width: min(100%, var(--app-width));
+        height: var(--bottom-nav-height);
+        margin-inline: auto;
+        transform: none;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-auto-columns: auto;
+        gap: 4px;
+        padding: 7px max(8px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+        border: 0;
+        border-top: 1px solid var(--border-subtle);
+        border-radius: 0;
+        background: #23262a;
+      }
+
+      .mobile-nav a { min-width: 0; min-height: 48px; }
+
+      /* A 16px editing font avoids Safari focus zoom without disabling pinch zoom. */
+      .app :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) {
+        min-width: 0;
+        max-width: 100%;
+        min-height: 44px;
+        font-size: 16px;
+        color: #ffffff;
+        -webkit-text-fill-color: #ffffff;
+        background-color: #121212;
+        border-color: #454b53;
+        color-scheme: dark;
+      }
+
+      .app :is(input, textarea)::placeholder {
+        color: #aeb5bd;
+        -webkit-text-fill-color: #aeb5bd;
+        opacity: 1;
+      }
+
+      .app input:autofill {
+        -webkit-text-fill-color: #ffffff;
+        box-shadow: inset 0 0 0 1000px #121212;
+      }
+
+      .app input:-webkit-autofill {
+        -webkit-text-fill-color: #ffffff;
+        -webkit-box-shadow: inset 0 0 0 1000px #121212;
+      }
+
+      .completed-training-supplement-form button { min-height: 44px; }
     </style>
   </head>
   <body>
@@ -5583,6 +5652,7 @@
       <footer class="footer">
         内容为原创训练教育整理，参考 NSCA-CPT 的训练评估、动作教学、渐进负荷与恢复管理原则。
       </footer>
+    </div>
       <nav class="mobile-nav" aria-label="APP 底部导航">
         <a href="#home">首页</a>
         <a href="#evaluation">评估</a>
@@ -5590,7 +5660,6 @@
         <a href="#training">动作库</a>
         <a href="#records">记录</a>
       </nav>
-    </div>
 
     <script src="data/exercise-library-data.js"></script>
     <script src="./config/fitlog-runtime.js"></script>
