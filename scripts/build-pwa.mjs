@@ -44,13 +44,16 @@ if (usesBuildTimeRuntime) {
 const cacheInputs = [
   "index.html",
   "manifest.webmanifest",
+  "app-icon.svg",
+  "icon-192.png",
+  "icon-512.png",
   "config/fitlog-runtime.js",
   "sync/fitlog-sync.js",
   "data/exercises-v1.json",
   "data/exercise-library-data.js",
 ];
 const cacheDigest = createHash("sha256")
-  .update((await Promise.all(cacheInputs.map((file) => readFile(resolve(output, file))))).join(""))
+  .update(Buffer.concat(await Promise.all(cacheInputs.map((file) => readFile(resolve(output, file))))))
   .digest("hex")
   .slice(0, 12);
 const workerPath = resolve(output, "sw.js");
