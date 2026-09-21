@@ -1,4 +1,4 @@
-name: Deploy FitLog PWA to GitHub Pages
+name: Deploy FitMine PWA to GitHub Pages
 
 on:
   push:

@@ -14,7 +14,7 @@
 		</dict>
 	</array>
 	<key>CFBundleDisplayName</key>
-        <string>FitLog 科学健身助手</string>
+        <string>FitMine 科学力量训练</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

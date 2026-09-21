@@ -60,4 +60,4 @@ const workerPath = resolve(output, "sw.js");
 const worker = await readFile(workerPath, "utf8");
 await writeFile(workerPath, worker.replace(/fitlog-app-v\d+/, `fitlog-app-${cacheDigest}`));
 
-console.log(`FitLog PWA build complete: ${output}`);
+console.log(`FitMine PWA build complete: ${output}`);

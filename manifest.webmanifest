@@ -1,6 +1,6 @@
 {
-  "name": "FitLog 科学健身助手",
-  "short_name": "FitLog",
+  "name": "FitMine 科学力量训练",
+  "short_name": "FitMine",
   "description": "基于 NSCA-CPT 训练知识的科学健身助手与知识库，提供动作学习、风险评估、体能评估、计划匹配和训练记录。",
   "start_url": "./?source=pwa",
   "scope": "./",

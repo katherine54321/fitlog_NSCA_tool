@@ -32,5 +32,5 @@ createServer((request, response) => {
   });
   createReadStream(file).pipe(response);
 }).listen(port, () => {
-  console.log(`FitLog preview: http://localhost:${port}`);
+  console.log(`FitMine preview: http://localhost:${port}`);
 });

@@ -2,7 +2,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
   appId: "com.fitlog.sciencefitness",
-  appName: "FitLog 科学健身助手",
+  appName: "FitMine 科学力量训练",
   webDir: "dist-pwa",
   bundledWebRuntime: false,
   server: {

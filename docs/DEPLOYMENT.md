@@ -1,4 +1,4 @@
-# FitLog 部署与云端配置
+# FitMine 部署与云端配置
 
 ## 1. 创建 Supabase 项目
 
@@ -12,10 +12,10 @@
 在 **Authentication > Email Templates > Magic Link** 中，将登录链接改为以下形式：
 
 ```html
-<a href="{{ .SiteURL }}/?token_hash={{ .TokenHash }}&type=email">登录 FitLog</a>
+<a href="{{ .SiteURL }}/?token_hash={{ .TokenHash }}&type=email">登录 FitMine</a>
 ```
 
-FitLog 会在返回站点后验证一次性令牌，再建立本地登录会话。开发阶段 `Site URL` 应为 `http://localhost:4173`；生产环境必须改为实际的 HTTPS 域名。不要将完整登录链接或其中的 `token_hash` 发给任何人。
+FitMine 会在返回站点后验证一次性令牌，再建立本地登录会话。开发阶段 `Site URL` 应为 `http://localhost:4173`；生产环境必须改为实际的 HTTPS 域名。不要将完整登录链接或其中的 `token_hash` 发给任何人。
 
 ## 3. 配置生产构建
 
