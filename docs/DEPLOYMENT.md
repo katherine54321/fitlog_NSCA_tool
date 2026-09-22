@@ -4,18 +4,19 @@
 
 1. 新建一个 Production 项目，并在 SQL Editor 执行 `supabase/migrations/0001_fitlog_schema.sql`。
 2. Authentication 中开启 Email OTP；生产环境建议同时配置 Sign in with Apple。
-3. 将 Web 与 iOS 回调地址加入 Redirect URLs，例如 `https://app.example.com/` 和 `com.fitlog.sciencefitness://auth/callback`。
+3. 将生产 Web 域名配置为 Site URL，例如 `https://app.example.com/`。
 4. 在 Edge Functions 中部署 `supabase/functions/delete-account`。服务端保存的 `SUPABASE_SERVICE_ROLE_KEY` 绝不能进入网页、iOS 包或 Git。
 
-## 2. 配置邮箱登录模板
+## 2. 配置邮箱验证码模板
 
-在 **Authentication > Email Templates > Magic Link** 中，将登录链接改为以下形式：
+在 **Authentication > Email Templates > Magic Link** 中，将邮件内容改为展示一次性验证码：
 
 ```html
-<a href="{{ .SiteURL }}/?token_hash={{ .TokenHash }}&type=email">登录 FitMine</a>
+<p>你的 FitMine 登录验证码是：</p>
+<p style="font-size: 24px; font-weight: 700; letter-spacing: 4px;">{{ .Token }}</p>
 ```
 
-FitMine 会在返回站点后验证一次性令牌，再建立本地登录会话。开发阶段 `Site URL` 应为 `http://localhost:4173`；生产环境必须改为实际的 HTTPS 域名。不要将完整登录链接或其中的 `token_hash` 发给任何人。
+FitMine 会在应用内验证 6 位一次性验证码，再建立本地登录会话。开发阶段 `Site URL` 应为 `http://localhost:4173`；生产环境必须改为实际的 HTTPS 域名。不要将验证码发给任何人。
 
 ## 3. 配置生产构建
 
@@ -24,10 +25,9 @@ FitMine 会在返回站点后验证一次性令牌，再建立本地登录会话
 ```text
 FITLOG_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 FITLOG_SUPABASE_ANON_KEY=YOUR_PUBLIC_ANON_KEY
-FITLOG_AUTH_REDIRECT_URL=https://app.example.com/
 ```
 
-当前生产测试地址为 `https://fitlog-science-fitness.katherine54321.workers.dev/`；正式绑定自定义域名后，将此处与 Supabase 的 Site URL 一并替换为自定义 HTTPS 域名。
+当前生产测试地址为 `https://fitlog-science-fitness.katherine54321.workers.dev/`；正式绑定自定义域名后，将 Supabase 的 Site URL 一并替换为自定义 HTTPS 域名。
 
 构建产物是 `dist-pwa/`。其中的 `config/fitlog-runtime.js` 只允许包含 Supabase URL 与 anon key；不可写入数据库密码、service role key 或 Apple 私钥。
 

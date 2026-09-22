@@ -28,7 +28,6 @@ for (const entry of entries) {
 const runtime = {
   supabaseUrl: process.env.FITLOG_SUPABASE_URL || "",
   supabaseAnonKey: process.env.FITLOG_SUPABASE_ANON_KEY || "",
-  authRedirectUrl: process.env.FITLOG_AUTH_REDIRECT_URL || "",
 };
 const usesBuildTimeRuntime = Object.values(runtime).some(Boolean);
 if (usesBuildTimeRuntime) {

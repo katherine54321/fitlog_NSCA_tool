@@ -281,6 +281,11 @@
         background: #fff;
       }
 
+      .account-dialog input:disabled {
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.64);
+      }
+
       .account-dialog .primary-btn,
       .account-dialog .secondary-btn {
         width: 100%;
@@ -5192,7 +5197,13 @@
           <label class="account-email-label" for="accountEmail">邮箱</label>
           <input id="accountEmail" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" />
           <label class="account-consent"><input id="accountConsent" type="checkbox" /> 我已阅读并同意<a href="./legal/privacy.html" target="_blank" rel="noopener">隐私政策</a></label>
-          <button class="primary-btn" id="accountSendLink" type="button">发送登录链接</button>
+          <button class="primary-btn" id="accountSendCode" type="button">发送验证码</button>
+          <div id="accountOtpStep" hidden>
+            <label class="account-email-label" for="accountOtp">邮箱验证码</label>
+            <input id="accountOtp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="输入 6 位验证码" />
+            <button class="primary-btn" id="accountVerifyCode" type="button">验证并登录</button>
+            <button class="text-btn" id="accountChangeEmail" type="button">更换邮箱</button>
+          </div>
           <p class="form-hint">配置云端服务后，可使用邮箱登录并同步训练计划、记录与评估数据。</p>
         </div>
         <div id="accountSignedIn" hidden>
@@ -6277,9 +6288,8 @@
         const modules = Array.from(document.querySelectorAll("[data-module-panel]"));
         const authHash = new URLSearchParams(window.location.hash.slice(1));
         const authQuery = new URLSearchParams(window.location.search);
-        // Supabase magic links deliver tokens in the hash. Let FitLogSync consume
-        // them before the regular router normalizes unknown routes to home.
-        // Token-hash links use query parameters and are verified by the sync client.
+        // Supabase email callbacks deliver tokens in the hash or query. Let
+        // FitLogSync consume them before the router normalizes unknown routes.
         if (
           (authHash.has("access_token") && authHash.has("refresh_token")) ||
           (authQuery.has("token_hash") && authQuery.get("type") === "email")

@@ -4,6 +4,7 @@
   const sessionKey = "fitlog-sync-session";
   const stateKey = "fitlog-sync-state";
   const backupTable = "user_sync_snapshots";
+  let pendingEmail = "";
 
   const configured = () => Boolean(runtime.supabaseUrl && runtime.supabaseAnonKey);
   const api = (path) => `${String(runtime.supabaseUrl || "").replace(/\/$/, "")}${path}`;
@@ -69,19 +70,39 @@
     };
   }
 
-  async function requestMagicLink(email) {
+  async function requestEmailOtp(email) {
     if (!configured()) throw new Error("云端服务尚未配置，请联系管理员。");
-    const redirectTo = runtime.authRedirectUrl || window.location.origin + window.location.pathname;
     const response = await fetch(api("/auth/v1/otp"), {
       method: "POST",
       headers: headers(null, { "Content-Type": "application/json" }),
-      body: JSON.stringify({ email, create_user: true, email_redirect_to: redirectTo }),
+      body: JSON.stringify({ email, create_user: true }),
     });
     if (!response.ok) {
       const errorBody = await response.json().catch(() => null);
       const detail = errorBody?.msg || errorBody?.message || errorBody?.error_description;
-      throw new Error(detail ? `登录链接发送失败：${String(detail).slice(0, 160)}` : "登录链接发送失败，请稍后重试。");
+      throw new Error(detail ? `验证码发送失败：${String(detail).slice(0, 160)}` : "验证码发送失败，请稍后重试。");
     }
+  }
+
+  async function verifyEmailOtp(email, token) {
+    if (!configured()) throw new Error("云端服务尚未配置，请联系管理员。");
+    const response = await fetch(api("/auth/v1/verify"), {
+      method: "POST",
+      headers: headers(null, { "Content-Type": "application/json" }),
+      body: JSON.stringify({ email, token, type: "email" }),
+    });
+    if (!response.ok) throw new Error("验证码错误或已过期，请重新发送验证码。");
+
+    const session = await response.json();
+    if (!session.access_token || !session.refresh_token) {
+      throw new Error("验证码未返回有效会话，请重新发送验证码。");
+    }
+    saveSession({
+      accessToken: session.access_token,
+      refreshToken: session.refresh_token,
+      email: session.user?.email || email,
+      userId: session.user?.id || userIdFromToken(session.access_token),
+    });
   }
 
   function captureHashSession(url = window.location.href) {
@@ -118,11 +139,11 @@
       headers: headers(null, { "Content-Type": "application/json" }),
       body: JSON.stringify({ token_hash: verification.tokenHash, type: verification.type }),
     });
-    if (!response.ok) throw new Error("登录链接已失效或已被使用，请重新发送登录链接。");
+    if (!response.ok) throw new Error("登录链接已失效或已被使用，请改用邮箱验证码重新登录。");
 
     const session = await response.json();
     if (!session.access_token || !session.refresh_token) {
-      throw new Error("登录链接未返回有效会话，请重新发送登录链接。");
+      throw new Error("登录链接未返回有效会话，请改用邮箱验证码重新登录。");
     }
     saveSession({
       accessToken: session.access_token,
@@ -132,6 +153,21 @@
     });
     clearEmailVerificationParams();
     return true;
+  }
+
+  async function completeSignIn() {
+    pendingEmail = "";
+    setOtpStep(false);
+    renderAccount();
+    setMessage("登录成功，正在恢复最新训练数据…");
+    recordConsent().catch(() => {});
+    const restored = await pullLatest();
+    if (restored) {
+      window.location.reload();
+      return;
+    }
+    await syncNow();
+    setMessage("登录成功，已完成首次备份。");
   }
 
   async function syncNow() {
@@ -226,20 +262,55 @@
     if (target) target.textContent = message;
   }
 
+  function setOtpStep(active) {
+    const emailInput = document.querySelector("#accountEmail");
+    const consent = document.querySelector("#accountConsent");
+    const sendButton = document.querySelector("#accountSendCode");
+    const otpStep = document.querySelector("#accountOtpStep");
+    const otpInput = document.querySelector("#accountOtp");
+    if (emailInput) emailInput.disabled = active;
+    if (consent) consent.disabled = active;
+    if (sendButton) sendButton.hidden = active;
+    if (otpStep) otpStep.hidden = !active;
+    if (otpInput && !active) otpInput.value = "";
+    if (active) otpInput?.focus();
+  }
+
   function bindUi() {
     const dialog = document.querySelector("#accountDialog");
     document.querySelector("#accountButton")?.addEventListener("click", () => dialog?.showModal());
-    document.querySelector("#accountSendLink")?.addEventListener("click", async () => {
-      const email = document.querySelector("#accountEmail")?.value.trim();
+    document.querySelector("#accountSendCode")?.addEventListener("click", async () => {
+      const email = document.querySelector("#accountEmail")?.value.trim().toLowerCase();
       if (!email) return setMessage("请输入有效邮箱。");
       if (!document.querySelector("#accountConsent")?.checked) return setMessage("请先阅读并同意隐私政策。");
-      setMessage("正在发送登录链接…");
+      if (!configured()) return setMessage("云端服务尚未配置，请联系管理员。");
+      pendingEmail = email;
+      setOtpStep(true);
+      setMessage("正在发送验证码…");
       try {
-        await requestMagicLink(email);
-        setMessage("登录链接已发送，请在邮箱中打开。");
+        await requestEmailOtp(email);
+        setMessage("验证码已发送，请查看邮箱并在此输入。");
       } catch (error) {
         setMessage(error.message || "操作失败，请稍后重试。");
       }
+    });
+    document.querySelector("#accountVerifyCode")?.addEventListener("click", async () => {
+      const email = pendingEmail || document.querySelector("#accountEmail")?.value.trim().toLowerCase();
+      const token = document.querySelector("#accountOtp")?.value.replace(/\s/g, "");
+      if (!email) return setMessage("请先填写邮箱并发送验证码。");
+      if (!/^\d{6}$/.test(token || "")) return setMessage("请输入邮件中的 6 位验证码。");
+      setMessage("正在验证验证码…");
+      try {
+        await verifyEmailOtp(email, token);
+        await completeSignIn();
+      } catch (error) {
+        setMessage(error.message || "登录失败，请稍后重试。");
+      }
+    });
+    document.querySelector("#accountChangeEmail")?.addEventListener("click", () => {
+      pendingEmail = "";
+      setOtpStep(false);
+      setMessage("可重新填写邮箱并获取验证码。");
     });
     document.querySelector("#accountSyncNow")?.addEventListener("click", async () => {
       setMessage("正在同步…");
@@ -279,24 +350,19 @@
         try {
           if (captureHashSession(url) || await verifyEmailToken(url)) window.location.reload();
         } catch (error) {
-          setMessage(error.message || "登录未完成，请重新发送登录链接。");
+          setMessage(error.message || "登录未完成，请改用邮箱验证码重新登录。");
         }
       });
       if (!signedInFromLink) {
         try {
           signedInFromLink = await verifyEmailToken();
         } catch (error) {
-          setMessage(error.message || "登录未完成，请重新发送登录链接。");
+          setMessage(error.message || "登录未完成，请改用邮箱验证码重新登录。");
         }
       }
       renderAccount();
       if (signedInFromLink) {
-        setMessage("登录成功，正在恢复最新训练数据…");
-        recordConsent().catch(() => {});
-        pullLatest().then((restored) => {
-          if (restored) window.location.reload();
-          else syncNow().then(() => setMessage("登录成功，已完成首次备份。")).catch(() => {});
-        });
+        completeSignIn().catch((error) => setMessage(error.message || "登录后的同步未完成，请稍后重试。"));
       } else if (loadSession()?.accessToken) {
         pullLatest().then((restored) => {
           if (restored) window.location.reload();
