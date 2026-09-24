@@ -29,6 +29,12 @@ test("PWA document declares installable and offline delivery assets", async () =
   assert.equal(JSON.parse(manifest).scope, "./");
   assert.match(serviceWorker, /manifest\.webmanifest/);
   assert.match(serviceWorker, /self\.registration\.scope/);
+  assert.match(serviceWorker, /IMAGE_CACHE_NAME = "fitlog-exercise-images-v1"/);
+  assert.match(serviceWorker, /isImageRequest\(event\.request\)/);
+  assert.match(serviceWorker, /caches\.match\(IMAGE_PLACEHOLDER\)/);
+  assert.match(serviceWorker, /catch\(\(\) => caches\.match\(event\.request\)\)/);
+  assert.match(html, /decodeImageSource/);
+  assert.match(html, /data-ready="false" data-loading="true"/);
   assert.match(html, /registration\.update\(\)\.catch/);
   assert.match(releaseWorker, /const CACHE_NAME = "fitlog-app-[a-f0-9]{12}"/);
 });

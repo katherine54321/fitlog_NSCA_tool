@@ -1475,6 +1475,37 @@
         transform: scale(0.985);
       }
 
+      @keyframes image-skeleton-shimmer {
+        0% {
+          background-position: 160% 0;
+        }
+        100% {
+          background-position: -160% 0;
+        }
+      }
+
+      .exercise-library-card-image,
+      .workout-action-image,
+      .exercise-animation {
+        background-image: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0));
+        background-size: 220% 100%;
+      }
+
+      .exercise-library-card-image[data-image-loading="true"],
+      .workout-action-image[data-image-loading="true"],
+      .exercise-animation[data-loading="true"] {
+        background-image: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0));
+        background-size: 220% 100%;
+        animation: image-skeleton-shimmer 1.15s ease-in-out infinite;
+      }
+
+      .exercise-library-card-image[data-image-loaded="true"],
+      .workout-action-image[data-image-loaded="true"],
+      .exercise-animation[data-loading="false"] {
+        animation: none;
+        background-image: none;
+      }
+
       .exercise-library-card-image {
         display: block;
         width: 100%;
@@ -1574,8 +1605,8 @@
         transition: opacity 220ms ease;
       }
 
-      .exercise-animation[data-frame="start"] .exercise-animation-frame:first-child,
-      .exercise-animation[data-frame="end"] .exercise-animation-frame:last-of-type {
+      .exercise-animation[data-ready="true"][data-frame="start"] .exercise-animation-frame:first-child,
+      .exercise-animation[data-ready="true"][data-frame="end"] .exercise-animation-frame:last-of-type {
         opacity: 1;
       }
 
@@ -1598,6 +1629,10 @@
         color: #fff;
         background: var(--brand);
         font-size: 18px;
+      }
+
+      .exercise-animation-tools button:disabled {
+        opacity: 0.62;
       }
 
       .exercise-animation:fullscreen {
@@ -6163,6 +6198,7 @@
       const planProgressText = document.querySelector("#planProgressText");
       const planProgressHint = document.querySelector("#planProgressHint");
       const today = new Date().toISOString().slice(0, 10);
+      const EXERCISE_PLACEHOLDER_IMAGE = "assets/exercise-placeholder.svg";
 
       const libraryExercises = Array.isArray(window.EXERCISE_LIBRARY_DATA) ? window.EXERCISE_LIBRARY_DATA : [];
       const exercisesByLibraryType = (type) =>
@@ -7601,7 +7637,7 @@
           <article class="workout-action-card">
             <button class="workout-action-open" type="button" data-open-workout-exercise="${exercise.id}" aria-label="查看${exercise.nameZh}动作详情">
               <span class="workout-action-number">${index + 1}</span>
-              <img class="workout-action-image" data-library-image data-src="${exercise.startImage || "assets/exercise-placeholder.svg"}" src="assets/exercise-placeholder.svg" alt="${exercise.nameZh} 动作示例" loading="lazy">
+              <img class="workout-action-image" data-library-image data-image-loading="true" data-src="${exercise.startImage || EXERCISE_PLACEHOLDER_IMAGE}" src="${EXERCISE_PLACEHOLDER_IMAGE}" width="66" height="66" alt="${exercise.nameZh} 动作示例" loading="lazy" decoding="async">
               <span class="workout-action-content">
                 <b>${exercise.nameZh}</b>
                 <small>${exercise.nameEn}</small>
@@ -8146,7 +8182,37 @@
         const image = event.currentTarget;
         if (image.dataset.fallbackApplied) return;
         image.dataset.fallbackApplied = "true";
-        image.src = "assets/exercise-placeholder.svg";
+        image.dataset.imageLoading = "false";
+        image.dataset.imageLoaded = "false";
+        image.src = EXERCISE_PLACEHOLDER_IMAGE;
+      }
+
+      function decodeImageSource(source) {
+        return new Promise((resolve) => {
+          const preview = new Image();
+          preview.decoding = "async";
+          preview.onload = async () => {
+            try {
+              if (preview.decode) await preview.decode();
+            } catch {}
+            resolve(preview.currentSrc || preview.src);
+          };
+          preview.onerror = () => resolve(EXERCISE_PLACEHOLDER_IMAGE);
+          preview.src = source || EXERCISE_PLACEHOLDER_IMAGE;
+          if (preview.complete && preview.naturalWidth > 0) {
+            preview.onload();
+          }
+        });
+      }
+
+      async function loadDecodedImageInto(image, source) {
+        if (!image || image.dataset.imageLoaded === "true") return;
+        image.dataset.imageLoading = "true";
+        const decodedSource = await decodeImageSource(source);
+        if (!image.isConnected) return;
+        image.src = decodedSource;
+        image.dataset.imageLoading = "false";
+        image.dataset.imageLoaded = decodedSource !== EXERCISE_PLACEHOLDER_IMAGE ? "true" : "false";
       }
 
       function observeLibraryImages() {
@@ -8154,7 +8220,7 @@
         const images = document.querySelectorAll("[data-library-image]");
         if (!("IntersectionObserver" in window)) {
           images.forEach((image) => {
-            image.src = image.dataset.src;
+            loadDecodedImageInto(image, image.dataset.src);
           });
           return;
         }
@@ -8163,7 +8229,7 @@
             entries.forEach((entry) => {
               if (!entry.isIntersecting) return;
               const image = entry.target;
-              image.src = image.dataset.src;
+              loadDecodedImageInto(image, image.dataset.src);
               libraryImageObserver.unobserve(image);
             });
           },
@@ -8176,7 +8242,7 @@
       function exerciseLibraryCardTemplate(exercise) {
         return `
           <button class="exercise-library-card" type="button" data-open-exercise="${exercise.id}">
-            <img class="exercise-library-card-image" data-library-image data-src="${exercise.startImage || "assets/exercise-placeholder.svg"}" src="assets/exercise-placeholder.svg" alt="${exercise.nameZh} 起始姿势" loading="lazy">
+            <img class="exercise-library-card-image" data-library-image data-image-loading="true" data-src="${exercise.startImage || EXERCISE_PLACEHOLDER_IMAGE}" src="${EXERCISE_PLACEHOLDER_IMAGE}" width="320" height="240" alt="${exercise.nameZh} 起始姿势" loading="lazy" decoding="async">
             <span class="exercise-library-card-content">
               <h4>${exercise.nameZh}</h4>
               <p>${exercise.nameEn}</p>
@@ -8225,6 +8291,8 @@
           this.visible = true;
           this.timer = null;
           this.frame = "start";
+          this.ready = false;
+          this.destroyed = false;
           this.isStatic = !this.end || this.start.dataset.imageSource === this.end.dataset.imageSource;
           this.onImageError = localImageFallback;
           this.start.addEventListener("error", this.onImageError);
@@ -8239,10 +8307,40 @@
             : null;
           this.observer?.observe(root);
           this.sync();
+          this.preloadFrames();
+        }
+
+        async preloadFrames() {
+          const startSource = this.start.dataset.imageSource || EXERCISE_PLACEHOLDER_IMAGE;
+          const endSource = this.end?.dataset.imageSource || startSource;
+          const startFrame = decodeImageSource(startSource);
+          const endFrame = endSource === startSource ? startFrame : decodeImageSource(endSource);
+          const [decodedStart, decodedEnd] = await Promise.all([startFrame, endFrame]);
+          if (this.destroyed || !this.root.isConnected) return;
+          this.start.src = decodedStart;
+          this.start.dataset.imageLoading = "false";
+          this.start.dataset.imageLoaded = decodedStart !== EXERCISE_PLACEHOLDER_IMAGE ? "true" : "false";
+          if (this.end) {
+            this.end.src = decodedEnd;
+            this.end.dataset.imageLoading = "false";
+            this.end.dataset.imageLoaded = decodedEnd !== EXERCISE_PLACEHOLDER_IMAGE ? "true" : "false";
+          }
+          this.ready = true;
+          this.root.dataset.ready = "true";
+          this.root.dataset.loading = "false";
+          this.sync();
         }
 
         sync() {
           this.stop();
+          this.root.dataset.ready = this.ready ? "true" : "false";
+          if (!this.ready) {
+            this.root.dataset.frame = "start";
+            this.control.textContent = "...";
+            this.control.setAttribute("aria-label", "正在加载动作示意");
+            this.control.disabled = true;
+            return;
+          }
           if (!this.isStatic && !this.manualPaused && this.visible) {
             this.timer = window.setInterval(() => {
               this.frame = this.frame === "start" ? "end" : "start";
@@ -8276,6 +8374,7 @@
         }
 
         destroy() {
+          this.destroyed = true;
           this.stop();
           this.observer?.disconnect();
           this.start.removeEventListener("error", this.onImageError);
@@ -8289,14 +8388,14 @@
       }
 
       function animationTemplate(exercise) {
-        const start = exercise.startImage || "assets/exercise-placeholder.svg";
+        const start = exercise.startImage || EXERCISE_PLACEHOLDER_IMAGE;
         const end = exercise.endImage || start;
         return `
-          <div class="exercise-animation" data-exercise-animation data-frame="start">
-            <img class="exercise-animation-frame" data-animation-start data-image-source="${start}" src="${start}" alt="${exercise.nameZh} 起始姿势">
-            <img class="exercise-animation-frame" data-animation-end data-image-source="${end}" src="${end}" alt="${exercise.nameZh} 结束姿势">
+          <div class="exercise-animation" data-exercise-animation data-frame="start" data-ready="false" data-loading="true">
+            <img class="exercise-animation-frame" data-animation-start data-image-source="${start}" data-image-loading="true" src="${EXERCISE_PLACEHOLDER_IMAGE}" alt="${exercise.nameZh} 起始姿势" decoding="async">
+            <img class="exercise-animation-frame" data-animation-end data-image-source="${end}" data-image-loading="true" src="${EXERCISE_PLACEHOLDER_IMAGE}" alt="${exercise.nameZh} 结束姿势" decoding="async">
             <div class="exercise-animation-tools">
-              <button type="button" data-animation-control aria-label="暂停动作示意">Ⅱ</button>
+              <button type="button" data-animation-control aria-label="正在加载动作示意" disabled>...</button>
               <button type="button" data-animation-fullscreen aria-label="全屏查看动作示意">⛶</button>
             </div>
           </div>
