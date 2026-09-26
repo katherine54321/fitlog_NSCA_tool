@@ -4573,6 +4573,7 @@
       #evaluation .risk-card,
       #evaluation .risk-card .mini-list,
       #evaluation .risk-card .mini-list li,
+      #riskForm .question span,
       #evaluation .assessment-history-item h4 {
         color: #ffffff;
       }
@@ -5009,9 +5010,10 @@
       #plan .plan-metric strong {
         font-size: clamp(13px, 4.4cqw, 16px);
         line-height: 1.2;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        white-space: normal;
+        overflow: visible;
+        overflow-wrap: anywhere;
+        text-overflow: clip;
         letter-spacing: 0;
       }
 
@@ -5120,7 +5122,7 @@
         }
       }
 
-      @container (min-width: 820px) {
+      @container (min-width: 980px) {
         #plan .plan-metric-grid {
           grid-template-columns: repeat(4, minmax(0, 1fr));
         }

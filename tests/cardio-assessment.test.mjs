@@ -76,3 +76,7 @@ test('page JavaScript parses and strength calculation is independent', () => {
   const strength = section('function renderAssessment()', 'function getFitnessHistory()');
   assert.doesNotMatch(strength, /renderCardioAssessment|cardioTitle/);
 });
+
+test('risk questionnaire text uses a high-contrast dark-theme color', () => {
+  assert.match(html, /#riskForm \.question span,\s*#evaluation \.assessment-history-item h4\s*\{\s*color: #ffffff;/);
+});

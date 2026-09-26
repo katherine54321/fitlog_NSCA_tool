@@ -89,8 +89,8 @@ test("phone plan layout uses its app container instead of the browser viewport",
 
 test("plan metrics preserve readable widths and contain long values", () => {
   assert.match(source, /@container \(min-width: 620px\)\s*\{\s*#plan \.plan-metric-grid\s*\{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
-  assert.match(source, /@container \(min-width: 820px\)\s*\{\s*#plan \.plan-metric-grid\s*\{\s*grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
-  assert.match(source, /#plan \.plan-metric strong\s*\{[\s\S]*?overflow: hidden;[\s\S]*?text-overflow: ellipsis/);
+  assert.match(source, /@container \(min-width: 980px\)\s*\{\s*#plan \.plan-metric-grid\s*\{\s*grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
+  assert.match(source, /#plan \.plan-metric strong\s*\{[\s\S]*?white-space: normal;[\s\S]*?overflow-wrap: anywhere;[\s\S]*?text-overflow: clip/);
 });
 
 test("period cards show a compact week hierarchy without a redundant section heading", () => {
