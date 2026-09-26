@@ -22,6 +22,16 @@ test("plan generator uses only resistance goal, training history, and weekly tra
   assert.doesNotMatch(source, /data-plan-tab="templatePlanPane"/);
 });
 
+test("saved weekly training days restore into the trainingDays control", () => {
+  assert.match(source, /const profileFieldIds = \{ days: "trainingDays" \}/);
+  assert.match(source, /querySelector\(`#\$\{profileFieldIds\[key\] \|\| key\}`\)/);
+});
+
+test("dark exercise details use high-contrast theme colors", () => {
+  assert.match(source, /\.exercise-detail-fact b\s*\{\s*color: var\(--brand\);/);
+  assert.match(source, /\.exercise-muscle-list li,\s*\.exercise-steps li\s*\{\s*color: var\(--text-strong\);/);
+});
+
 test("four-week plan exposes progressive and deload microcycles", () => {
   assert.match(source, /function createPeriodization/);
   assert.match(source, /动作适应周/);

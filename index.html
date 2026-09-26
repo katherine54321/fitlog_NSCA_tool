@@ -4435,6 +4435,15 @@
         color: #ffffff;
       }
 
+      .exercise-detail-fact b {
+        color: var(--brand);
+      }
+
+      .exercise-muscle-list li,
+      .exercise-steps li {
+        color: var(--text-strong);
+      }
+
       input,
       select,
       textarea,
@@ -8959,8 +8968,9 @@
 
       const savedProfile = JSON.parse(localStorage.getItem("fitlog-profile") || "null");
       if (savedProfile) {
+        const profileFieldIds = { days: "trainingDays" };
         Object.entries(savedProfile).forEach(([key, value]) => {
-          const input = document.querySelector(`#${key}`);
+          const input = document.querySelector(`#${profileFieldIds[key] || key}`);
           if (input) input.value = value;
         });
       }
