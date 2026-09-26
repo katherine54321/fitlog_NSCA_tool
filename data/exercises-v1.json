@@ -1251,7 +1251,7 @@
     "category": "手臂",
     "libraryType": "resistance",
     "level": "中级",
-    "equipment": "曲杆",
+    "equipment": "杠铃",
     "force": "推",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -2804,7 +2804,7 @@
     "category": "手臂",
     "libraryType": "resistance",
     "level": "初级",
-    "equipment": "曲杆",
+    "equipment": "杠铃",
     "force": "拉",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -3731,7 +3731,7 @@
     "category": "热身",
     "libraryType": "warmup",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "推",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -3820,7 +3820,7 @@
     "category": "热身",
     "libraryType": "warmup",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "拉",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -3847,7 +3847,7 @@
     "category": "拉伸",
     "libraryType": "stretch",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "静态",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -3874,7 +3874,7 @@
     "category": "拉伸",
     "libraryType": "stretch",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "静态",
     "mechanic": "未提供",
     "primaryMuscles": [
@@ -3901,7 +3901,7 @@
     "category": "拉伸",
     "libraryType": "stretch",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "静态",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -4085,7 +4085,7 @@
     "category": "背部",
     "libraryType": "resistance",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "其他",
     "force": "拉",
     "mechanic": "复合动作",
     "primaryMuscles": [
@@ -4356,7 +4356,7 @@
     "category": "手臂",
     "libraryType": "resistance",
     "level": "初级",
-    "equipment": "曲杆",
+    "equipment": "杠铃",
     "force": "推",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -4446,7 +4446,7 @@
     "category": "腿部",
     "libraryType": "resistance",
     "level": "初级",
-    "equipment": "kettlebells",
+    "equipment": "其他",
     "force": "推",
     "mechanic": "复合动作",
     "primaryMuscles": [
@@ -4571,7 +4571,7 @@
     "category": "臀部",
     "libraryType": "resistance",
     "level": "中级",
-    "equipment": "kettlebells",
+    "equipment": "其他",
     "force": "推",
     "mechanic": "复合动作",
     "primaryMuscles": [
@@ -4604,7 +4604,7 @@
     "category": "臀部",
     "libraryType": "resistance",
     "level": "中级",
-    "equipment": "kettlebells",
+    "equipment": "其他",
     "force": "拉",
     "mechanic": "复合动作",
     "primaryMuscles": [
@@ -4697,7 +4697,7 @@
     "category": "臀部",
     "libraryType": "resistance",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "推",
     "mechanic": "复合动作",
     "primaryMuscles": [
@@ -4878,7 +4878,7 @@
     "category": "热身",
     "libraryType": "warmup",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "拉",
     "mechanic": "未提供",
     "primaryMuscles": [
@@ -4904,7 +4904,7 @@
     "category": "热身",
     "libraryType": "warmup",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "拉",
     "mechanic": "未提供",
     "primaryMuscles": [
@@ -4932,7 +4932,7 @@
     "category": "热身",
     "libraryType": "warmup",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "拉",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -4961,7 +4961,7 @@
     "category": "热身",
     "libraryType": "warmup",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "静态",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -5101,7 +5101,7 @@
     "category": "热身",
     "libraryType": "warmup",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "拉",
     "mechanic": "未提供",
     "primaryMuscles": [
@@ -5155,7 +5155,7 @@
     "category": "热身",
     "libraryType": "warmup",
     "level": "中级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "静态",
     "mechanic": "未提供",
     "primaryMuscles": [
@@ -5216,7 +5216,7 @@
     "category": "拉伸",
     "libraryType": "stretch",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "静态",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -5243,7 +5243,7 @@
     "category": "拉伸",
     "libraryType": "stretch",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "静态",
     "mechanic": "未提供",
     "primaryMuscles": [
@@ -5361,7 +5361,7 @@
     "category": "拉伸",
     "libraryType": "stretch",
     "level": "高级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "静态",
     "mechanic": "未提供",
     "primaryMuscles": [
@@ -5390,7 +5390,7 @@
     "category": "拉伸",
     "libraryType": "stretch",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "静态",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -5445,7 +5445,7 @@
     "category": "拉伸",
     "libraryType": "stretch",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "静态",
     "mechanic": "孤立动作",
     "primaryMuscles": [
@@ -5478,7 +5478,7 @@
     "category": "拉伸",
     "libraryType": "stretch",
     "level": "初级",
-    "equipment": "未提供",
+    "equipment": "徒手",
     "force": "静态",
     "mechanic": "未提供",
     "primaryMuscles": [

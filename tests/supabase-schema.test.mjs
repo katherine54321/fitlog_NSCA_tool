@@ -2,7 +2,11 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const migration = await readFile(new URL("../supabase/migrations/0001_fitlog_schema.sql", import.meta.url), "utf8");
+const migrationFiles = [
+  "../supabase/migrations/0001_fitlog_schema.sql",
+  "../supabase/migrations/0002_structured_training_snapshot_sync.sql",
+];
+const migration = (await Promise.all(migrationFiles.map((file) => readFile(new URL(file, import.meta.url), "utf8")))).join("\n");
 
 test("schema covers accounts, training, assessments, subscriptions, and deletion", () => {
   for (const table of [
@@ -22,4 +26,12 @@ test("assessment records preserve calculation and norm versions", () => {
   assert.match(migration, /norms_version text not null/);
   assert.match(migration, /estimated_one_rm_kg/);
   assert.match(migration, /estimated_vo2max/);
+});
+
+test("structured workout sync preserves the snapshot migration path", () => {
+  assert.match(migration, /user_sync_snapshots/);
+  assert.match(migration, /add column if not exists client_id text/);
+  assert.match(migration, /source_snapshot_key text/);
+  assert.match(migration, /workout_sessions_user_client_id_uidx/);
+  assert.match(migration, /workout_sets_exercise_client_id_uidx/);
 });

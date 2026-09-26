@@ -7,7 +7,7 @@ FitMine 是一个基于 NSCA-CPT 的移动端科学力量训练 PWA，提供动�
 - 前端：原生 HTML/CSS/JavaScript PWA，训练内容与动作库随包发布。
 - 原生壳：Capacitor iOS，工程位于 `ios/`。
 - 云端：Supabase Auth、PostgreSQL、Row Level Security、Edge Function。
-- 数据：迁移脚本位于 `supabase/migrations/0001_fitlog_schema.sql`。
+- 数据：迁移脚本位于 `supabase/migrations/`。
 
 ## 本地开发
 

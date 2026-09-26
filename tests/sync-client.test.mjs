@@ -16,8 +16,67 @@ test("sync payload excludes its own credential and revision keys", () => {
   assert.match(source, /key !== sessionKey && key !== stateKey/);
   assert.match(source, /startsWith\(storagePrefix\)/);
   assert.match(source, /on_conflict=user_id/);
+  assert.match(source, /workout_sessions/);
+  assert.match(source, /workout_exercises/);
+  assert.match(source, /workout_sets/);
   assert.match(source, /functions\/v1\/delete-account/);
   assert.match(source, /accountConsent/);
+});
+
+test("syncNow keeps the legacy snapshot and upserts structured training rows", async () => {
+  const page = createSyncClientHarness();
+  vm.runInNewContext(source, page.context);
+  page.localStorage.setItem("fitlog-sync-session", JSON.stringify({
+    accessToken: "access-token",
+    refreshToken: "refresh-token",
+    email: "user@example.com",
+    userId: "user-123",
+  }));
+  seedTrainingSnapshot(page.localStorage);
+
+  await page.context.window.FitLogSync.syncNow();
+
+  const snapshotCall = page.fetchCalls.find((call) => call.url.includes("/rest/v1/user_sync_snapshots?on_conflict="));
+  assert.ok(snapshotCall);
+  const snapshotBody = JSON.parse(snapshotCall.options.body);
+  assert.ok(snapshotBody.snapshot["fitlog-records"]);
+  assert.ok(snapshotBody.snapshot["fitlog-training-set-logs"]);
+
+  const sessions = structuredBody(page, "workout_sessions");
+  const exercises = structuredBody(page, "workout_exercises");
+  const sets = structuredBody(page, "workout_sets");
+  assert.equal(sessions.length, 1);
+  assert.equal(sessions[0].user_id, "user-123");
+  assert.equal(sessions[0].client_id, "plan:2026-09-25-strength-beginner-3-w1-d1");
+  assert.equal(sessions[0].source_snapshot_key, "fitlog-training-set-logs");
+  assert.equal(sessions[0].status, "completed");
+  assert.equal(exercises.length, 1);
+  assert.equal(exercises[0].exercise_id, "barbell-bench-press");
+  assert.equal(exercises[0].planned_rep_min, 8);
+  assert.equal(sets.length, 3);
+  assert.deepEqual(sets.map((set) => set.set_number), [1, 2, 3]);
+  assert.equal(sets[0].weight_kg, 60);
+});
+
+test("pullLatest restores old snapshots and migrates them into structured tables", async () => {
+  const remoteSnapshot = trainingSnapshot();
+  const page = createSyncClientHarness({
+    remoteSnapshots: [{ snapshot: remoteSnapshot, client_updated_at: "2026-09-25T08:00:00.000Z" }],
+  });
+  vm.runInNewContext(source, page.context);
+  page.localStorage.setItem("fitlog-sync-session", JSON.stringify({
+    accessToken: "access-token",
+    refreshToken: "refresh-token",
+    email: "user@example.com",
+    userId: "user-123",
+  }));
+
+  const restored = await page.context.window.FitLogSync.pullLatest();
+
+  assert.equal(restored, true);
+  assert.equal(page.localStorage.getItem("fitlog-records"), remoteSnapshot["fitlog-records"]);
+  assert.equal(structuredBody(page, "workout_sessions").length, 1);
+  assert.equal(structuredBody(page, "workout_sets").length, 3);
 });
 
 test("page router preserves Supabase email callback tokens until the sync client consumes them", async () => {
@@ -79,9 +138,10 @@ test("email code login reveals OTP input immediately and completes verification"
   assert.equal(session.userId, "user-123");
 });
 
-function createSyncClientHarness() {
+function createSyncClientHarness(options = {}) {
   let resolveOtpRequest;
   const fetchCalls = [];
+  const remoteSnapshots = options.remoteSnapshots || [];
   const elements = Object.fromEntries([
     "accountButton",
     "accountDialog",
@@ -130,8 +190,9 @@ function createSyncClientHarness() {
           user: { id: "user-123", email: "user@example.com" },
         });
       }
-      if (url.includes("/rest/v1/user_sync_snapshots?user_id=")) return okResponse([]);
+      if (url.includes("/rest/v1/user_sync_snapshots?user_id=")) return okResponse(remoteSnapshots);
       if (url.includes("/rest/v1/user_sync_snapshots?on_conflict=")) return okResponse([]);
+      if (/\/rest\/v1\/(workout_sessions|workout_exercises|workout_sets)\?on_conflict=id/.test(url)) return okResponse([]);
       if (url.includes("/rest/v1/user_consents?on_conflict=")) return okResponse([]);
       throw new Error(`Unexpected fetch: ${url}`);
     },
@@ -169,6 +230,56 @@ function createSyncClientHarness() {
     localStorage,
     resolveOtpRequest: () => resolveOtpRequest(),
   };
+}
+
+function trainingSnapshot() {
+  const planDayId = "2026-09-25-strength-beginner-3-w1-d1";
+  return {
+    "fitlog-records": JSON.stringify([{
+      id: `plan-${planDayId}`,
+      planDayId,
+      source: "plan",
+      date: "2026-09-25",
+      name: "上肢训练",
+      description: "卧推主项",
+      actions: 1,
+      rm: "80-82.5% 1RM",
+      exercises: [{
+        exerciseId: "barbell-bench-press",
+        name: "杠铃卧推",
+        sets: 3,
+        prescription: "3 组 × 8 次",
+        loadKg: "60",
+      }],
+      completedAt: "2026-09-25T07:30:00.000Z",
+    }]),
+    "fitlog-training-set-logs": JSON.stringify([{
+      id: `plan-set-${planDayId}-0`,
+      source: "plan",
+      planDayId,
+      date: "2026-09-25",
+      exerciseId: "barbell-bench-press",
+      exerciseName: "杠铃卧推",
+      category: "胸部",
+      sets: 3,
+      reps: 8,
+      weightKg: 60,
+      estimated1RM: 75,
+      notes: "已完成 上肢训练",
+      createdAt: "2026-09-25T07:30:00.000Z",
+    }]),
+    "fitlog-plan-completed": JSON.stringify([planDayId]),
+  };
+}
+
+function seedTrainingSnapshot(localStorage) {
+  Object.entries(trainingSnapshot()).forEach(([key, value]) => localStorage.setItem(key, value));
+}
+
+function structuredBody(page, table) {
+  const call = page.fetchCalls.find((item) => item.url.includes(`/rest/v1/${table}?on_conflict=id`));
+  assert.ok(call, `missing ${table} upsert`);
+  return JSON.parse(call.options.body);
 }
 
 function createElement(id) {

@@ -39,6 +39,26 @@ test("exercise library contains 180 complete local exercises with balanced cover
   });
 });
 
+test("exercise equipment labels are normalized to the supported taxonomy", () => {
+  const supportedEquipment = new Set(["杠铃", "哑铃", "徒手", "绳索器械", "固定器械", "药球", "其他", "弹力带", "健身球"]);
+  assert.equal(exercises.filter((exercise) => ["未提供", "kettlebells", "曲杆"].includes(exercise.equipment)).length, 0);
+  assert.equal(exercises.filter((exercise) => !supportedEquipment.has(exercise.equipment)).length, 0);
+
+  const equipmentById = Object.fromEntries(exercises.map((exercise) => [exercise.id, exercise.equipment]));
+  for (const id of [
+    "arm-circles", "ankle-circles", "triceps-stretch", "upper-back-stretch", "kneeling-hip-flexor",
+    "bodyweight-walking-lunge", "dynamic-back-stretch", "dynamic-chest-stretch",
+    "elbow-circles", "elbows-back", "shoulder-circles", "worlds-greatest-stretch", "calf-stretch-hands-wall",
+    "childs-pose", "seated-hamstring-stretch", "standing-soleus-achilles-stretch", "spinal-stretch", "tricep-side-stretch"
+  ]) assert.equal(equipmentById[id], "徒手", id);
+  for (const id of ["inverted-row", "goblet-squat", "lunge-pass-through", "kettlebell-one-legged-deadlift"]) {
+    assert.equal(equipmentById[id], "其他", id);
+  }
+  for (const id of ["lying-triceps-press", "ez-bar-curl", "ez-bar-skullcrusher"]) {
+    assert.equal(equipmentById[id], "杠铃", id);
+  }
+});
+
 test("exercise importer merges the expansion catalog and list stays paginated", () => {
   assert.match(importScript, /exercise-expansion-v2\.json/);
   assert.match(importScript, /const exerciseConfigs = \{ \.\.\.terms\.exercises, \.\.\.expansion\.exercises \}/);

@@ -27,7 +27,7 @@ FITLOG_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 FITLOG_SUPABASE_ANON_KEY=YOUR_PUBLIC_ANON_KEY
 ```
 
-当前生产测试地址为 `https://fitlog-science-fitness.katherine54321.workers.dev/`；正式绑定自定义域名后，将 Supabase 的 Site URL 一并替换为自定义 HTTPS 域名。
+当前 GitHub Pages 生产地址为 `https://katherine54321.github.io/fitlog_NSCA_tool/`；如改为自定义 HTTPS 域名或备用网址，将 Supabase 的 Site URL 一并替换为实际入口域名。
 
 构建产物是 `dist-pwa/`。其中的 `config/fitlog-runtime.js` 只允许包含 Supabase URL 与 anon key；不可写入数据库密码、service role key 或 Apple 私钥。
 

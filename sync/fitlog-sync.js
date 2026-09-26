@@ -4,6 +4,11 @@
   const sessionKey = "fitlog-sync-session";
   const stateKey = "fitlog-sync-state";
   const backupTable = "user_sync_snapshots";
+  const structuredTables = {
+    sessions: "workout_sessions",
+    exercises: "workout_exercises",
+    sets: "workout_sets",
+  };
   let pendingEmail = "";
 
   const configured = () => Boolean(runtime.supabaseUrl && runtime.supabaseAnonKey);
@@ -60,6 +65,252 @@
     Object.entries(snapshot).forEach(([key, value]) => {
       if (key.startsWith(storagePrefix) && typeof value === "string") localStorage.setItem(key, value);
     });
+  }
+
+  function parseSnapshotJson(snapshot, key, fallback) {
+    const raw = snapshot?.[key];
+    if (raw === undefined || raw === null) return fallback;
+    if (typeof raw !== "string") return raw;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return fallback;
+    }
+  }
+
+  function snapshotArray(snapshot, key) {
+    const value = parseSnapshotJson(snapshot, key, []);
+    return Array.isArray(value) ? value : [];
+  }
+
+  function normalizeDate(value, fallback = new Date().toISOString().slice(0, 10)) {
+    const match = String(value || "").match(/^\d{4}-\d{2}-\d{2}/);
+    return match ? match[0] : fallback;
+  }
+
+  function numberOrNull(value) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  function positiveInt(value) {
+    const number = Number(value);
+    return Number.isFinite(number) && number > 0 ? Math.round(number) : null;
+  }
+
+  function parseRepRange(value) {
+    const text = String(value || "");
+    const range = text.match(/(\d+)\s*[-~至]\s*(\d+)/);
+    if (range) return { min: Number(range[1]), max: Number(range[2]) };
+    const single = text.match(/(?:×|x)\s*(\d+)|(\d+)\s*次/);
+    const reps = Number(single?.[1] || single?.[2] || 0);
+    return reps ? { min: reps, max: reps } : { min: null, max: null };
+  }
+
+  function stableHashHex(value, salt) {
+    let hash = 0x811c9dc5 ^ salt;
+    for (let index = 0; index < value.length; index += 1) {
+      hash ^= value.charCodeAt(index);
+      hash = Math.imul(hash, 0x01000193);
+    }
+    return (hash >>> 0).toString(16).padStart(8, "0");
+  }
+
+  function stableUuid(value) {
+    const input = String(value || "fitlog");
+    let hex = [0, 1, 2, 3].map((salt) => stableHashHex(input, salt)).join("");
+    hex = `${hex.slice(0, 12)}5${hex.slice(13, 16)}${((parseInt(hex[16], 16) & 3) | 8).toString(16)}${hex.slice(17)}`;
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  }
+
+  function exerciseName(item) {
+    return item?.exerciseName || item?.name || item?.nameZh || "训练动作";
+  }
+
+  function exerciseClientKey(item, index) {
+    return item?.exerciseId || item?.id || exerciseName(item) || `exercise-${index + 1}`;
+  }
+
+  function workoutSessionId(userId, clientId) {
+    return stableUuid(`workout-session:${userId}:${clientId}`);
+  }
+
+  function workoutExerciseId(userId, clientId) {
+    return stableUuid(`workout-exercise:${userId}:${clientId}`);
+  }
+
+  function workoutSetId(userId, clientId) {
+    return stableUuid(`workout-set:${userId}:${clientId}`);
+  }
+
+  function buildStructuredTrainingRows(snapshot, userId, migratedAt = new Date().toISOString()) {
+    const records = snapshotArray(snapshot, "fitlog-records");
+    const trainingSetLogs = snapshotArray(snapshot, "fitlog-training-set-logs");
+    const completedPlanDays = new Set(snapshotArray(snapshot, "fitlog-plan-completed").filter(Boolean));
+    const sessions = new Map();
+    const exercises = new Map();
+    const sets = new Map();
+    const exerciseSortBySession = new Map();
+
+    function addSession(clientId, row) {
+      if (!clientId) return null;
+      const id = workoutSessionId(userId, clientId);
+      const existing = sessions.get(id) || {};
+      sessions.set(id, {
+        id,
+        user_id: userId,
+        client_id: clientId,
+        source_snapshot_key: row.source_snapshot_key || "fitlog-records",
+        source_snapshot_version: 1,
+        performed_on: normalizeDate(row.performed_on || row.date),
+        status: row.status || "completed",
+        completed_at: row.completed_at || row.completedAt || migratedAt,
+        total_volume_kg: numberOrNull(row.total_volume_kg) || numberOrNull(row.totalVolumeKg) || existing.total_volume_kg || 0,
+        total_exercise_count: positiveInt(row.total_exercise_count) || positiveInt(row.actions) || existing.total_exercise_count || 0,
+        notes: row.notes || row.description || existing.notes || null,
+      });
+      return id;
+    }
+
+    function addExercise(sessionId, sessionClientId, item, index, sourceKey = "fitlog-records") {
+      if (!sessionId) return null;
+      const sortOrder = index + 1;
+      const clientId = `${sessionClientId}:exercise:${exerciseClientKey(item, index)}`;
+      const id = workoutExerciseId(userId, clientId);
+      const reps = parseRepRange(item?.prescription || item?.plannedReps || item?.reps);
+      exercises.set(id, {
+        id,
+        workout_session_id: sessionId,
+        client_id: clientId,
+        source_snapshot_key: sourceKey,
+        source_snapshot_version: 1,
+        exercise_id: item?.exerciseId || item?.id || null,
+        exercise_name_snapshot: exerciseName(item),
+        phase: "main",
+        sort_order: sortOrder,
+        planned_sets: positiveInt(item?.sets),
+        planned_rep_min: reps.min,
+        planned_rep_max: reps.max,
+        planned_rm_target: item?.rm || item?.rmTarget || null,
+      });
+      return id;
+    }
+
+    function addLogSet(workoutExerciseIdValue, log, setNumber, sourceKey = "fitlog-training-set-logs") {
+      if (!workoutExerciseIdValue || !setNumber) return;
+      const clientId = `${log.id || `${log.planDayId || log.date}-${log.exerciseId || log.exerciseName}`}:set:${setNumber}`;
+      const id = workoutSetId(userId, clientId);
+      sets.set(id, {
+        id,
+        workout_exercise_id: workoutExerciseIdValue,
+        client_id: clientId,
+        source_snapshot_key: sourceKey,
+        source_snapshot_version: 1,
+        set_number: setNumber,
+        weight_kg: numberOrNull(log.weightKg),
+        reps: positiveInt(log.reps || log.plannedReps),
+        rm_actual: log.rmActual || null,
+        rest_seconds: positiveInt(log.restSeconds),
+        completed: true,
+      });
+    }
+
+    function findExercise(sessionId, exerciseKey, name) {
+      return Array.from(exercises.values()).find((row) =>
+        row.workout_session_id === sessionId
+        && (row.exercise_id === exerciseKey || row.exercise_name_snapshot === name)
+      )?.id || null;
+    }
+
+    function nextExerciseIndex(sessionId) {
+      return Array.from(exercises.values()).filter((row) => row.workout_session_id === sessionId).length;
+    }
+
+    records
+      .filter((record) => record && (record.source === "plan" || record.planDayId || record.exercises))
+      .forEach((record) => {
+        const sessionClientId = `plan:${record.planDayId || record.id}`;
+        const sessionId = addSession(sessionClientId, {
+          ...record,
+          status: completedPlanDays.has(record.planDayId) || record.completedAt ? "completed" : "scheduled",
+          source_snapshot_key: "fitlog-records",
+        });
+        const recordExercises = Array.isArray(record.exercises) ? record.exercises : [];
+        recordExercises.forEach((exercise, index) => {
+          addExercise(sessionId, sessionClientId, { ...exercise, rm: record.rm }, index, "fitlog-records");
+        });
+      });
+
+    const planLogGroups = new Map();
+    const manualLogGroups = new Map();
+    trainingSetLogs.forEach((log) => {
+      if (!log || typeof log !== "object") return;
+      if (log.source === "plan" && log.planDayId) {
+        const key = `plan:${log.planDayId}`;
+        if (!planLogGroups.has(key)) planLogGroups.set(key, []);
+        planLogGroups.get(key).push(log);
+      } else {
+        const key = `manual:${normalizeDate(log.date)}`;
+        if (!manualLogGroups.has(key)) manualLogGroups.set(key, []);
+        manualLogGroups.get(key).push(log);
+      }
+    });
+
+    planLogGroups.forEach((logs, sessionClientId) => {
+      const first = logs[0] || {};
+      const sessionId = addSession(sessionClientId, {
+        date: first.date,
+        completedAt: first.completedAt || first.createdAt,
+        source_snapshot_key: "fitlog-training-set-logs",
+        total_exercise_count: new Set(logs.map((log) => log.exerciseId || log.exerciseName)).size,
+        total_volume_kg: logs.reduce((sum, log) => {
+          const setsCount = positiveInt(log.sets) || 1;
+          return sum + (numberOrNull(log.weightKg) || 0) * (positiveInt(log.reps || log.plannedReps) || 0) * setsCount;
+        }, 0),
+        notes: first.notes || "Snapshot 训练记录迁移",
+      });
+      logs.forEach((log, index) => {
+        const exerciseKey = exerciseClientKey(log, index);
+        const exerciseId = findExercise(sessionId, exerciseKey, exerciseName(log))
+          || addExercise(sessionId, sessionClientId, { ...log, sets: log.sets || 1 }, nextExerciseIndex(sessionId), "fitlog-training-set-logs");
+        const setCount = positiveInt(log.sets) || 1;
+        for (let setNumber = 1; setNumber <= setCount; setNumber += 1) addLogSet(exerciseId, log, setNumber);
+      });
+    });
+
+    manualLogGroups.forEach((logs, sessionClientId) => {
+      const first = logs[0] || {};
+      const usedSetNumbers = new Map();
+      const sessionId = addSession(sessionClientId, {
+        date: first.date,
+        completedAt: first.createdAt,
+        source_snapshot_key: "fitlog-training-set-logs",
+        total_exercise_count: new Set(logs.map((log) => log.exerciseId || log.exerciseName)).size,
+        total_volume_kg: logs.reduce((sum, log) => sum + (numberOrNull(log.weightKg) || 0) * (positiveInt(log.reps) || 0), 0),
+        notes: "手动训练组记录",
+      });
+      logs.forEach((log, index) => {
+        const exerciseKey = exerciseClientKey(log, index);
+        const sessionExerciseKey = `${sessionClientId}:exercise:${exerciseKey}`;
+        if (!exerciseSortBySession.has(sessionExerciseKey)) exerciseSortBySession.set(sessionExerciseKey, nextExerciseIndex(sessionId));
+        const exerciseId = findExercise(sessionId, exerciseKey, exerciseName(log))
+          || addExercise(sessionId, sessionClientId, { ...log, sets: 1 }, exerciseSortBySession.get(sessionExerciseKey), "fitlog-training-set-logs");
+        const used = usedSetNumbers.get(exerciseId) || new Set();
+        let setNumber = positiveInt(log.setNumber) || logs.filter((item, itemIndex) =>
+          itemIndex <= index && exerciseClientKey(item, itemIndex) === exerciseKey
+        ).length;
+        while (used.has(setNumber)) setNumber += 1;
+        used.add(setNumber);
+        usedSetNumbers.set(exerciseId, used);
+        addLogSet(exerciseId, log, setNumber);
+      });
+    });
+
+    return {
+      sessions: Array.from(sessions.values()),
+      exercises: Array.from(exercises.values()),
+      sets: Array.from(sets.values()),
+    };
   }
 
   function headers(token, extra = {}) {
@@ -191,7 +442,35 @@
       body: JSON.stringify(payload),
     });
     if (!response.ok) throw new Error("云端备份失败，请检查网络后重试。");
-    localStorage.setItem(stateKey, JSON.stringify({ lastSyncedAt: timestamp }));
+    const structuredSynced = await syncStructuredTraining(session, payload.snapshot, timestamp).catch(() => false);
+    localStorage.setItem(stateKey, JSON.stringify({
+      lastSyncedAt: timestamp,
+      structuredTrainingSyncedAt: structuredSynced ? timestamp : undefined,
+    }));
+  }
+
+  async function upsertStructuredRows(session, table, rows) {
+    if (!rows.length) return true;
+    const response = await fetch(api(`/rest/v1/${table}?on_conflict=id`), {
+      method: "POST",
+      headers: headers(session.accessToken, {
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates,return=minimal",
+      }),
+      body: JSON.stringify(rows),
+    });
+    if (!response.ok) throw new Error(`Structured sync failed for ${table}`);
+    return true;
+  }
+
+  async function syncStructuredTraining(session, snapshot = storageSnapshot(), timestamp = new Date().toISOString()) {
+    if (!session?.accessToken || !session?.userId) return false;
+    const rows = buildStructuredTrainingRows(snapshot, session.userId, timestamp);
+    if (!rows.sessions.length && !rows.exercises.length && !rows.sets.length) return false;
+    await upsertStructuredRows(session, structuredTables.sessions, rows.sessions);
+    await upsertStructuredRows(session, structuredTables.exercises, rows.exercises);
+    await upsertStructuredRows(session, structuredTables.sets, rows.sets);
+    return true;
   }
 
   async function pullLatest() {
@@ -205,6 +484,7 @@
     const localState = JSON.parse(localStorage.getItem(stateKey) || "{}");
     if (remote?.snapshot && (!localState.lastSyncedAt || remote.client_updated_at > localState.lastSyncedAt)) {
       restoreSnapshot(remote.snapshot);
+      await syncStructuredTraining(session, storageSnapshot(), remote.client_updated_at).catch(() => false);
       localStorage.setItem(stateKey, JSON.stringify({ lastSyncedAt: remote.client_updated_at }));
       return true;
     }
@@ -373,5 +653,9 @@
     pullLatest,
     deleteAccount,
     isConfigured: configured,
+    __private: {
+      buildStructuredTrainingRows,
+      stableUuid,
+    },
   };
 })();

@@ -14,6 +14,11 @@ const imageDir = join(root, "assets", "exercise-images");
 const verbose = process.env.EXERCISE_IMPORT_VERBOSE === "1";
 
 const translate = (value) => terms.terms[String(value || "").toLowerCase()] || value || "未提供";
+const equipmentLabels = new Set(["杠铃", "哑铃", "徒手", "绳索器械", "固定器械", "药球", "其他", "弹力带", "健身球"]);
+const translateEquipment = (value) => {
+  const label = terms.terms[String(value || "").toLowerCase()] || value;
+  return equipmentLabels.has(label) ? label : "其他";
+};
 const normalize = (value) => String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
 async function fetchWithRetry(url, attempts = 3) {
@@ -79,7 +84,7 @@ for (const [id, config] of Object.entries(exerciseConfigs)) {
       category: config.category,
       libraryType: config.libraryType || "resistance",
       level: translate(exercise.level),
-      equipment: translate(exercise.equipment),
+      equipment: translateEquipment(exercise.equipment),
       force: translate(exercise.force),
       mechanic: translate(exercise.mechanic),
       primaryMuscles: (exercise.primaryMuscles || []).map(translate),
