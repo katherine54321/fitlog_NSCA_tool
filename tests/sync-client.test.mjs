@@ -107,6 +107,10 @@ test("email code login reveals OTP input immediately and completes verification"
   vm.runInNewContext(source, page.context);
 
   await page.context.window.FitLogSync.init();
+  assert.equal(page.elements.myAccountTitle.textContent, "未登录");
+  assert.equal(page.elements.myAccountAction.textContent, "登录");
+  await page.elements.myAccountButton.click();
+  assert.equal(page.elements.accountDialog.open, true);
   page.elements.accountEmail.value = "USER@example.COM";
   page.elements.accountConsent.checked = true;
 
@@ -132,6 +136,8 @@ test("email code login reveals OTP input immediately and completes verification"
   assert.equal(page.elements.accountSignedOut.hidden, true);
   assert.equal(page.elements.accountSignedIn.hidden, false);
   assert.equal(page.elements.accountEmailValue.textContent, "user@example.com");
+  assert.equal(page.elements.myAccountTitle.textContent, "user@example.com");
+  assert.equal(page.elements.myAccountAction.textContent, "管理");
 
   const session = JSON.parse(page.localStorage.getItem("fitlog-sync-session"));
   assert.equal(session.email, "user@example.com");
@@ -144,6 +150,10 @@ function createSyncClientHarness(options = {}) {
   const remoteSnapshots = options.remoteSnapshots || [];
   const elements = Object.fromEntries([
     "accountButton",
+    "myAccountButton",
+    "myAccountTitle",
+    "myAccountHint",
+    "myAccountAction",
     "accountDialog",
     "accountSignedOut",
     "accountSignedIn",

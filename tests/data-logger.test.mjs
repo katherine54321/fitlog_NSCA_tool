@@ -18,8 +18,14 @@ test("data record page provides set logging, Brzycki estimate, filtering, and ex
 
 test("action record page includes an overload monitor sourced from the same logs", () => {
   assert.match(source, /id="recordTabs"/);
+  assert.match(source, /data-record-tab="trainingCalendarPane"/);
   assert.match(source, /data-record-tab="actionRecordPane"/);
   assert.match(source, /data-record-tab="trainingRecordPane"/);
+  assert.match(source, /id="recordCalendarGrid"/);
+  assert.match(source, /function renderRecordCalendar/);
+  assert.match(source, /completedPlanDays\.includes\(item\.id\)/);
+  assert.doesNotMatch(source, /<h2>数据记录<\/h2>/);
+  assert.doesNotMatch(source, /id="completedTrainingTitle"/);
   assert.match(source, /id="overloadMonitor"/);
   assert.match(source, /id="overloadExerciseSelect"/);
   assert.match(source, /id="overloadChart"/);

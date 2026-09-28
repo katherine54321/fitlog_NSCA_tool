@@ -81,6 +81,50 @@ test("plan schedule days open the selected week workout detail without verbose g
   assert.doesNotMatch(source, /四周计划已按目标、体能水平与每周/);
 });
 
+test("home today plan mirrors plan titles and exposes the next workout on rest days", () => {
+  assert.match(source, /id="homeTodayScheduleTitle">今日计划<\/strong>/);
+  assert.match(source, /function getScheduledPlanDays/);
+  assert.match(source, /<h3>训练日\$\{todayWorkout\.dayIndex \+ 1\} · \$\{todayWorkout\.day\}<\/h3>/);
+  assert.match(source, /data-view-day data-week-index="\$\{todayWorkout\.weekIndex\}"/);
+  assert.match(source, /\$\{completed \? "查看详情" : "开始训练"\}/);
+  assert.match(source, /<h3>休息日<\/h3>/);
+  assert.match(source, /下个训练日计划/);
+  assert.match(source, /4: \[1, 2, 4, 5\]/);
+  assert.match(source, /5: \[1, 2, 3, 5, 6\]/);
+});
+
+test("home calendar marks the next 28 days of the saved plan and opens workout details", () => {
+  assert.match(source, /id="homeTrainingCalendarTitle">训练日历<\/strong>/);
+  assert.match(source, /id="homeTrainingCalendarGrid"/);
+  assert.match(source, /Array\.from\(\{ length: 28 \}/);
+  assert.match(source, /class="home-training-calendar-day is-training/);
+  assert.match(source, /data-view-day data-week-index="\$\{workout\.weekIndex\}"/);
+  assert.match(source, /document\.querySelector\("#home"\)\.addEventListener\("click"/);
+});
+
+test("training weekday preferences support recurring and current-week scopes", () => {
+  assert.match(source, /id="adjustTrainingDays"/);
+  assert.match(source, /id="scheduleWeekdayPicker"/);
+  assert.match(source, /保存至本计划（每周）/);
+  assert.match(source, /仅保持至本周/);
+  assert.match(source, /fitlog-training-day-preferences/);
+  assert.match(source, /preferences\.weeklyOverrides\[String\(weekIndex\)\] = selected/);
+  assert.match(source, /preferences\.recurring = selected/);
+  assert.match(source, /preferences\.weeklyOverrides = \{\}/);
+  assert.match(source, /return `\$\{startDate\}-\$\{profile\.goal\}-\$\{profile\.experience\}-\$\{plan\.days\}-w\$\{weekIndex \+ 1\}-d\$\{dayIndex \+ 1\}`/);
+});
+
+test("home progress ring uses a dark hollow center", () => {
+  assert.match(source, /radial-gradient\(circle at center, var\(--panel\) 54%, transparent 55%\)/);
+  assert.doesNotMatch(source, /radial-gradient\(circle at center, #fff 54%, transparent 55%\)/);
+});
+
+test("home calendar uses compact circular dates and an unfilled electric-blue today marker", () => {
+  assert.match(source, /\.home-training-calendar-day\s*\{[\s\S]*?width: 34px;[\s\S]*?height: 34px;[\s\S]*?border-radius: 50%/);
+  assert.match(source, /\.home-training-calendar-grid \.home-training-calendar-day\.is-today\s*\{[\s\S]*?border-color: var\(--brand-accent\);[\s\S]*?background: transparent/);
+  assert.match(source, /\.schedule-dialog-actions\s*\{[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+});
+
 test("phone plan layout uses its app container instead of the browser viewport", () => {
   assert.match(source, /\.app\s*\{[\s\S]*?container-type: inline-size/);
   assert.match(source, /@container \(min-width: 620px\)/);

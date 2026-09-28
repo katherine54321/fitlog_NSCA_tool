@@ -346,6 +346,133 @@
         color: #a13d32;
       }
 
+      .schedule-dialog {
+        width: min(calc(100vw - 32px), 420px);
+        padding: 20px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 20px;
+        color: var(--text-strong);
+        background: var(--panel);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+      }
+
+      .schedule-dialog::backdrop {
+        background: rgba(0, 0, 0, 0.64);
+        backdrop-filter: blur(3px);
+      }
+
+      .schedule-dialog-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .schedule-dialog-head .icon-btn {
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        min-height: 40px;
+        padding: 0;
+      }
+
+      .schedule-dialog h2,
+      .schedule-dialog p {
+        margin: 0;
+      }
+
+      .schedule-dialog h2 {
+        color: #ffffff;
+        font-size: 20px;
+      }
+
+      .schedule-dialog-summary {
+        margin-top: 7px !important;
+        color: var(--text-secondary);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .schedule-weekday-picker {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 18px;
+      }
+
+      .schedule-weekday {
+        width: 100%;
+        min-width: 0;
+        min-height: 42px;
+        padding: 0;
+        border: 1px solid var(--border-subtle);
+        border-radius: 10px;
+        color: var(--text-secondary);
+        background: var(--surface-soft);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .schedule-weekday[aria-pressed="true"] {
+        color: #091009;
+        border-color: var(--brand);
+        background: var(--brand);
+      }
+
+      .schedule-selection-hint {
+        min-height: 20px;
+        margin-top: 9px !important;
+        color: var(--text-secondary);
+        font-size: 11px;
+      }
+
+      .schedule-scope {
+        display: grid;
+        gap: 8px;
+        margin: 12px 0 0;
+        padding: 0;
+        border: 0;
+      }
+
+      .schedule-scope label {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+        padding: 12px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        background: var(--surface-soft);
+      }
+
+      .schedule-scope input {
+        width: 18px;
+        height: 18px;
+        margin: 1px 0 0;
+        accent-color: var(--brand);
+      }
+
+      .schedule-scope strong,
+      .schedule-scope small {
+        display: block;
+      }
+
+      .schedule-scope strong { color: #ffffff; font-size: 13px; }
+      .schedule-scope small { margin-top: 3px; color: var(--text-secondary); font-size: 11px; line-height: 1.4; }
+
+      .schedule-dialog-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+        margin-top: 16px;
+      }
+
+      .schedule-dialog-actions button {
+        width: 100%;
+        min-height: 44px;
+        margin: 0;
+      }
+
       .mobile-nav {
         position: fixed;
         left: 50%;
@@ -3015,8 +3142,8 @@
         place-items: center;
         border-radius: 50%;
         background:
-          radial-gradient(circle at center, #fff 54%, transparent 55%),
-          conic-gradient(var(--brand) var(--progress), #e8ece7 0);
+          radial-gradient(circle at center, var(--panel) 54%, transparent 55%),
+          conic-gradient(var(--brand) var(--progress), var(--border-subtle) 0);
       }
 
       .progress-pie strong {
@@ -5174,6 +5301,549 @@
 
       .mobile-nav a { min-width: 0; min-height: 48px; }
 
+      .home-today-schedule {
+        grid-column: 1 / -1;
+        display: grid;
+        gap: 11px;
+        margin: 0;
+        padding: 16px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        background: var(--surface-tint);
+      }
+
+      .home-today-schedule-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .home-today-schedule-head strong {
+        color: #ffffff;
+        font-size: 17px;
+      }
+
+      .home-today-date {
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      #home {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .home-today-plan {
+        display: grid;
+        gap: 10px;
+      }
+
+      .home-today-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        min-height: 128px;
+        padding: 16px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        background: var(--panel);
+      }
+
+      .home-today-card.is-rest {
+        grid-template-columns: 1fr;
+      }
+
+      .home-today-kicker {
+        display: inline-flex;
+        margin-bottom: 6px;
+        color: var(--brand);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .home-today-card h3,
+      .home-today-card p {
+        margin: 0;
+      }
+
+      .home-today-card h3 {
+        color: #ffffff;
+        font-size: 18px;
+        line-height: 1.35;
+      }
+
+      .home-today-card p {
+        margin-top: 6px;
+        color: var(--text-secondary);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .home-today-meta {
+        display: block;
+        margin-top: 8px;
+        color: var(--text-secondary);
+        font-size: 11px;
+      }
+
+      .home-today-action {
+        min-width: 92px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 14px;
+        border: 1px solid var(--brand);
+        border-radius: 10px;
+        color: var(--brand);
+        background: transparent;
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .home-next-plan {
+        display: grid;
+        gap: 4px;
+        margin-top: 14px;
+        padding-top: 13px;
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .home-next-plan span,
+      .home-next-plan small {
+        color: var(--text-secondary);
+        font-size: 11px;
+      }
+
+      .home-next-plan strong {
+        color: #ffffff;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .home-training-calendar {
+        grid-column: 1 / -1;
+        display: grid;
+        gap: 9px;
+        padding: 14px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        background: var(--surface-tint);
+      }
+
+      .home-training-calendar-head,
+      .home-training-calendar-legend {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .home-training-calendar-head strong {
+        color: #ffffff;
+        font-size: 17px;
+      }
+
+      .home-training-calendar-head span,
+      .home-training-calendar-legend {
+        color: var(--text-secondary);
+        font-size: 11px;
+      }
+
+      .home-training-calendar-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+      }
+
+      .adjust-training-days {
+        min-height: 32px;
+        padding: 0 10px;
+        border: 1px solid rgba(57, 255, 20, 0.55);
+        border-radius: 8px;
+        color: var(--brand);
+        background: transparent;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .adjust-training-days:disabled {
+        opacity: 0.4;
+      }
+
+      .home-training-calendar-weekdays,
+      .home-training-calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 3px;
+      }
+
+      .home-training-calendar-weekdays {
+        color: var(--text-secondary);
+        text-align: center;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .home-training-calendar-day {
+        width: 34px;
+        height: 34px;
+        min-width: 0;
+        min-height: 34px;
+        display: grid;
+        place-items: center;
+        justify-self: center;
+        padding: 0;
+        border: 1px solid transparent;
+        border-radius: 50%;
+        color: #dbe3dd;
+        background: transparent;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      button.home-training-calendar-day.is-training {
+        color: var(--brand);
+        border-color: rgba(57, 255, 20, 0.62);
+        background: rgba(57, 255, 20, 0.08);
+      }
+
+      button.home-training-calendar-day.is-completed {
+        color: #091009;
+        background: var(--brand);
+      }
+
+      .home-training-calendar-grid .home-training-calendar-day.is-today {
+        color: var(--brand-accent);
+        border-color: var(--brand-accent);
+        background: transparent;
+        box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.22), 0 0 12px rgba(0, 229, 255, 0.16);
+      }
+
+      .home-training-calendar-day.is-empty {
+        visibility: hidden;
+      }
+
+      .home-training-calendar-legend {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .home-training-calendar-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .home-training-calendar-legend i {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--text-secondary);
+      }
+
+      .home-training-calendar-legend .training i { background: var(--brand); }
+      .home-training-calendar-legend .today i { background: var(--brand-accent); }
+
+      .record-calendar-shell {
+        margin-top: 0;
+      }
+
+      .record-calendar-shell .calendar-day {
+        color: #dbe3dd;
+      }
+
+      .record-calendar-shell .calendar-day.is-empty {
+        opacity: 0;
+      }
+
+      .record-calendar-shell .calendar-day.has-record {
+        color: #ffffff;
+      }
+
+      .record-calendar-month {
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .record-calendar-legend {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-secondary);
+        font-size: 11px;
+      }
+
+      .record-calendar-legend::before {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--brand);
+        content: "";
+      }
+
+      .completed-training-head {
+        justify-content: flex-end;
+      }
+
+      /* Native-style account hub and assessment entry points. */
+      .my-page {
+        display: grid;
+        gap: 14px;
+      }
+
+      .my-account-card {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 58px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 15px;
+        min-height: 124px;
+        padding: 21px 18px;
+        border: 1px solid rgba(57, 255, 20, 0.32);
+        border-radius: 18px;
+        color: var(--text-strong);
+        background:
+          radial-gradient(circle at 92% 16%, rgba(57, 255, 20, 0.18), transparent 34%),
+          linear-gradient(135deg, #30343a 0%, #24272b 68%, #202823 100%);
+        text-align: left;
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
+      }
+
+      .my-account-card::before,
+      .my-account-card::after {
+        position: absolute;
+        z-index: -1;
+        border: 1px solid rgba(57, 255, 20, 0.13);
+        border-radius: 50%;
+        content: "";
+      }
+
+      .my-account-card::before {
+        top: -74px;
+        right: -42px;
+        width: 158px;
+        height: 158px;
+      }
+
+      .my-account-card::after {
+        right: 28px;
+        bottom: -68px;
+        width: 112px;
+        height: 112px;
+      }
+
+      .my-account-avatar {
+        width: 58px;
+        height: 58px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(57, 255, 20, 0.64);
+        border-radius: 50%;
+        color: var(--brand);
+        background: rgba(12, 18, 14, 0.72);
+        box-shadow: inset 0 0 0 5px rgba(57, 255, 20, 0.05);
+      }
+
+      .my-account-avatar svg {
+        width: 27px;
+        height: 27px;
+      }
+
+      .my-account-copy {
+        min-width: 0;
+        display: grid;
+        gap: 4px;
+      }
+
+      .my-account-copy strong {
+        overflow: hidden;
+        color: #ffffff;
+        font-size: 20px;
+        line-height: 1.25;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .my-account-kicker {
+        color: var(--brand);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+      }
+
+      .my-account-copy > span:last-child {
+        color: var(--text-secondary);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .my-account-action {
+        min-width: 58px;
+        min-height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        border-radius: 999px;
+        color: var(--brand);
+        background: rgba(57, 255, 20, 0.1);
+        box-shadow: inset 0 0 0 1px rgba(57, 255, 20, 0.38);
+        font-size: 14px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .my-section {
+        margin-top: 2px;
+      }
+
+      .my-menu-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .my-menu-item {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 46px minmax(0, 1fr);
+        align-content: start;
+        gap: 13px;
+        min-height: 126px;
+        padding: 17px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 16px;
+        color: var(--text-strong);
+        background: linear-gradient(145deg, #2d3035, #25282c);
+        text-decoration: none;
+      }
+
+      .my-menu-item + .my-menu-item {
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .my-menu-icon {
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        color: var(--brand);
+        background: rgba(57, 255, 20, 0.08);
+        box-shadow: inset 0 0 0 1px rgba(57, 255, 20, 0.18);
+      }
+
+      .my-menu-icon svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .my-menu-copy {
+        min-width: 0;
+        display: grid;
+        gap: 3px;
+      }
+
+      .my-menu-copy strong {
+        color: #ffffff;
+        font-size: 17px;
+        line-height: 1.3;
+      }
+
+      .my-menu-copy small {
+        color: var(--text-secondary);
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .my-menu-chevron {
+        position: absolute;
+        right: 15px;
+        bottom: 13px;
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--text-secondary);
+        background: #202226;
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      @container (max-width: 480px) {
+        .my-menu-list {
+          grid-template-columns: 1fr;
+        }
+
+        .my-menu-item {
+          min-height: 92px;
+          align-content: center;
+        }
+      }
+
+      #assessmentTabs,
+      #riskOverview,
+      #riskEntry .risk-page-header[hidden] {
+        display: none;
+      }
+
+      .assessment-detail-head {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .assessment-detail-back {
+        justify-self: start;
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        color: var(--brand);
+        font-size: 14px;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .assessment-detail-head h2,
+      .assessment-detail-head p {
+        margin: 0;
+      }
+
+      .assessment-detail-head p {
+        color: var(--text-secondary);
+      }
+
+      @media (max-width: 720px) {
+        .topbar {
+          display: none;
+        }
+
+        .main {
+          padding-top: calc(12px + env(safe-area-inset-top));
+        }
+
+        #me,
+        #evaluation {
+          min-height: calc(100dvh - var(--bottom-nav-height) - env(safe-area-inset-top) - 28px);
+        }
+      }
+
       /* A 16px editing font avoids Safari focus zoom without disabling pinch zoom. */
       .app :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) {
         min-width: 0;
@@ -5218,10 +5888,10 @@
         </div>
         <nav class="nav" aria-label="页面导航">
           <a href="#home">首页</a>
-          <a href="#evaluation">评估</a>
           <a href="#plan">计划</a>
           <a href="#training">动作库</a>
           <a href="#records">记录</a>
+          <a href="#me">我的</a>
         </nav>
         <div class="app-actions">
           <span class="app-status" id="appStatus">可离线使用</span>
@@ -5261,9 +5931,50 @@
         <p class="form-hint" id="accountMessage" role="status" aria-live="polite"></p>
       </dialog>
 
+      <dialog class="schedule-dialog" id="scheduleDialog" aria-labelledby="scheduleDialogTitle">
+        <div class="schedule-dialog-head">
+          <div>
+            <h2 id="scheduleDialogTitle">调整训练日</h2>
+            <p class="schedule-dialog-summary" id="scheduleDialogSummary"></p>
+          </div>
+          <button class="icon-btn" id="scheduleDialogClose" type="button" aria-label="关闭训练日设置">×</button>
+        </div>
+        <div class="schedule-weekday-picker" id="scheduleWeekdayPicker" aria-label="选择每周训练日">
+          <button class="schedule-weekday" type="button" data-schedule-weekday="1" aria-pressed="false">一</button>
+          <button class="schedule-weekday" type="button" data-schedule-weekday="2" aria-pressed="false">二</button>
+          <button class="schedule-weekday" type="button" data-schedule-weekday="3" aria-pressed="false">三</button>
+          <button class="schedule-weekday" type="button" data-schedule-weekday="4" aria-pressed="false">四</button>
+          <button class="schedule-weekday" type="button" data-schedule-weekday="5" aria-pressed="false">五</button>
+          <button class="schedule-weekday" type="button" data-schedule-weekday="6" aria-pressed="false">六</button>
+          <button class="schedule-weekday" type="button" data-schedule-weekday="0" aria-pressed="false">日</button>
+        </div>
+        <p class="schedule-selection-hint" id="scheduleSelectionHint" role="status" aria-live="polite"></p>
+        <fieldset class="schedule-scope">
+          <label>
+            <input type="radio" name="scheduleScope" value="plan" checked />
+            <span><strong>保存至本计划（每周）</strong><small>本计划所有周都使用这组训练日。</small></span>
+          </label>
+          <label>
+            <input type="radio" name="scheduleScope" value="week" />
+            <span><strong>仅保持至本周</strong><small>只调整当前计划周，下一周恢复本计划设置。</small></span>
+          </label>
+        </fieldset>
+        <div class="schedule-dialog-actions">
+          <button class="ghost-btn" id="scheduleCancel" type="button">取消</button>
+          <button class="primary-btn" id="scheduleSave" type="button">保存训练日</button>
+        </div>
+      </dialog>
+
       <main class="main">
         <div class="content">
           <section class="panel hero module-panel" id="home" data-module-panel>
+            <section class="home-today-schedule" aria-labelledby="homeTodayScheduleTitle">
+              <div class="home-today-schedule-head">
+                <strong id="homeTodayScheduleTitle">今日计划</strong>
+                <span class="home-today-date" id="homeTodayDate"></span>
+              </div>
+              <div class="home-today-plan" id="homeTodayPlan"></div>
+            </section>
             <div class="hero-copy">
               <div class="kicker">当前计划</div>
               <h2 id="homeTitle">还没有保存训练计划。</h2>
@@ -5291,42 +6002,71 @@
                   </div>
                 </div>
               </div>
-              <div class="home-list" id="homePlanList"></div>
-              <div class="hero-actions">
-                <a href="#evaluation" id="homePrimaryAction">先做综合评估</a>
-                <a href="#plan">制定计划</a>
-              </div>
             </div>
-            <div class="training-visual" aria-label="肌群与训练负荷视觉图">
-              <div class="body-map">
-                <div class="figure" aria-hidden="true">
-                  <span class="head"></span>
-                  <span class="torso"></span>
-                  <span class="hips"></span>
-                  <span class="arm left"></span>
-                  <span class="arm right"></span>
-                  <span class="leg left"></span>
-                  <span class="leg right"></span>
+            <section class="home-training-calendar" aria-labelledby="homeTrainingCalendarTitle">
+              <div class="home-training-calendar-head">
+                <strong id="homeTrainingCalendarTitle">训练日历</strong>
+                <div class="home-training-calendar-actions">
+                  <span id="homeCalendarRange"></span>
+                  <button class="adjust-training-days" id="adjustTrainingDays" type="button">调整训练日</button>
                 </div>
               </div>
-              <div class="visual-strip">
-                <div class="metric"><span>本周频率</span><strong id="heroDays">3 天</strong></div>
-                <div class="metric"><span>主强度</span><strong id="heroRm">10-12 RM</strong></div>
-                <div class="metric"><span>周期</span><strong>4 周</strong></div>
+              <div class="home-training-calendar-weekdays" aria-hidden="true"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+              <div class="home-training-calendar-grid" id="homeTrainingCalendarGrid" role="grid"></div>
+              <div class="home-training-calendar-legend" aria-hidden="true">
+                <span class="training"><i></i>训练日</span>
+                <span class="today"><i></i>今天</span>
               </div>
+            </section>
+          </section>
+
+          <section class="panel section module-panel" id="me" data-module-panel hidden>
+            <div class="my-page">
+              <button class="my-account-card" id="myAccountButton" type="button" aria-haspopup="dialog">
+                <span class="my-account-avatar" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c.5-4 2.8-6 6.5-6s6 2 6.5 6"/></svg>
+                </span>
+                <span class="my-account-copy">
+                  <span class="my-account-kicker">FITMINE ID</span>
+                  <strong id="myAccountTitle">未登录</strong>
+                  <span id="myAccountHint">点击登录，开启训练数据云端备份</span>
+                </span>
+                <span class="my-account-action" id="myAccountAction">登录</span>
+              </button>
+              <section class="my-section" aria-label="训练评估">
+                <div class="my-menu-list">
+                  <a class="my-menu-item" href="#fitness-assessment">
+                    <span class="my-menu-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2-5 4 10 2-5h7"/><path d="M5 4h14v16H5z" opacity=".28"/></svg>
+                    </span>
+                    <span class="my-menu-copy">
+                      <strong>体能评估</strong>
+                      <small>心肺能力与抗阻力量评估</small>
+                    </span>
+                    <span class="my-menu-chevron" aria-hidden="true">›</span>
+                  </a>
+                  <a class="my-menu-item" href="#risk-assessment">
+                    <span class="my-menu-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.7 3.1 7.8 7.5 9.5 4.4-1.7 7.5-4.8 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-4"/></svg>
+                    </span>
+                    <span class="my-menu-copy">
+                      <strong>风险评估</strong>
+                      <small>训练前健康筛查与风险建议</small>
+                    </span>
+                    <span class="my-menu-chevron" aria-hidden="true">›</span>
+                  </a>
+                </div>
+              </section>
             </div>
           </section>
 
           <section class="panel section module-panel" id="evaluation" data-module-panel hidden>
-            <div class="section-head">
-              <div>
-                <h2>综合评估</h2>
-                <p>
-                  先完成风险筛查，再了解心肺与相对力量水平；两项结果都会影响训练建议。
-                </p>
-              </div>
+            <div class="assessment-detail-head">
+              <a class="assessment-detail-back" href="#me">← 返回我的</a>
+              <h2 id="assessmentPageTitle">体能评估</h2>
+              <p id="assessmentPageSummary">了解当前心肺能力与相对力量水平。</p>
             </div>
-            <div class="tabs" role="tablist" aria-label="评估类型切换" id="assessmentTabs">
+            <div class="tabs" role="tablist" aria-label="评估类型切换" id="assessmentTabs" hidden>
               <button class="tab" type="button" aria-selected="true" data-assessment-tab="riskPane">风险评估</button>
               <button class="tab" type="button" aria-selected="false" data-assessment-tab="fitnessPane">体能评估</button>
             </div>
@@ -5340,8 +6080,8 @@
                 <button class="primary-btn" type="button" data-start-evaluation="risk">开始评估</button>
               </div>
               <div class="evaluation-entry" id="riskEntry" hidden>
-                <div class="risk-page-header">
-                  <a id="riskBack" href="#evaluation">返回评估</a>
+                <div class="risk-page-header" hidden>
+                  <a id="riskBack" href="#me">返回我的</a>
                   <div>
                     <h2 id="riskEntryTitle">训练前风险评估</h2>
                     <p>请根据当前健康情况填写；存在红旗症状时应先获得医学许可。</p>
@@ -5549,7 +6289,7 @@
               </div>
               <div class="plan-metric-grid" data-plan-current-content>
                 <div class="plan-metric"><span>主训练强度</span><strong id="planMetricRm">10-15 RM</strong><small id="planMetricRmNote">按训练历史调整</small></div>
-                <div class="plan-metric"><span>每组完成次数</span><strong id="planMetricReps">8-12 次</strong><small>主训练动作建议范围</small></div>
+                <div class="plan-metric"><span>每组次数</span><strong id="planMetricReps">8-12 次</strong><small>主训练动作建议范围</small></div>
                 <div class="plan-metric"><span>组间恢复</span><strong id="planMetricRest">60-90 秒</strong><small>按训练目标安排</small></div>
                 <div class="plan-metric"><span>每动作容量</span><strong id="planMetricSets">3 组</strong><small id="planMetricSetsNote">第 4 周自动减量</small></div>
               </div>
@@ -5651,16 +6391,22 @@
           </section>
 
           <section class="panel section module-panel" id="records" data-module-panel hidden>
-            <div class="section-head">
-              <div>
-                <h2>数据记录</h2>
-              </div>
-            </div>
             <div class="tabs record-tabs" role="tablist" aria-label="记录类型切换" id="recordTabs">
-              <button class="tab" type="button" aria-selected="true" data-record-tab="actionRecordPane">动作记录</button>
+              <button class="tab" type="button" aria-selected="true" data-record-tab="trainingCalendarPane">训练日历</button>
+              <button class="tab" type="button" aria-selected="false" data-record-tab="actionRecordPane">动作记录</button>
               <button class="tab" type="button" aria-selected="false" data-record-tab="trainingRecordPane">训练记录</button>
             </div>
-            <div class="record-pane" id="actionRecordPane" data-record-pane>
+            <div class="record-pane" id="trainingCalendarPane" data-record-pane>
+              <section class="calendar-shell record-calendar-shell" aria-label="当月已完成训练日历">
+                <div class="calendar-head">
+                  <span class="record-calendar-month" id="recordCalendarMonth"></span>
+                  <span class="record-calendar-legend">已完成训练</span>
+                </div>
+                <div class="calendar-weekdays" aria-hidden="true"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+                <div class="calendar-grid" id="recordCalendarGrid"></div>
+              </section>
+            </div>
+            <div class="record-pane" id="actionRecordPane" data-record-pane hidden>
               <div class="data-logger-layout">
                 <form id="setLogForm" class="set-log-form">
                   <label class="form-field-wide">训练动作<select id="setLogExercise" required></select></label>
@@ -5694,9 +6440,8 @@
               </section>
             </div>
             <div class="record-pane" id="trainingRecordPane" data-record-pane hidden>
-              <section class="completed-training-history" aria-labelledby="completedTrainingTitle">
+              <section class="completed-training-history" aria-label="训练记录">
                 <div class="completed-training-head">
-                  <h3 id="completedTrainingTitle">已完成训练</h3>
                   <select id="completedTrainingFilter" aria-label="筛选已完成训练动作"></select>
                 </div>
                 <div id="completedTrainingList"></div>
@@ -5712,10 +6457,10 @@
     </div>
       <nav class="mobile-nav" aria-label="APP 底部导航">
         <a href="#home">首页</a>
-        <a href="#evaluation">评估</a>
-        <a href="#plan">计划</a>
         <a href="#training">动作库</a>
+        <a href="#plan">计划</a>
         <a href="#records">记录</a>
+        <a href="#me">我的</a>
       </nav>
 
     <script src="data/exercise-library-data.js"></script>
@@ -6193,6 +6938,8 @@
       const setLogList = document.querySelector("#setLogList");
       const setLogCount = document.querySelector("#setLogCount");
       const recordTabs = document.querySelector("#recordTabs");
+      const recordCalendarMonth = document.querySelector("#recordCalendarMonth");
+      const recordCalendarGrid = document.querySelector("#recordCalendarGrid");
       const completedTrainingList = document.querySelector("#completedTrainingList");
       const completedTrainingFilter = document.querySelector("#completedTrainingFilter");
       const overloadExerciseSelect = document.querySelector("#overloadExerciseSelect");
@@ -6208,8 +6955,13 @@
       const planProgressPercent = document.querySelector("#planProgressPercent");
       const planProgressText = document.querySelector("#planProgressText");
       const planProgressHint = document.querySelector("#planProgressHint");
-      const today = new Date().toISOString().slice(0, 10);
+      const scheduleDialog = document.querySelector("#scheduleDialog");
+      const scheduleWeekdayPicker = document.querySelector("#scheduleWeekdayPicker");
+      const scheduleSelectionHint = document.querySelector("#scheduleSelectionHint");
+      const adjustTrainingDays = document.querySelector("#adjustTrainingDays");
+      const today = formatLocalDate(new Date());
       const EXERCISE_PLACEHOLDER_IMAGE = "assets/exercise-placeholder.svg";
+      const TRAINING_DAY_PREFERENCES_KEY = "fitlog-training-day-preferences";
 
       const libraryExercises = Array.isArray(window.EXERCISE_LIBRARY_DATA) ? window.EXERCISE_LIBRARY_DATA : [];
       const exercisesByLibraryType = (type) =>
@@ -6228,13 +6980,14 @@
       if (!Array.isArray(trainingSetLogs)) trainingSetLogs = [];
       let completedPlanDays = JSON.parse(localStorage.getItem("fitlog-plan-completed") || "[]");
       let planHistory = JSON.parse(localStorage.getItem("fitlog-plan-history") || "[]");
-      let calendarCursor = new Date(today.slice(0, 7) + "-01T00:00:00");
       let isEditingPlan = false;
       let activePlanWeekIndex = 0;
       let activeWorkoutDay = null;
       let pendingPlanLogContext = null;
       let activeSupplementLogId = null;
       let deferredInstallPrompt = null;
+      let scheduleDraftWeekdays = new Set();
+      let scheduleDraftContext = null;
 
       if ("serviceWorker" in navigator) {
         let serviceWorkerRefreshPending = false;
@@ -6322,7 +7075,7 @@
       }
 
       function setRecordPane(paneId) {
-        const target = paneId || "actionRecordPane";
+        const target = paneId || "trainingCalendarPane";
         document.querySelectorAll("[data-record-pane]").forEach((pane) => {
           pane.hidden = pane.id !== target;
         });
@@ -6343,9 +7096,11 @@
         ) return;
         const requested = (window.location.hash || "#home").replace("#", "");
         const aliases = {
-          risk: "evaluation",
+          evaluation: "me",
+          risk: "me",
           "risk-assessment": "evaluation",
-          assessment: "evaluation",
+          "fitness-assessment": "evaluation",
+          assessment: "me",
           moves: "training",
           warmup: "training",
           stretch: "training",
@@ -6358,13 +7113,33 @@
         const normalized = aliases[requested] || requested;
         const activeId = modules.some((panel) => panel.id === normalized) ? normalized : "home";
         const riskDetail = requested === "risk-assessment";
-        const wasRiskDetail = document.querySelector("#evaluation").dataset.riskScreen === "detail";
+        const fitnessDetail = requested === "fitness-assessment";
+        const assessmentDetail = riskDetail || fitnessDetail;
+        const evaluation = document.querySelector("#evaluation");
+        const wasRiskDetail = evaluation.dataset.riskScreen === "detail";
+        evaluation.dataset.assessmentScreen = riskDetail ? "risk" : "fitness";
         document.querySelector("#evaluation").dataset.riskScreen = riskDetail ? "detail" : "overview";
         document.querySelector("#riskEntry").hidden = !riskDetail;
         document.querySelector("#riskEntry").dataset.stage = "questions";
         document.querySelector("#riskEntryTitle").textContent = "训练前风险评估";
-        document.querySelector("#riskOverview").hidden = riskDetail;
-        if (riskDetail || wasRiskDetail) setAssessmentPane("riskPane");
+        document.querySelector("#riskOverview").hidden = true;
+        if (riskDetail) {
+          const savedAnswers = JSON.parse(localStorage.getItem("fitlog-risk") || "null");
+          if (savedAnswers) {
+            riskForm.querySelectorAll("select").forEach((select) => {
+              select.value = savedAnswers[select.id] ? "yes" : "no";
+            });
+          }
+          document.querySelector("#assessmentPageTitle").textContent = "风险评估";
+          document.querySelector("#assessmentPageSummary").textContent = "完成训练前健康筛查，了解风险等级与训练建议。";
+          setAssessmentPane("riskPane");
+        } else if (fitnessDetail) {
+          document.querySelector("#assessmentPageTitle").textContent = "体能评估";
+          document.querySelector("#assessmentPageSummary").textContent = "了解当前心肺能力与相对力量水平。";
+          setAssessmentPane("fitnessPane");
+        } else if (wasRiskDetail) {
+          setAssessmentPane("riskPane");
+        }
         renderEvaluationOverview();
         document.querySelector("#riskResultSection").hidden = true;
         modules.forEach((panel) => {
@@ -6372,13 +7147,14 @@
         });
         if (activeId === "exercise-detail") renderExerciseDetail();
         else cleanupExerciseAnimations();
+        const activeNavId = activeId === "evaluation" ? "me" : activeId;
         document.querySelectorAll(".nav a, .mobile-nav a").forEach((link) => {
           link.setAttribute(
             "aria-current",
-            link.getAttribute("href") === `#${activeId}` ? "true" : "false"
+            link.getAttribute("href") === `#${activeNavId}` ? "true" : "false"
           );
         });
-        if (!riskDetail && window.location.hash.replace("#", "") !== activeId) {
+        if (!assessmentDetail && window.location.hash.replace("#", "") !== activeId) {
           history.replaceState(null, "", `#${activeId}`);
         }
         window.requestAnimationFrame(() => {
@@ -7100,6 +7876,59 @@
         return formatLocalDate(date);
       }
 
+      function getDefaultTrainingWeekdays(days) {
+        const schedules = {
+          2: [1, 4],
+          3: [1, 3, 5],
+          4: [1, 2, 4, 5],
+          5: [1, 2, 3, 5, 6],
+          6: [1, 2, 3, 4, 5, 6]
+        };
+        return schedules[days] || Array.from({ length: days }, (_, index) => (index + 1) % 7);
+      }
+
+      function normalizeTrainingWeekdays(value, days) {
+        if (!Array.isArray(value)) return null;
+        const normalized = [...new Set(value.map(Number).filter((day) => Number.isInteger(day) && day >= 0 && day <= 6))];
+        return normalized.length === days ? normalized : null;
+      }
+
+      function getPlanScheduleKey(profile, plan, startDate = getPlanStartDate()) {
+        return `${startDate}-${profile.goal}-${profile.experience}-${plan.days}`;
+      }
+
+      function loadTrainingDayPreferences() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(TRAINING_DAY_PREFERENCES_KEY) || "null");
+          return saved && typeof saved === "object" ? saved : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function getPlanTrainingWeekdays(profile, plan, weekIndex, startDate = getPlanStartDate()) {
+        const defaults = getDefaultTrainingWeekdays(plan.days);
+        const preferences = loadTrainingDayPreferences();
+        if (preferences?.planKey !== getPlanScheduleKey(profile, plan, startDate)) return defaults;
+        return normalizeTrainingWeekdays(preferences.weeklyOverrides?.[String(weekIndex)], plan.days)
+          || normalizeTrainingWeekdays(preferences.recurring, plan.days)
+          || defaults;
+      }
+
+      function getTrainingDayOffsets(days, startDate, weekdays = getDefaultTrainingWeekdays(days)) {
+        const startWeekday = parseLocalDate(startDate).getDay();
+        return weekdays
+          .map((weekday) => (weekday - startWeekday + 7) % 7)
+          .sort((a, b) => a - b)
+          .slice(0, days);
+      }
+
+      function getPlanDayDate(startDate, weekIndex, dayIndex, profile, plan) {
+        const weekdays = getPlanTrainingWeekdays(profile, plan, weekIndex, startDate);
+        const offset = getTrainingDayOffsets(plan.days, startDate, weekdays)[dayIndex] ?? dayIndex;
+        return addDays(startDate, weekIndex * 7 + offset);
+      }
+
       function getPlanStartDate() {
         return localStorage.getItem("fitlog-plan-start-date") || today;
       }
@@ -7557,7 +8386,7 @@
         const startDate = getPlanStartDate();
         const [day, description] = plan.split[dayIndex] || plan.split[0];
         const period = plan.periodization?.[weekIndex] || plan.periodization?.[0];
-        const date = addDays(startDate, weekIndex * 7 + dayIndex * 2);
+        const date = getPlanDayDate(startDate, weekIndex, dayIndex, profile, plan);
         return {
           id: planDayId(profile, plan, weekIndex, dayIndex, startDate),
           weekIndex,
@@ -7664,7 +8493,7 @@
         if (!activeWorkoutDay) {
           workoutDetail.innerHTML = `
             <button class="ghost-btn detail-back" type="button" data-workout-back>返回首页</button>
-            <div class="workout-overview"><h2>选择训练日</h2><p class="muted">请从首页的训练日列表进入训练详情。</p></div>
+            <div class="workout-overview"><h2>选择训练日</h2><p class="muted">请从首页的今日计划或计划页进入训练详情。</p></div>
           `;
           return;
         }
@@ -7779,6 +8608,7 @@
         if (button.dataset.logWorkoutDate) setLogDate.value = button.dataset.logWorkoutDate;
         updateSetLogPreview();
         renderOverloadMonitor(exerciseId);
+        setRecordPane("actionRecordPane");
         window.location.hash = "records";
         setTimeout(() => setLogForm?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
       }
@@ -7808,8 +8638,6 @@
         document.querySelector("#planSummary").textContent = planVisible
           ? "4 周周期训练计划"
           : "选择三项信息，生成周期训练计划。";
-        document.querySelector("#heroDays").textContent = `${plan.days} 天`;
-        document.querySelector("#heroRm").textContent = plan.rm;
         document.querySelector("#planMetricRm").textContent = plan.load;
         document.querySelector("#planMetricRmNote").textContent = plan.rm;
         document.querySelector("#planMetricReps").textContent = plan.reps;
@@ -7831,15 +8659,17 @@
         activeWeekFocus.textContent = activePeriod.focus;
         activeWeekPrescription.textContent = `${activePeriod.sets} 组 × ${activePeriod.reps}`;
         document.querySelector("#planMetricSetsNote").textContent = `本周 ${activePeriod.sets} 组`;
+        const planStartDate = getPlanStartDate();
         weekPlan.innerHTML = plan.split
-          .map(
-            ([day, text], index) => `
+          .map(([day, text], index) => {
+            const scheduledDate = getPlanDayDate(planStartDate, activePlanWeekIndex, index, profile, plan);
+            return `
               <button class="day plan-training-day" type="button" data-plan-day="${index}" aria-label="查看${activePeriod.label}训练日${index + 1}的动作详情">
                 <strong>训练日${index + 1} · ${day}</strong>
-                <span>${text}<br><small class="muted">主项 ${activePeriod.sets} 组 × ${activePeriod.reps} · 间歇 ${activePeriod.rest}</small></span>
+                <span>${text}<br><small class="muted">${formatPlanDateLabel(scheduledDate)} · 主项 ${activePeriod.sets} 组 × ${activePeriod.reps} · 间歇 ${activePeriod.rest}</small></span>
               </button>
-            `
-          )
+            `;
+          })
           .join("");
         const rules = [
           `本周主项：${activePeriod.sets} 组 × ${activePeriod.reps}，建议负荷 ${activePeriod.load}（${activePeriod.rm}）。`,
@@ -7973,6 +8803,7 @@
       function saveCurrentPlan({ templateId = null } = {}) {
         const replacingPlan = hasGeneratedPlan() && isEditingPlan;
         if (replacingPlan) archiveCurrentPlan();
+        if (replacingPlan) localStorage.removeItem(TRAINING_DAY_PREFERENCES_KEY);
         if (templateId) {
           localStorage.setItem("fitlog-plan-template", templateId);
         } else {
@@ -8024,6 +8855,158 @@
 
       }
 
+      function getScheduledPlanDays(profile, plan) {
+        if (!hasGeneratedPlan()) return [];
+        const startDate = getPlanStartDate();
+        return Array.from({ length: 4 }, (_, weekIndex) =>
+          plan.split.map(([day, text], dayIndex) => ({
+            id: planDayId(profile, plan, weekIndex, dayIndex, startDate),
+            date: getPlanDayDate(startDate, weekIndex, dayIndex, profile, plan),
+            weekIndex,
+            dayIndex,
+            day,
+            text,
+            period: plan.periodization[weekIndex] || plan.periodization[0]
+          }))
+        ).flat();
+      }
+
+      function formatPlanDateLabel(value) {
+        const date = parseLocalDate(value);
+        const weekDays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+        return `${date.getMonth() + 1} 月 ${date.getDate()} 日 · ${weekDays[date.getDay()]}`;
+      }
+
+      function renderHomeTodayPlan(profile, plan, saved) {
+        const container = document.querySelector("#homeTodayPlan");
+        document.querySelector("#homeTodayDate").textContent = formatPlanDateLabel(today);
+        if (!saved) {
+          container.innerHTML = `
+            <article class="home-today-card is-rest">
+              <div><span class="home-today-kicker">未安排</span><h3>今日暂无训练计划</h3><p>保存训练计划后，这里会显示当天训练内容。</p></div>
+            </article>
+          `;
+          return;
+        }
+
+        const schedule = getScheduledPlanDays(profile, plan).sort((a, b) => a.date.localeCompare(b.date));
+        const todayWorkout = schedule.find((item) => item.date === today);
+        if (todayWorkout) {
+          const completed = completedPlanDays.includes(todayWorkout.id);
+          container.innerHTML = `
+            <article class="home-today-card">
+              <div>
+                <span class="home-today-kicker">${completed ? "已完成" : todayWorkout.period?.label || "今日训练"}</span>
+                <h3>训练日${todayWorkout.dayIndex + 1} · ${todayWorkout.day}</h3>
+                <p>${todayWorkout.text}</p>
+                <small class="home-today-meta">主项 ${todayWorkout.period?.sets || "-"} 组 × ${todayWorkout.period?.reps || plan.reps} · 间歇 ${todayWorkout.period?.rest || plan.rest}</small>
+              </div>
+              <button class="home-today-action" type="button" data-view-day data-week-index="${todayWorkout.weekIndex}" data-day-index="${todayWorkout.dayIndex}">${completed ? "查看详情" : "开始训练"}</button>
+            </article>
+          `;
+          return;
+        }
+
+        const nextWorkout = schedule.find((item) => item.date > today);
+        container.innerHTML = `
+          <article class="home-today-card is-rest">
+            <div>
+              <span class="home-today-kicker">恢复与适应</span>
+              <h3>休息日</h3>
+              <p>今天没有安排抗阻训练，保持轻度活动并优先恢复。</p>
+              <div class="home-next-plan">
+                <span>下个训练日计划</span>
+                ${nextWorkout
+                  ? `<strong>${formatPlanDateLabel(nextWorkout.date)} · 训练日${nextWorkout.dayIndex + 1} · ${nextWorkout.day}</strong><small>${nextWorkout.text}</small>`
+                  : '<strong>当前四周周期已无后续训练日</strong><small>可在计划页调整或生成下一周期。</small>'}
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function renderHomeTrainingCalendar(profile, plan, saved) {
+        const grid = document.querySelector("#homeTrainingCalendarGrid");
+        const range = document.querySelector("#homeCalendarRange");
+        adjustTrainingDays.disabled = !saved;
+        const firstDate = parseLocalDate(today);
+        const lastValue = addDays(today, 27);
+        const lastDate = parseLocalDate(lastValue);
+        range.textContent = firstDate.getFullYear() === lastDate.getFullYear()
+          ? `${firstDate.getFullYear()} 年 ${firstDate.getMonth() + 1}${firstDate.getMonth() === lastDate.getMonth() ? "" : `–${lastDate.getMonth() + 1}`} 月`
+          : `${firstDate.getFullYear()} 年 ${firstDate.getMonth() + 1} 月–${lastDate.getFullYear()} 年 ${lastDate.getMonth() + 1} 月`;
+
+        const scheduleByDate = new Map(
+          (saved ? getScheduledPlanDays(profile, plan) : []).map((item) => [item.date, item])
+        );
+        const leading = Array.from({ length: firstDate.getDay() }, () => '<span class="home-training-calendar-day is-empty" aria-hidden="true"></span>').join("");
+        const days = Array.from({ length: 28 }, (_, index) => {
+          const dateValue = addDays(today, index);
+          const date = parseLocalDate(dateValue);
+          const workout = scheduleByDate.get(dateValue);
+          const isToday = dateValue === today;
+          if (!workout) {
+            return `<span class="home-training-calendar-day ${isToday ? "is-today" : ""}" role="gridcell" aria-label="${dateValue} 休息日">${date.getDate()}</span>`;
+          }
+          const completed = completedPlanDays.includes(workout.id);
+          return `<button class="home-training-calendar-day is-training ${completed ? "is-completed" : ""} ${isToday ? "is-today" : ""}" type="button" role="gridcell" data-view-day data-week-index="${workout.weekIndex}" data-day-index="${workout.dayIndex}" aria-label="${dateValue} 训练日${workout.dayIndex + 1} ${workout.day}${completed ? "，已完成" : ""}">${date.getDate()}</button>`;
+        }).join("");
+        grid.innerHTML = `${leading}${days}`;
+      }
+
+      function renderScheduleDraft() {
+        if (!scheduleDraftContext) return;
+        scheduleWeekdayPicker.querySelectorAll("[data-schedule-weekday]").forEach((button) => {
+          button.setAttribute("aria-pressed", String(scheduleDraftWeekdays.has(Number(button.dataset.scheduleWeekday))));
+        });
+        const required = scheduleDraftContext.plan.days;
+        const selected = scheduleDraftWeekdays.size;
+        scheduleSelectionHint.textContent = selected === required
+          ? `已选择 ${selected} 天，可以保存。`
+          : `请选择 ${required} 天，当前已选择 ${selected} 天。`;
+      }
+
+      function openScheduleDialog() {
+        if (!hasGeneratedPlan()) return;
+        const profile = getProfile();
+        const plan = buildPlan(profile);
+        const startDate = getPlanStartDate();
+        const weekIndex = getCurrentPlanWeek(startDate);
+        scheduleDraftContext = { profile, plan, startDate, weekIndex };
+        scheduleDraftWeekdays = new Set(getPlanTrainingWeekdays(profile, plan, weekIndex, startDate));
+        document.querySelector("#scheduleDialogSummary").textContent = `当前为计划第 ${weekIndex + 1} 周，每周需要选择 ${plan.days} 个训练日。`;
+        document.querySelector('input[name="scheduleScope"][value="plan"]').checked = true;
+        renderScheduleDraft();
+        scheduleDialog.showModal();
+      }
+
+      function saveTrainingDayPreferences() {
+        if (!scheduleDraftContext) return;
+        const { profile, plan, startDate, weekIndex } = scheduleDraftContext;
+        if (scheduleDraftWeekdays.size !== plan.days) {
+          scheduleSelectionHint.textContent = `需要选择 ${plan.days} 天后才能保存。`;
+          return;
+        }
+        const planKey = getPlanScheduleKey(profile, plan, startDate);
+        const existing = loadTrainingDayPreferences();
+        const preferences = existing?.planKey === planKey
+          ? { ...existing, weeklyOverrides: { ...(existing.weeklyOverrides || {}) } }
+          : { version: 1, planKey, recurring: getDefaultTrainingWeekdays(plan.days), weeklyOverrides: {} };
+        const selected = [...scheduleDraftWeekdays];
+        const scope = document.querySelector('input[name="scheduleScope"]:checked')?.value || "plan";
+        if (scope === "week") {
+          preferences.weeklyOverrides[String(weekIndex)] = selected;
+        } else {
+          preferences.recurring = selected;
+          preferences.weeklyOverrides = {};
+        }
+        preferences.updatedAt = new Date().toISOString();
+        localStorage.setItem(TRAINING_DAY_PREFERENCES_KEY, JSON.stringify(preferences));
+        scheduleDialog.close();
+        renderPlan();
+        renderHome();
+      }
+
       function renderHome() {
         const saved = hasGeneratedPlan();
         const profile = getProfile();
@@ -8031,29 +9014,13 @@
         const title = `${plan.template?.name || planNames[profile.goal]} · 每周 ${plan.days} 天`;
         const homeTitle = document.querySelector("#homeTitle");
         const homeSummary = document.querySelector("#homeSummary");
-        const homeList = document.querySelector("#homePlanList");
-        const homePrimary = document.querySelector("#homePrimaryAction");
+        renderHomeTodayPlan(profile, plan, saved);
+        renderHomeTrainingCalendar(profile, plan, saved);
 
         if (!saved) {
           planConsole.hidden = true;
           homeTitle.textContent = "还没有保存训练计划。";
           homeSummary.textContent = "选择目标、训练历史和每周训练天数，即可生成并保存四周周期课表。";
-          homePrimary.textContent = "制定计划";
-          homePrimary.setAttribute("href", "#plan");
-          homeList.innerHTML = [
-            ["第 1 步", "选择训练目标、训练历史和每周可训练天数"],
-            ["第 2 步", "生成四周周期化课表并确认训练日安排"],
-            ["第 3 步", "建议完成风险评估后，再按课表开始训练"]
-          ]
-            .map(
-              ([step, text]) => `
-                <article class="day guide-day">
-                  <strong>${step}</strong>
-                  <span>${text}</span>
-                </article>
-              `
-            )
-            .join("");
           return;
         }
 
@@ -8078,26 +9045,6 @@
         const currentPeriod = plan.periodization[weekIndex] || plan.periodization[0];
         homeSummary.textContent =
           `${currentPeriod.title}：${currentPeriod.focus} 建议 ${currentPeriod.sets} 组 × ${currentPeriod.reps}，主训练强度 ${currentPeriod.rm}。`;
-        homePrimary.textContent = "查看计划";
-        homePrimary.setAttribute("href", "#plan");
-        homeList.innerHTML = plan.split
-          .map(
-            ([day, text], dayIndex) => {
-              const id = planDayId(profile, plan, weekIndex, dayIndex, startDate);
-              const isDone = completedPlanDays.includes(id);
-              const planDate = addDays(startDate, weekIndex * 7 + dayIndex * 2);
-              return `
-              <article class="day training-day ${isDone ? "is-done" : ""}">
-                <strong>训练日${dayIndex + 1}</strong>
-                <span>${text}<br><small class="muted">${planDate}</small></span>
-                <button type="button" data-view-day data-week-index="${weekIndex}" data-day-index="${dayIndex}" aria-pressed="${isDone}">
-                  ${isDone ? "已完成" : "查看"}
-                </button>
-              </article>
-            `;
-            }
-          )
-          .join("");
       }
 
       function renderRisk(risk = assessRisk()) {
@@ -8655,8 +9602,41 @@
         overloadChart.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="训练重量与预估一RM趋势"><line x1="${pad.left}" y1="${y(min)}" x2="${width - pad.right}" y2="${y(min)}" stroke="#3b4248"/><line x1="${pad.left}" y1="${y(max)}" x2="${width - pad.right}" y2="${y(max)}" stroke="#3b4248"/><text x="2" y="${y(max) + 3}">${max}</text><text x="2" y="${y(min) + 3}">${min}</text><polyline points="${line("weightKg")}" fill="none" stroke="#00e5ff" stroke-width="2" stroke-dasharray="4 3"/><polyline points="${line("estimated1RM")}" fill="none" stroke="#39ff14" stroke-width="2.5"/>${logs.map((log, index) => `<circle cx="${x(index).toFixed(1)}" cy="${y(Number(log.estimated1RM)).toFixed(1)}" r="3" fill="#39ff14"/>`).join("")}${dateLabels}</svg>`;
       }
 
+      function renderRecordCalendar() {
+        if (!recordCalendarMonth || !recordCalendarGrid) return;
+        const cursor = parseLocalDate(`${today.slice(0, 7)}-01`);
+        const year = cursor.getFullYear();
+        const month = cursor.getMonth();
+        const monthPrefix = `${year}-${String(month + 1).padStart(2, "0")}`;
+        const completedDateCounts = new Map();
+        records.forEach((record) => {
+          if (!String(record.date || "").startsWith(monthPrefix)) return;
+          completedDateCounts.set(record.date, (completedDateCounts.get(record.date) || 0) + 1);
+        });
+        if (hasGeneratedPlan()) {
+          const profile = getProfile();
+          const plan = buildPlan(profile);
+          getScheduledPlanDays(profile, plan).forEach((item) => {
+            if (item.date.startsWith(monthPrefix) && completedPlanDays.includes(item.id)) {
+              completedDateCounts.set(item.date, Math.max(1, completedDateCounts.get(item.date) || 0));
+            }
+          });
+        }
+
+        recordCalendarMonth.textContent = `${year} 年 ${month + 1} 月`;
+        const leading = Array.from({ length: cursor.getDay() }, () => '<span class="calendar-day is-empty" aria-hidden="true"></span>').join("");
+        const dayCount = new Date(year, month + 1, 0).getDate();
+        const days = Array.from({ length: dayCount }, (_, index) => {
+          const dateValue = `${monthPrefix}-${String(index + 1).padStart(2, "0")}`;
+          const completedCount = completedDateCounts.get(dateValue) || 0;
+          return `<span class="calendar-day ${dateValue === today ? "is-today" : ""} ${completedCount ? "has-record" : ""}" role="gridcell" aria-label="${month + 1}月${index + 1}日${completedCount ? `，已完成 ${completedCount} 次训练` : ""}">${index + 1}</span>`;
+        }).join("");
+        recordCalendarGrid.innerHTML = `${leading}${days}`;
+      }
+
       function renderRecords() {
         if (!setLogForm) return;
+        renderRecordCalendar();
         populateSetLogExerciseOptions();
         updateSetLogPreview();
         renderTrainingSetLogs();
@@ -8819,10 +9799,29 @@
 
       planStartDateInput.addEventListener("change", () => {
         localStorage.setItem("fitlog-plan-start-date", planStartDateInput.value || today);
-        renderHome();
+        renderPlan();
       });
 
-      document.querySelector("#homePlanList").addEventListener("click", (event) => {
+      adjustTrainingDays.addEventListener("click", openScheduleDialog);
+      document.querySelector("#scheduleDialogClose").addEventListener("click", () => scheduleDialog.close());
+      document.querySelector("#scheduleCancel").addEventListener("click", () => scheduleDialog.close());
+      document.querySelector("#scheduleSave").addEventListener("click", saveTrainingDayPreferences);
+      scheduleWeekdayPicker.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-schedule-weekday]");
+        if (!button || !scheduleDraftContext) return;
+        const weekday = Number(button.dataset.scheduleWeekday);
+        if (scheduleDraftWeekdays.has(weekday)) {
+          scheduleDraftWeekdays.delete(weekday);
+        } else if (scheduleDraftWeekdays.size < scheduleDraftContext.plan.days) {
+          scheduleDraftWeekdays.add(weekday);
+        } else {
+          scheduleSelectionHint.textContent = `每周计划为 ${scheduleDraftContext.plan.days} 天，请先取消一个已选日期。`;
+          return;
+        }
+        renderScheduleDraft();
+      });
+
+      document.querySelector("#home").addEventListener("click", (event) => {
         const button = event.target.closest("[data-view-day]");
         if (!button) return;
         openWorkoutDetail(Number(button.dataset.weekIndex), Number(button.dataset.dayIndex));

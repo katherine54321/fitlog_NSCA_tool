@@ -535,6 +535,16 @@
       ? "已登录。训练计划、记录与评估数据会加密传输后备份到你的账户。"
       : configured() ? "登录后即可备份数据并在新设备恢复。" : "当前为离线模式，数据仅保存在此设备。";
     email.textContent = session?.email || "已登录账户";
+    const myAccountTitle = document.querySelector("#myAccountTitle");
+    const myAccountHint = document.querySelector("#myAccountHint");
+    const myAccountAction = document.querySelector("#myAccountAction");
+    if (myAccountTitle) myAccountTitle.textContent = signedIn ? (session.email || "已登录账户") : "未登录";
+    if (myAccountHint) {
+      myAccountHint.textContent = signedIn
+        ? "训练数据已关联此账户，点击管理同步设置"
+        : configured() ? "点击登录，开启训练数据云端备份" : "当前为离线模式，数据仅保存在此设备";
+    }
+    if (myAccountAction) myAccountAction.textContent = signedIn ? "管理" : "登录";
   }
 
   function setMessage(message) {
@@ -559,6 +569,7 @@
   function bindUi() {
     const dialog = document.querySelector("#accountDialog");
     document.querySelector("#accountButton")?.addEventListener("click", () => dialog?.showModal());
+    document.querySelector("#myAccountButton")?.addEventListener("click", () => dialog?.showModal());
     document.querySelector("#accountSendCode")?.addEventListener("click", async () => {
       const email = document.querySelector("#accountEmail")?.value.trim().toLowerCase();
       if (!email) return setMessage("请输入有效邮箱。");
