@@ -1207,6 +1207,10 @@
         font-weight: 900;
       }
 
+      html[lang="en"] .plan-training-day::after {
+        content: "View exercises";
+      }
+
       .week-schedule {
         padding: 2px 0;
       }
@@ -6178,6 +6182,14 @@
                   </a>
                 </div>
               </section>
+              <section class="my-section" aria-label="设置" data-i18n-aria-label="appSettings">
+                <div class="settings-list">
+                  <a class="settings-row" href="#settings">
+                    <span data-i18n="appSettings">设置</span>
+                    <span class="settings-row-value" aria-hidden="true">›</span>
+                  </a>
+                </div>
+              </section>
             </div>
           </section>
 
@@ -6189,10 +6201,6 @@
                 <strong id="accountEmailValue">—</strong>
               </div>
               <div class="settings-list">
-                <a class="settings-row" href="#language-settings">
-                  <span data-i18n="languageSettings">语言设置</span>
-                  <span class="settings-row-value"><span id="accountLanguageValue">简体中文</span> ›</span>
-                </a>
                 <button class="settings-row settings-row-danger" id="accountSignOut" type="button">
                   <span data-i18n="signOut">退出当前账户</span><span aria-hidden="true">›</span>
                 </button>
@@ -6204,9 +6212,21 @@
             </div>
           </section>
 
+          <section class="panel section module-panel" id="settings" data-module-panel hidden>
+            <div class="settings-page">
+              <a class="settings-back" href="#me" data-i18n="backToMe">← 返回我的</a>
+              <div class="settings-list">
+                <a class="settings-row" href="#language-settings">
+                  <span data-i18n="languageSettings">语言设置</span>
+                  <span class="settings-row-value"><span id="accountLanguageValue">简体中文</span> ›</span>
+                </a>
+              </div>
+            </div>
+          </section>
+
           <section class="panel section module-panel" id="language-settings" data-module-panel hidden>
             <div class="settings-page">
-              <a class="settings-back" href="#account-management" data-i18n="backToAccount">← 返回账户管理</a>
+              <a class="settings-back" href="#settings" data-i18n="backToSettings">← 返回设置</a>
               <div class="language-options" role="radiogroup" aria-label="语言设置" data-i18n-aria-label="languageSettings">
                 <label class="language-option">
                   <span>简体中文<small>Chinese (Simplified)</small></span>
@@ -6647,9 +6667,10 @@
         changeEmail: { zh: "更换邮箱", en: "Change email" },
         signInHint: { zh: "登录后，训练数据会自动同步到你的账户。", en: "Your training data syncs automatically after sign-in." },
         backToMe: { zh: "← 返回我的", en: "← Back to Me" },
-        backToAccount: { zh: "← 返回账户管理", en: "← Back to account" },
         currentAccount: { zh: "当前账户", en: "Current account" },
+        appSettings: { zh: "设置", en: "Settings" },
         languageSettings: { zh: "语言设置", en: "Language" },
+        backToSettings: { zh: "← 返回设置", en: "← Back to settings" },
         signOut: { zh: "退出当前账户", en: "Sign out" },
         deleteAccount: { zh: "删除账户与云端数据", en: "Delete account and cloud data" },
         fitnessAssessment: { zh: "体能评估", en: "Fitness assessment" },
@@ -6740,21 +6761,274 @@
         ["保存至本计划（每周）", "Save for this plan (weekly)"],
         ["仅保持至本周", "This week only"],
         ["删除账户与云端数据", "Delete account and cloud data"],
-        ["简体中文", "Simplified Chinese"]
+        ["简体中文", "Simplified Chinese"],
+        ["英语", "English"],
+        ["开始日期", "Start date"],
+        ["计划内容切换", "Plan views"],
+        ["四周周期安排", "Four-week schedule"],
+        ["评估类型切换", "Assessment type"],
+        ["APP 底部导航", "App navigation"],
+        ["动作库分类", "Exercise categories"],
+        ["按部位浏览", "Browse by body area"],
+        ["按器械浏览", "Browse by equipment"],
+        ["搜索动作名称", "Search exercises"],
+        ["全部", "All"],
+        ["其他", "Other"],
+        ["弹力带", "Resistance bands"],
+        ["健身球", "Exercise ball"],
+        ["未提供", "Not specified"],
+        ["无", "None"],
+        ["静态", "Static"],
+        ["记录类型切换", "Record views"],
+        ["当月已完成训练日历", "Completed workouts this month"],
+        ["快速调整重量", "Quick load adjustment"],
+        ["快速选择次数", "Quick rep selection"],
+        ["选择要查看的动作", "Choose an exercise to view"],
+        ["筛选已完成训练动作", "Filter completed exercises"],
+        ["训练内容导航", "Training content navigation"],
+        ["全部器械", "All equipment"],
+        ["训练评估", "Training assessments"],
+        ["了解当前心肺能力与相对力量水平。", "Understand your current cardiorespiratory fitness and relative strength."],
+        ["完成训练前健康筛查，了解风险等级与训练建议。", "Complete the pre-training health screening to understand your risk level and training guidance."],
+        ["体能评估项目切换", "Fitness assessment types"],
+        ["填写体重", "Enter body weight"],
+        ["2.4 公里跑", "2.4 km run"],
+        ["跑步机 2.4 公里", "2.4 km treadmill run"],
+        ["测试动作", "Test exercise"],
+        ["Universal 器械卧推", "Universal machine bench press"],
+        ["Universal 器械腿举", "Universal machine leg press"],
+        ["出现代偿或疼痛", "Compensation or pain"],
+        ["计算与常模来源", "Calculation and reference norms"],
+        ["估算最大摄氧量 = 88.02 − 0.1656 × 体重（kg）− 2.76 × 用时（分钟）+ 3.716 × 性别（男 1、女 0）。跑步估算值用于参考，与直接测量值有差异；心率数据不参与评级。", "Estimated VO₂max = 88.02 − 0.1656 × body weight (kg) − 2.76 × time (minutes) + 3.716 × sex (male 1, female 0). The running estimate is for reference and may differ from direct measurement; heart-rate data is not used for classification."],
+        ["抗阻常模来源：NSCA's Essentials of Personal Training", "Resistance norms source: NSCA's Essentials of Personal Training"],
+        ["心肺水平同组百分位", "Cardiorespiratory percentile by peer group"],
+        ["最大摄氧量 · mL/kg/min", "VO₂max · mL/kg/min"],
+        ["等级", "Level"], ["摄氧量区间", "VO₂max range"], ["百分位", "Percentile"],
+        ["较差", "Poor"], ["一般", "Fair"], ["良好", "Good"], ["优秀", "Excellent"],
+        ["低于 20%", "Below the 20th percentile"],
+        ["处于同年龄、同性别参考人群最低 20% 区间", "In the lowest 20% of the reference group for the same age and sex"],
+        ["约超过 20% 的同组参考人群，尚未达到中位水平", "Above about 20% of the peer reference group, but below the median"],
+        ["约超过 50% 的同组参考人群，尚未达到前 20% 水平", "Above about 50% of the peer reference group, but below the top 20%"],
+        ["达到同年龄、同性别参考人群前 20% 水平（约超过 80%）", "In the top 20% of the reference group for the same age and sex (above about 80%)"],
+        ["估算最大摄氧量", "Estimated VO₂max"],
+        ["请填写 20–79 岁的年龄并选择生理性别。", "Enter an age from 20 to 79 and select a sex."],
+        ["请填写体重（25–250 kg）和有效跑步用时（分钟小数）。", "Enter a body weight from 25 to 250 kg and a valid run time in minutes."],
+        ["该数据超出公式可用范围，请核对体重、距离和跑步用时。", "These values are outside the formula's valid range. Check body weight, distance, and run time."],
+        ["等待评估", "Awaiting assessment"],
+        ["请检查输入", "Check your entries"],
+        ["力量水平同组百分位", "Strength percentile by peer group"],
+        ["相对力量", "Relative strength"], ["对应 1RM", "Equivalent 1RM"],
+        ["远高于平均", "Well above average"], ["高于平均", "Above average"], ["平均", "Average"],
+        ["低于平均", "Below average"], ["远低于平均", "Well below average"],
+        ["高风险", "High risk"], ["中风险", "Moderate risk"], ["低风险", "Low risk"],
+        ["先获得医学许可，再开始或升级训练", "Obtain medical clearance before starting or progressing training"],
+        ["可训练，但计划需保守并加强监控", "Training is possible with a conservative, closely monitored plan"],
+        ["可从低到中等强度开始", "Begin with low-to-moderate intensity"],
+        ["运动或活动中出现胸部/颈颌/手臂不适", "Chest, neck, jaw, or arm discomfort during exercise or activity"],
+        ["眩晕、昏厥或异常呼吸困难", "Dizziness, fainting, or unusual shortness of breath"],
+        ["医生提示心脏病/高血压或运动前需许可", "A physician has identified heart disease, high blood pressure, or a need for exercise clearance"],
+        ["已确诊心肺代谢、骨科、神经或其他慢性疾病", "Diagnosed cardiopulmonary, metabolic, orthopedic, neurological, or other chronic disease"],
+        ["近期手术、住院或医生限制运动", "Recent surgery, hospitalization, or physician-imposed exercise restriction"],
+        ["年龄达到 CVD 风险因素阈值", "Age meets the CVD risk-factor threshold"],
+        ["近亲早发心脏病或猝死家族史", "Family history of premature heart disease or sudden death"],
+        ["吸烟、近期戒烟或二手烟暴露", "Smoking, recent smoking cessation, or secondhand-smoke exposure"],
+        ["体力活动不足或久坐", "Insufficient physical activity or prolonged sitting"],
+        ["BMI/腰围达到肥胖风险范围", "BMI or waist circumference is within an obesity-risk range"],
+        ["血压升高或正在服用降压药", "Elevated blood pressure or antihypertensive medication use"],
+        ["血脂异常", "Abnormal blood lipids"],
+        ["血糖或 HbA1C 异常", "Abnormal blood glucose or HbA1C"],
+        ["正在服用可能影响运动反应的药物", "Medication may affect the exercise response"],
+        ["近期骨骼、关节或软组织损伤/疼痛", "Recent bone, joint, or soft-tissue injury or pain"],
+        ["暂不推荐高强度、最大力量、冲刺间歇或屏气用力训练。", "High-intensity, maximal-strength, sprint-interval, and breath-holding efforts are not currently recommended."],
+        ["如医生允许，先从低强度有氧、基础活动度和技术练习开始。", "If medically cleared, begin with low-intensity cardio, basic mobility, and technique practice."],
+        ["训练中出现胸痛、眩晕、异常气短或放射性疼痛时立即停止。", "Stop immediately if chest pain, dizziness, unusual shortness of breath, or radiating pain occurs."],
+        ["从 12-15 RM、较低总组数和低冲击动作开始。", "Begin with 12-15 RM, fewer total sets, and low-impact exercises."],
+        ["优先选择可控器械、徒手或哑铃动作，避免突然增加强度。", "Prioritize controllable machine, bodyweight, or dumbbell exercises and avoid sudden intensity increases."],
+        ["先建立 2-4 周稳定记录，再逐步提高负荷或训练密度。", "Build 2-4 weeks of consistent records before gradually increasing load or training density."],
+        ["未发现红旗症状或明确疾病限制", "No red-flag symptoms or clear disease restrictions were identified"],
+        ["按目标从基础动作质量、活动度和渐进负荷开始。", "Begin with movement quality, mobility, and progressive loading appropriate to your goal."],
+        ["每周增加总量不超过 5%-10%，并保留 1-3 次余力。", "Increase weekly volume by no more than 5%-10% and keep 1-3 reps in reserve."],
+        ["若出现新的疼痛、胸闷、眩晕或异常疲劳，重新评估风险。", "Reassess risk if new pain, chest tightness, dizziness, or unusual fatigue occurs."],
+        ["请选择一个动作查看详情。", "Select an exercise to view its details."],
+        ["正在加载动作示意", "Loading exercise demonstration"],
+        ["全屏查看动作示意", "View exercise demonstration full screen"],
+        ["补充数据", "Add data"], ["保存", "Save"],
+        ["每侧 20-30 秒", "20-30 sec per side"],
+        ["完成训练日后，记录会自动显示在这里。", "Completed workout exercises will appear here automatically."],
+        ["历史峰值", "All-time peak"], ["最近 1RM", "Latest 1RM"], ["净变化", "Net change"], ["有效样本", "Valid sets"],
+        ["约", "About"],
+        ["填写重量与次数后计算", "Enter load and reps to calculate"],
+        ["训练重量与预估一RM趋势", "Training load and estimated 1RM trend"],
+        ["至少记录同一动作两组以上，才能判断变化趋势。", "Log at least two sets of the same exercise to identify a trend."],
+        ["选择一个动作并完成训练组记录后，显示重量和预估 1RM 的趋势。", "Choose an exercise and log working sets to view load and estimated 1RM trends."],
+        ["请根据自身能力选择动作和训练重量。首次练习或进行大重量训练时，建议由专业教练指导。", "Choose exercises and loads that match your ability. Seek guidance from a qualified coach when learning a movement or training with heavy loads."]
+      ].forEach(([zh, en]) => exactEnglishTranslations.set(zh, en));
+
+      [
+        ["4 周周期训练计划", "4-week periodized training plan"],
+        ["当前方案：全身基础训练，每周 3 天，优先动作质量、活动度和稳定渐进。", "Current plan: full-body fundamentals, 3 days per week, prioritizing movement quality, mobility, and steady progression."],
+        ["还没有保存训练计划。", "No saved training plan yet."],
+        ["先完成风险与体能评估，再制定并保存一个适合当前情况的训练计划。", "Complete the risk and fitness assessments, then create a plan that fits your current needs."],
+        ["选择三项信息，生成周期训练计划。", "Choose three items to create a periodized training plan."],
+        ["选择训练目标、训练历史和每周训练天数，即可生成并保存四周周期课表。", "Choose your goal, experience, and weekly training days to create and save a four-week plan."],
+        ["选择训练目标、训练历史和每周可训练天数，生成四周周期化课表。", "Choose your goal, experience, and available training days to create a four-week periodized plan."],
+        ["决定主训练的次数范围、组间休息与周重点。", "Sets the rep range, rest intervals, and weekly focus."],
+        ["决定动作复杂度、抗阻耐受上限与递进步伐。", "Sets movement complexity, resistance tolerance, and progression pace."],
+        ["决定全身训练或分化训练的课表结构。", "Determines a full-body or split-plan structure."],
+        ["风险评估结果会作为训练安全提示；如有疼痛、疾病或医生限制，请先完成风险评估。", "Risk results inform training safety. Complete the risk assessment first if you have pain, a medical condition, or exercise restrictions."],
+        ["按训练历史调整", "Adjusted by experience"],
+        ["主训练动作建议范围", "Recommended range for main exercises"],
+        ["按训练目标安排", "Based on training goal"],
+        ["第 4 周自动减量", "Automatic deload in week 4"],
+        ["当前微周期 · 第 1 周", "Current microcycle · Week 1"],
+        ["建立稳定动作模式与基础训练容量。", "Build stable movement patterns and foundational training capacity."],
+        ["如果最后一组仍能稳定完成目标次数，下周总量增加 5%-10%。", "If the final set remains controlled at the target reps, increase next week's volume by 5%-10%."],
+        ["动作适应周", "Movement adaptation"],
+        ["容量递进周", "Volume progression"],
+        ["目标强化周", "Goal intensification"],
+        ["减载巩固周", "Deload and consolidate"],
+        ["熟悉动作轨迹，建立基础训练容量，保留 2-3 次余力。", "Learn the movement paths, build baseline capacity, and keep 2-3 reps in reserve."],
+        ["在动作质量稳定的前提下，恢复到计划训练量并完成目标次数。", "Return to planned volume while maintaining movement quality and completing target reps."],
+        ["将主项调整到目标次数范围，优先专项性与可控强度。", "Move main lifts into the target rep range with specific, controlled intensity."],
+        ["训练组数减少约 40%-50%，维持动作练习并为下一周期恢复。", "Reduce sets by about 40%-50%, maintain movement practice, and recover for the next cycle."],
+        ["全身复合力量与动作基础", "Full-body compound strength and movement fundamentals"],
+        ["全身髋主导与垂直推拉", "Full-body hip hinge and vertical push/pull"],
+        ["全身单侧控制与容量补量", "Full-body unilateral control and accessory volume"],
+        ["全身基础力量与动作控制", "Full-body foundational strength and movement control"],
+        ["全身单侧力量与容量补量", "Full-body unilateral strength and accessory volume"],
+        ["上肢推拉大力量", "Upper-body push/pull strength"],
+        ["下肢推拉与深蹲发展", "Lower-body push/pull and squat development"],
+        ["上肢容量与肩胛平衡", "Upper-body volume and scapular balance"],
+        ["上肢垂直推拉与背部强化", "Upper-body vertical push/pull and back strength"],
+        ["下肢髋主导与后链发展", "Lower-body hip hinge and posterior-chain development"],
+        ["下肢髋主导与后链力量", "Lower-body hip hinge and posterior-chain strength"],
+        ["胸肩推举与肱三头力量", "Chest, shoulder, and triceps pressing strength"],
+        ["背部拉力与肱二头发展", "Back pulling and biceps development"],
+        ["深蹲主导的臀腿力量", "Squat-dominant glute and leg strength"],
+        ["上胸肩部容量发展", "Upper-chest and shoulder volume"],
+        ["背阔肌划船与手臂补量", "Lat rowing and arm accessory volume"],
+        ["髋主导臀腿后侧发展", "Hip-dominant posterior leg development"],
+        ["上肢推举弱项补强", "Upper-body pressing weak-point work"],
+        ["背部拉力弱项补强", "Back pulling weak-point work"],
+        ["臀腿后侧弱项补强", "Posterior leg weak-point work"],
+        ["胸、背、肩与手臂；水平推拉为主", "Chest, back, shoulders, and arms; horizontal push/pull emphasis"],
+        ["股四头肌、臀肌、腘绳肌与小腿；深蹲模式为主", "Quads, glutes, hamstrings, and calves; squat-pattern emphasis"],
+        ["胸、背、肩与手臂；垂直推拉和容量补量", "Chest, back, shoulders, and arms; vertical push/pull plus accessory volume"],
+        ["臀肌、腘绳肌、股四头肌与小腿；髋主导为主", "Glutes, hamstrings, quads, and calves; hip-hinge emphasis"],
+        ["胸、肩、肱三头肌；水平推为主", "Chest, shoulders, and triceps; horizontal press emphasis"],
+        ["胸、肩、肱三头肌；核心多关节推举优先", "Chest, shoulders, and triceps; compound presses first"],
+        ["背部、后三角、肱二头肌；垂直拉与水平拉", "Back, rear delts, and biceps; vertical and horizontal pulling"],
+        ["股四头肌、臀肌、腘绳肌与小腿；下肢复合项优先", "Quads, glutes, hamstrings, and calves; compound lower-body work first"],
+        ["胸、肩、肱三头肌；上斜推与肩部容量", "Chest, shoulders, and triceps; incline pressing and shoulder volume"],
+        ["背部、后三角、肱二头肌；划船与背阔肌补量", "Back, rear delts, and biceps; rowing and lat accessory work"],
+        ["胸、肩、肱三头肌；弱项辅助", "Chest, shoulders, and triceps; weak-point accessories"],
+        ["背部、后三角、肱二头肌；弱项辅助", "Back, rear delts, and biceps; weak-point accessories"],
+        ["臀腿与小腿；弱项辅助", "Glutes, legs, and calves; weak-point accessories"],
+        ["下肢推、水平推拉与后侧链；覆盖全身大肌群", "Lower-body push, horizontal push/pull, and posterior chain; covers major muscle groups"],
+        ["髋主导、垂直推拉与单腿训练；覆盖全身大肌群", "Hip hinge, vertical push/pull, and unilateral leg work; covers major muscle groups"],
+        ["单腿、上斜推拉与臀腿补量；覆盖全身大肌群", "Unilateral legs, incline push/pull, and lower-body accessories; covers major muscle groups"],
+        ["膝主导、水平推拉、髋主导与躯干稳定", "Knee-dominant work, horizontal push/pull, hip hinge, and trunk stability"],
+        ["髋主导、垂直推拉、单腿训练与躯干稳定", "Hip hinge, vertical push/pull, unilateral legs, and trunk stability"],
+        ["单腿、上斜推、背部容量与基础核心", "Unilateral legs, incline pressing, back volume, and core fundamentals"],
+        ["水平推拉、肩部与手臂辅助", "Horizontal push/pull with shoulder and arm accessories"],
+        ["深蹲模式、单腿训练与小腿", "Squat patterns, unilateral leg work, and calves"],
+        ["垂直推拉、背部与手臂辅助", "Vertical push/pull with back and arm accessories"],
+        ["髋主导、臀腿后侧与小腿", "Hip hinge, posterior legs, and calves"],
+        ["当前数据仅保存在此设备。", "Data is currently stored only on this device."],
+        ["登录后，训练数据会自动同步到你的账户。", "Your training data syncs automatically after sign-in."],
+        ["本计划所有周都使用这组训练日。", "Use these training days for every week of this plan."],
+        ["只调整当前计划周，下一周恢复本计划设置。", "Change only the current week; the plan schedule returns next week."],
+        ["训练前健康筛查与风险建议", "Pre-training health screening and risk guidance"],
+        ["完成问卷后，系统会给出风险等级及开始训练的建议。", "Complete the questionnaire to receive a risk level and guidance for starting training."],
+        ["请根据当前健康情况填写；存在红旗症状时应先获得医学许可。", "Answer based on your current health. Obtain medical clearance first if red-flag symptoms are present."],
+        ["医生是否告知你有心脏病、高血压，或建议运动前先获得许可？", "Has a doctor told you that you have heart disease or high blood pressure, or advised clearance before exercise?"],
+        ["运动或日常活动中，是否出现胸部、颈部、下颌、手臂疼痛或压迫感？", "Do you experience pain or pressure in the chest, neck, jaw, or arms during exercise or daily activity?"],
+        ["过去 12 个月是否出现眩晕、昏厥，或运动时明显呼吸困难？", "In the past 12 months, have you had dizziness, fainting, or marked shortness of breath during exercise?"],
+        ["是否已确诊心肺代谢病、癌症、骨质疏松、关节炎、中风/TIA 或脊髓损伤？", "Have you been diagnosed with cardiopulmonary or metabolic disease, cancer, osteoporosis, arthritis, stroke/TIA, or spinal cord injury?"],
+        ["是否正在服用会影响心率、血压、血糖、呼吸或运动耐受的药物？", "Are you taking medication that affects heart rate, blood pressure, blood glucose, breathing, or exercise tolerance?"],
+        ["过去 12 个月是否有骨骼、关节、肌肉、韧带或肌腱损伤/疼痛？", "In the past 12 months, have you had bone, joint, muscle, ligament, or tendon injury or pain?"],
+        ["近期是否做过手术、住院，或医生要求限制某类运动？", "Have you recently had surgery or hospitalization, or been told to restrict certain exercise?"],
+        ["父亲/兄弟/儿子 55 岁前，或母亲/姐妹/女儿 65 岁前是否发生心脏病或猝死？", "Did a father, brother, or son before age 55, or a mother, sister, or daughter before age 65, have heart disease or sudden death?"],
+        ["当前是否吸烟，或过去 6 个月戒烟，或长期暴露于二手烟？", "Do you currently smoke, quit within the past 6 months, or have long-term secondhand-smoke exposure?"],
+        ["每周中等强度活动是否少于 150 分钟，或多数时间久坐？", "Do you get less than 150 minutes of moderate activity per week or spend most of your time sitting?"],
+        ["BMI 是否 ≥30，或男性腰围 >102cm / 女性腰围 >88cm？", "Is BMI at least 30, or waist circumference above 102 cm for men or 88 cm for women?"],
+        ["血压是否 ≥130/80mmHg，或正在服用降压药？", "Is blood pressure at least 130/80 mmHg, or are you taking antihypertensive medication?"],
+        ["血脂是否异常：LDL、非 HDL、总胆固醇偏高，或 HDL 偏低？", "Are blood lipids abnormal, including high LDL, non-HDL, or total cholesterol, or low HDL?"],
+        ["空腹血糖、OGTT 或 HbA1C 是否达到糖代谢异常范围？", "Are fasting glucose, OGTT, or HbA1C values in an abnormal glycemic range?"],
+        ["若已知 HDL-C，是否 ≥60mg/dL，可作为一个保护因素？", "If known, is HDL-C at least 60 mg/dL, which can count as a protective factor?"],
+        ["未发现红旗症状或明确疾病限制。仍建议循序渐进，并在训练中持续观察反应。", "No red-flag symptoms or clear disease restrictions were identified. Progress gradually and monitor your response during training."],
+        ["填写年龄、性别、体重和跑步用时后，点击心肺评估。", "Enter age, sex, weight, and run time, then select Cardio assessment."],
+        ["选择教材指定器械动作并填写 10RM，按实际年龄、生理性别和体重给出同组参考。", "Choose a specified machine exercise and enter 10RM to compare by age, sex, and body weight."],
+        ["先升温与活动关节，再用动态动作进入主训练。", "Raise body temperature and mobilize the joints before progressing to dynamic preparation."],
+        ["恢复呼吸后，选择与本次训练相关的静态拉伸。", "After breathing recovers, choose static stretches relevant to the workout."],
+        ["选择部位和器械，快速找到适合的抗阻动作。", "Choose a body area and equipment to find suitable resistance exercises."],
+        ["记录同一动作的训练组后，这里会显示负荷与预估 1RM 的变化。", "Log sets for the same exercise to view changes in load and estimated 1RM."],
+        ["内容为原创训练教育整理，参考 NSCA-CPT 的训练评估、动作教学、渐进负荷与恢复管理原则。", "Original training education content informed by NSCA-CPT principles for assessment, exercise instruction, progressive overload, and recovery."],
+        ["正在加载本地动作库...", "Loading the local exercise library..."],
+        ["当前体重 kg", "Current body weight (kg)"],
+        ["静息心率 次/分", "Resting heart rate (bpm)"],
+        ["跑步测试", "Run test"],
+        ["完成时间 分钟", "Completion time (minutes)"],
+        ["跑后 1 分钟心率 次/分", "Heart rate 1 minute after run (bpm)"],
+        ["该动作 10RM kg", "Exercise 10RM (kg)"],
+        ["最后两次动作质量", "Quality of the final two reps"],
+        ["动作顺序：爆发力动作（如适用）→ 核心多关节动作 → 辅助动作 → 躯干稳定与整理。", "Exercise order: power work (when applicable) → core compound lifts → accessory work → trunk stability and cooldown."],
+        ["2-for-2：最后一组连续两次训练均能多完成 2 次以上，再增加负重。", "2-for-2 rule: increase load after exceeding the target by at least 2 reps in the final set for two consecutive workouts."],
+        ["上肢每次增加 1-2.5 kg 或 2.5%-5%；下肢增加 2.5-5 kg 或 5%-10%。", "Increase upper-body loads by 1-2.5 kg or 2.5%-5%; increase lower-body loads by 2.5-5 kg or 5%-10%."],
+        ["第 4 周减少约 40%-50% 训练组数，为下一周期恢复。", "Reduce sets by about 40%-50% in week 4 to recover for the next cycle."],
+        ["初级阶段优先固定动作模式和线性递进，不自动编排每周 4 天以上的抗阻训练。", "Beginners should prioritize consistent movement patterns and linear progression; resistance training is capped at three days per week."],
+        ["分化安排为同一肌群保留至少 48 小时恢复时间。", "Split routines allow at least 48 hours of recovery before training the same muscle group again."],
+        ["高风险结果：正式训练或强度升级前，先取得医生或合格医疗专业人员许可。", "High-risk result: obtain clearance from a physician or qualified medical professional before starting formal training or increasing intensity."],
+        ["中风险结果：前 2-4 周以动作学习和较轻 RM 强度为主，记录血压和疼痛反应。", "Moderate-risk result: focus on movement learning and lighter RM intensity for the first 2-4 weeks, while monitoring blood pressure and pain."],
+        ["力量目标需要更长休息，避免把主项做成疲劳训练。", "Strength goals require longer rest intervals; avoid turning main lifts into fatigue work."],
+        ["爆发力动作以速度和技术质量为先；出现速度明显下降时结束该动作。", "For power exercises, prioritize speed and technique; stop the exercise when speed clearly declines."],
+        ["肌耐力目标优先保持连续动作质量，避免在疲劳下以代偿完成次数。", "For muscular endurance, maintain consistent movement quality and avoid compensating to finish reps under fatigue."],
+        ["初学者：规律抗阻 < 6 个月", "Beginner: consistent resistance training under 6 months"],
+        ["中级：规律抗阻 6-12 个月", "Intermediate: 6-12 months of consistent resistance training"],
+        ["高级：系统抗阻 > 1 年", "Advanced: over 1 year of structured resistance training"],
+        ["每周 2 天", "2 days/week"], ["每周 3 天", "3 days/week"], ["每周 4 天", "4 days/week"],
+        ["每周 5 天", "5 days/week"], ["每周 6 天", "6 days/week"],
+        ["生成 4 周周期课表", "Create four-week plan"],
+        ["稳定、无疼痛", "Stable and pain-free"],
+        ["出现代偿或疼痛", "Compensation or pain"],
+        ["训练重量 kg", "Training weight (kg)"],
+        ["第几组（可选）", "Set number (optional)"],
+        ["本组预估 1RM", "Estimated 1RM for this set"],
+        ["已完成训练", "Completed training"],
+        ["实做重量", "Actual load"],
+        ["部位", "Body area"],
+        ["热身", "Warm-up"],
+        ["拉伸", "Stretching"],
+        ["一", "Mon"], ["二", "Tue"], ["三", "Wed"], ["四", "Thu"], ["五", "Fri"], ["六", "Sat"], ["日", "Sun"]
       ].forEach(([zh, en]) => exactEnglishTranslations.set(zh, en));
 
       const englishTermReplacements = [
+        ["当前微周期", "Current microcycle"], ["今日训练", "Today's workout"], ["查看详情", "View details"], ["开始训练", "Start workout"],
+        ["下个训练日计划", "Next workout"], ["当前四周周期已无后续训练日", "No more workouts remain in this four-week cycle"],
+        ["可在计划页调整或生成下一周期", "Adjust the plan or create the next cycle on the Plan page"],
+        ["主训练动作", "Main exercises"], ["完成训练", "Complete workout"], ["记录数据", "Log data"],
+        ["返回首页", "Back to Home"], ["选择训练日", "Select a workout"], ["计划日期", "Scheduled date"], ["当周训练", "This week's training"],
+        ["动作详情", "exercise details"], ["动作示例", "exercise demonstration"],
+        ["间歇", "Rest"], ["主项", "Main lifts"], ["本周", "This week"], ["建议负荷", "Suggested load"],
+        ["计划第一周", "Plan week 1"], ["计划第二周", "Plan week 2"], ["计划第三周", "Plan week 3"], ["计划第四周", "Plan week 4"],
         ["第一周", "Week 1"], ["第二周", "Week 2"], ["第三周", "Week 3"], ["第四周", "Week 4"],
         ["每周", "per week"], ["训练日", "Training day"], ["已完成", "Completed"], ["休息日", "Rest day"],
         ["周日", "Sun"], ["周一", "Mon"], ["周二", "Tue"], ["周三", "Wed"], ["周四", "Thu"], ["周五", "Fri"], ["周六", "Sat"],
         ["胸部", "Chest"], ["背部", "Back"], ["肩部", "Shoulders"], ["手臂", "Arms"], ["腿部", "Legs"], ["臀部", "Glutes"], ["核心", "Core"],
         ["徒手", "Bodyweight"], ["哑铃", "Dumbbells"], ["杠铃", "Barbell"], ["固定器械", "Machine"], ["绳索器械", "Cable"], ["药球", "Medicine ball"],
+        ["髋外展肌群", "Hip abductors"], ["髋内收肌群", "Hip adductors"], ["腹部肌群", "Abdominals"],
+        ["股四头肌", "Quadriceps"], ["腘绳肌", "Hamstrings"], ["肱三头肌", "Triceps"], ["肱二头肌", "Biceps"],
+        ["背阔肌", "Lats"], ["中背部", "Middle back"], ["下背部", "Lower back"], ["斜方肌", "Trapezius"],
+        ["臀肌", "Glutes"], ["前臂", "Forearms"], ["小腿", "Calves"], ["腹部", "Abdominals"],
+        ["弹力带", "Resistance bands"], ["健身球", "Exercise ball"], ["其他", "Other"], ["未提供", "Not specified"], ["静态", "Static"],
         ["初级", "Beginner"], ["中级", "Intermediate"], ["高级", "Advanced"],
+        ["男性", "Male"], ["女性", "Female"], ["男", "Male"], ["女", "Female"], ["岁", "years"],
         ["增肌", "Hypertrophy"], ["肌耐力", "Muscular endurance"], ["爆发力", "Power"], ["力量", "Strength"],
         ["复合动作", "Compound"], ["孤立动作", "Isolation"], ["个动作", " exercises"]
-      ];
+      ].sort((a, b) => b[0].length - a[0].length);
       const originalInterfaceText = new WeakMap();
       const translatedInterfaceText = new WeakMap();
+      const originalInterfaceAttributes = new WeakMap();
       let localizationQueued = false;
 
       function translateInterfaceText(value) {
@@ -6769,8 +7043,49 @@
           .replace(/(\d+(?:\.\d+)?)\s*组/g, "$1 sets")
           .replace(/(\d+(?:\.\d+)?)\s*次/g, "$1 reps")
           .replace(/(\d+(?:\.\d+)?)\s*秒/g, "$1 sec")
-          .replace(/(\d+(?:\.\d+)?)\s*天/g, "$1 days");
+          .replace(/(\d+(?:\.\d+)?)\s*天/g, "$1 days")
+          .replace(/，/g, ", ")
+          .replace(/；/g, "; ")
+          .replace(/：/g, ": ")
+          .replace(/。/g, ".")
+          .replace(/（/g, " (")
+          .replace(/）/g, ")")
+          .replace(/、/g, ", ")
+          .replace(/\s+([,.;:])/g, "$1")
+          .replace(/\s{2,}/g, " ");
+        if (/[\u3400-\u9fff]/.test(translated)) {
+          console.warn("[FitMine i18n] Missing English translation:", core);
+          const safeEnglish = translated
+            .replace(/[\u3400-\u9fff]+/g, " ")
+            .replace(/\s+([,.;:])/g, "$1")
+            .replace(/([,.;:]){2,}/g, "$1")
+            .replace(/\s{2,}/g, " ")
+            .trim();
+          translated = /[A-Za-z0-9]/.test(safeEnglish) ? safeEnglish : "English translation unavailable";
+        }
         return `${leading}${translated}${trailing}`;
+      }
+
+      function localizeInterfaceAttributes(root = document.body) {
+        const elements = [];
+        if (root instanceof Element && root.matches("[placeholder], [aria-label], [title]")) elements.push(root);
+        root.querySelectorAll?.("[placeholder], [aria-label], [title]").forEach((element) => elements.push(element));
+        elements.forEach((element) => {
+          const saved = originalInterfaceAttributes.get(element) || {};
+          ["placeholder", "aria-label", "title"].forEach((attribute) => {
+            if (!element.hasAttribute(attribute)) return;
+            const current = element.getAttribute(attribute) || "";
+            if (appLanguage === "zh") {
+              if (saved[attribute]) element.setAttribute(attribute, saved[attribute]);
+              return;
+            }
+            if (!saved[attribute] && /[\u3400-\u9fff]/.test(current)) saved[attribute] = current;
+            const source = saved[attribute] || current;
+            const translated = translateInterfaceText(source);
+            if (translated !== current) element.setAttribute(attribute, translated);
+          });
+          if (Object.keys(saved).length) originalInterfaceAttributes.set(element, saved);
+        });
       }
 
       function localizeTextNodes(root = document.body) {
@@ -6796,6 +7111,25 @@
             }
           }
         });
+        localizeInterfaceAttributes(root);
+      }
+
+      function findUnexpectedChinese(root = document.body) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        const residual = [];
+        while (walker.nextNode()) {
+          const node = walker.currentNode;
+          const parent = node.parentElement;
+          if (!parent || parent.closest("script, style, [data-no-i18n]")) continue;
+          if (/[\u3400-\u9fff]/.test(node.nodeValue || "")) residual.push(node.nodeValue.trim());
+        }
+        root.querySelectorAll?.("[placeholder], [aria-label], [title]").forEach((element) => {
+          ["placeholder", "aria-label", "title"].forEach((attribute) => {
+            const value = element.getAttribute(attribute) || "";
+            if (/[\u3400-\u9fff]/.test(value)) residual.push(value);
+          });
+        });
+        return residual.filter(Boolean);
       }
 
       function queueLocalization() {
@@ -6842,7 +7176,14 @@
 
       new MutationObserver(() => {
         if (appLanguage === "en") queueLocalization();
-      }).observe(document.body, { childList: true, subtree: true, characterData: true });
+      }).observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["placeholder", "aria-label", "title"] });
+
+      window.FitMineI18n = {
+        applyLanguage,
+        translate: translateInterfaceText,
+        findUnexpectedChinese,
+        get language() { return appLanguage; }
+      };
 
       const legacyExerciseGuides = {
         胸部: [
@@ -7524,7 +7865,7 @@
         });
         if (activeId === "exercise-detail") renderExerciseDetail();
         else cleanupExerciseAnimations();
-        const activeNavId = ["evaluation", "account-management", "language-settings"].includes(activeId) ? "me" : activeId;
+        const activeNavId = ["evaluation", "account-management", "settings", "language-settings"].includes(activeId) ? "me" : activeId;
         document.querySelectorAll(".nav a, .mobile-nav a").forEach((link) => {
           link.setAttribute(
             "aria-current",
@@ -7851,19 +8192,19 @@
           .map((percentile, index) => {
             const isCurrent = result.percentile === percentile;
             const targetLoad = weightIsValid ? `${(thresholds[index] * weight).toFixed(1)} kg` : "-";
-            return `<tr${isCurrent ? ' class="is-current"' : ""}><td>P${percentile}</td><td>${thresholds[index].toFixed(2)} 倍</td><td>${targetLoad}</td></tr>`;
+            return `<tr${isCurrent ? ' class="is-current"' : ""}><td>P${percentile}</td><td>${thresholds[index].toFixed(2)}${appLanguage === "en" ? " × body weight" : " 倍"}</td><td>${targetLoad}</td></tr>`;
           })
           .join("");
 
         container.innerHTML = `
           <div class="strength-norms-head">
-            <h4>力量水平同组百分位</h4>
-            <span class="chip">${sexLabels[sex]} · ${band} 岁</span>
+            <h4>${appLanguage === "en" ? "Strength percentile by peer group" : "力量水平同组百分位"}</h4>
+            <span class="chip">${appLanguage === "en" ? translateInterfaceText(sexLabels[sex]) : sexLabels[sex]} · ${band}${appLanguage === "en" ? " years" : " 岁"}</span>
           </div>
-          <p>${exerciseName} · 相对力量 = 估算 1RM ÷ 体重</p>
+          <p>${appLanguage === "en" ? `${translateInterfaceText(exerciseName)} · Relative strength = estimated 1RM ÷ body weight` : `${exerciseName} · 相对力量 = 估算 1RM ÷ 体重`}</p>
           <div class="strength-norms-scroll">
             <table class="strength-norms-table">
-              <thead><tr><th>百分位</th><th>相对力量</th><th>对应 1RM</th></tr></thead>
+              <thead><tr><th>${appLanguage === "en" ? "Percentile" : "百分位"}</th><th>${appLanguage === "en" ? "Relative strength" : "相对力量"}</th><th>${appLanguage === "en" ? "Equivalent 1RM" : "对应 1RM"}</th></tr></thead>
               <tbody>${rows}</tbody>
             </table>
           </div>
@@ -7951,8 +8292,8 @@
           Number.isFinite(load) && load > 0 && load <= 500;
 
         if (!hasValidStrengthInputs) {
-          document.querySelector("#strengthTitle").textContent = "请检查输入";
-          document.querySelector("#strengthText").textContent = "年龄需为 20-79 岁，体重 25-250 kg，10RM 需大于 0 kg。";
+          document.querySelector("#strengthTitle").textContent = appLanguage === "en" ? "Check your entries" : "请检查输入";
+          document.querySelector("#strengthText").textContent = appLanguage === "en" ? "Age must be 20-79, body weight 25-250 kg, and 10RM greater than 0 kg." : "年龄需为 20-79 岁，体重 25-250 kg，10RM 需大于 0 kg。";
           document.querySelector("#strengthDetails").innerHTML = "";
           renderStrengthNorms({
             table: strengthTable,
@@ -7971,18 +8312,21 @@
         const strengthExplanation = strengthPercentileExplanation(strengthResult);
 
         document.querySelector("#strengthTitle").textContent = hasCompensation
-          ? "结果待动作质量确认"
-          : strengthExplanation;
+          ? appLanguage === "en" ? "Confirm movement quality before using this result" : "结果待动作质量确认"
+          : translateInterfaceText(strengthExplanation);
         document.querySelector("#strengthText").textContent =
           hasCompensation
-            ? "先确认动作质量与无疼痛，再采用本次负重进行比较。"
+            ? appLanguage === "en" ? "Confirm pain-free movement quality before comparing this load." : "先确认动作质量与无疼痛，再采用本次负重进行比较。"
             : strengthResult.percentile < 10
-              ? "处于同年龄、同性别参考人群最低 10% 区间，具体超过比例未知。"
-              : `${percentileComparison(strengthResult)} 的同年龄、同性别参考人群`;
-        document.querySelector("#strengthDetails").innerHTML = [
+              ? appLanguage === "en" ? "In the lowest 10% of the reference group for the same age and sex; the exact comparison is unavailable." : "处于同年龄、同性别参考人群最低 10% 区间，具体超过比例未知。"
+              : appLanguage === "en" ? `Above about ${strengthResult.percentile}% of the reference group for the same age and sex.` : `${percentileComparison(strengthResult)} 的同年龄、同性别参考人群`;
+        document.querySelector("#strengthDetails").innerHTML = (appLanguage === "en" ? [
+          `Estimated 1RM ${estimatedLoad.toFixed(1)} kg · Relative strength ${relativeLoad.toFixed(2)} × body weight`,
+          hasCompensation ? "Recommendation: address compensation or pain before retesting." : strengthResult.percentile >= 50 ? "Recommendation: maintain movement quality while gradually increasing load or training volume." : "Recommendation: prioritize technique and foundational volume before increasing load."
+        ] : [
           `估算 1RM ${estimatedLoad.toFixed(1)} kg · 相对力量 ${relativeLoad.toFixed(2)} 倍体重`,
           hasCompensation ? "建议：先处理动作代偿或疼痛，再进行下一次测试。" : strengthResult.percentile >= 50 ? "建议：保持动作质量，逐步增加负荷或训练容量。" : "建议：优先练习动作技术与基础容量，再提高负荷。"
-        ].map((item) => `<li>${item}</li>`).join("");
+        ]).map((item) => `<li>${item}</li>`).join("");
         renderStrengthNorms({
           table: strengthTable,
           sex: strengthSex,
@@ -8842,22 +9186,26 @@
 
       function workoutActionCardTemplate(item, index, type = "训练") {
         const exercise = libraryExerciseForWorkout(item, type);
+        const displayName = appLanguage === "en" ? (exercise.nameEn || exercise.nameZh) : exercise.nameZh;
+        const secondaryName = appLanguage === "en" ? "" : exercise.nameEn;
         const prescription = item.prescription
           ? type === "训练"
-            ? `${item.prescription} · 间歇 ${item.rest}`
-            : item.prescription
-          : "按舒适范围完成";
+            ? appLanguage === "en"
+              ? `${translateInterfaceText(item.prescription)} · Rest ${translateInterfaceText(item.rest || "-")}`
+              : `${item.prescription} · 间歇 ${item.rest}`
+            : translateInterfaceText(item.prescription)
+          : appLanguage === "en" ? "Complete within a comfortable range" : "按舒适范围完成";
         const logEntry = type === "训练"
-          ? `<button class="workout-log-link" type="button" data-log-workout-exercise="${exercise.id}" data-log-workout-reps="${item.prescription || ""}" data-log-workout-sets="${getExerciseSetCount(item)}" data-log-workout-date="${activeWorkoutDay?.date || today}" data-log-workout-plan-id="${activeWorkoutDay?.id || ""}">记录数据</button>`
+          ? `<button class="workout-log-link" type="button" data-log-workout-exercise="${exercise.id}" data-log-workout-reps="${item.prescription || ""}" data-log-workout-sets="${getExerciseSetCount(item)}" data-log-workout-date="${activeWorkoutDay?.date || today}" data-log-workout-plan-id="${activeWorkoutDay?.id || ""}">${appLanguage === "en" ? "Log data" : "记录数据"}</button>`
           : "";
         return `
           <article class="workout-action-card">
-            <button class="workout-action-open" type="button" data-open-workout-exercise="${exercise.id}" aria-label="查看${exercise.nameZh}动作详情">
+            <button class="workout-action-open" type="button" data-open-workout-exercise="${exercise.id}" aria-label="${appLanguage === "en" ? `View ${displayName} details` : `查看${exercise.nameZh}动作详情`}">
               <span class="workout-action-number">${index + 1}</span>
-              <img class="workout-action-image" data-library-image data-image-loading="true" data-src="${exercise.startImage || EXERCISE_PLACEHOLDER_IMAGE}" src="${EXERCISE_PLACEHOLDER_IMAGE}" width="66" height="66" alt="${exercise.nameZh} 动作示例" loading="lazy" decoding="async">
+              <img class="workout-action-image" data-library-image data-image-loading="true" data-src="${exercise.startImage || EXERCISE_PLACEHOLDER_IMAGE}" src="${EXERCISE_PLACEHOLDER_IMAGE}" width="66" height="66" alt="${appLanguage === "en" ? `${displayName} demonstration` : `${exercise.nameZh} 动作示例`}" loading="lazy" decoding="async">
               <span class="workout-action-content">
-                <b>${exercise.nameZh}</b>
-                <small>${exercise.nameEn}</small>
+                <b>${displayName}</b>
+                ${secondaryName ? `<small>${secondaryName}</small>` : ""}
                 <span>${prescription}</span>
               </span>
             </button>
@@ -8879,12 +9227,12 @@
         const preparation = getTargetedPreparation(workout);
         const recordedExercises = records.find((item) => item.planDayId === workout.id)?.exercises || [];
         workoutDetail.innerHTML = `
-          <button class="ghost-btn detail-back" type="button" data-workout-back>返回首页</button>
+          <button class="ghost-btn detail-back" type="button" data-workout-back>${appLanguage === "en" ? "Back to Home" : "返回首页"}</button>
           <div class="workout-overview">
-            <span class="chip">${workout.title}</span>
-            <h2>${workout.name}</h2>
-            <p>${workout.description}</p>
-            <p class="muted">计划日期 ${workout.date} · ${workout.period?.title || "当周训练"} · ${workout.period?.rm || workout.plan.rm}</p>
+            <span class="chip">${appLanguage === "en" ? `Plan week ${workout.weekIndex + 1} · Training day ${workout.dayIndex + 1}` : workout.title}</span>
+            <h2>${translateInterfaceText(workout.name)}</h2>
+            <p>${translateInterfaceText(workout.description)}</p>
+            <p class="muted">${appLanguage === "en" ? `Scheduled date ${workout.date} · ${translateInterfaceText(workout.period?.title || "当周训练")} · ${workout.period?.rm || workout.plan.rm}` : `计划日期 ${workout.date} · ${workout.period?.title || "当周训练"} · ${workout.period?.rm || workout.plan.rm}`}</p>
           </div>
           <div class="workout-flow">
             <h3 class="flow-heading">训练前热身</h3>
@@ -8901,7 +9249,7 @@
             </div>
           </div>
           <button class="primary-btn workout-complete" type="button" data-complete-workout ${completed ? "disabled" : ""}>
-            ${completed ? "已完成" : "完成训练"}
+            ${appLanguage === "en" ? (completed ? "Completed" : "Complete workout") : (completed ? "已完成" : "完成训练")}
           </button>
         `;
         observeLibraryImages();
@@ -9003,13 +9351,15 @@
 
       function formatPeriodIntensity(load) {
         const match = String(load || "").match(/\d+(?:-\d+(?:\.\d+)?)?%/);
+        if (appLanguage === "en") return match ? `Intensity ${match[0]}` : "Adjusted intensity";
         return match ? `强度 ${match[0]}` : "强度调整";
       }
 
       function renderPlan() {
         const profile = getProfile();
         const plan = buildPlan(profile);
-        const title = `${planNames[profile.goal]} · 每周 ${plan.days} 天`;
+        const goalName = translateInterfaceText(planNames[profile.goal]);
+        const title = appLanguage === "en" ? `${goalName} · ${plan.days} days/week` : `${planNames[profile.goal]} · 每周 ${plan.days} 天`;
         const planVisible = hasGeneratedPlan() || isEditingPlan;
         document.querySelector("#planTitle").textContent = planVisible ? title : "训练计划";
         document.querySelector("#planSummary").textContent = planVisible
@@ -9026,30 +9376,32 @@
           .map((period, index) => `
             <button class="period-card" type="button" data-period-week="${index}" aria-pressed="${index === activePlanWeekIndex}">
               <small>Week ${String(index + 1).padStart(2, "0")}</small>
-              <strong>${period.title}</strong>
+              <strong>${translateInterfaceText(period.title)}</strong>
               <span>${formatPeriodIntensity(period.load)}</span>
             </button>
           `)
           .join("");
-        activeWeekKicker.textContent = `当前微周期 · ${activePeriod.label}`;
-        activeWeekTitle.textContent = activePeriod.title;
-        activeWeekFocus.textContent = activePeriod.focus;
-        activeWeekPrescription.textContent = `${activePeriod.sets} 组 × ${activePeriod.reps}`;
-        document.querySelector("#planMetricSetsNote").textContent = `本周 ${activePeriod.sets} 组`;
+        activeWeekKicker.textContent = appLanguage === "en" ? `Current microcycle · Week ${activePlanWeekIndex + 1}` : `当前微周期 · ${activePeriod.label}`;
+        activeWeekTitle.textContent = translateInterfaceText(activePeriod.title);
+        activeWeekFocus.textContent = translateInterfaceText(activePeriod.focus);
+        activeWeekPrescription.textContent = appLanguage === "en" ? `${activePeriod.sets} sets × ${translateInterfaceText(activePeriod.reps)}` : `${activePeriod.sets} 组 × ${activePeriod.reps}`;
+        document.querySelector("#planMetricSetsNote").textContent = appLanguage === "en" ? `${activePeriod.sets} sets this week` : `本周 ${activePeriod.sets} 组`;
         const planStartDate = getPlanStartDate();
         weekPlan.innerHTML = plan.split
           .map(([day, text], index) => {
             const scheduledDate = getPlanDayDate(planStartDate, activePlanWeekIndex, index, profile, plan);
             return `
-              <button class="day plan-training-day" type="button" data-plan-day="${index}" aria-label="查看${activePeriod.label}训练日${index + 1}的动作详情">
-                <strong>训练日${index + 1} · ${day}</strong>
-                <span>${text}<br><small class="muted">${formatPlanDateLabel(scheduledDate)} · 主项 ${activePeriod.sets} 组 × ${activePeriod.reps} · 间歇 ${activePeriod.rest}</small></span>
+              <button class="day plan-training-day" type="button" data-plan-day="${index}" aria-label="${appLanguage === "en" ? `View week ${activePlanWeekIndex + 1}, training day ${index + 1}` : `查看${activePeriod.label}训练日${index + 1}的动作详情`}">
+                <strong>${appLanguage === "en" ? `Training day ${index + 1} · ${translateInterfaceText(day)}` : `训练日${index + 1} · ${day}`}</strong>
+                <span>${translateInterfaceText(text)}<br><small class="muted">${formatPlanDateLabel(scheduledDate)} · ${appLanguage === "en" ? `Main lifts ${activePeriod.sets} sets × ${translateInterfaceText(activePeriod.reps)} · Rest ${translateInterfaceText(activePeriod.rest)}` : `主项 ${activePeriod.sets} 组 × ${activePeriod.reps} · 间歇 ${activePeriod.rest}`}</small></span>
               </button>
             `;
           })
           .join("");
         const rules = [
-          `本周主项：${activePeriod.sets} 组 × ${activePeriod.reps}，建议负荷 ${activePeriod.load}（${activePeriod.rm}）。`,
+          appLanguage === "en"
+            ? `Main lifts this week: ${activePeriod.sets} sets × ${translateInterfaceText(activePeriod.reps)}, suggested load ${activePeriod.load} (${activePeriod.rm}).`
+            : `本周主项：${activePeriod.sets} 组 × ${activePeriod.reps}，建议负荷 ${activePeriod.load}（${activePeriod.rm}）。`,
           "动作顺序：爆发力动作（如适用）→ 核心多关节动作 → 辅助动作 → 躯干稳定与整理。",
           "2-for-2：最后一组连续两次训练均能多完成 2 次以上，再增加负重。",
           "上肢每次增加 1-2.5 kg 或 2.5%-5%；下肢增加 2.5-5 kg 或 5%-10%。",
@@ -9066,9 +9418,9 @@
         if (profile.goal === "strength") rules.push("力量目标需要更长休息，避免把主项做成疲劳训练。");
         if (profile.goal === "power") rules.push("爆发力动作以速度和技术质量为先；出现速度明显下降时结束该动作。");
         if (profile.goal === "endurance") rules.push("肌耐力目标优先保持连续动作质量，避免在疲劳下以代偿完成次数。");
-        loadRules.innerHTML = rules.map((rule) => `<li>${rule}</li>`).join("");
+        loadRules.innerHTML = rules.map((rule) => `<li>${translateInterfaceText(rule)}</li>`).join("");
         document.querySelector("#loadBar").style.setProperty("--w", `${Math.min(88, activePeriod.sets * 21)}%`);
-        document.querySelector("#volumeHint").textContent = `${activePeriod.focus} ${plan.risk.level === "unassessed" ? "建议在正式训练前完成风险评估。" : ""}`;
+        document.querySelector("#volumeHint").textContent = translateInterfaceText(`${activePeriod.focus} ${plan.risk.level === "unassessed" ? "建议在正式训练前完成风险评估。" : ""}`);
         updatePlanMode(profile, plan);
         renderHome();
       }
@@ -9263,7 +9615,7 @@
         if (!saved) {
           container.innerHTML = `
             <article class="home-today-card is-rest">
-              <div><span class="home-today-kicker">未安排</span><h3>今日暂无训练计划</h3><p>保存训练计划后，这里会显示当天训练内容。</p></div>
+              <div><span class="home-today-kicker">${appLanguage === "en" ? "Not scheduled" : "未安排"}</span><h3>${appLanguage === "en" ? "No workout scheduled today" : "今日暂无训练计划"}</h3><p>${appLanguage === "en" ? "Save a training plan to see today's workout here." : "保存训练计划后，这里会显示当天训练内容。"}</p></div>
             </article>
           `;
           return;
@@ -9276,12 +9628,12 @@
           container.innerHTML = `
             <article class="home-today-card">
               <div>
-                <span class="home-today-kicker">${completed ? "已完成" : todayWorkout.period?.label || "今日训练"}</span>
-                <h3>训练日${todayWorkout.dayIndex + 1} · ${todayWorkout.day}</h3>
-                <p>${todayWorkout.text}</p>
-                <small class="home-today-meta">主项 ${todayWorkout.period?.sets || "-"} 组 × ${todayWorkout.period?.reps || plan.reps} · 间歇 ${todayWorkout.period?.rest || plan.rest}</small>
+                <span class="home-today-kicker">${appLanguage === "en" ? (completed ? "Completed" : `Week ${todayWorkout.weekIndex + 1}`) : (completed ? "已完成" : todayWorkout.period?.label || "今日训练")}</span>
+                <h3>${appLanguage === "en" ? `Training day ${todayWorkout.dayIndex + 1} · ${translateInterfaceText(todayWorkout.day)}` : `训练日${todayWorkout.dayIndex + 1} · ${todayWorkout.day}`}</h3>
+                <p>${translateInterfaceText(todayWorkout.text)}</p>
+                <small class="home-today-meta">${appLanguage === "en" ? `Main lifts ${todayWorkout.period?.sets || "-"} sets × ${translateInterfaceText(todayWorkout.period?.reps || plan.reps)} · Rest ${translateInterfaceText(todayWorkout.period?.rest || plan.rest)}` : `主项 ${todayWorkout.period?.sets || "-"} 组 × ${todayWorkout.period?.reps || plan.reps} · 间歇 ${todayWorkout.period?.rest || plan.rest}`}</small>
               </div>
-              <button class="home-today-action" type="button" data-view-day data-week-index="${todayWorkout.weekIndex}" data-day-index="${todayWorkout.dayIndex}">${completed ? "查看详情" : "开始训练"}</button>
+              <button class="home-today-action" type="button" data-view-day data-week-index="${todayWorkout.weekIndex}" data-day-index="${todayWorkout.dayIndex}">${appLanguage === "en" ? (completed ? "View details" : "Start workout") : (completed ? "查看详情" : "开始训练")}</button>
             </article>
           `;
           return;
@@ -9291,14 +9643,14 @@
         container.innerHTML = `
           <article class="home-today-card is-rest">
             <div>
-              <span class="home-today-kicker">恢复与适应</span>
-              <h3>休息日</h3>
-              <p>今天没有安排抗阻训练，保持轻度活动并优先恢复。</p>
+              <span class="home-today-kicker">${appLanguage === "en" ? "Recovery and adaptation" : "恢复与适应"}</span>
+              <h3>${appLanguage === "en" ? "Rest day" : "休息日"}</h3>
+              <p>${appLanguage === "en" ? "No resistance training is scheduled today. Keep activity light and prioritize recovery." : "今天没有安排抗阻训练，保持轻度活动并优先恢复。"}</p>
               <div class="home-next-plan">
-                <span>下个训练日计划</span>
+                <span>${appLanguage === "en" ? "Next workout" : "下个训练日计划"}</span>
                 ${nextWorkout
-                  ? `<strong>${formatPlanDateLabel(nextWorkout.date)} · 训练日${nextWorkout.dayIndex + 1} · ${nextWorkout.day}</strong><small>${nextWorkout.text}</small>`
-                  : '<strong>当前四周周期已无后续训练日</strong><small>可在计划页调整或生成下一周期。</small>'}
+                  ? `<strong>${formatPlanDateLabel(nextWorkout.date)} · ${appLanguage === "en" ? `Training day ${nextWorkout.dayIndex + 1} · ${translateInterfaceText(nextWorkout.day)}` : `训练日${nextWorkout.dayIndex + 1} · ${nextWorkout.day}`}</strong><small>${translateInterfaceText(nextWorkout.text)}</small>`
+                  : appLanguage === "en" ? '<strong>No more workouts remain in this four-week cycle</strong><small>Adjust the plan or create the next cycle on the Plan page.</small>' : '<strong>当前四周周期已无后续训练日</strong><small>可在计划页调整或生成下一周期。</small>'}
               </div>
             </div>
           </article>
@@ -9328,10 +9680,10 @@
           const workout = scheduleByDate.get(dateValue);
           const isToday = dateValue === today;
           if (!workout) {
-            return `<span class="home-training-calendar-day ${isToday ? "is-today" : ""}" role="gridcell" aria-label="${dateValue} 休息日">${date.getDate()}</span>`;
+            return `<span class="home-training-calendar-day ${isToday ? "is-today" : ""}" role="gridcell" aria-label="${appLanguage === "en" ? `${dateValue} rest day` : `${dateValue} 休息日`}">${date.getDate()}</span>`;
           }
           const completed = completedPlanDays.includes(workout.id);
-          return `<button class="home-training-calendar-day is-training ${completed ? "is-completed" : ""} ${isToday ? "is-today" : ""}" type="button" role="gridcell" data-view-day data-week-index="${workout.weekIndex}" data-day-index="${workout.dayIndex}" aria-label="${dateValue} 训练日${workout.dayIndex + 1} ${workout.day}${completed ? "，已完成" : ""}">${date.getDate()}</button>`;
+          return `<button class="home-training-calendar-day is-training ${completed ? "is-completed" : ""} ${isToday ? "is-today" : ""}" type="button" role="gridcell" data-view-day data-week-index="${workout.weekIndex}" data-day-index="${workout.dayIndex}" aria-label="${appLanguage === "en" ? `${dateValue}, training day ${workout.dayIndex + 1}, ${translateInterfaceText(workout.day)}${completed ? ", completed" : ""}` : `${dateValue} 训练日${workout.dayIndex + 1} ${workout.day}${completed ? "，已完成" : ""}`}">${date.getDate()}</button>`;
         }).join("");
         grid.innerHTML = `${leading}${days}`;
       }
@@ -9343,9 +9695,13 @@
         });
         const required = scheduleDraftContext.plan.days;
         const selected = scheduleDraftWeekdays.size;
-        scheduleSelectionHint.textContent = selected === required
-          ? `已选择 ${selected} 天，可以保存。`
-          : `请选择 ${required} 天，当前已选择 ${selected} 天。`;
+        scheduleSelectionHint.textContent = appLanguage === "en"
+          ? selected === required
+            ? `${selected} days selected. Ready to save.`
+            : `Select ${required} days. ${selected} currently selected.`
+          : selected === required
+            ? `已选择 ${selected} 天，可以保存。`
+            : `请选择 ${required} 天，当前已选择 ${selected} 天。`;
       }
 
       function openScheduleDialog() {
@@ -9356,7 +9712,9 @@
         const weekIndex = getCurrentPlanWeek(startDate);
         scheduleDraftContext = { profile, plan, startDate, weekIndex };
         scheduleDraftWeekdays = new Set(getPlanTrainingWeekdays(profile, plan, weekIndex, startDate));
-        document.querySelector("#scheduleDialogSummary").textContent = `当前为计划第 ${weekIndex + 1} 周，每周需要选择 ${plan.days} 个训练日。`;
+        document.querySelector("#scheduleDialogSummary").textContent = appLanguage === "en"
+          ? `Plan week ${weekIndex + 1}. Select ${plan.days} training days per week.`
+          : `当前为计划第 ${weekIndex + 1} 周，每周需要选择 ${plan.days} 个训练日。`;
         document.querySelector('input[name="scheduleScope"][value="plan"]').checked = true;
         renderScheduleDraft();
         scheduleDialog.showModal();
@@ -9366,7 +9724,7 @@
         if (!scheduleDraftContext) return;
         const { profile, plan, startDate, weekIndex } = scheduleDraftContext;
         if (scheduleDraftWeekdays.size !== plan.days) {
-          scheduleSelectionHint.textContent = `需要选择 ${plan.days} 天后才能保存。`;
+          scheduleSelectionHint.textContent = appLanguage === "en" ? `Select ${plan.days} days before saving.` : `需要选择 ${plan.days} 天后才能保存。`;
           return;
         }
         const planKey = getPlanScheduleKey(profile, plan, startDate);
@@ -9393,7 +9751,8 @@
         const saved = hasGeneratedPlan();
         const profile = getProfile();
         const plan = buildPlan(profile);
-        const title = `${plan.template?.name || planNames[profile.goal]} · 每周 ${plan.days} 天`;
+        const planName = translateInterfaceText(plan.template?.name || planNames[profile.goal]);
+        const title = appLanguage === "en" ? `${planName} · ${plan.days} days/week` : `${plan.template?.name || planNames[profile.goal]} · 每周 ${plan.days} 天`;
         const homeTitle = document.querySelector("#homeTitle");
         const homeSummary = document.querySelector("#homeSummary");
         renderHomeTodayPlan(profile, plan, saved);
@@ -9416,17 +9775,20 @@
 
         planConsole.hidden = false;
         planStartDateInput.value = startDate;
-        currentWeekLabel.textContent = `计划${weekNames[weekIndex]}`;
-        planPattern.textContent = planPatternText(plan);
+        currentWeekLabel.textContent = appLanguage === "en" ? `Plan week ${weekIndex + 1}` : `计划${weekNames[weekIndex]}`;
+        planPattern.textContent = appLanguage === "en"
+          ? plan.split.map(([day]) => translateInterfaceText(day)).join(" / ")
+          : planPatternText(plan);
         planProgressPie.style.setProperty("--progress", `${percent}%`);
         planProgressPercent.textContent = `${percent}%`;
-        planProgressText.textContent = `${doneCount}/${totalDays} 已完成`;
-        planProgressHint.textContent = `四周计划共 ${totalDays} 个训练日，当前显示${weekNames[weekIndex]}。`;
+        planProgressText.textContent = appLanguage === "en" ? `${doneCount}/${totalDays} completed` : `${doneCount}/${totalDays} 已完成`;
+        planProgressHint.textContent = appLanguage === "en" ? `${totalDays} workouts across four weeks. Currently showing week ${weekIndex + 1}.` : `四周计划共 ${totalDays} 个训练日，当前显示${weekNames[weekIndex]}。`;
 
         homeTitle.textContent = title;
         const currentPeriod = plan.periodization[weekIndex] || plan.periodization[0];
-        homeSummary.textContent =
-          `${currentPeriod.title}：${currentPeriod.focus} 建议 ${currentPeriod.sets} 组 × ${currentPeriod.reps}，主训练强度 ${currentPeriod.rm}。`;
+        homeSummary.textContent = appLanguage === "en"
+          ? `${translateInterfaceText(currentPeriod.title)}: ${translateInterfaceText(currentPeriod.focus)} Recommended: ${currentPeriod.sets} sets × ${translateInterfaceText(currentPeriod.reps)}, main intensity ${currentPeriod.rm}.`
+          : `${currentPeriod.title}：${currentPeriod.focus} 建议 ${currentPeriod.sets} 组 × ${currentPeriod.reps}，主训练强度 ${currentPeriod.rm}。`;
       }
 
       function renderRisk(risk = assessRisk()) {
@@ -9581,17 +9943,17 @@
 
       function exerciseLibraryCardTemplate(exercise) {
         const displayName = appLanguage === "en" ? (exercise.nameEn || exercise.nameZh) : exercise.nameZh;
-        const secondaryName = appLanguage === "en" ? exercise.nameZh : exercise.nameEn;
+        const secondaryName = appLanguage === "en" ? "" : exercise.nameEn;
         return `
           <button class="exercise-library-card" type="button" data-open-exercise="${exercise.id}">
             <img class="exercise-library-card-image" data-library-image data-image-loading="true" data-src="${exercise.startImage || EXERCISE_PLACEHOLDER_IMAGE}" src="${EXERCISE_PLACEHOLDER_IMAGE}" width="320" height="240" alt="${displayName} ${appLanguage === "en" ? "starting position" : "起始姿势"}" loading="lazy" decoding="async">
             <span class="exercise-library-card-content">
               <h4>${displayName}</h4>
-              <p>${secondaryName}</p>
+              ${secondaryName ? `<p>${secondaryName}</p>` : ""}
               <span class="exercise-library-meta">
-                <span>${exercise.primaryMuscles[0] || exercise.category}</span>
-                <span>${exercise.equipment}</span>
-                <span>${exercise.level}</span>
+                <span>${translateInterfaceText(exercise.primaryMuscles[0] || exercise.category)}</span>
+                <span>${translateInterfaceText(exercise.equipment)}</span>
+                <span>${translateInterfaceText(exercise.level)}</span>
               </span>
             </span>
           </button>
@@ -9758,26 +10120,26 @@
         }
         const exercise = activeLibraryExercise;
         const displayName = appLanguage === "en" ? (exercise.nameEn || exercise.nameZh) : exercise.nameZh;
-        const secondaryName = appLanguage === "en" ? exercise.nameZh : exercise.nameEn;
+        const secondaryName = appLanguage === "en" ? "" : exercise.nameEn;
         const instructions = appLanguage === "en" ? exercise.instructionsEn : exercise.instructionsZh;
         exerciseDetailPage.innerHTML = `
           <button class="ghost-btn exercise-detail-back" type="button" data-exercise-back>${backLabel}</button>
           ${animationTemplate(exercise)}
-          <div class="exercise-detail-title"><h2>${displayName}</h2><p>${secondaryName}</p></div>
+          <div class="exercise-detail-title"><h2>${displayName}</h2>${secondaryName ? `<p>${secondaryName}</p>` : ""}</div>
           <article class="exercise-detail-card">
             <h3>基本信息</h3>
             <div class="exercise-detail-facts">
-              <div class="exercise-detail-fact"><span>难度</span><b>${exercise.level}</b></div>
-              <div class="exercise-detail-fact"><span>器械</span><b>${exercise.equipment}</b></div>
-              <div class="exercise-detail-fact"><span>动作类型</span><b>${exercise.mechanic}</b></div>
-              <div class="exercise-detail-fact"><span>发力方式</span><b>${exercise.force}</b></div>
+              <div class="exercise-detail-fact"><span>难度</span><b>${translateInterfaceText(exercise.level)}</b></div>
+              <div class="exercise-detail-fact"><span>器械</span><b>${translateInterfaceText(exercise.equipment)}</b></div>
+              <div class="exercise-detail-fact"><span>动作类型</span><b>${translateInterfaceText(exercise.mechanic)}</b></div>
+              <div class="exercise-detail-fact"><span>发力方式</span><b>${translateInterfaceText(exercise.force)}</b></div>
             </div>
           </article>
           <article class="exercise-detail-card">
             <h3>训练肌群</h3>
             <div class="exercise-detail-facts">
-              <div class="exercise-detail-fact"><span>主要肌群</span><b>${exercise.primaryMuscles.join("、") || "未提供"}</b></div>
-              <div class="exercise-detail-fact"><span>辅助肌群</span><b>${exercise.secondaryMuscles.join("、") || "无"}</b></div>
+              <div class="exercise-detail-fact"><span>主要肌群</span><b>${exercise.primaryMuscles.map(translateInterfaceText).join(", ") || translateInterfaceText("未提供")}</b></div>
+              <div class="exercise-detail-fact"><span>辅助肌群</span><b>${exercise.secondaryMuscles.map(translateInterfaceText).join(", ") || translateInterfaceText("无")}</b></div>
             </div>
           </article>
           <article class="exercise-detail-card">
@@ -9845,7 +10207,7 @@
         const selectedId = setLogExercise.value || exercises[0]?.id || "";
         const categories = [...new Set(exercises.map((exercise) => exercise.category))];
         setLogExercise.innerHTML = categories
-          .map((category) => `<optgroup label="${category}">${exercises.filter((exercise) => exercise.category === category).map((exercise) => `<option value="${exercise.id}">${exercise.nameZh}</option>`).join("")}</optgroup>`)
+          .map((category) => `<optgroup label="${translateInterfaceText(category)}">${exercises.filter((exercise) => exercise.category === category).map((exercise) => `<option value="${exercise.id}">${appLanguage === "en" ? (exercise.nameEn || exercise.nameZh) : exercise.nameZh}</option>`).join("")}</optgroup>`)
           .join("");
         setLogExercise.value = exercises.some((exercise) => exercise.id === selectedId) ? selectedId : exercises[0]?.id || "";
       }
@@ -9854,7 +10216,9 @@
         const oneRm = calculateBrzyckiOneRm(Number(setLogWeight.value), Number(setLogReps.value));
         const intensity = oneRm ? Math.min(100, Math.round((Number(setLogWeight.value) / oneRm) * 100)) : 0;
         setLogOneRm.textContent = oneRm ? `${oneRm.toFixed(1)} kg` : "-";
-        setLogIntensity.textContent = oneRm ? `约 ${intensity}% 1RM` : "填写重量与次数后计算";
+        setLogIntensity.textContent = oneRm
+          ? appLanguage === "en" ? `About ${intensity}% 1RM` : `约 ${intensity}% 1RM`
+          : appLanguage === "en" ? "Enter load and reps to calculate" : "填写重量与次数后计算";
       }
 
       function renderTrainingSetLogs() {
@@ -9888,17 +10252,25 @@
         const completedActions = getCompletedTrainingActions(sessions);
         const selectedId = completedTrainingFilter.value || "all";
         const actionChoices = [...new Map(completedActions.map((item) => [item.exerciseId || item.exerciseName, item.exerciseName])).entries()];
-        completedTrainingFilter.innerHTML = `<option value="all">全部动作</option>${actionChoices.map(([id, name]) => `<option value="${id}">${escapeLogText(name)}</option>`).join("")}`;
+        completedTrainingFilter.innerHTML = `<option value="all">${appLanguage === "en" ? "All exercises" : "全部动作"}</option>${actionChoices.map(([id, name]) => {
+          const exercise = getLoggableExercises().find((item) => item.id === id);
+          const displayName = appLanguage === "en" ? (exercise?.nameEn || name) : name;
+          return `<option value="${id}">${escapeLogText(displayName)}</option>`;
+        }).join("")}`;
         completedTrainingFilter.value = actionChoices.some(([id]) => id === selectedId) ? selectedId : "all";
         const visibleActions = completedActions.filter((item) => completedTrainingFilter.value === "all" || (item.exerciseId || item.exerciseName) === completedTrainingFilter.value);
         completedTrainingList.innerHTML = visibleActions.length
           ? visibleActions.map((item) => {
-              const volume = `${item.sets || "-"} 组 × ${item.plannedReps || item.reps || "-"} 次`;
+              const volume = appLanguage === "en"
+                ? `${item.sets || "-"} sets × ${item.plannedReps || item.reps || "-"} reps`
+                : `${item.sets || "-"} 组 × ${item.plannedReps || item.reps || "-"} 次`;
               const supplementOpen = activeSupplementLogId === item.id;
               const hasLoad = Number(item.weightKg) > 0;
+              const exercise = getLoggableExercises().find((entry) => entry.id === item.exerciseId);
+              const displayName = appLanguage === "en" ? (exercise?.nameEn || item.exerciseName) : item.exerciseName;
               return `
               <article class="completed-training-item${supplementOpen ? " is-expanded" : ""}">
-                <div><strong>${escapeLogText(item.exerciseName)}</strong><span>${item.date} · ${volume}${hasLoad ? ` · ${item.weightKg} kg` : ""}</span></div>
+                <div><strong>${escapeLogText(displayName)}</strong><span>${item.date} · ${volume}${hasLoad ? ` · ${item.weightKg} kg` : ""}</span></div>
                 ${hasLoad ? "" : `<button class="completed-training-supplement" type="button" data-open-supplement="${item.id}">补充数据</button>`}
                 ${supplementOpen ? `<form class="completed-training-supplement-form" data-supplement-form="${item.id}" data-plan-day-id="${item.planDayId || ""}" data-exercise-id="${item.exerciseId || ""}" data-date="${item.date}" data-sets="${item.sets || ""}" data-planned-reps="${item.plannedReps || item.reps || ""}"><label>训练重量 kg<input type="number" min="0.5" max="500" step="0.5" value="${hasLoad ? item.weightKg : ""}" required></label><button type="submit">保存</button></form>` : ""}
               </article>`;
@@ -9944,7 +10316,7 @@
         if (!overloadExerciseSelect) return;
         const exercises = getLoggableExercises();
         const previous = overloadExerciseSelect.value;
-        overloadExerciseSelect.innerHTML = exercises.map((exercise) => `<option value="${exercise.id}">${exercise.nameZh}</option>`).join("");
+        overloadExerciseSelect.innerHTML = exercises.map((exercise) => `<option value="${exercise.id}">${appLanguage === "en" ? (exercise.nameEn || exercise.nameZh) : exercise.nameZh}</option>`).join("");
         const firstLogged = trainingSetLogs.find((log) => exercises.some((exercise) => exercise.id === log.exerciseId));
         overloadExerciseSelect.value = exercises.some((exercise) => exercise.id === preferredExerciseId)
           ? preferredExerciseId
@@ -9966,13 +10338,15 @@
           ["最近 1RM", latest ? `${Number(latest.estimated1RM).toFixed(1)} kg` : "-"],
           ["净变化", logs.length > 1 ? `${gain >= 0 ? "+" : ""}${gain.toFixed(1)} kg` : "-"],
           ["有效样本", `${logs.length} 组`]
-        ].map(([label, value]) => `<div class="overload-stat"><span>${label}</span><b>${value}</b></div>`).join("");
+        ].map(([label, value]) => `<div class="overload-stat"><span>${translateInterfaceText(label)}</span><b>${translateInterfaceText(value)}</b></div>`).join("");
         renderOverloadChart(logs);
         const activeExercise = exercises.find((exercise) => exercise.id === exerciseId);
         const lowerBody = /腿部|臀部/.test(activeExercise?.category || "");
         overloadAdvice.textContent = logs.length < 2
-          ? "至少记录同一动作两组以上，才能判断变化趋势。"
-          : `当前相对首组${gain >= 0 ? "提升" : "下降"} ${Math.abs(gain).toFixed(1)} kg（${gainPercent >= 0 ? "+" : ""}${gainPercent.toFixed(1)}%）。连续两次训练的最后一组均比计划次数上限多完成 2 次且动作稳定时，可按 2-for-2 原则尝试增加 ${lowerBody ? "2.5-5 kg" : "1-2.5 kg"}。`;
+          ? appLanguage === "en" ? "Log at least two sets of the same exercise to identify a trend." : "至少记录同一动作两组以上，才能判断变化趋势。"
+          : appLanguage === "en"
+            ? `Change from the first set: ${gain >= 0 ? "+" : "-"}${Math.abs(gain).toFixed(1)} kg (${gainPercent >= 0 ? "+" : ""}${gainPercent.toFixed(1)}%). When the final set exceeds the planned rep ceiling by 2 reps with stable form in two consecutive workouts, use the 2-for-2 rule to add ${lowerBody ? "2.5-5 kg" : "1-2.5 kg"}.`
+            : `当前相对首组${gain >= 0 ? "提升" : "下降"} ${Math.abs(gain).toFixed(1)} kg（${gainPercent >= 0 ? "+" : ""}${gainPercent.toFixed(1)}%）。连续两次训练的最后一组均比计划次数上限多完成 2 次且动作稳定时，可按 2-for-2 原则尝试增加 ${lowerBody ? "2.5-5 kg" : "1-2.5 kg"}。`;
       }
 
       function renderOverloadChart(logs) {
@@ -10014,13 +10388,18 @@
           });
         }
 
-        recordCalendarMonth.textContent = `${year} 年 ${month + 1} 月`;
+        recordCalendarMonth.textContent = appLanguage === "en"
+          ? new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(cursor)
+          : `${year} 年 ${month + 1} 月`;
         const leading = Array.from({ length: cursor.getDay() }, () => '<span class="calendar-day is-empty" aria-hidden="true"></span>').join("");
         const dayCount = new Date(year, month + 1, 0).getDate();
         const days = Array.from({ length: dayCount }, (_, index) => {
           const dateValue = `${monthPrefix}-${String(index + 1).padStart(2, "0")}`;
           const completedCount = completedDateCounts.get(dateValue) || 0;
-          return `<span class="calendar-day ${dateValue === today ? "is-today" : ""} ${completedCount ? "has-record" : ""}" role="gridcell" aria-label="${month + 1}月${index + 1}日${completedCount ? `，已完成 ${completedCount} 次训练` : ""}">${index + 1}</span>`;
+          const calendarLabel = appLanguage === "en"
+            ? `${new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric" }).format(parseLocalDate(dateValue))}${completedCount ? `, ${completedCount} completed workout${completedCount === 1 ? "" : "s"}` : ""}`
+            : `${month + 1}月${index + 1}日${completedCount ? `，已完成 ${completedCount} 次训练` : ""}`;
+          return `<span class="calendar-day ${dateValue === today ? "is-today" : ""} ${completedCount ? "has-record" : ""}" role="gridcell" aria-label="${calendarLabel}">${index + 1}</span>`;
         }).join("");
         recordCalendarGrid.innerHTML = `${leading}${days}`;
       }

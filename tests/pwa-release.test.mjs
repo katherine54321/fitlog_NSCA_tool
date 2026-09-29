@@ -47,8 +47,17 @@ test("PWA document declares installable and offline delivery assets", async () =
   assert.doesNotMatch(html, /<nav class="mobile-nav"[^>]*>[\s\S]*?<a href="#evaluation">评估<\/a>[\s\S]*?<\/nav>/);
   assert.match(html, /id="accountDelete"/);
   assert.match(html, /id="account-management"/);
+  assert.match(html, /id="me"[\s\S]*?href="#settings"/);
+  assert.match(html, /id="settings"[\s\S]*?href="#language-settings"/);
   assert.match(html, /id="language-settings"/);
+  assert.match(html, /id="language-settings"[\s\S]*?href="#settings"/);
   assert.match(html, /name="appLanguage" value="en"/);
+  assert.match(html, /function localizeInterfaceAttributes/);
+  assert.match(html, /function findUnexpectedChinese/);
+  assert.match(html, /window\.FitMineI18n/);
+  assert.match(html, /Movement adaptation/);
+  assert.match(html, /Training day \$\{todayWorkout\.dayIndex \+ 1\}/);
+  assert.match(html, /exercise\.nameEn \|\| exercise\.nameZh/);
   assert.doesNotMatch(html, /id="accountSyncNow"/);
   assert.doesNotMatch(html, /训练数据备份/);
   assert.equal(JSON.parse(manifest).display, "standalone");

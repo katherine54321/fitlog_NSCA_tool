@@ -84,10 +84,10 @@ test("plan schedule days open the selected week workout detail without verbose g
 test("home today plan mirrors plan titles and exposes the next workout on rest days", () => {
   assert.match(source, /id="homeTodayScheduleTitle">今日计划<\/strong>/);
   assert.match(source, /function getScheduledPlanDays/);
-  assert.match(source, /<h3>训练日\$\{todayWorkout\.dayIndex \+ 1\} · \$\{todayWorkout\.day\}<\/h3>/);
+  assert.match(source, /Training day \$\{todayWorkout\.dayIndex \+ 1\}/);
   assert.match(source, /data-view-day data-week-index="\$\{todayWorkout\.weekIndex\}"/);
-  assert.match(source, /\$\{completed \? "查看详情" : "开始训练"\}/);
-  assert.match(source, /<h3>休息日<\/h3>/);
+  assert.match(source, /completed \? "View details" : "Start workout"/);
+  assert.match(source, /appLanguage === "en" \? "Rest day" : "休息日"/);
   assert.match(source, /下个训练日计划/);
   assert.match(source, /4: \[1, 2, 4, 5\]/);
   assert.match(source, /5: \[1, 2, 3, 5, 6\]/);
@@ -141,6 +141,6 @@ test("period cards show a compact week hierarchy without a redundant section hea
   assert.doesNotMatch(source, />四周训练重点</);
   assert.match(source, /aria-label="四周周期安排"/);
   assert.match(source, /<small>Week \$\{String\(index \+ 1\)\.padStart\(2, "0"\)\}<\/small>/);
-  assert.match(source, /<strong>\$\{period\.title\}<\/strong>/);
+  assert.match(source, /<strong>\$\{translateInterfaceText\(period\.title\)\}<\/strong>/);
   assert.match(source, /id="activeWeekKicker"/);
 });
