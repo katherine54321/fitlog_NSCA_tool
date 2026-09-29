@@ -5,10 +5,12 @@ import vm from "node:vm";
 
 const source = await readFile(new URL("../sync/fitlog-sync.js", import.meta.url), "utf8");
 
-test("sync remains opt-in and never embeds privileged credentials", () => {
+test("sync remains account-scoped and never embeds privileged credentials", () => {
   assert.match(source, /const configured = \(\) => Boolean\(runtime\.supabaseUrl && runtime\.supabaseAnonKey\)/);
   assert.match(source, /user_sync_snapshots/);
   assert.match(source, /window\.addEventListener\("online"/);
+  assert.match(source, /function startAutoSync/);
+  assert.match(source, /function queueSync/);
   assert.doesNotMatch(source, /service_role|SUPABASE_SERVICE/);
 });
 
@@ -102,6 +104,18 @@ test("email code login requests and verifies Supabase OTP without redirect token
   assert.match(source, /errorBody\?\.msg \|\| errorBody\?\.message \|\| errorBody\?\.error_description/);
 });
 
+test("account status follows the saved interface language", async () => {
+  const page = createSyncClientHarness();
+  page.localStorage.setItem("fitlog-language", "en");
+  vm.runInNewContext(source, page.context);
+
+  await page.context.window.FitLogSync.init();
+
+  assert.equal(page.elements.myAccountTitle.textContent, "Not signed in");
+  assert.equal(page.elements.myAccountHint.textContent, "Tap to sign in");
+  assert.equal(page.elements.myAccountAction.textContent, "Sign in");
+});
+
 test("email code login reveals OTP input immediately and completes verification", async () => {
   const page = createSyncClientHarness();
   vm.runInNewContext(source, page.context);
@@ -133,11 +147,11 @@ test("email code login reveals OTP input immediately and completes verification"
     token: "123456",
     type: "email",
   });
-  assert.equal(page.elements.accountSignedOut.hidden, true);
-  assert.equal(page.elements.accountSignedIn.hidden, false);
+  assert.equal(page.elements.accountSignedOut.hidden, false);
   assert.equal(page.elements.accountEmailValue.textContent, "user@example.com");
   assert.equal(page.elements.myAccountTitle.textContent, "user@example.com");
   assert.equal(page.elements.myAccountAction.textContent, "管理");
+  assert.equal(page.context.window.location.hash, "account-management");
 
   const session = JSON.parse(page.localStorage.getItem("fitlog-sync-session"));
   assert.equal(session.email, "user@example.com");
@@ -156,8 +170,6 @@ function createSyncClientHarness(options = {}) {
     "myAccountAction",
     "accountDialog",
     "accountSignedOut",
-    "accountSignedIn",
-    "accountState",
     "accountEmailValue",
     "accountEmail",
     "accountConsent",
@@ -166,14 +178,13 @@ function createSyncClientHarness(options = {}) {
     "accountOtp",
     "accountVerifyCode",
     "accountChangeEmail",
-    "accountSyncNow",
     "accountSignOut",
     "accountDelete",
     "accountMessage",
+    "accountManagementMessage",
   ].map((id) => [id, createElement(id)]));
 
   elements.accountOtpStep.hidden = true;
-  elements.accountSignedIn.hidden = true;
   const localStorage = createLocalStorage();
   const accessToken = jwt({ sub: "user-123" });
 

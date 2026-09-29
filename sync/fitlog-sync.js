@@ -10,6 +10,11 @@
     sets: "workout_sets",
   };
   let pendingEmail = "";
+  let autoSyncTimer = null;
+  let snapshotCheckTimer = null;
+  let lastSnapshotFingerprint = "";
+
+  const uiText = (zh, en) => localStorage.getItem("fitlog-language") === "en" ? en : zh;
 
   const configured = () => Boolean(runtime.supabaseUrl && runtime.supabaseAnonKey);
   const api = (path) => `${String(runtime.supabaseUrl || "").replace(/\/$/, "")}${path}`;
@@ -58,6 +63,33 @@
       }
     }
     return snapshot;
+  }
+
+  function snapshotFingerprint(snapshot = storageSnapshot()) {
+    return JSON.stringify(Object.keys(snapshot).sort().map((key) => [key, snapshot[key]]));
+  }
+
+  function markSnapshotSynced(snapshot = storageSnapshot()) {
+    lastSnapshotFingerprint = snapshotFingerprint(snapshot);
+  }
+
+  function queueSync(delay = 1200) {
+    const session = loadSession();
+    if (!configured() || !session?.accessToken || !session.userId || typeof window.setTimeout !== "function") return;
+    if (autoSyncTimer && typeof window.clearTimeout === "function") window.clearTimeout(autoSyncTimer);
+    autoSyncTimer = window.setTimeout(() => {
+      autoSyncTimer = null;
+      if (snapshotFingerprint() === lastSnapshotFingerprint) return;
+      syncNow().catch(() => {});
+    }, delay);
+  }
+
+  function startAutoSync() {
+    markSnapshotSynced();
+    if (snapshotCheckTimer || typeof window.setInterval !== "function") return;
+    snapshotCheckTimer = window.setInterval(() => {
+      if (snapshotFingerprint() !== lastSnapshotFingerprint) queueSync();
+    }, 5000);
   }
 
   function restoreSnapshot(snapshot) {
@@ -418,7 +450,10 @@
       return;
     }
     await syncNow();
-    setMessage("登录成功，已完成首次备份。");
+    document.querySelector("#accountDialog")?.close?.();
+    window.location.hash = "account-management";
+    setMessage("");
+    startAutoSync();
   }
 
   async function syncNow() {
@@ -447,6 +482,7 @@
       lastSyncedAt: timestamp,
       structuredTrainingSyncedAt: structuredSynced ? timestamp : undefined,
     }));
+    markSnapshotSynced(payload.snapshot);
   }
 
   async function upsertStructuredRows(session, table, rows) {
@@ -486,8 +522,10 @@
       restoreSnapshot(remote.snapshot);
       await syncStructuredTraining(session, storageSnapshot(), remote.client_updated_at).catch(() => false);
       localStorage.setItem(stateKey, JSON.stringify({ lastSyncedAt: remote.client_updated_at }));
+      markSnapshotSynced();
       return true;
     }
+    markSnapshotSynced();
     return false;
   }
 
@@ -525,31 +563,22 @@
     const session = loadSession();
     const signedIn = Boolean(session?.accessToken && session?.userId);
     const signedOut = document.querySelector("#accountSignedOut");
-    const signedInPanel = document.querySelector("#accountSignedIn");
-    const state = document.querySelector("#accountState");
     const email = document.querySelector("#accountEmailValue");
-    if (!signedOut || !signedInPanel || !state || !email) return;
-    signedOut.hidden = signedIn;
-    signedInPanel.hidden = !signedIn;
-    state.textContent = signedIn
-      ? "已登录。训练计划、记录与评估数据会加密传输后备份到你的账户。"
-      : configured() ? "登录后即可备份数据并在新设备恢复。" : "当前为离线模式，数据仅保存在此设备。";
-    email.textContent = session?.email || "已登录账户";
+    if (signedOut) signedOut.hidden = false;
+    if (email) email.textContent = session?.email || "—";
     const myAccountTitle = document.querySelector("#myAccountTitle");
     const myAccountHint = document.querySelector("#myAccountHint");
     const myAccountAction = document.querySelector("#myAccountAction");
-    if (myAccountTitle) myAccountTitle.textContent = signedIn ? (session.email || "已登录账户") : "未登录";
-    if (myAccountHint) {
-      myAccountHint.textContent = signedIn
-        ? "训练数据已关联此账户，点击管理同步设置"
-        : configured() ? "点击登录，开启训练数据云端备份" : "当前为离线模式，数据仅保存在此设备";
-    }
-    if (myAccountAction) myAccountAction.textContent = signedIn ? "管理" : "登录";
+    if (myAccountTitle) myAccountTitle.textContent = signedIn ? (session.email || uiText("已登录账户", "Signed-in account")) : uiText("未登录", "Not signed in");
+    if (myAccountHint) myAccountHint.textContent = signedIn ? uiText("账户管理", "Account settings") : uiText("点击登录", "Tap to sign in");
+    if (myAccountAction) myAccountAction.textContent = signedIn ? uiText("管理", "Manage") : uiText("登录", "Sign in");
   }
 
   function setMessage(message) {
     const target = document.querySelector("#accountMessage");
     if (target) target.textContent = message;
+    const managementTarget = document.querySelector("#accountManagementMessage");
+    if (managementTarget) managementTarget.textContent = message;
   }
 
   function setOtpStep(active) {
@@ -568,68 +597,70 @@
 
   function bindUi() {
     const dialog = document.querySelector("#accountDialog");
-    document.querySelector("#accountButton")?.addEventListener("click", () => dialog?.showModal());
-    document.querySelector("#myAccountButton")?.addEventListener("click", () => dialog?.showModal());
+    const openAccount = () => {
+      const session = loadSession();
+      if (session?.accessToken && session?.userId) window.location.hash = "account-management";
+      else dialog?.showModal();
+    };
+    document.querySelector("#accountButton")?.addEventListener("click", openAccount);
+    document.querySelector("#myAccountButton")?.addEventListener("click", openAccount);
     document.querySelector("#accountSendCode")?.addEventListener("click", async () => {
       const email = document.querySelector("#accountEmail")?.value.trim().toLowerCase();
-      if (!email) return setMessage("请输入有效邮箱。");
-      if (!document.querySelector("#accountConsent")?.checked) return setMessage("请先阅读并同意隐私政策。");
-      if (!configured()) return setMessage("云端服务尚未配置，请联系管理员。");
+      if (!email) return setMessage(uiText("请输入有效邮箱。", "Enter a valid email address."));
+      if (!document.querySelector("#accountConsent")?.checked) return setMessage(uiText("请先阅读并同意隐私政策。", "Please read and accept the Privacy Policy first."));
+      if (!configured()) return setMessage(uiText("云端服务尚未配置，请联系管理员。", "Cloud service is not configured. Contact the administrator."));
       pendingEmail = email;
       setOtpStep(true);
-      setMessage("正在发送验证码…");
+      setMessage(uiText("正在发送验证码…", "Sending verification code…"));
       try {
         await requestEmailOtp(email);
-        setMessage("验证码已发送，请查看邮箱并在此输入。");
+        setMessage(uiText("验证码已发送，请查看邮箱并在此输入。", "Code sent. Check your email and enter it here."));
       } catch (error) {
-        setMessage(error.message || "操作失败，请稍后重试。");
+        setMessage(error.message || uiText("操作失败，请稍后重试。", "Something went wrong. Try again later."));
       }
     });
     document.querySelector("#accountVerifyCode")?.addEventListener("click", async () => {
       const email = pendingEmail || document.querySelector("#accountEmail")?.value.trim().toLowerCase();
       const token = document.querySelector("#accountOtp")?.value.replace(/\s/g, "");
-      if (!email) return setMessage("请先填写邮箱并发送验证码。");
-      if (!/^\d{6}$/.test(token || "")) return setMessage("请输入邮件中的 6 位验证码。");
-      setMessage("正在验证验证码…");
+      if (!email) return setMessage(uiText("请先填写邮箱并发送验证码。", "Enter your email and request a code first."));
+      if (!/^\d{6}$/.test(token || "")) return setMessage(uiText("请输入邮件中的 6 位验证码。", "Enter the 6-digit code from your email."));
+      setMessage(uiText("正在验证验证码…", "Verifying code…"));
       try {
         await verifyEmailOtp(email, token);
         await completeSignIn();
       } catch (error) {
-        setMessage(error.message || "登录失败，请稍后重试。");
+        setMessage(error.message || uiText("登录失败，请稍后重试。", "Sign-in failed. Try again later."));
       }
     });
     document.querySelector("#accountChangeEmail")?.addEventListener("click", () => {
       pendingEmail = "";
       setOtpStep(false);
-      setMessage("可重新填写邮箱并获取验证码。");
-    });
-    document.querySelector("#accountSyncNow")?.addEventListener("click", async () => {
-      setMessage("正在同步…");
-      try {
-        await syncNow();
-        setMessage("已完成云端备份。");
-      } catch (error) {
-        setMessage(error.message || "同步失败，请稍后重试。");
-      }
+      setMessage(uiText("可重新填写邮箱并获取验证码。", "Enter another email to request a new code."));
     });
     document.querySelector("#accountSignOut")?.addEventListener("click", () => {
       clearSession();
       renderAccount();
-      setMessage("已退出账户；此设备上的本地训练数据仍会保留。");
+      window.location.hash = "me";
+      setMessage("");
     });
     document.querySelector("#accountDelete")?.addEventListener("click", async () => {
-      if (!window.confirm("删除后将无法恢复云端训练数据。确定继续吗？")) return;
-      setMessage("正在删除账户与云端数据…");
+      if (!window.confirm(uiText("删除后将无法恢复云端训练数据。确定继续吗？", "Cloud training data cannot be recovered after deletion. Continue?"))) return;
+      setMessage(uiText("正在删除账户与云端数据…", "Deleting account and cloud data…"));
       try {
         await deleteAccount();
         renderAccount();
-        setMessage("账户与云端数据已删除，本机数据也已清除。");
+        window.location.hash = "me";
+        setMessage(uiText("账户与云端数据已删除，本机数据也已清除。", "Account, cloud data, and local data have been deleted."));
       } catch (error) {
-        setMessage(error.message || "删除失败，请稍后重试。");
+        setMessage(error.message || uiText("删除失败，请稍后重试。", "Deletion failed. Try again later."));
       }
     });
     window.addEventListener("online", () => syncNow().catch(() => {}));
     window.addEventListener("pagehide", () => syncNow().catch(() => {}));
+    window.addEventListener("storage", (event) => {
+      if (event.key?.startsWith(storagePrefix) && event.key !== sessionKey && event.key !== stateKey) queueSync(250);
+    });
+    window.addEventListener("fitlog:data-changed", () => queueSync(250));
   }
 
   window.FitLogSync = {
@@ -657,12 +688,17 @@
       } else if (loadSession()?.accessToken) {
         pullLatest().then((restored) => {
           if (restored) window.location.reload();
+          else startAutoSync();
         });
+      } else {
+        startAutoSync();
       }
     },
     syncNow,
+    queueSync,
     pullLatest,
     deleteAccount,
+    renderAccount,
     isConfigured: configured,
     __private: {
       buildStructuredTrainingRows,

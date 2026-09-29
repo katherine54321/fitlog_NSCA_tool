@@ -5711,6 +5711,134 @@
         margin-top: 2px;
       }
 
+      .settings-page {
+        display: grid;
+        gap: 14px;
+        max-width: 680px;
+        margin: 0 auto;
+      }
+
+      .settings-back {
+        justify-self: start;
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        color: var(--electric-blue);
+        font-size: 14px;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .settings-account-summary {
+        display: grid;
+        gap: 4px;
+        padding: 18px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 16px;
+        background: linear-gradient(145deg, #2d3035, #25282c);
+      }
+
+      .settings-account-summary span {
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .settings-account-summary strong {
+        overflow-wrap: anywhere;
+        color: var(--text-strong);
+        font-size: 18px;
+      }
+
+      .settings-list {
+        overflow: hidden;
+        border: 1px solid var(--border-subtle);
+        border-radius: 16px;
+        background: #282b2f;
+      }
+
+      .settings-row {
+        width: 100%;
+        min-height: 58px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        padding: 0 17px;
+        border: 0;
+        color: var(--text-strong);
+        background: transparent;
+        text-align: left;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 750;
+      }
+
+      .settings-row + .settings-row {
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .settings-row-value {
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .settings-row-danger {
+        color: #ff9999;
+      }
+
+      .settings-danger-zone {
+        margin-top: 12px;
+      }
+
+      .settings-danger-zone .settings-row {
+        justify-content: center;
+        color: #ff9999;
+        text-align: center;
+      }
+
+      .language-options {
+        display: grid;
+        overflow: hidden;
+        border: 1px solid var(--border-subtle);
+        border-radius: 16px;
+        background: #282b2f;
+      }
+
+      .language-option {
+        min-height: 62px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 24px;
+        align-items: center;
+        gap: 12px;
+        padding: 0 17px;
+        color: var(--text-strong);
+        cursor: pointer;
+      }
+
+      .language-option + .language-option {
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .language-option span {
+        display: grid;
+        gap: 2px;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .language-option small {
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .language-option input {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--brand);
+      }
+
       .my-menu-list {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5887,15 +6015,15 @@
           </div>
         </div>
         <nav class="nav" aria-label="页面导航">
-          <a href="#home">首页</a>
-          <a href="#plan">计划</a>
-          <a href="#training">动作库</a>
-          <a href="#records">记录</a>
-          <a href="#me">我的</a>
+          <a href="#home" data-i18n="home">首页</a>
+          <a href="#plan" data-i18n="plan">计划</a>
+          <a href="#training" data-i18n="library">动作库</a>
+          <a href="#records" data-i18n="records">记录</a>
+          <a href="#me" data-i18n="me">我的</a>
         </nav>
         <div class="app-actions">
           <span class="app-status" id="appStatus">可离线使用</span>
-          <button class="account-btn" id="accountButton" type="button" aria-haspopup="dialog">账户</button>
+          <button class="account-btn" id="accountButton" type="button" data-i18n="account">账户</button>
           <button class="install-btn" id="installApp" type="button" hidden>安装 APP</button>
         </div>
       </header>
@@ -5903,30 +6031,23 @@
       <dialog class="account-dialog" id="accountDialog" aria-labelledby="accountDialogTitle">
         <form method="dialog" class="account-dialog-head">
           <div>
-            <span class="kicker">账户与同步</span>
-            <h2 id="accountDialogTitle">训练数据备份</h2>
+            <span class="kicker" data-i18n="account">账户</span>
+            <h2 id="accountDialogTitle" data-i18n="signIn">登录</h2>
           </div>
-          <button class="icon-btn" type="submit" aria-label="关闭账户面板">×</button>
+          <button class="icon-btn" type="submit" aria-label="关闭账户面板" data-i18n-aria-label="closeAccount">×</button>
         </form>
-        <p class="muted" id="accountState">当前数据仅保存在此设备。</p>
         <div id="accountSignedOut">
-          <label class="account-email-label" for="accountEmail">邮箱</label>
+          <label class="account-email-label" for="accountEmail" data-i18n="email">邮箱</label>
           <input id="accountEmail" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" />
-          <label class="account-consent"><input id="accountConsent" type="checkbox" /> 我已阅读并同意<a href="./legal/privacy.html" target="_blank" rel="noopener">隐私政策</a></label>
-          <button class="primary-btn" id="accountSendCode" type="button">发送验证码</button>
+          <label class="account-consent"><input id="accountConsent" type="checkbox" /> <span data-i18n="privacyConsent">我已阅读并同意</span><a href="./legal/privacy.html" target="_blank" rel="noopener" data-i18n="privacyPolicy">隐私政策</a></label>
+          <button class="primary-btn" id="accountSendCode" type="button" data-i18n="sendCode">发送验证码</button>
           <div id="accountOtpStep" hidden>
-            <label class="account-email-label" for="accountOtp">邮箱验证码</label>
+            <label class="account-email-label" for="accountOtp" data-i18n="emailCode">邮箱验证码</label>
             <input id="accountOtp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="输入 6 位验证码" />
-            <button class="primary-btn" id="accountVerifyCode" type="button">验证并登录</button>
-            <button class="text-btn" id="accountChangeEmail" type="button">更换邮箱</button>
+            <button class="primary-btn" id="accountVerifyCode" type="button" data-i18n="verifyAndSignIn">验证并登录</button>
+            <button class="text-btn" id="accountChangeEmail" type="button" data-i18n="changeEmail">更换邮箱</button>
           </div>
-          <p class="form-hint">配置云端服务后，可使用邮箱登录并同步训练计划、记录与评估数据。</p>
-        </div>
-        <div id="accountSignedIn" hidden>
-          <div class="account-email" id="accountEmailValue"></div>
-          <button class="secondary-btn" id="accountSyncNow" type="button">立即备份与同步</button>
-          <button class="text-btn" id="accountSignOut" type="button">退出当前账户</button>
-          <button class="text-btn danger-btn" id="accountDelete" type="button">删除账户与云端数据</button>
+          <p class="form-hint" data-i18n="signInHint">登录后，训练数据会自动同步到你的账户。</p>
         </div>
         <p class="form-hint" id="accountMessage" role="status" aria-live="polite"></p>
       </dialog>
@@ -6022,14 +6143,14 @@
 
           <section class="panel section module-panel" id="me" data-module-panel hidden>
             <div class="my-page">
-              <button class="my-account-card" id="myAccountButton" type="button" aria-haspopup="dialog">
+              <button class="my-account-card" id="myAccountButton" type="button">
                 <span class="my-account-avatar" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c.5-4 2.8-6 6.5-6s6 2 6.5 6"/></svg>
                 </span>
                 <span class="my-account-copy">
                   <span class="my-account-kicker">FITMINE ID</span>
                   <strong id="myAccountTitle">未登录</strong>
-                  <span id="myAccountHint">点击登录，开启训练数据云端备份</span>
+                  <span id="myAccountHint">点击登录</span>
                 </span>
                 <span class="my-account-action" id="myAccountAction">登录</span>
               </button>
@@ -6040,8 +6161,8 @@
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2-5 4 10 2-5h7"/><path d="M5 4h14v16H5z" opacity=".28"/></svg>
                     </span>
                     <span class="my-menu-copy">
-                      <strong>体能评估</strong>
-                      <small>心肺能力与抗阻力量评估</small>
+                      <strong data-i18n="fitnessAssessment">体能评估</strong>
+                      <small data-i18n="fitnessAssessmentHint">心肺能力与抗阻力量评估</small>
                     </span>
                     <span class="my-menu-chevron" aria-hidden="true">›</span>
                   </a>
@@ -6050,13 +6171,52 @@
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.7 3.1 7.8 7.5 9.5 4.4-1.7 7.5-4.8 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-4"/></svg>
                     </span>
                     <span class="my-menu-copy">
-                      <strong>风险评估</strong>
-                      <small>训练前健康筛查与风险建议</small>
+                      <strong data-i18n="riskAssessment">风险评估</strong>
+                      <small data-i18n="riskAssessmentHint">训练前健康筛查与风险建议</small>
                     </span>
                     <span class="my-menu-chevron" aria-hidden="true">›</span>
                   </a>
                 </div>
               </section>
+            </div>
+          </section>
+
+          <section class="panel section module-panel" id="account-management" data-module-panel hidden>
+            <div class="settings-page">
+              <a class="settings-back" href="#me" data-i18n="backToMe">← 返回我的</a>
+              <div class="settings-account-summary">
+                <span data-i18n="currentAccount">当前账户</span>
+                <strong id="accountEmailValue">—</strong>
+              </div>
+              <div class="settings-list">
+                <a class="settings-row" href="#language-settings">
+                  <span data-i18n="languageSettings">语言设置</span>
+                  <span class="settings-row-value"><span id="accountLanguageValue">简体中文</span> ›</span>
+                </a>
+                <button class="settings-row settings-row-danger" id="accountSignOut" type="button">
+                  <span data-i18n="signOut">退出当前账户</span><span aria-hidden="true">›</span>
+                </button>
+              </div>
+              <div class="settings-list settings-danger-zone">
+                <button class="settings-row" id="accountDelete" type="button" data-i18n="deleteAccount">删除账户与云端数据</button>
+              </div>
+              <p class="form-hint" id="accountManagementMessage" role="status" aria-live="polite"></p>
+            </div>
+          </section>
+
+          <section class="panel section module-panel" id="language-settings" data-module-panel hidden>
+            <div class="settings-page">
+              <a class="settings-back" href="#account-management" data-i18n="backToAccount">← 返回账户管理</a>
+              <div class="language-options" role="radiogroup" aria-label="语言设置" data-i18n-aria-label="languageSettings">
+                <label class="language-option">
+                  <span>简体中文<small>Chinese (Simplified)</small></span>
+                  <input type="radio" name="appLanguage" value="zh" />
+                </label>
+                <label class="language-option">
+                  <span>English<small>英语</small></span>
+                  <input type="radio" name="appLanguage" value="en" />
+                </label>
+              </div>
             </div>
           </section>
 
@@ -6456,17 +6616,234 @@
       </footer>
     </div>
       <nav class="mobile-nav" aria-label="APP 底部导航">
-        <a href="#home">首页</a>
-        <a href="#training">动作库</a>
-        <a href="#plan">计划</a>
-        <a href="#records">记录</a>
-        <a href="#me">我的</a>
+        <a href="#home" data-i18n="home">首页</a>
+        <a href="#training" data-i18n="library">动作库</a>
+        <a href="#plan" data-i18n="plan">计划</a>
+        <a href="#records" data-i18n="records">记录</a>
+        <a href="#me" data-i18n="me">我的</a>
       </nav>
 
     <script src="data/exercise-library-data.js"></script>
     <script src="./config/fitlog-runtime.js"></script>
     <script src="./sync/fitlog-sync.js"></script>
     <script>
+      const APP_LANGUAGE_KEY = "fitlog-language";
+      let appLanguage = localStorage.getItem(APP_LANGUAGE_KEY) === "en" ? "en" : "zh";
+      const interfaceTranslations = {
+        home: { zh: "首页", en: "Home" },
+        plan: { zh: "计划", en: "Plan" },
+        library: { zh: "动作库", en: "Exercises" },
+        records: { zh: "记录", en: "Records" },
+        me: { zh: "我的", en: "Me" },
+        account: { zh: "账户", en: "Account" },
+        signIn: { zh: "登录", en: "Sign in" },
+        closeAccount: { zh: "关闭账户面板", en: "Close account panel" },
+        email: { zh: "邮箱", en: "Email" },
+        privacyConsent: { zh: "我已阅读并同意", en: "I have read and agree to the" },
+        privacyPolicy: { zh: "隐私政策", en: "Privacy Policy" },
+        sendCode: { zh: "发送验证码", en: "Send code" },
+        emailCode: { zh: "邮箱验证码", en: "Email verification code" },
+        verifyAndSignIn: { zh: "验证并登录", en: "Verify and sign in" },
+        changeEmail: { zh: "更换邮箱", en: "Change email" },
+        signInHint: { zh: "登录后，训练数据会自动同步到你的账户。", en: "Your training data syncs automatically after sign-in." },
+        backToMe: { zh: "← 返回我的", en: "← Back to Me" },
+        backToAccount: { zh: "← 返回账户管理", en: "← Back to account" },
+        currentAccount: { zh: "当前账户", en: "Current account" },
+        languageSettings: { zh: "语言设置", en: "Language" },
+        signOut: { zh: "退出当前账户", en: "Sign out" },
+        deleteAccount: { zh: "删除账户与云端数据", en: "Delete account and cloud data" },
+        fitnessAssessment: { zh: "体能评估", en: "Fitness assessment" },
+        fitnessAssessmentHint: { zh: "心肺能力与抗阻力量评估", en: "Cardiorespiratory and resistance strength" },
+        riskAssessment: { zh: "风险评估", en: "Risk assessment" },
+        riskAssessmentHint: { zh: "训练前健康筛查与风险建议", en: "Pre-training screening and guidance" }
+      };
+
+      const exactEnglishTranslations = new Map(Object.values(interfaceTranslations).map((item) => [item.zh, item.en]));
+      [
+        ["FitMine 科学力量训练", "FitMine Strength Training"],
+        ["NSCA-CPT 训练知识库", "NSCA-CPT Training Library"],
+        ["可离线使用", "Available offline"],
+        ["安装 APP", "Install app"],
+        ["今日计划", "Today's plan"],
+        ["当前计划", "Current plan"],
+        ["训练日历", "Training calendar"],
+        ["调整训练日", "Adjust training days"],
+        ["训练日", "Training day"],
+        ["今天", "Today"],
+        ["未登录", "Not signed in"],
+        ["点击登录", "Tap to sign in"],
+        ["管理", "Manage"],
+        ["返回我的", "Back to Me"],
+        ["训练前风险评估", "Pre-training risk assessment"],
+        ["开始评估", "Start assessment"],
+        ["未评估", "Not assessed"],
+        ["否", "No"],
+        ["是", "Yes"],
+        ["否/未知", "No / Unknown"],
+        ["心肺评估", "Cardio assessment"],
+        ["抗阻力量评估", "Strength assessment"],
+        ["等待评估", "Awaiting assessment"],
+        ["年龄", "Age"],
+        ["生理性别", "Sex"],
+        ["男", "Male"],
+        ["女", "Female"],
+        ["训练计划", "Training plan"],
+        ["修改训练计划", "Edit plan"],
+        ["保存方案", "Save plan"],
+        ["历史训练计划", "Plan history"],
+        ["还没有训练计划", "No training plan yet"],
+        ["生成训练计划", "Create training plan"],
+        ["生成周期化课表", "Create periodized plan"],
+        ["训练目标", "Training goal"],
+        ["训练历史", "Training experience"],
+        ["每周可训练天数", "Training days per week"],
+        ["增肌", "Hypertrophy"],
+        ["肌耐力", "Muscular endurance"],
+        ["力量", "Strength"],
+        ["爆发力", "Power"],
+        ["主训练强度", "Main intensity"],
+        ["每组次数", "Reps per set"],
+        ["组间恢复", "Rest between sets"],
+        ["每动作容量", "Sets per exercise"],
+        ["负荷规则", "Loading rules"],
+        ["全部动作", "All exercises"],
+        ["清除", "Clear"],
+        ["加载更多", "Load more"],
+        ["训练前热身", "Pre-workout warm-up"],
+        ["练后拉伸", "Post-workout stretching"],
+        ["训练日历", "Training calendar"],
+        ["动作记录", "Exercise log"],
+        ["训练记录", "Workout history"],
+        ["训练动作", "Exercise"],
+        ["完成次数", "Completed reps"],
+        ["训练日期", "Training date"],
+        ["保存训练数据", "Save training data"],
+        ["渐进负荷", "Progressive overload"],
+        ["力量进展", "Strength progress"],
+        ["基本信息", "Overview"],
+        ["难度", "Difficulty"],
+        ["器械", "Equipment"],
+        ["动作类型", "Movement type"],
+        ["发力方式", "Force"],
+        ["推", "Push"],
+        ["拉", "Pull"],
+        ["训练肌群", "Muscles trained"],
+        ["主要肌群", "Primary muscles"],
+        ["辅助肌群", "Secondary muscles"],
+        ["动作步骤", "Instructions"],
+        ["安全提示", "Safety"],
+        ["查看英文原文", "View original English"],
+        ["返回训练日", "Back to workout"],
+        ["返回动作库", "Back to exercises"],
+        ["取消", "Cancel"],
+        ["保存训练日", "Save training days"],
+        ["保存至本计划（每周）", "Save for this plan (weekly)"],
+        ["仅保持至本周", "This week only"],
+        ["删除账户与云端数据", "Delete account and cloud data"],
+        ["简体中文", "Simplified Chinese"]
+      ].forEach(([zh, en]) => exactEnglishTranslations.set(zh, en));
+
+      const englishTermReplacements = [
+        ["第一周", "Week 1"], ["第二周", "Week 2"], ["第三周", "Week 3"], ["第四周", "Week 4"],
+        ["每周", "per week"], ["训练日", "Training day"], ["已完成", "Completed"], ["休息日", "Rest day"],
+        ["周日", "Sun"], ["周一", "Mon"], ["周二", "Tue"], ["周三", "Wed"], ["周四", "Thu"], ["周五", "Fri"], ["周六", "Sat"],
+        ["胸部", "Chest"], ["背部", "Back"], ["肩部", "Shoulders"], ["手臂", "Arms"], ["腿部", "Legs"], ["臀部", "Glutes"], ["核心", "Core"],
+        ["徒手", "Bodyweight"], ["哑铃", "Dumbbells"], ["杠铃", "Barbell"], ["固定器械", "Machine"], ["绳索器械", "Cable"], ["药球", "Medicine ball"],
+        ["初级", "Beginner"], ["中级", "Intermediate"], ["高级", "Advanced"],
+        ["增肌", "Hypertrophy"], ["肌耐力", "Muscular endurance"], ["爆发力", "Power"], ["力量", "Strength"],
+        ["复合动作", "Compound"], ["孤立动作", "Isolation"], ["个动作", " exercises"]
+      ];
+      const originalInterfaceText = new WeakMap();
+      const translatedInterfaceText = new WeakMap();
+      let localizationQueued = false;
+
+      function translateInterfaceText(value) {
+        if (appLanguage !== "en" || !/[\u3400-\u9fff]/.test(value || "")) return value;
+        const leading = value.match(/^\s*/)?.[0] || "";
+        const trailing = value.match(/\s*$/)?.[0] || "";
+        const core = value.trim();
+        if (exactEnglishTranslations.has(core)) return `${leading}${exactEnglishTranslations.get(core)}${trailing}`;
+        let translated = core;
+        englishTermReplacements.forEach(([zh, en]) => { translated = translated.split(zh).join(en); });
+        translated = translated
+          .replace(/(\d+(?:\.\d+)?)\s*组/g, "$1 sets")
+          .replace(/(\d+(?:\.\d+)?)\s*次/g, "$1 reps")
+          .replace(/(\d+(?:\.\d+)?)\s*秒/g, "$1 sec")
+          .replace(/(\d+(?:\.\d+)?)\s*天/g, "$1 days");
+        return `${leading}${translated}${trailing}`;
+      }
+
+      function localizeTextNodes(root = document.body) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+        nodes.forEach((node) => {
+          const parent = node.parentElement;
+          if (!parent || parent.closest("script, style, [data-no-i18n]")) return;
+          if (appLanguage === "zh") {
+            if (/[\u3400-\u9fff]/.test(node.nodeValue || "")) originalInterfaceText.set(node, node.nodeValue);
+            else if (originalInterfaceText.has(node)) node.nodeValue = originalInterfaceText.get(node);
+            translatedInterfaceText.delete(node);
+            return;
+          }
+          if (translatedInterfaceText.get(node) === node.nodeValue) return;
+          if (/[\u3400-\u9fff]/.test(node.nodeValue || "")) {
+            originalInterfaceText.set(node, node.nodeValue);
+            const translated = translateInterfaceText(node.nodeValue);
+            if (translated !== node.nodeValue) {
+              translatedInterfaceText.set(node, translated);
+              node.nodeValue = translated;
+            }
+          }
+        });
+      }
+
+      function queueLocalization() {
+        if (localizationQueued) return;
+        localizationQueued = true;
+        window.requestAnimationFrame(() => {
+          localizationQueued = false;
+          localizeTextNodes();
+        });
+      }
+
+      function applyLanguage(language, { persist = true, rerender = true } = {}) {
+        appLanguage = language === "en" ? "en" : "zh";
+        if (persist) localStorage.setItem(APP_LANGUAGE_KEY, appLanguage);
+        document.documentElement.lang = appLanguage === "en" ? "en" : "zh-CN";
+        document.title = appLanguage === "en" ? "FitMine Strength Training" : "FitMine 科学力量训练";
+        document.querySelectorAll("[data-i18n]").forEach((element) => {
+          const value = interfaceTranslations[element.dataset.i18n]?.[appLanguage];
+          if (value) element.textContent = value;
+        });
+        document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+          const value = interfaceTranslations[element.dataset.i18nAriaLabel]?.[appLanguage];
+          if (value) element.setAttribute("aria-label", value);
+        });
+        document.querySelectorAll('input[name="appLanguage"]').forEach((input) => {
+          input.checked = input.value === appLanguage;
+        });
+        const languageValue = document.querySelector("#accountLanguageValue");
+        if (languageValue) languageValue.textContent = appLanguage === "en" ? "English" : "简体中文";
+        if (rerender && typeof renderPlan === "function") {
+          renderPlan();
+          renderEvaluationOverview();
+          renderPlanHistory();
+          renderExercises();
+          renderExerciseCardGrid("#warmupGrid", warmupExercises);
+          renderExerciseCardGrid("#stretchGrid", stretchExercises);
+          renderRecords();
+          if (activeLibraryExercise) renderExerciseDetail();
+        }
+        window.FitLogSync?.renderAccount?.();
+        queueLocalization();
+        if (persist) window.FitLogSync?.queueSync?.();
+      }
+
+      new MutationObserver(() => {
+        if (appLanguage === "en") queueLocalization();
+      }).observe(document.body, { childList: true, subtree: true, characterData: true });
+
       const legacyExerciseGuides = {
         胸部: [
           {
@@ -7147,7 +7524,7 @@
         });
         if (activeId === "exercise-detail") renderExerciseDetail();
         else cleanupExerciseAnimations();
-        const activeNavId = activeId === "evaluation" ? "me" : activeId;
+        const activeNavId = ["evaluation", "account-management", "language-settings"].includes(activeId) ? "me" : activeId;
         document.querySelectorAll(".nav a, .mobile-nav a").forEach((link) => {
           link.setAttribute(
             "aria-current",
@@ -8873,6 +9250,9 @@
 
       function formatPlanDateLabel(value) {
         const date = parseLocalDate(value);
+        if (appLanguage === "en") {
+          return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", weekday: "short" }).format(date);
+        }
         const weekDays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
         return `${date.getMonth() + 1} 月 ${date.getDate()} 日 · ${weekDays[date.getDay()]}`;
       }
@@ -8932,9 +9312,11 @@
         const firstDate = parseLocalDate(today);
         const lastValue = addDays(today, 27);
         const lastDate = parseLocalDate(lastValue);
-        range.textContent = firstDate.getFullYear() === lastDate.getFullYear()
-          ? `${firstDate.getFullYear()} 年 ${firstDate.getMonth() + 1}${firstDate.getMonth() === lastDate.getMonth() ? "" : `–${lastDate.getMonth() + 1}`} 月`
-          : `${firstDate.getFullYear()} 年 ${firstDate.getMonth() + 1} 月–${lastDate.getFullYear()} 年 ${lastDate.getMonth() + 1} 月`;
+        range.textContent = appLanguage === "en"
+          ? `${new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric" }).format(firstDate)} – ${new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric" }).format(lastDate)}`
+          : firstDate.getFullYear() === lastDate.getFullYear()
+            ? `${firstDate.getFullYear()} 年 ${firstDate.getMonth() + 1}${firstDate.getMonth() === lastDate.getMonth() ? "" : `–${lastDate.getMonth() + 1}`} 月`
+            : `${firstDate.getFullYear()} 年 ${firstDate.getMonth() + 1} 月–${lastDate.getFullYear()} 年 ${lastDate.getMonth() + 1} 月`;
 
         const scheduleByDate = new Map(
           (saved ? getScheduledPlanDays(profile, plan) : []).map((item) => [item.date, item])
@@ -9198,12 +9580,14 @@
       }
 
       function exerciseLibraryCardTemplate(exercise) {
+        const displayName = appLanguage === "en" ? (exercise.nameEn || exercise.nameZh) : exercise.nameZh;
+        const secondaryName = appLanguage === "en" ? exercise.nameZh : exercise.nameEn;
         return `
           <button class="exercise-library-card" type="button" data-open-exercise="${exercise.id}">
-            <img class="exercise-library-card-image" data-library-image data-image-loading="true" data-src="${exercise.startImage || EXERCISE_PLACEHOLDER_IMAGE}" src="${EXERCISE_PLACEHOLDER_IMAGE}" width="320" height="240" alt="${exercise.nameZh} 起始姿势" loading="lazy" decoding="async">
+            <img class="exercise-library-card-image" data-library-image data-image-loading="true" data-src="${exercise.startImage || EXERCISE_PLACEHOLDER_IMAGE}" src="${EXERCISE_PLACEHOLDER_IMAGE}" width="320" height="240" alt="${displayName} ${appLanguage === "en" ? "starting position" : "起始姿势"}" loading="lazy" decoding="async">
             <span class="exercise-library-card-content">
-              <h4>${exercise.nameZh}</h4>
-              <p>${exercise.nameEn}</p>
+              <h4>${displayName}</h4>
+              <p>${secondaryName}</p>
               <span class="exercise-library-meta">
                 <span>${exercise.primaryMuscles[0] || exercise.category}</span>
                 <span>${exercise.equipment}</span>
@@ -9348,10 +9732,13 @@
       function animationTemplate(exercise) {
         const start = exercise.startImage || EXERCISE_PLACEHOLDER_IMAGE;
         const end = exercise.endImage || start;
+        const displayName = appLanguage === "en" ? (exercise.nameEn || exercise.nameZh) : exercise.nameZh;
+        const startLabel = appLanguage === "en" ? "starting position" : "起始姿势";
+        const endLabel = appLanguage === "en" ? "ending position" : "结束姿势";
         return `
           <div class="exercise-animation" data-exercise-animation data-frame="start" data-ready="false" data-loading="true">
-            <img class="exercise-animation-frame" data-animation-start data-image-source="${start}" data-image-loading="true" src="${EXERCISE_PLACEHOLDER_IMAGE}" alt="${exercise.nameZh} 起始姿势" decoding="async">
-            <img class="exercise-animation-frame" data-animation-end data-image-source="${end}" data-image-loading="true" src="${EXERCISE_PLACEHOLDER_IMAGE}" alt="${exercise.nameZh} 结束姿势" decoding="async">
+            <img class="exercise-animation-frame" data-animation-start data-image-source="${start}" data-image-loading="true" src="${EXERCISE_PLACEHOLDER_IMAGE}" alt="${displayName} ${startLabel}" decoding="async">
+            <img class="exercise-animation-frame" data-animation-end data-image-source="${end}" data-image-loading="true" src="${EXERCISE_PLACEHOLDER_IMAGE}" alt="${displayName} ${endLabel}" decoding="async">
             <div class="exercise-animation-tools">
               <button type="button" data-animation-control aria-label="正在加载动作示意" disabled>...</button>
               <button type="button" data-animation-fullscreen aria-label="全屏查看动作示意">⛶</button>
@@ -9362,16 +9749,21 @@
 
       function renderExerciseDetail() {
         cleanupExerciseAnimations();
-        const backLabel = exerciseDetailReturnHash === "workout-detail" ? "返回训练日" : "返回动作库";
+        const backLabel = exerciseDetailReturnHash === "workout-detail"
+          ? (appLanguage === "en" ? "Back to workout" : "返回训练日")
+          : (appLanguage === "en" ? "Back to exercises" : "返回动作库");
         if (!activeLibraryExercise) {
           exerciseDetailPage.innerHTML = `<button class="ghost-btn exercise-detail-back" type="button" data-exercise-back>${backLabel}</button><div class="library-empty">请选择一个动作查看详情。</div>`;
           return;
         }
         const exercise = activeLibraryExercise;
+        const displayName = appLanguage === "en" ? (exercise.nameEn || exercise.nameZh) : exercise.nameZh;
+        const secondaryName = appLanguage === "en" ? exercise.nameZh : exercise.nameEn;
+        const instructions = appLanguage === "en" ? exercise.instructionsEn : exercise.instructionsZh;
         exerciseDetailPage.innerHTML = `
           <button class="ghost-btn exercise-detail-back" type="button" data-exercise-back>${backLabel}</button>
           ${animationTemplate(exercise)}
-          <div class="exercise-detail-title"><h2>${exercise.nameZh}</h2><p>${exercise.nameEn}</p></div>
+          <div class="exercise-detail-title"><h2>${displayName}</h2><p>${secondaryName}</p></div>
           <article class="exercise-detail-card">
             <h3>基本信息</h3>
             <div class="exercise-detail-facts">
@@ -9390,9 +9782,8 @@
           </article>
           <article class="exercise-detail-card">
             <h3>动作步骤</h3>
-            <ol class="exercise-steps">${exercise.instructionsZh.map((step) => `<li>${step}</li>`).join("")}</ol>
-            <button class="exercise-english-toggle" type="button" data-english-toggle>查看英文原文</button>
-            <ol class="exercise-steps exercise-english-steps" data-english-steps hidden>${exercise.instructionsEn.map((step) => `<li>${step}</li>`).join("")}</ol>
+            <ol class="exercise-steps">${instructions.map((step) => `<li>${step}</li>`).join("")}</ol>
+            ${appLanguage === "zh" ? `<button class="exercise-english-toggle" type="button" data-english-toggle>查看英文原文</button><ol class="exercise-steps exercise-english-steps" data-english-steps hidden>${exercise.instructionsEn.map((step) => `<li>${step}</li>`).join("")}</ol>` : ""}
           </article>
           <article class="exercise-detail-card exercise-safety">
             <h3>安全提示</h3>
@@ -9967,6 +10358,12 @@
         URL.revokeObjectURL(url);
       });
 
+      document.querySelectorAll('input[name="appLanguage"]').forEach((input) => {
+        input.addEventListener("change", () => {
+          if (input.checked) applyLanguage(input.value);
+        });
+      });
+
       const savedProfile = JSON.parse(localStorage.getItem("fitlog-profile") || "null");
       if (savedProfile) {
         const profileFieldIds = { days: "trainingDays" };
@@ -10024,6 +10421,7 @@
       if (setLogDate && !setLogDate.value) setLogDate.value = today;
       renderRecords();
       syncModuleTabs();
+      applyLanguage(appLanguage, { persist: false, rerender: false });
       window.FitLogSync?.init();
     </script>
   </body>

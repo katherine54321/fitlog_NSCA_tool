@@ -27,7 +27,7 @@ test("PWA document declares installable and offline delivery assets", async () =
   assert.match(html, /id="myAccountButton"/);
   assert.match(html, /href="#fitness-assessment"/);
   assert.match(html, /href="#risk-assessment"/);
-  assert.match(html, /<a href="#me">我的<\/a>/);
+  assert.match(html, /<a href="#me"[^>]*>我的<\/a>/);
   assert.match(html, /id="homeTodayScheduleTitle">今日计划<\/strong>/);
   assert.match(html, /id="homeTodayPlan"/);
   assert.match(html, /下个训练日计划/);
@@ -43,9 +43,14 @@ test("PWA document declares installable and offline delivery assets", async () =
   assert.match(html, /<span>每组次数<\/span><strong id="planMetricReps">/);
   assert.doesNotMatch(html, /每组完成次数/);
   assert.doesNotMatch(html, /id="homePrimaryAction"/);
-  assert.match(html, /<nav class="mobile-nav"[^>]*>[\s\S]*?<a href="#home">首页<\/a>\s*<a href="#training">动作库<\/a>\s*<a href="#plan">计划<\/a>\s*<a href="#records">记录<\/a>\s*<a href="#me">我的<\/a>/);
+  assert.match(html, /<nav class="mobile-nav"[^>]*>[\s\S]*?<a href="#home"[^>]*>首页<\/a>\s*<a href="#training"[^>]*>动作库<\/a>\s*<a href="#plan"[^>]*>计划<\/a>\s*<a href="#records"[^>]*>记录<\/a>\s*<a href="#me"[^>]*>我的<\/a>/);
   assert.doesNotMatch(html, /<nav class="mobile-nav"[^>]*>[\s\S]*?<a href="#evaluation">评估<\/a>[\s\S]*?<\/nav>/);
   assert.match(html, /id="accountDelete"/);
+  assert.match(html, /id="account-management"/);
+  assert.match(html, /id="language-settings"/);
+  assert.match(html, /name="appLanguage" value="en"/);
+  assert.doesNotMatch(html, /id="accountSyncNow"/);
+  assert.doesNotMatch(html, /训练数据备份/);
   assert.equal(JSON.parse(manifest).display, "standalone");
   assert.equal(JSON.parse(manifest).scope, "./");
   assert.match(serviceWorker, /manifest\.webmanifest/);
