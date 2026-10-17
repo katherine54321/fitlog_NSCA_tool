@@ -135,6 +135,11 @@ test("plan metrics preserve readable widths and contain long values", () => {
   assert.match(source, /@container \(min-width: 620px\)\s*\{\s*#plan \.plan-metric-grid\s*\{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
   assert.match(source, /@container \(min-width: 980px\)\s*\{\s*#plan \.plan-metric-grid\s*\{\s*grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
   assert.match(source, /#plan \.plan-metric strong\s*\{[\s\S]*?white-space: normal;[\s\S]*?overflow-wrap: anywhere;[\s\S]*?text-overflow: clip/);
+  assert.match(source, /#plan \.plan-metric\s*\{[\s\S]*?grid-template-rows: 3\.75em auto minmax\(2\.5em, auto\)/);
+  assert.match(source, /<span>建议负荷<\/span><strong id="planMetricRm">67-85% 1RM<\/strong><small id="planMetricRmNote">约 6-12 RM<\/small>/);
+  assert.match(source, /\["建议负荷", "Training load"\]/);
+  assert.match(source, /#planMetricRm"\)\.textContent = plan\.load/);
+  assert.match(source, /#planMetricRmNote"\)\.textContent = appLanguage === "en" \? `Approx\. \$\{plan\.rm\}` : `约 \$\{plan\.rm\}`/);
 });
 
 test("period cards show a compact week hierarchy without a redundant section heading", () => {
@@ -143,4 +148,6 @@ test("period cards show a compact week hierarchy without a redundant section hea
   assert.match(source, /<small>Week \$\{String\(index \+ 1\)\.padStart\(2, "0"\)\}<\/small>/);
   assert.match(source, /<strong>\$\{translateInterfaceText\(period\.title\)\}<\/strong>/);
   assert.match(source, /id="activeWeekKicker"/);
+  assert.match(source, /#plan \.periodization-grid\s*\{[\s\S]*?grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
+  assert.match(source, /#plan \.period-card strong\s*\{[\s\S]*?font-size: clamp\(9px, 2\.4cqw, 11px\)[\s\S]*?-webkit-line-clamp: unset/);
 });
