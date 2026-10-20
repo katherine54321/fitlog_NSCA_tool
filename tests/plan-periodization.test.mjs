@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import vm from "node:vm";
 
 const source = await readFile(new URL("../index.html", import.meta.url), "utf8");
+const exerciseData = JSON.parse(await readFile(new URL("../data/exercises-v1.json", import.meta.url), "utf8"));
 
-test("plan generator uses only resistance goal, training history, and weekly training days", () => {
+test("plan generator supports core inputs plus one optional focus area and goal", () => {
   assert.match(source, /<select id="goal">/);
   assert.match(source, /<option value="hypertrophy">增肌<\/option>/);
   assert.match(source, /<option value="endurance">肌耐力<\/option>/);
@@ -14,12 +16,79 @@ test("plan generator uses only resistance goal, training history, and weekly tra
   assert.doesNotMatch(source, /<option value="fatloss">/);
   assert.match(source, /<select id="experience">/);
   assert.match(source, /<select id="trainingDays">/);
+  assert.match(source, /<select id="focusArea">/);
+  assert.match(source, /<option value="chest">胸<\/option>/);
+  assert.match(source, /<option value="back">背<\/option>/);
+  assert.match(source, /<option value="shoulders">肩<\/option>/);
+  assert.match(source, /<option value="arms">手臂<\/option>/);
+  assert.match(source, /<option value="glutes">臀<\/option>/);
+  assert.match(source, /<option value="quadriceps">股四头肌<\/option>/);
+  assert.match(source, /<option value="hamstrings">腘绳肌<\/option>/);
+  assert.match(source, /<option value="calves">小腿<\/option>/);
+  assert.match(source, /<option value="core">核心<\/option>/);
+  assert.match(source, /<select id="focusPurpose">/);
+  assert.match(source, /<option value="strength">提升力量<\/option>/);
+  assert.match(source, /<option value="hypertrophy">增加肌肉<\/option>/);
+  assert.match(source, /<option value="stability">提高稳定性<\/option>/);
   assert.match(source, /训练历史/);
   assert.match(source, /规律抗阻 &lt; 6 个月/);
   assert.match(source, /规律抗阻 6-12 个月/);
   assert.match(source, /系统抗阻 &gt; 1 年/);
-  assert.match(source, /选择三项信息，生成周期训练计划/);
+  assert.match(source, /可按需设置一个重点部位与加强目的/);
   assert.doesNotMatch(source, /data-plan-tab="templatePlanPane"/);
+});
+
+test("focus plan rules preserve movement patterns, prioritize compounds, and add two to four weekly sets", () => {
+  assert.match(source, /focusArea: value\("#focusArea"\)/);
+  assert.match(source, /focusPurpose: value\("#focusPurpose"\)/);
+  assert.match(source, /const focusAreaDefinitions = \{/);
+  assert.match(source, /function applyFocusEmphasis\(exercises, dayIndex, program, plan, period\)/);
+  assert.match(source, /if \(!plan\.focusArea \|\| !plan\.focusPurpose \|\| plan\.risk\.level === "high"\) return exercises/);
+  assert.match(source, /const adjusted = exercises\.map\(\(exercise\) => \(\{ \.\.\.exercise \}\)\)/);
+  assert.match(source, /adjusted\.unshift\(adjusted\.splice\(primaryIndex, 1\)\[0\]\)/);
+  assert.match(source, /plan\.experience === "advanced" \? 4 : 3/);
+  assert.match(source, /return 2;/);
+  assert.match(source, /isFocusBonus: true/);
+  assert.match(source, /每周增加 2-4 个有效组/);
+});
+
+test("focus plan behavior retains every base exercise and adds the expected purpose-specific volume", () => {
+  const start = source.indexOf("const focusAreaDefinitions = {");
+  const end = source.indexOf("function getWorkoutExercises", start);
+  assert.ok(start >= 0 && end > start);
+  const context = {
+    resistanceExercises: exerciseData.filter((exercise) => exercise.libraryType === "resistance"),
+    focusAreaLabels: { chest: "胸" },
+    focusPurposeLabels: { strength: "提升力量", hypertrophy: "增加肌肉", stability: "提高稳定性" },
+    focusAreaDisplayName: () => "胸",
+    focusPurposeDisplayName: (purpose) => ({ strength: "提升力量", hypertrophy: "增加肌肉", stability: "提高稳定性" })[purpose]
+  };
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(start, end)}\nthis.applyFocusEmphasis = applyFocusEmphasis;`, context);
+  const base = [
+    { name: "腿举", focus: "复合主项 · 股四头肌", exerciseId: "leg-press" },
+    { name: "哑铃卧推", focus: "复合主项 · 胸大肌", exerciseId: "dumbbell-bench-press" },
+    { name: "胸托哑铃划船", focus: "复合主项 · 背部", exerciseId: "one-arm-dumbbell-row" },
+    { name: "俯卧腿弯举", focus: "孤立补量 · 腘绳肌", exerciseId: "lying-leg-curls" }
+  ];
+  const program = [base.map((exercise) => [exercise.name, exercise.focus])];
+  const period = { title: "容量递进周" };
+  const plan = { focusArea: "chest", focusPurpose: "hypertrophy", experience: "intermediate", risk: { level: "low" } };
+  const focused = context.applyFocusEmphasis(base, 0, program, plan, period);
+  assert.equal(focused[0].name, "哑铃卧推");
+  assert.equal(focused.length, base.length + 1);
+  base.forEach((exercise) => assert.ok(focused.some((item) => item.name === exercise.name)));
+  assert.equal(focused.at(-1).isFocusBonus, true);
+  assert.equal(focused.at(-1).sets, 3);
+  assert.match(focused.at(-1).prescription, /^3 组 × 8-12 次$/);
+
+  const strength = context.applyFocusEmphasis(base, 0, program, { ...plan, focusPurpose: "strength" }, period);
+  assert.equal(strength.at(-1).sets, 2);
+  assert.match(strength.at(-1).prescription, /^2 组 × 3-6 次$/);
+  const deload = context.applyFocusEmphasis(base, 0, program, { ...plan, experience: "advanced" }, { title: "减载巩固周" });
+  assert.equal(deload.at(-1).sets, 2);
+  assert.deepEqual(context.applyFocusEmphasis(base, 0, program, { ...plan, focusArea: "" }, period), base);
+  assert.deepEqual(context.applyFocusEmphasis(base, 0, program, { ...plan, risk: { level: "high" } }, period), base);
 });
 
 test("saved weekly training days restore into the trainingDays control", () => {
@@ -111,7 +180,8 @@ test("training weekday preferences support recurring and current-week scopes", (
   assert.match(source, /preferences\.weeklyOverrides\[String\(weekIndex\)\] = selected/);
   assert.match(source, /preferences\.recurring = selected/);
   assert.match(source, /preferences\.weeklyOverrides = \{\}/);
-  assert.match(source, /return `\$\{startDate\}-\$\{profile\.goal\}-\$\{profile\.experience\}-\$\{plan\.days\}-w\$\{weekIndex \+ 1\}-d\$\{dayIndex \+ 1\}`/);
+  assert.match(source, /const focusKey = plan\.focusArea \? `-\$\{plan\.focusArea\}-\$\{plan\.focusPurpose\}` : ""/);
+  assert.match(source, /return `\$\{startDate\}-\$\{profile\.goal\}-\$\{profile\.experience\}-\$\{plan\.days\}\$\{focusKey\}-w\$\{weekIndex \+ 1\}-d\$\{dayIndex \+ 1\}`/);
 });
 
 test("home progress ring uses a dark hollow center", () => {

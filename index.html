@@ -6712,7 +6712,7 @@
               <div class="plan-empty-state" id="planEmptyState">
                 <span class="chip">当前计划</span>
                 <h3>还没有训练计划</h3>
-                <p class="muted">选择训练目标、训练历史和每周可训练天数，生成四周周期化课表。</p>
+                <p class="muted">选择训练目标、训练历史和每周可训练天数；可按需设置一个重点部位与加强目的。</p>
                 <button class="primary-btn" id="startPlan" type="button">生成训练计划</button>
               </div>
               <div class="card plan-generator" id="profileEditor" aria-labelledby="profileTitle">
@@ -6753,6 +6753,32 @@
                         <option value="6">每周 6 天</option>
                       </select>
                       <small>决定全身训练或分化训练的课表结构。</small>
+                    </label>
+                    <label>
+                      <span>期望加强部位</span>
+                      <select id="focusArea">
+                        <option value="">无特殊加强</option>
+                        <option value="chest">胸</option>
+                        <option value="back">背</option>
+                        <option value="shoulders">肩</option>
+                        <option value="arms">手臂</option>
+                        <option value="glutes">臀</option>
+                        <option value="quadriceps">股四头肌</option>
+                        <option value="hamstrings">腘绳肌</option>
+                        <option value="calves">小腿</option>
+                        <option value="core">核心</option>
+                      </select>
+                      <small>保留主要动作模式，并增加重点部位的有效训练量。</small>
+                    </label>
+                    <label>
+                      <span>加强目的</span>
+                      <select id="focusPurpose">
+                        <option value="">跟随总体训练目标</option>
+                        <option value="strength">提升力量</option>
+                        <option value="hypertrophy">增加肌肉</option>
+                        <option value="stability">提高稳定性</option>
+                      </select>
+                      <small>调整重点动作的顺序、次数范围和辅助训练方式。</small>
                     </label>
                   </div>
                   <button class="primary-btn" type="submit">生成 4 周周期课表</button>
@@ -7182,7 +7208,7 @@
         ["先完成风险与体能评估，再制定并保存一个适合当前情况的训练计划。", "Complete the risk and fitness assessments, then create a plan that fits your current needs."],
         ["选择三项信息，生成周期训练计划。", "Choose three items to create a periodized training plan."],
         ["选择训练目标、训练历史和每周训练天数，即可生成并保存四周周期课表。", "Choose your goal, experience, and weekly training days to create and save a four-week plan."],
-        ["选择训练目标、训练历史和每周可训练天数，生成四周周期化课表。", "Choose your goal, experience, and available training days to create a four-week periodized plan."],
+        ["选择训练目标、训练历史和每周可训练天数；可按需设置一个重点部位与加强目的。", "Choose your goal, experience, and available training days, with an optional focus area and focus goal."],
         ["决定主训练的次数范围、组间休息与周重点。", "Sets the rep range, rest intervals, and weekly focus."],
         ["决定动作复杂度、抗阻耐受上限与递进步伐。", "Sets movement complexity, resistance tolerance, and progression pace."],
         ["决定全身训练或分化训练的课表结构。", "Determines a full-body or split-plan structure."],
@@ -7300,6 +7326,17 @@
         ["高级：系统抗阻 > 1 年", "Advanced: over 1 year of structured resistance training"],
         ["每周 2 天", "2 days/week"], ["每周 3 天", "3 days/week"], ["每周 4 天", "4 days/week"],
         ["每周 5 天", "5 days/week"], ["每周 6 天", "6 days/week"],
+        ["期望加强部位", "Focus area"],
+        ["加强目的", "Focus goal"],
+        ["重点加强", "Training focus"],
+        ["无特殊加强", "No specific focus"],
+        ["跟随总体训练目标", "Follow overall training goal"],
+        ["胸", "Chest"], ["背", "Back"], ["肩", "Shoulders"], ["手臂", "Arms"], ["臀", "Glutes"],
+        ["股四头肌", "Quadriceps"], ["腘绳肌", "Hamstrings"], ["小腿", "Calves"], ["核心", "Core"],
+        ["提升力量", "Build strength"], ["增加肌肉", "Build muscle"], ["提高稳定性", "Improve stability"],
+        ["保留主要动作模式，并增加重点部位的有效训练量。", "Preserves all major movement patterns while adding effective volume for the focus area."],
+        ["调整重点动作的顺序、次数范围和辅助训练方式。", "Adjusts exercise order, rep range, and accessory work for the selected focus."],
+        ["选择训练信息，生成周期训练计划。", "Choose your training settings to create a periodized plan."],
         ["生成 4 周周期课表", "Create four-week plan"],
         ["稳定、无疼痛", "Stable and pain-free"],
         ["出现代偿或疼痛", "Compensation or pain"],
@@ -7697,6 +7734,47 @@
         strength: "力量",
         power: "爆发力"
       };
+
+      const focusAreaLabels = {
+        chest: "胸",
+        back: "背",
+        shoulders: "肩",
+        arms: "手臂",
+        glutes: "臀",
+        quadriceps: "股四头肌",
+        hamstrings: "腘绳肌",
+        calves: "小腿",
+        core: "核心"
+      };
+      const focusPurposeLabels = {
+        strength: "提升力量",
+        hypertrophy: "增加肌肉",
+        stability: "提高稳定性"
+      };
+      const focusAreaEnglishLabels = {
+        chest: "Chest",
+        back: "Back",
+        shoulders: "Shoulders",
+        arms: "Arms",
+        glutes: "Glutes",
+        quadriceps: "Quadriceps",
+        hamstrings: "Hamstrings",
+        calves: "Calves",
+        core: "Core"
+      };
+      const focusPurposeEnglishLabels = {
+        strength: "Build strength",
+        hypertrophy: "Build muscle",
+        stability: "Improve stability"
+      };
+
+      function focusAreaDisplayName(focusArea) {
+        return appLanguage === "en" ? focusAreaEnglishLabels[focusArea] : focusAreaLabels[focusArea];
+      }
+
+      function focusPurposeDisplayName(focusPurpose) {
+        return appLanguage === "en" ? focusPurposeEnglishLabels[focusPurpose] : focusPurposeLabels[focusPurpose];
+      }
 
       const sexLabels = { male: "男", female: "女" };
       const experienceLabels = {
@@ -8327,6 +8405,8 @@
           experience: value("#experience", "beginner"),
           goal: value("#goal", "hypertrophy"),
           days: Number(value("#trainingDays", 3)),
+          focusArea: value("#focusArea"),
+          focusPurpose: value("#focusPurpose"),
           sleep: value("#sleep", "normal"),
           stress: value("#stress", "normal"),
           limits: value("#limits").trim()
@@ -8844,6 +8924,15 @@
           rest,
           load
         });
+        const focusArea = focusAreaLabels[profile.focusArea] ? profile.focusArea : "";
+        const defaultFocusPurpose = profile.goal === "strength"
+          ? "strength"
+          : profile.goal === "hypertrophy"
+            ? "hypertrophy"
+            : "stability";
+        const focusPurpose = focusArea
+          ? (focusPurposeLabels[profile.focusPurpose] ? profile.focusPurpose : defaultFocusPurpose)
+          : "";
         return {
           rm,
           load,
@@ -8855,6 +8944,8 @@
           days,
           goal: profile.goal,
           experience: profile.experience,
+          focusArea,
+          focusPurpose,
           split,
           risk,
           periodization,
@@ -8955,7 +9046,8 @@
       }
 
       function getPlanScheduleKey(profile, plan, startDate = getPlanStartDate()) {
-        return `${startDate}-${profile.goal}-${profile.experience}-${plan.days}`;
+        const focusKey = plan.focusArea ? `-${plan.focusArea}-${plan.focusPurpose}` : "";
+        return `${startDate}-${profile.goal}-${profile.experience}-${plan.days}${focusKey}`;
       }
 
       function loadTrainingDayPreferences() {
@@ -9000,7 +9092,8 @@
       }
 
       function planDayId(profile, plan, weekIndex, dayIndex, startDate) {
-        return `${startDate}-${profile.goal}-${profile.experience}-${plan.days}-w${weekIndex + 1}-d${dayIndex + 1}`;
+        const focusKey = plan.focusArea ? `-${plan.focusArea}-${plan.focusPurpose}` : "";
+        return `${startDate}-${profile.goal}-${profile.experience}-${plan.days}${focusKey}-w${weekIndex + 1}-d${dayIndex + 1}`;
       }
 
       function allPlanDayIds(profile, plan, startDate) {
@@ -9015,6 +9108,166 @@
 
       function planPatternText(plan) {
         return plan.split.map(([day]) => day).join(" / ");
+      }
+
+      const focusAreaDefinitions = {
+        chest: {
+          matcher: /胸|卧推|推胸|俯卧撑|夹胸/,
+          compound: /卧推|推胸|俯卧撑/,
+          bonuses: {
+            strength: ["barbell-bench-press", "close-grip-barbell-bench-press"],
+            hypertrophy: ["cable-crossover", "cable-chest-press"],
+            stability: ["cable-chest-press", "push-up"]
+          }
+        },
+        back: {
+          matcher: /背|划船|下拉|背阔/,
+          compound: /划船|下拉/,
+          bonuses: {
+            strength: ["bent-over-barbell-row", "one-arm-dumbbell-row"],
+            hypertrophy: ["rope-straight-arm-pulldown", "seated-one-arm-cable-row"],
+            stability: ["seated-one-arm-cable-row", "one-arm-dumbbell-row"]
+          }
+        },
+        shoulders: {
+          matcher: /肩|三角肌|侧平举|面拉|反向飞鸟/,
+          compound: /肩推|推举|阿诺德/,
+          bonuses: {
+            strength: ["barbell-shoulder-press", "dumbbell-shoulder-press"],
+            hypertrophy: ["side-lateral-raise", "reverse-machine-flyes"],
+            stability: ["one-arm-dumbbell-shoulder-press", "face-pull"]
+          }
+        },
+        arms: {
+          matcher: /手臂|肱二头|肱三头|弯举|下压|臂屈伸|窄握/,
+          compound: /窄握|臂屈伸/,
+          bonuses: {
+            strength: ["close-grip-barbell-bench-press", "ez-bar-curl"],
+            hypertrophy: ["dumbbell-hammer-curl", "triceps-pushdown"],
+            stability: ["cable-one-arm-tricep-extension", "concentration-curl"]
+          }
+        },
+        glutes: {
+          matcher: /臀|髋伸|髋主导|后链|硬拉/,
+          compound: /臀推|深蹲|硬拉|分腿蹲|箭步蹲/,
+          bonuses: {
+            strength: ["barbell-hip-thrust", "barbell-glute-bridge"],
+            hypertrophy: ["cable-pull-through", "single-leg-glute-bridge"],
+            stability: ["single-leg-glute-bridge", "elevated-back-lunge"]
+          }
+        },
+        quadriceps: {
+          matcher: /股四头肌|膝主导|深蹲|腿举|分腿蹲|箭步蹲/,
+          compound: /深蹲|腿举|分腿蹲|箭步蹲/,
+          bonuses: {
+            strength: ["barbell-squat", "front-squat-clean-grip"],
+            hypertrophy: ["leg-press", "leg-extensions"],
+            stability: ["elevated-back-lunge", "dumbbell-step-ups"]
+          }
+        },
+        hamstrings: {
+          matcher: /腘绳肌|腿弯举|髋主导|后链|硬拉/,
+          compound: /硬拉|早安式|臀腿挺身/,
+          bonuses: {
+            strength: ["romanian-deadlift", "good-morning"],
+            hypertrophy: ["lying-leg-curls", "seated-leg-curl"],
+            stability: ["kettlebell-one-legged-deadlift", "glute-ham-raise"]
+          }
+        },
+        calves: {
+          matcher: /小腿|提踵/,
+          compound: /提踵/,
+          bonuses: {
+            strength: ["calf-press", "standing-calf-raises"],
+            hypertrophy: ["seated-calf-raise", "donkey-calf-raise"],
+            stability: ["standing-calf-raises", "calf-press"]
+          }
+        },
+        core: {
+          matcher: /核心|躯干|腹|抗旋转|农夫行走/,
+          compound: /抗旋转|农夫行走|滚轮/,
+          bonuses: {
+            strength: ["weighted-sit-up", "ab-roller"],
+            hypertrophy: ["cable-crunch", "ab-crunch-machine"],
+            stability: ["pallof-press", "cable-russian-twist"]
+          }
+        }
+      };
+
+      function focusExerciseText(exercise) {
+        return Array.isArray(exercise)
+          ? `${exercise[0] || ""} ${exercise[1] || ""}`
+          : `${exercise?.name || ""} ${exercise?.focus || ""}`;
+      }
+
+      function focusExerciseMatches(exercise, focusArea, compoundOnly = false) {
+        const definition = focusAreaDefinitions[focusArea];
+        if (!definition) return false;
+        return (compoundOnly ? definition.compound : definition.matcher).test(focusExerciseText(exercise));
+      }
+
+      function getFocusEmphasisDayIndex(program, focusArea) {
+        let bestIndex = 0;
+        let bestScore = -1;
+        program.forEach((day, index) => {
+          const score = day.reduce((total, exercise) => total
+            + (focusExerciseMatches(exercise, focusArea) ? 1 : 0)
+            + (focusExerciseMatches(exercise, focusArea, true) ? 2 : 0), 0);
+          if (score > bestScore) {
+            bestScore = score;
+            bestIndex = index;
+          }
+        });
+        return bestIndex;
+      }
+
+      function getFocusBonusSetCount(plan, period) {
+        if (period?.title === "减载巩固周") return 2;
+        if (plan.focusPurpose === "hypertrophy") return plan.experience === "advanced" ? 4 : 3;
+        return 2;
+      }
+
+      function focusBonusPrescription(plan, bonusSets) {
+        if (plan.focusPurpose === "strength") return { prescription: `${bonusSets} 组 × 3-6 次`, rest: "2-3 分钟" };
+        if (plan.focusPurpose === "stability") return { prescription: `${bonusSets} 组 × 每侧 8-12 次`, rest: "45-75 秒" };
+        return { prescription: `${bonusSets} 组 × 8-12 次`, rest: "60-90 秒" };
+      }
+
+      function makeFocusBonusExercise(plan, exercises, period) {
+        const definition = focusAreaDefinitions[plan.focusArea];
+        const candidateIds = definition?.bonuses?.[plan.focusPurpose] || [];
+        const usedIds = new Set(exercises.map((exercise) => exercise.exerciseId).filter(Boolean));
+        const usedNames = new Set(exercises.map((exercise) => exercise.name));
+        const candidate = candidateIds
+          .map((id) => resistanceExercises.find((exercise) => exercise.id === id))
+          .find((exercise) => exercise && !usedIds.has(exercise.id) && !usedNames.has(exercise.nameZh));
+        if (!candidate) return null;
+        const bonusSets = getFocusBonusSetCount(plan, period);
+        return {
+          name: candidate.nameZh,
+          focus: `${focusAreaDisplayName(plan.focusArea)} · ${focusPurposeDisplayName(plan.focusPurpose)}`,
+          cue: candidate.instructionsZh?.[0] || "保持动作稳定，在无痛范围内完成。",
+          exerciseId: candidate.id,
+          sets: bonusSets,
+          isFocusBonus: true,
+          ...focusBonusPrescription(plan, bonusSets)
+        };
+      }
+
+      function applyFocusEmphasis(exercises, dayIndex, program, plan, period) {
+        if (!plan.focusArea || !plan.focusPurpose || plan.risk.level === "high") return exercises;
+        const adjusted = exercises.map((exercise) => ({ ...exercise }));
+        const primaryIndex = adjusted.findIndex((exercise) => focusExerciseMatches(exercise, plan.focusArea, true));
+        if (primaryIndex > 0) adjusted.unshift(adjusted.splice(primaryIndex, 1)[0]);
+        if (dayIndex !== getFocusEmphasisDayIndex(program, plan.focusArea)) return adjusted;
+        const bonusExercise = makeFocusBonusExercise(plan, adjusted, period);
+        if (bonusExercise) {
+          const insertAt = primaryIndex < 0 && focusExerciseMatches(bonusExercise, plan.focusArea, true)
+            ? 0
+            : adjusted.length;
+          adjusted.splice(insertAt, 0, bonusExercise);
+        }
+        return adjusted;
       }
 
       function getWorkoutExercises(dayIndex, plan, weekIndex = 0) {
@@ -9055,13 +9308,14 @@
           ? chestShouldersBackLegsTemplate[dayIndex]
           : null;
         if (focusedTemplate) {
-          return focusedTemplate.map(([name, focus, cue], index) => ({
+          const focusedExercises = focusedTemplate.map(([name, focus, cue], index) => ({
             name,
             focus,
             cue,
             prescription: `${index === focusedTemplate.length - 1 ? accessorySets : mainSets} × ${period.reps}`,
             rest: index === focusedTemplate.length - 1 ? "45-60 秒" : period.rest
           }));
+          return applyFocusEmphasis(focusedExercises, dayIndex, chestShouldersBackLegsTemplate, plan, period);
         }
         const generalTemplates = [
           [
@@ -9207,7 +9461,7 @@
           : plan.goal === "hypertrophy"
             ? hypertrophyProgram[dayIndex % hypertrophyProgram.length]
             : generalProgram[dayIndex % generalProgram.length];
-        return fallback.map(([name, focus, cue, exerciseId], index) => ({
+        const exercises = fallback.map(([name, focus, cue, exerciseId], index) => ({
           name,
           focus,
           cue,
@@ -9215,6 +9469,10 @@
           prescription: `${index === fallback.length - 1 ? accessorySets : mainSets} × ${plan.goal === "hypertrophy" && index === fallback.length - 1 ? "10-15 次" : period.reps}`,
           rest: index === fallback.length - 1 ? "45-60 秒" : period.rest
         }));
+        const activeProgram = plan.risk.level === "high"
+          ? [fallback]
+          : plan.goal === "hypertrophy" ? hypertrophyProgram : generalProgram;
+        return applyFocusEmphasis(exercises, dayIndex, activeProgram, plan, period);
       }
 
       function getLegacyTargetedPreparation(workout) {
@@ -9956,9 +10214,16 @@
         const title = appLanguage === "en" ? `${goalName} · ${plan.days} days/week` : `${planNames[profile.goal]} · 每周 ${plan.days} 天`;
         const planVisible = hasGeneratedPlan() || isEditingPlan;
         document.querySelector("#planTitle").textContent = planVisible ? title : "训练计划";
+        const focusSummary = plan.focusArea
+          ? appLanguage === "en"
+            ? ` · Focus: ${focusAreaDisplayName(plan.focusArea)} / ${focusPurposeDisplayName(plan.focusPurpose)}`
+            : ` · 重点：${focusAreaLabels[plan.focusArea]} / ${focusPurposeLabels[plan.focusPurpose]}`
+          : "";
         document.querySelector("#planSummary").textContent = planVisible
-          ? "4 周周期训练计划"
-          : "选择三项信息，生成周期训练计划。";
+          ? `${appLanguage === "en" ? "Four-week periodized training plan" : "4 周周期训练计划"}${focusSummary}`
+          : appLanguage === "en"
+            ? "Choose your training settings to create a periodized plan."
+            : "选择训练信息，生成周期训练计划。";
         document.querySelector("#planMetricRm").textContent = plan.load;
         document.querySelector("#planMetricRmNote").textContent = appLanguage === "en" ? `Approx. ${plan.rm}` : `约 ${plan.rm}`;
         document.querySelector("#planMetricReps").textContent = plan.reps;
@@ -10009,6 +10274,11 @@
         if (plan.risk.level === "moderate") {
           rules.unshift("中风险结果：前 2-4 周以动作学习和较轻 RM 强度为主，记录血压和疼痛反应。");
         }
+        if (plan.focusArea) {
+          rules.unshift(appLanguage === "en"
+            ? `Focus: ${focusAreaDisplayName(plan.focusArea)} · ${focusPurposeDisplayName(plan.focusPurpose)}. Major movement patterns stay in the plan, the focus compound lift is moved earlier, and 2-4 effective sets are added each week.`
+            : `重点加强：${focusAreaLabels[plan.focusArea]} · ${focusPurposeLabels[plan.focusPurpose]}；保留主要动作模式，重点复合动作优先安排，每周增加 2-4 个有效组。`);
+        }
         if (profile.goal === "strength") rules.push("力量目标需要更长休息，避免把主项做成疲劳训练。");
         if (profile.goal === "power") rules.push("爆发力动作以速度和技术质量为先；出现速度明显下降时结束该动作。");
         if (profile.goal === "endurance") rules.push("肌耐力目标优先保持连续动作质量，避免在疲劳下以代偿完成次数。");
@@ -10035,6 +10305,9 @@
           ["每周训练", `${plan.days} 天`],
           ["风险评估", plan.risk.label]
         ];
+        if (plan.focusArea) {
+          facts.splice(2, 0, ["重点加强", `${focusAreaDisplayName(plan.focusArea)} · ${focusPurposeDisplayName(plan.focusPurpose)}`]);
+        }
         if (!profileFacts) return;
         profileFacts.innerHTML = facts
           .map(([label, value]) => `<div class="profile-fact"><span>${label}</span><b>${value}</b></div>`)
