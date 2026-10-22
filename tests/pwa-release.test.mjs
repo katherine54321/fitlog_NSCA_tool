@@ -71,5 +71,18 @@ test("PWA document declares installable and offline delivery assets", async () =
   assert.match(html, /decodeImageSource/);
   assert.match(html, /data-ready="false" data-loading="true"/);
   assert.match(html, /registration\.update\(\)\.catch/);
+  assert.match(html, /<body class="is-booting">/);
+  assert.match(html, /id="appBoot"/);
+  assert.match(html, /id="appShell" aria-busy="true"/);
+  assert.match(html, /function completeAppBoot\(activeId\)/);
+  assert.match(html, /document\.body\.classList\.remove\("is-booting"\)/);
+  assert.match(html, /const hadServiceWorkerController = Boolean\(navigator\.serviceWorker\.controller\)/);
+  assert.match(html, /if \(!hadServiceWorkerController \|\| serviceWorkerRefreshPending\) return/);
+  assert.match(html, /const initializedModules = new Set\(\)/);
+  assert.match(html, /function initializeModule\(moduleId\)/);
+  assert.match(html, /initializeModule\(activeId\)/);
+  assert.match(html, /applyLanguage\(appLanguage, \{ persist: false, rerender: false, localize: false \}\)/);
+  assert.match(html, /const activeModuleId = syncModuleTabs\(\) \|\| "home"/);
+  assert.doesNotMatch(html, /\n\s*renderPlan\(\);\n\s*if \(savedCardioAssessment\?\.cardioWeight\)/);
   assert.match(releaseWorker, /const CACHE_NAME = "fitlog-app-[a-f0-9]{12}"/);
 });

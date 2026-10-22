@@ -54,6 +54,79 @@
           sans-serif;
       }
 
+      .app-boot {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: grid;
+        place-items: center;
+        padding: calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
+        color: #ffffff;
+        background: #1b1d20;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 140ms ease-out, visibility 140ms ease-out;
+      }
+
+      .app-boot-card {
+        width: min(100%, 280px);
+        display: grid;
+        justify-items: center;
+        gap: 14px;
+      }
+
+      .app-boot-mark {
+        width: 54px;
+        height: 54px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(57, 255, 20, 0.68);
+        border-radius: 15px;
+        color: #39ff14;
+        background: #23262a;
+        font-size: 30px;
+        font-weight: 950;
+      }
+
+      .app-boot-title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 900;
+      }
+
+      .app-boot-progress {
+        width: 132px;
+        height: 3px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #34383e;
+      }
+
+      .app-boot-progress::after {
+        content: "";
+        display: block;
+        width: 48%;
+        height: 100%;
+        border-radius: inherit;
+        background: #00e5ff;
+        animation: appBootProgress 900ms ease-in-out infinite alternate;
+      }
+
+      @keyframes appBootProgress {
+        from { transform: translateX(-35%); }
+        to { transform: translateX(145%); }
+      }
+
+      body.is-booting .app {
+        visibility: hidden;
+      }
+
+      body:not(.is-booting) .app-boot {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
       button,
       input,
       select,
@@ -6300,8 +6373,19 @@
       .completed-training-supplement-form button { min-height: 44px; }
     </style>
   </head>
-  <body>
-    <div class="app">
+  <body class="is-booting">
+    <div class="app-boot" id="appBoot" role="status" aria-live="polite" aria-label="FitMine 正在准备页面">
+      <div class="app-boot-card">
+        <div class="app-boot-mark" aria-hidden="true">F</div>
+        <p class="app-boot-title">FitMine</p>
+        <div class="app-boot-progress" aria-hidden="true"></div>
+      </div>
+    </div>
+    <script>
+      window.setTimeout(() => document.body?.classList.remove("is-booting"), 5000);
+    </script>
+    <noscript><style>.app-boot{display:none}.app{visibility:visible!important}</style></noscript>
+    <div class="app" id="appShell" aria-busy="true">
       <header class="topbar">
         <div class="brand">
           <img class="mark" src="./app-icon.svg" width="40" height="40" alt="" aria-hidden="true" />
@@ -6983,6 +7067,7 @@
     <script>
       const APP_LANGUAGE_KEY = "fitlog-language";
       let appLanguage = localStorage.getItem(APP_LANGUAGE_KEY) === "en" ? "en" : "zh";
+      let appBootReady = false;
       const interfaceTranslations = {
         home: { zh: "首页", en: "Home" },
         plan: { zh: "计划", en: "Plan" },
@@ -7490,7 +7575,7 @@
         });
       }
 
-      function applyLanguage(language, { persist = true, rerender = true } = {}) {
+      function applyLanguage(language, { persist = true, rerender = true, localize = true } = {}) {
         appLanguage = language === "en" ? "en" : "zh";
         if (persist) localStorage.setItem(APP_LANGUAGE_KEY, appLanguage);
         document.documentElement.lang = appLanguage === "en" ? "en" : "zh-CN";
@@ -7508,25 +7593,14 @@
         });
         const languageValue = document.querySelector("#accountLanguageValue");
         if (languageValue) languageValue.textContent = appLanguage === "en" ? "English" : "简体中文";
-        if (rerender && typeof renderPlan === "function") {
-          renderPlan();
-          renderEvaluationOverview();
-          renderPlanHistory();
-          renderExercises();
-          renderExerciseCardGrid("#warmupGrid", warmupExercises);
-          renderExerciseCardGrid("#stretchGrid", stretchExercises);
-          renderFavoriteExercises();
-          renderRecords();
-          if (activeLibraryExercise) renderExerciseDetail();
-          if (exerciseReplacementContext) renderExerciseReplacementPage();
-        }
+        if (rerender && typeof rerenderInitializedModules === "function") rerenderInitializedModules();
         window.FitLogSync?.renderAccount?.();
-        queueLocalization();
+        if (localize) queueLocalization();
         if (persist) window.FitLogSync?.queueSync?.();
       }
 
       new MutationObserver(() => {
-        if (appLanguage === "en") queueLocalization();
+        if (appLanguage === "en" && appBootReady) queueLocalization();
       }).observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["placeholder", "aria-label", "title"] });
 
       window.FitMineI18n = {
@@ -8108,11 +8182,14 @@
       let deferredInstallPrompt = null;
       let scheduleDraftWeekdays = new Set();
       let scheduleDraftContext = null;
+      const initializedModules = new Set();
+      const initializedTrainingPanes = new Set();
 
       if ("serviceWorker" in navigator) {
+        const hadServiceWorkerController = Boolean(navigator.serviceWorker.controller);
         let serviceWorkerRefreshPending = false;
         navigator.serviceWorker.addEventListener("controllerchange", () => {
-          if (serviceWorkerRefreshPending) return;
+          if (!hadServiceWorkerController || serviceWorkerRefreshPending) return;
           serviceWorkerRefreshPending = true;
           window.location.reload();
         });
@@ -8145,9 +8222,19 @@
         installButton.hidden = true;
       });
 
+      function initializeTrainingPane(paneId) {
+        const target = paneId || "movesPane";
+        if (initializedTrainingPanes.has(target)) return;
+        initializedTrainingPanes.add(target);
+        if (target === "movesPane") renderExercises();
+        if (target === "warmupPane") renderExerciseCardGrid("#warmupGrid", warmupExercises);
+        if (target === "stretchPane") renderExerciseCardGrid("#stretchGrid", stretchExercises);
+        if (target === "favoritesPane") renderFavoriteExercises();
+        observeLibraryImages();
+      }
+
       function setTrainingPane(paneId) {
         const target = paneId || "movesPane";
-        if (target === "favoritesPane") renderFavoriteExercises();
         document.querySelector("#training").dataset.activePane = target;
         document.querySelectorAll("[data-training-pane]").forEach((pane) => {
           pane.hidden = pane.id !== target;
@@ -8161,6 +8248,7 @@
         document.querySelectorAll("[data-library-view]").forEach((tab) => {
           tab.setAttribute("aria-selected", tab.dataset.libraryView === target ? "true" : "false");
         });
+        if (initializedModules.has("training")) initializeTrainingPane(target);
       }
 
       function setAssessmentPane(paneId) {
@@ -8205,6 +8293,72 @@
         });
       }
 
+      function initializeModule(moduleId) {
+        if (initializedModules.has(moduleId)) return;
+        initializedModules.add(moduleId);
+        if (moduleId === "home") renderHome();
+        if (moduleId === "plan") {
+          renderPlan();
+          initializedModules.add("home");
+          renderPlanHistory();
+          renderResistanceTemplates();
+        }
+        if (moduleId === "training") {
+          const activePane = document.querySelector("#training")?.dataset.activePane || "movesPane";
+          initializeTrainingPane(activePane);
+        }
+        if (moduleId === "records") {
+          if (setLogDate && !setLogDate.value) setLogDate.value = today;
+          renderRecords();
+        }
+        if (moduleId === "evaluation") {
+          if (savedCardioAssessment?.cardioWeight) renderCardioAssessment();
+          renderAssessment();
+          renderEvaluationOverview();
+        }
+        if (moduleId === "workout-detail" && activeWorkoutDay) renderWorkoutDetail();
+      }
+
+      function rerenderInitializedModules() {
+        if (initializedModules.has("plan")) {
+          renderPlan();
+          renderPlanHistory();
+          renderResistanceTemplates();
+        } else if (initializedModules.has("home")) {
+          renderHome();
+        }
+        if (initializedModules.has("evaluation")) {
+          renderAssessment();
+          renderEvaluationOverview();
+        }
+        if (initializedModules.has("training")) {
+          initializedTrainingPanes.forEach((paneId) => {
+            if (paneId === "movesPane") renderExercises();
+            if (paneId === "warmupPane") renderExerciseCardGrid("#warmupGrid", warmupExercises);
+            if (paneId === "stretchPane") renderExerciseCardGrid("#stretchGrid", stretchExercises);
+            if (paneId === "favoritesPane") renderFavoriteExercises();
+          });
+          observeLibraryImages();
+        }
+        if (initializedModules.has("records")) renderRecords();
+        if (activeLibraryExercise) renderExerciseDetail();
+        if (exerciseReplacementContext) renderExerciseReplacementPage();
+      }
+
+      function completeAppBoot(activeId) {
+        const roots = [
+          document.querySelector(".topbar"),
+          document.querySelector(".mobile-nav"),
+          document.querySelector(`#${activeId}`)
+        ].filter(Boolean);
+        roots.forEach((root) => localizeTextNodes(root));
+        window.requestAnimationFrame(() => {
+          appBootReady = true;
+          document.querySelector("#appShell")?.setAttribute("aria-busy", "false");
+          document.body.classList.remove("is-booting");
+        });
+      }
+
       function syncModuleTabs() {
         const modules = Array.from(document.querySelectorAll("[data-module-panel]"));
         const authHash = new URLSearchParams(window.location.hash.slice(1));
@@ -8214,7 +8368,7 @@
         if (
           (authHash.has("access_token") && authHash.has("refresh_token")) ||
           (authQuery.has("token_hash") && authQuery.get("type") === "email")
-        ) return;
+        ) return "home";
         const requested = (window.location.hash || "#home").replace("#", "");
         const aliases = {
           evaluation: "me",
@@ -8238,36 +8392,38 @@
         const riskDetail = requested === "risk-assessment";
         const fitnessDetail = requested === "fitness-assessment";
         const assessmentDetail = riskDetail || fitnessDetail;
-        const evaluation = document.querySelector("#evaluation");
-        const wasRiskDetail = evaluation.dataset.riskScreen === "detail";
-        evaluation.dataset.assessmentScreen = riskDetail ? "risk" : "fitness";
-        document.querySelector("#evaluation").dataset.riskScreen = riskDetail ? "detail" : "overview";
-        document.querySelector("#riskEntry").hidden = !riskDetail;
-        document.querySelector("#riskEntry").dataset.stage = "questions";
-        document.querySelector("#riskEntryTitle").textContent = "训练前风险评估";
-        document.querySelector("#riskOverview").hidden = true;
-        if (riskDetail) {
-          const savedAnswers = JSON.parse(localStorage.getItem("fitlog-risk") || "null");
-          if (savedAnswers) {
-            riskForm.querySelectorAll("select").forEach((select) => {
-              select.value = savedAnswers[select.id] ? "yes" : "no";
-            });
+        if (activeId === "evaluation") {
+          const evaluation = document.querySelector("#evaluation");
+          const wasRiskDetail = evaluation.dataset.riskScreen === "detail";
+          evaluation.dataset.assessmentScreen = riskDetail ? "risk" : "fitness";
+          evaluation.dataset.riskScreen = riskDetail ? "detail" : "overview";
+          document.querySelector("#riskEntry").hidden = !riskDetail;
+          document.querySelector("#riskEntry").dataset.stage = "questions";
+          document.querySelector("#riskEntryTitle").textContent = "训练前风险评估";
+          document.querySelector("#riskOverview").hidden = true;
+          if (riskDetail) {
+            const savedAnswers = JSON.parse(localStorage.getItem("fitlog-risk") || "null");
+            if (savedAnswers) {
+              riskForm.querySelectorAll("select").forEach((select) => {
+                select.value = savedAnswers[select.id] ? "yes" : "no";
+              });
+            }
+            document.querySelector("#assessmentPageTitle").textContent = "风险评估";
+            document.querySelector("#assessmentPageSummary").textContent = "完成训练前健康筛查，了解风险等级与训练建议。";
+            setAssessmentPane("riskPane");
+          } else if (fitnessDetail) {
+            document.querySelector("#assessmentPageTitle").textContent = "体能评估";
+            document.querySelector("#assessmentPageSummary").textContent = "了解当前心肺能力与相对力量水平。";
+            setAssessmentPane("fitnessPane");
+          } else if (wasRiskDetail) {
+            setAssessmentPane("riskPane");
           }
-          document.querySelector("#assessmentPageTitle").textContent = "风险评估";
-          document.querySelector("#assessmentPageSummary").textContent = "完成训练前健康筛查，了解风险等级与训练建议。";
-          setAssessmentPane("riskPane");
-        } else if (fitnessDetail) {
-          document.querySelector("#assessmentPageTitle").textContent = "体能评估";
-          document.querySelector("#assessmentPageSummary").textContent = "了解当前心肺能力与相对力量水平。";
-          setAssessmentPane("fitnessPane");
-        } else if (wasRiskDetail) {
-          setAssessmentPane("riskPane");
+          document.querySelector("#riskResultSection").hidden = true;
         }
-        renderEvaluationOverview();
-        document.querySelector("#riskResultSection").hidden = true;
         modules.forEach((panel) => {
           panel.hidden = panel.id !== activeId;
         });
+        initializeModule(activeId);
         if (activeId === "exercise-detail") renderExerciseDetail();
         else if (activeId === "exercise-replace") renderExerciseReplacementPage();
         else cleanupExerciseAnimations();
@@ -8290,6 +8446,7 @@
         window.requestAnimationFrame(() => {
           window.scrollTo({ top: 0, left: 0, behavior: "instant" });
         });
+        return activeId;
       }
 
       window.addEventListener("hashchange", syncModuleTabs);
@@ -11733,21 +11890,9 @@
         });
       }
 
-      renderPlan();
-      if (savedCardioAssessment?.cardioWeight) renderCardioAssessment();
-      renderAssessment();
-      renderEvaluationOverview();
-      renderPlanHistory();
-      renderResistanceTemplates();
-      renderExercises();
-      renderExerciseCardGrid("#warmupGrid", warmupExercises);
-      renderExerciseCardGrid("#stretchGrid", stretchExercises);
-      renderFavoriteExercises();
-      observeLibraryImages();
-      if (setLogDate && !setLogDate.value) setLogDate.value = today;
-      renderRecords();
-      syncModuleTabs();
-      applyLanguage(appLanguage, { persist: false, rerender: false });
+      applyLanguage(appLanguage, { persist: false, rerender: false, localize: false });
+      const activeModuleId = syncModuleTabs() || "home";
+      completeAppBoot(activeModuleId);
       window.FitLogSync?.init();
     </script>
   </body>
