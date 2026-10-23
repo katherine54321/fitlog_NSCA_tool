@@ -14,6 +14,11 @@ test("iOS target contains privacy manifest, branded app icon, and auth URL schem
   assert.match(privacy, /NSPrivacyAccessedAPICategoryUserDefaults/);
   assert.match(privacy, /NSPrivacyCollectedDataTypeHealth/);
   assert.match(project, /PrivacyInfo\.xcprivacy in Resources/);
+  assert.match(project, /TARGETED_DEVICE_FAMILY = 1;/);
+  assert.doesNotMatch(project, /TARGETED_DEVICE_FAMILY = "1,2";/);
   assert.match(plist, /com\.fitlog\.sciencefitness/);
+  assert.match(plist, /<key>UISupportedInterfaceOrientations<\/key>\s*<array>\s*<string>UIInterfaceOrientationPortrait<\/string>\s*<\/array>/);
+  assert.doesNotMatch(plist, /UIInterfaceOrientationLandscape/);
+  assert.doesNotMatch(plist, /UISupportedInterfaceOrientations~ipad/);
   assert.ok(icon.length > 10_000);
 });

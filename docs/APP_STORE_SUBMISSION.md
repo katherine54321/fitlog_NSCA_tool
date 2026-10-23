@@ -10,8 +10,8 @@
 | SKU | `fitlog-ios-001` |
 | 分类 | 健康健美 / 教育 |
 | 年龄分级 | 依据实际问卷重新填写；不要将评估表述为医疗诊断 |
-| 支持 URL | `https://YOUR_DOMAIN/legal/support.html` |
-| 隐私政策 URL | `https://YOUR_DOMAIN/legal/privacy.html` |
+| 支持 URL | `https://fitminetech.com/legal/support.html` |
+| 隐私政策 URL | `https://fitminetech.com/legal/privacy.html` |
 
 ## 中文商店文案
 
@@ -48,8 +48,8 @@ FitMine 提供的是运动训练参考，不替代医疗诊断、治疗或专业
 
 ## 提交前人工待办
 
-1. 将 `support@example.com`、`YOUR_DOMAIN` 与运营主体替换为真实信息。
-2. 在真机截取 App Store 所需的 6.7 英寸和 6.5 英寸 iPhone 截图；不要使用浏览器边框或开发预览图。
+1. 确认 `support@fitminetech.com` 可以正常收件，隐私政策和支持页面在线可访问。
+2. 在真机截取 App Store Connect 要求的 iPhone 截图；不要使用浏览器边框或开发预览图。
 3. 在 macOS 的 Xcode 中设置签名团队、版本号和 Build 号，Archive 后上传 App Store Connect。
 4. 配置 Apple 登录后，验证同一用户的 iOS 回调、登录、同步和账户删除。
 5. 如提供自动续期订阅，先创建内购项目、服务端验证和恢复购买流程，再提交。
