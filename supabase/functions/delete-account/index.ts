@@ -24,7 +24,9 @@ Deno.serve(async (request) => {
   if (userError || !user) return response("Unauthorized", { status: 401 });
 
   const adminClient = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
-  const { error } = await adminClient.auth.admin.deleteUser(user.id, true);
+  // Permanently remove the auth user so the database foreign keys declared
+  // with ON DELETE CASCADE also remove the user's FitMine data.
+  const { error } = await adminClient.auth.admin.deleteUser(user.id);
   if (error) return response("Unable to delete account", { status: 500 });
 
   return Response.json({ deleted: true }, { headers: corsHeaders });
