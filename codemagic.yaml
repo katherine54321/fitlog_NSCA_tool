@@ -1,0 +1,42 @@
+workflows:
+  fitmine-ios:
+    name: FitMine iOS App Store
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      xcode: 26.4
+      cocoapods: default
+      node: 24
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.fitlog.sciencefitness
+      vars:
+        XCODE_WORKSPACE: "App.xcworkspace"
+        XCODE_SCHEME: "App"
+    scripts:
+      - name: Install JavaScript dependencies
+        script: |
+          corepack enable
+          corepack prepare pnpm@11.19.0 --activate
+          pnpm install --frozen-lockfile
+      - name: Build the production PWA
+        script: pnpm build
+      - name: Sync Capacitor iOS project
+        script: pnpm exec cap sync ios
+      - name: Set the App Store build number
+        script: |
+          sed -i '' -E "s/CURRENT_PROJECT_VERSION = [^;]+;/CURRENT_PROJECT_VERSION = ${BUILD_NUMBER};/g" ios/App/App.xcodeproj/project.pbxproj
+      - name: Apply App Store signing profiles
+        script: xcode-project use-profiles --project ios/App/App.xcodeproj
+      - name: Build signed IPA
+        script: |
+          cd ios/App
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME" \
+            --archive-flags="-destination 'generic/platform=iOS'"
+    artifacts:
+      - ios/App/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+

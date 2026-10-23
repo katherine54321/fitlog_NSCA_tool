@@ -5,11 +5,13 @@ import test from "node:test";
 const root = new URL("../", import.meta.url);
 
 test("iOS target contains privacy manifest, branded app icon, and auth URL scheme", async () => {
-  const [privacy, project, plist, icon] = await Promise.all([
+  const [privacy, project, plist, icon, codemagic, sharedScheme] = await Promise.all([
     readFile(new URL("ios/App/App/PrivacyInfo.xcprivacy", root), "utf8"),
     readFile(new URL("ios/App/App.xcodeproj/project.pbxproj", root), "utf8"),
     readFile(new URL("ios/App/App/Info.plist", root), "utf8"),
     readFile(new URL("ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png", root)),
+    readFile(new URL("codemagic.yaml", root), "utf8"),
+    readFile(new URL("ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme", root), "utf8"),
   ]);
   assert.match(privacy, /NSPrivacyAccessedAPICategoryUserDefaults/);
   assert.match(privacy, /NSPrivacyCollectedDataTypeHealth/);
@@ -20,5 +22,14 @@ test("iOS target contains privacy manifest, branded app icon, and auth URL schem
   assert.match(plist, /<key>UISupportedInterfaceOrientations<\/key>\s*<array>\s*<string>UIInterfaceOrientationPortrait<\/string>\s*<\/array>/);
   assert.doesNotMatch(plist, /UIInterfaceOrientationLandscape/);
   assert.doesNotMatch(plist, /UISupportedInterfaceOrientations~ipad/);
+  assert.match(plist, /<key>ITSAppUsesNonExemptEncryption<\/key>\s*<false\/>/);
   assert.ok(icon.length > 10_000);
+  assert.match(codemagic, /instance_type: mac_mini_m2/);
+  assert.match(codemagic, /xcode: 26\.4/);
+  assert.match(codemagic, /bundle_identifier: com\.fitlog\.sciencefitness/);
+  assert.match(codemagic, /pnpm exec cap sync ios/);
+  assert.match(codemagic, /xcode-project use-profiles --project ios\/App\/App\.xcodeproj/);
+  assert.match(codemagic, /xcode-project build-ipa/);
+  assert.match(sharedScheme, /BlueprintName = "App"/);
+  assert.match(sharedScheme, /buildForArchiving = "YES"/);
 });

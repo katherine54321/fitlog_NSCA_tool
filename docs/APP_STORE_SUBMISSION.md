@@ -50,6 +50,6 @@ FitMine 提供的是运动训练参考，不替代医疗诊断、治疗或专业
 
 1. 确认 `support@fitminetech.com` 可以正常收件，隐私政策和支持页面在线可访问。
 2. 在真机截取 App Store Connect 要求的 iPhone 截图；不要使用浏览器边框或开发预览图。
-3. 在 macOS 的 Xcode 中设置签名团队、版本号和 Build 号，Archive 后上传 App Store Connect。
+3. 通过 Codemagic 云端 macOS/Xcode 应用签名、设置 Build 号、生成 IPA，并先上传 TestFlight 验证。
 4. 配置 Apple 登录后，验证同一用户的 iOS 回调、登录、同步和账户删除。
 5. 如提供自动续期订阅，先创建内购项目、服务端验证和恢复购买流程，再提交。
