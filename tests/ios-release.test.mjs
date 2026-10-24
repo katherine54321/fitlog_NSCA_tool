@@ -15,6 +15,10 @@ test("iOS target contains privacy manifest, branded app icon, and auth URL schem
   ]);
   assert.match(privacy, /NSPrivacyAccessedAPICategoryUserDefaults/);
   assert.match(privacy, /NSPrivacyCollectedDataTypeHealth/);
+  assert.match(privacy, /NSPrivacyCollectedDataTypeFitness/);
+  assert.match(privacy, /NSPrivacyCollectedDataTypeProductInteraction/);
+  assert.match(privacy, /NSPrivacyCollectedDataTypeOtherDiagnosticData/);
+  assert.doesNotMatch(privacy, /<key>NSPrivacyTracking<\/key>\s*<true\/>/);
   assert.match(project, /PrivacyInfo\.xcprivacy in Resources/);
   assert.match(project, /TARGETED_DEVICE_FAMILY = 1;/);
   assert.doesNotMatch(project, /TARGETED_DEVICE_FAMILY = "1,2";/);
