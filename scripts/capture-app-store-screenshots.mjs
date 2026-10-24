@@ -4,7 +4,9 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 const projectRoot = resolve(process.cwd());
-const outputDir = join(projectRoot, "docs", "app-store-assets", "screenshots-zh");
+const languageArg = process.argv.find((argument) => argument.startsWith("--language="));
+const screenshotLanguage = languageArg?.split("=")[1] === "en" ? "en" : "zh";
+const outputDir = join(projectRoot, "docs", "app-store-assets", `screenshots-${screenshotLanguage}`);
 const previewPort = 4173;
 const debugPort = 9333;
 const previewUrl = `http://127.0.0.1:${previewPort}/index.html`;
@@ -147,7 +149,7 @@ try {
   await waitForApp(client);
 
   const initialState = {
-    "fitlog-language": "zh",
+    "fitlog-language": screenshotLanguage,
     "fitlog-profile": JSON.stringify({
       age: 30,
       sex: "female",
@@ -173,10 +175,11 @@ try {
   await waitForApp(client);
 
   await evaluate(client, `(() => {
+    const captureLanguage = ${JSON.stringify(screenshotLanguage)};
     const workouts = [getWorkoutDay(0, 0), getWorkoutDay(0, 1), getWorkoutDay(1, 0)];
     const completedIds = workouts.map((workout) => workout.id);
     const planLogs = workouts.flatMap((workout, workoutIndex) => workout.exercises.slice(0, workoutIndex === 0 ? 1 : 4).map((item, index) => {
-      const exercise = libraryExerciseForWorkout(item, "训练");
+      const exercise = libraryExerciseForWorkout(item, captureLanguage === "en" ? "Training" : "训练");
       const sets = Math.max(1, getExerciseSetCount(item));
       const reps = Math.max(6, workoutRepTarget(item.prescription) || 8);
       const weightKg = 18 + workoutIndex * 2.5 + index * 5;
@@ -191,7 +194,7 @@ try {
         planDayId: workout.id,
         date: workout.date,
         exerciseId: exercise.id,
-        exerciseName: exercise.nameZh,
+        exerciseName: captureLanguage === "en" ? exercise.nameEn : exercise.nameZh,
         category: exercise.category,
         sets,
         setEntries,
@@ -199,7 +202,7 @@ try {
         reps,
         weightKg,
         estimated1RM: calculateBrzyckiOneRm(weightKg, reps),
-        notes: "计划动作负荷已记录",
+        notes: captureLanguage === "en" ? "Planned exercise load recorded" : "计划动作负荷已记录",
         createdAt: workout.date + "T10:00:00.000Z",
         completedAt: workout.date + "T11:00:00.000Z"
       };
@@ -210,8 +213,8 @@ try {
       id: "store-trend-" + index,
       date,
       exerciseId: "incline-dumbbell-press",
-      exerciseName: "上斜哑铃卧推",
-      category: "胸部",
+      exerciseName: captureLanguage === "en" ? "Incline Dumbbell Bench Press" : "上斜哑铃卧推",
+      category: captureLanguage === "en" ? "Chest" : "胸部",
       weightKg: trendWeights[index],
       reps: 8,
       estimated1RM: calculateBrzyckiOneRm(trendWeights[index], 8),
@@ -263,7 +266,7 @@ try {
   await capture(client, "06-strength-trends.png");
 
   client.close();
-  console.log(`Created 6 App Store screenshots in ${outputDir}`);
+  console.log(`Created 6 ${screenshotLanguage === "en" ? "English" : "Chinese"} App Store screenshots in ${outputDir}`);
 } finally {
   if (browserProcess && !browserProcess.killed) browserProcess.kill();
   if (previewProcess && !previewProcess.killed) previewProcess.kill();

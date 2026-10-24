@@ -1,5 +1,20 @@
 # FitMine App Store 素材说明
 
+## 英文 iPhone 截图（首发使用）
+
+目录：`screenshots-en/`
+
+所有图片均为 `1290 × 2796` PNG、RGB 无透明通道，页面语言、导航、计划、动作名称、记录状态及趋势数据均为英文。首版仅在海外英语区上架时，应优先上传这一组。
+
+建议上传顺序：
+
+1. `01-home-overview.png`：Today's workout、四周完成进度与训练日历。
+2. `02-periodized-plan.png`：周期化计划、训练指标与四周微周期。
+3. `03-workout-exercises.png`：训练动作列表及 Log data / View data 状态。
+4. `04-per-set-logging.png`：计划固定组数，逐组填写 Weight 和 Reps。
+5. `05-exercise-details.png`：动作详情、收藏、训练肌群与动作步骤。
+6. `06-strength-trends.png`：Peak、Recent 1RM、变化值与力量趋势图。
+
 ## 中文 iPhone 截图
 
 目录：`screenshots-zh/`
@@ -20,7 +35,13 @@
 在项目根目录运行：
 
 ```powershell
-node scripts/capture-app-store-screenshots.mjs
+node scripts/capture-app-store-screenshots.mjs --language=en
+```
+
+如需重新生成中文素材，运行：
+
+```powershell
+node scripts/capture-app-store-screenshots.mjs --language=zh
 ```
 
 脚本会启动本地预览和隐藏的无头 Edge，写入隔离的演示数据后重新生成以上 6 张截图，不会读取或修改真实用户数据。
