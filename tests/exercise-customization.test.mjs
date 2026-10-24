@@ -4,6 +4,12 @@ import test from "node:test";
 
 const source = await readFile(new URL("../index.html", import.meta.url), "utf8");
 
+const planLogHelperStart = source.indexOf("function hasRecordedPlanExerciseData(planLog)");
+const planLogHelperEnd = source.indexOf("function getWorkoutSetEntries", planLogHelperStart);
+const hasRecordedPlanExerciseData = new Function(
+  `${source.slice(planLogHelperStart, planLogHelperEnd)}; return hasRecordedPlanExerciseData;`
+)();
+
 test("generated workout actions can be replaced by exercises from the same body category", () => {
   assert.match(source, /PLAN_EXERCISE_REPLACEMENTS_KEY = "fitlog-plan-exercise-replacements"/);
   assert.match(source, /data-replace-workout-exercise="\$\{index\}"/);
@@ -38,7 +44,23 @@ test("workout cards use compact overflow actions and inline logging", () => {
   assert.match(source, /Workout data saved\./);
   assert.match(source, /Workout log persistence verification failed/);
   assert.match(source, /data-inline-workout-status role="status" aria-live="polite"/);
+  assert.match(source, /function hasRecordedPlanExerciseData\(planLog\)/);
+  assert.match(source, /hasRecordedData \? \(appLanguage === "en" \? "View data" : "查看数据"\) : \(appLanguage === "en" \? "Log data" : "记录数据"\)/);
+  assert.match(source, /if \(toggle\) toggle\.textContent = appLanguage === "en" \? "View data" : "查看数据"/);
+  assert.doesNotMatch(source, /planLog \? \(appLanguage === "en" \? "Recorded" : "已记录"\)/);
   assert.match(source, /workoutDetail\.addEventListener\("submit"/);
   assert.doesNotMatch(source, /data-log-workout-exercise="\$\{exercise\.id\}"/);
   assert.doesNotMatch(source, /class="workout-action-actions"/);
+});
+
+test("completed-only plan logs do not appear as recorded workout data", () => {
+  assert.equal(hasRecordedPlanExerciseData(null), false);
+  assert.equal(hasRecordedPlanExerciseData({ weightKg: null, reps: 12, completedAt: "2026-10-24T00:00:00.000Z" }), false);
+  assert.equal(hasRecordedPlanExerciseData({ weightKg: 20, reps: 8 }), true);
+  assert.equal(hasRecordedPlanExerciseData({
+    setEntries: [
+      { setNumber: 1, weightKg: 20, reps: 8 },
+      { setNumber: 2, weightKg: 20, reps: 8 }
+    ]
+  }), true);
 });

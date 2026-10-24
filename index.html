@@ -10050,6 +10050,7 @@
             : translateInterfaceText(item.prescription)
           : appLanguage === "en" ? "Complete within a comfortable range" : "按舒适范围完成";
         const planLog = type === "训练" ? getPlanExerciseLog(activeWorkoutDay?.id, exercise.id) : null;
+        const hasRecordedData = hasRecordedPlanExerciseData(planLog);
         const plannedSets = Math.max(1, getExerciseSetCount(item));
         const plannedReps = workoutRepTarget(item.prescription);
         const setEntries = getWorkoutSetEntries(planLog, plannedSets, item.loadKg, plannedReps);
@@ -10062,7 +10063,7 @@
         `).join("");
         const actionControls = type === "训练"
           ? `<div class="workout-card-footer">
-              <button class="workout-inline-log-toggle" type="button" data-toggle-inline-workout-log="${index}" aria-expanded="false">${planLog ? (appLanguage === "en" ? "Recorded" : "已记录") : (appLanguage === "en" ? "Log" : "记录")}</button>
+              <button class="workout-inline-log-toggle" type="button" data-toggle-inline-workout-log="${index}" aria-expanded="false">${hasRecordedData ? (appLanguage === "en" ? "View data" : "查看数据") : (appLanguage === "en" ? "Log data" : "记录数据")}</button>
               <div class="workout-overflow">
                 <button class="workout-overflow-toggle" type="button" data-toggle-workout-menu aria-expanded="false" aria-label="${appLanguage === "en" ? "More exercise options" : "更多动作操作"}">•••</button>
                 <div class="workout-overflow-menu" hidden>
@@ -10175,6 +10176,27 @@
         ) || null;
       }
 
+      function hasRecordedPlanExerciseData(planLog) {
+        if (!planLog) return false;
+        const setEntries = Array.isArray(planLog.setEntries) ? planLog.setEntries : [];
+        if (setEntries.length) {
+          return setEntries.every((setEntry) =>
+            setEntry.weightKg !== null
+            && setEntry.weightKg !== ""
+            && Number.isFinite(Number(setEntry.weightKg))
+            && Number(setEntry.weightKg) >= 0
+            && Number.isFinite(Number(setEntry.reps))
+            && Number(setEntry.reps) > 0
+          );
+        }
+        return planLog.weightKg !== null
+          && planLog.weightKg !== ""
+          && Number.isFinite(Number(planLog.weightKg))
+          && Number(planLog.weightKg) >= 0
+          && Number.isFinite(Number(planLog.reps))
+          && Number(planLog.reps) > 0;
+      }
+
       function getWorkoutSetEntries(planLog, plannedSets, fallbackWeight, fallbackReps) {
         const savedEntries = Array.isArray(planLog?.setEntries) ? planLog.setEntries : [];
         return Array.from({ length: plannedSets }, (_, setIndex) => {
@@ -10262,7 +10284,7 @@
           if (!persisted) throw new Error("Workout log persistence verification failed");
           const panel = form.closest("[data-inline-workout-log-panel]");
           const toggle = workoutDetail.querySelector(`[data-toggle-inline-workout-log="${exerciseIndex}"]`);
-          if (toggle) toggle.textContent = appLanguage === "en" ? "Recorded" : "已记录";
+          if (toggle) toggle.textContent = appLanguage === "en" ? "View data" : "查看数据";
           if (saveButton) {
             saveButton.disabled = true;
             saveButton.textContent = appLanguage === "en" ? "Saved" : "已保存";
