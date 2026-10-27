@@ -4723,6 +4723,101 @@
     "endImage": "assets/exercise-images/bodyweight-walking-lunge-1.jpg"
   },
   {
+    "id": "seated-hip-abduction",
+    "nameZh": "坐姿髋外展",
+    "nameEn": "Thigh Abductor",
+    "category": "臀部",
+    "libraryType": "resistance",
+    "level": "初级",
+    "equipment": "固定器械",
+    "force": "推",
+    "mechanic": "孤立动作",
+    "primaryMuscles": [
+      "髋外展肌群"
+    ],
+    "secondaryMuscles": [
+      "臀肌"
+    ],
+    "instructionsZh": [
+      "调整座椅与腿垫，让双腿舒适贴住外侧垫并握稳把手。",
+      "保持躯干和骨盆稳定，主动将双腿向外打开。",
+      "在外展末端短暂停顿，再缓慢回到起始位置，避免借助惯性。"
+    ],
+    "instructionsEn": [
+      "To begin, sit down on the abductor machine and select a weight you are comfortable with. When your legs are positioned properly, grip the handles on each side. Your entire upper body (from the waist up) should be stationary. This is the starting position.",
+      "Slowly press against the machine with your legs to move them away from each other while exhaling.",
+      "Feel the contraction for a second and begin to move your legs back to the starting position while breathing in. Note: Remember to keep your upper body stationary to prevent any injuries from occurring.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "startImage": "assets/exercise-images/seated-hip-abduction-0.jpg",
+    "endImage": "assets/exercise-images/seated-hip-abduction-1.jpg"
+  },
+  {
+    "id": "smith-machine-pistol-squat",
+    "nameZh": "史密斯机单腿深蹲",
+    "nameEn": "Smith Machine Pistol Squat",
+    "category": "臀部",
+    "libraryType": "resistance",
+    "level": "中级",
+    "equipment": "固定器械",
+    "force": "推",
+    "mechanic": "复合动作",
+    "primaryMuscles": [
+      "股四头肌"
+    ],
+    "secondaryMuscles": [
+      "小腿",
+      "臀肌",
+      "腘绳肌"
+    ],
+    "instructionsZh": [
+      "将史密斯机杠铃置于肩部舒适高度，单脚站稳，另一腿自然向前伸。",
+      "保持骨盆稳定，支撑腿屈髋屈膝下蹲至可控深度。",
+      "支撑脚全掌发力站起，膝盖始终跟随脚尖方向。"
+    ],
+    "instructionsEn": [
+      "To begin, first set the bar to a position that best matches your height. Step under it and position the bar across the back of your shoulders.",
+      "Take the bar with your hands facing forward, unlock it and lift it off the rack by extending your legs. 3",
+      "Move one foot forward about 12 inches in front of the bar. Extend the other leg out in front of you, holding it off the ground. Look forward at all times and maintain a neutral or slightly arched spine. This will be your starting position.",
+      "Maintaining good posture, lower yourself by flexing the knee and hip, going down as far as flexibility allows.",
+      "Pause briefly at the bottom and then return to the starting position by driving through the heel of your foot, extending the knee and hip."
+    ],
+    "startImage": "assets/exercise-images/smith-machine-pistol-squat-0.jpg",
+    "endImage": "assets/exercise-images/smith-machine-pistol-squat-1.jpg"
+  },
+  {
+    "id": "smith-machine-stiff-legged-deadlift",
+    "nameZh": "史密斯机直腿硬拉",
+    "nameEn": "Smith Machine Stiff-Legged Deadlift",
+    "category": "臀部",
+    "libraryType": "resistance",
+    "level": "初级",
+    "equipment": "固定器械",
+    "force": "拉",
+    "mechanic": "复合动作",
+    "primaryMuscles": [
+      "腘绳肌"
+    ],
+    "secondaryMuscles": [
+      "臀肌",
+      "下背部"
+    ],
+    "instructionsZh": [
+      "双脚与髋同宽站在杠铃前，握稳杠铃并保持膝盖微屈。",
+      "向后推髋，让杠铃贴近双腿下降，保持脊柱中立。",
+      "感受到臀腿后侧拉伸后伸髋站起，顶端避免腰椎过伸。"
+    ],
+    "instructionsEn": [
+      "To begin, set the bar on the smith machine to a height that is around the middle of your thighs. Once the correct height is chosen and the bar is loaded, grasp the bar using a pronated (palms forward) grip that is shoulder width apart. You may need some wrist wraps if using a significant amount of weight.",
+      "Lift the bar up by fully extending your arms while keeping your back straight. Stand with your torso straight and your legs spaced using a shoulder width or narrower stance. The knees should be slightly bent. This is your starting position.",
+      "Keeping the knees stationary, lower the barbell to over the top of your feet by bending at the waist while keeping your back straight. Keep moving forward as if you were going to pick something from the floor until you feel a stretch on the hamstrings. Exhale as you perform this movement",
+      "Start bringing your torso up straight again as soon as you feel the hamstrings stretch by extending your hips and waist until you are back at the starting position. Inhale as you perform this movement.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "startImage": "assets/exercise-images/smith-machine-stiff-legged-deadlift-0.jpg",
+    "endImage": "assets/exercise-images/smith-machine-stiff-legged-deadlift-1.jpg"
+  },
+  {
     "id": "hanging-leg-raise",
     "nameZh": "悬垂举腿",
     "nameEn": "Hanging Leg Raise",

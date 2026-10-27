@@ -17,13 +17,13 @@ const countBy = (items, property) =>
     return counts;
   }, {});
 
-test("exercise library contains 180 complete local exercises with balanced coverage", () => {
-  assert.equal(exercises.length, 180);
-  assert.equal(new Set(exercises.map((exercise) => exercise.id)).size, 180);
+test("exercise library contains 183 complete local exercises with balanced coverage", () => {
+  assert.equal(exercises.length, 183);
+  assert.equal(new Set(exercises.map((exercise) => exercise.id)).size, 183);
   assert.equal(exercises.filter((exercise) => !exercise.startImage || !exercise.endImage || !exercise.instructionsZh?.length).length, 0);
 
   const types = countBy(exercises, "libraryType");
-  assert.deepEqual(types, { resistance: 150, warmup: 15, stretch: 15 });
+  assert.deepEqual(types, { resistance: 153, warmup: 15, stretch: 15 });
 
   const categories = countBy(exercises, "category");
   assert.deepEqual(categories, {
@@ -32,7 +32,7 @@ test("exercise library contains 180 complete local exercises with balanced cover
     "肩部": 21,
     "手臂": 22,
     "腿部": 24,
-    "臀部": 19,
+    "臀部": 22,
     "核心": 21,
     "热身": 15,
     "拉伸": 15
@@ -59,10 +59,19 @@ test("exercise equipment labels are normalized to the supported taxonomy", () =>
   }
 });
 
+test("glute machine filter includes common abduction, unilateral squat, and hinge exercises", () => {
+  const machineGluteExercises = exercises.filter((exercise) => exercise.category === "臀部" && exercise.equipment === "固定器械");
+  assert.equal(machineGluteExercises.length, 4);
+  assert.deepEqual(
+    machineGluteExercises.map((exercise) => exercise.id).sort(),
+    ["glute-ham-raise", "seated-hip-abduction", "smith-machine-pistol-squat", "smith-machine-stiff-legged-deadlift"].sort()
+  );
+});
+
 test("exercise importer merges the expansion catalog and list stays paginated", () => {
   assert.match(importScript, /exercise-expansion-v2\.json/);
   assert.match(importScript, /const exerciseConfigs = \{ \.\.\.terms\.exercises, \.\.\.expansion\.exercises \}/);
-  assert.equal(Object.keys(expansion.exercises).length, 52);
+  assert.equal(Object.keys(expansion.exercises).length, 55);
   assert.match(appSource, /let libraryVisibleCount = 20/);
   assert.match(appSource, /libraryVisibleCount \+= 20/);
   assert.match(appSource, /renderExerciseCardGrid\("#warmupGrid", warmupExercises\)/);

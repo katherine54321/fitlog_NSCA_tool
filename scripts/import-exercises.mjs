@@ -16,6 +16,7 @@ const verbose = process.env.EXERCISE_IMPORT_VERBOSE === "1";
 const translate = (value) => terms.terms[String(value || "").toLowerCase()] || value || "未提供";
 const equipmentLabels = new Set(["杠铃", "哑铃", "徒手", "绳索器械", "固定器械", "药球", "其他", "弹力带", "健身球"]);
 const translateEquipment = (value) => {
+  if (!value) return "徒手";
   const label = terms.terms[String(value || "").toLowerCase()] || value;
   return equipmentLabels.has(label) ? label : "其他";
 };
@@ -84,7 +85,7 @@ for (const [id, config] of Object.entries(exerciseConfigs)) {
       category: config.category,
       libraryType: config.libraryType || "resistance",
       level: translate(exercise.level),
-      equipment: translateEquipment(exercise.equipment),
+      equipment: config.equipment || translateEquipment(exercise.equipment),
       force: translate(exercise.force),
       mechanic: translate(exercise.mechanic),
       primaryMuscles: (exercise.primaryMuscles || []).map(translate),
