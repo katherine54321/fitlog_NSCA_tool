@@ -65,7 +65,6 @@ test("adaptive progression setup and low-friction set logging are available", ()
   assert.match(source, /ADAPTIVE_SETUP_KEY = "fitlog-adaptive-progression-setup"/);
   assert.match(source, /planKey: getPlanScheduleKey\(profile, plan, startDate\)/);
   assert.match(source, /planKey: activeWorkoutDay\.planKey/);
-  assert.match(source, /adaptiveProgressionSetup\.planKey === activeWorkoutDay\.planKey/);
   assert.doesNotMatch(source, /function hasAnyAdaptiveTrainingData\(\)/);
   assert.match(source, /data-adaptive-setup="known"/);
   assert.match(source, /data-adaptive-setup="guide"/);
@@ -83,6 +82,7 @@ test("adaptive progression setup and low-friction set logging are available", ()
   assert.match(source, /!hasRecordedPlanExerciseData\(currentLog\) && !previousLog/);
   assert.match(source, /function getUnrecordedWorkoutExerciseIds\(workout\)/);
   assert.match(source, /const exerciseIds = getUnrecordedWorkoutExerciseIds\(activeWorkoutDay\)/);
+  assert.match(source, /unrecordedExerciseIds\.every\(\(exerciseId\) => getExerciseCalibration\(exerciseId\)\?\.status === "confirmed"\)/);
   assert.match(source, /openAdaptiveCalibrationDialog\(\)/);
   assert.match(source, /adaptiveCalibrationDialog\.showModal\(\)/);
   assert.match(source, /推荐重量已写入对应动作的“记录数据”默认重量/);
@@ -97,6 +97,14 @@ test("adaptive progression setup and low-friction set logging are available", ()
   assert.match(source, /记录主训练数据后，FitMine可为下次训练调整重量。/);
   assert.match(source, /getLatestRecordedExerciseLog\(exercise\.id, activeWorkoutDay\?\.id\)/);
   assert.match(source, /previousEntry\.weightKg \?\? previousLog\?\.weightKg/);
+  const openDetailStart = source.indexOf("function openWorkoutDetail(weekIndex, dayIndex, returnHash = \"plan\")");
+  const openDetailEnd = source.indexOf("function recordFromWorkout", openDetailStart);
+  assert.ok(openDetailStart >= 0 && openDetailEnd > openDetailStart);
+  assert.doesNotMatch(source.slice(openDetailStart, openDetailEnd), /openAdaptiveCalibrationDialog/);
+  assert.match(source, /class="workout-back-icon"[\s\S]*?aria-label="\$\{workoutBackLabel\}"[\s\S]*?>←<\/button>/);
+  assert.match(source, /window\.location\.hash = workoutDetailReturnHash/);
+  assert.match(source, /openWorkoutDetail\(activePlanWeekIndex, Number\(button\.dataset\.planDay\), "plan"\)/);
+  assert.match(source, /openWorkoutDetail\(Number\(button\.dataset\.weekIndex\), Number\(button\.dataset\.dayIndex\), "home"\)/);
 });
 
 test("adaptive setup appears only for unrecorded exercises not covered by the current workout choice", () => {

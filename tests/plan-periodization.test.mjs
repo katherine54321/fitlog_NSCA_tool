@@ -212,7 +212,7 @@ test("program design centralizes goal prescriptions and recovery-aware split sel
 
 test("plan schedule days open the selected week workout detail without verbose guidance", () => {
   assert.match(source, /data-plan-day/);
-  assert.match(source, /openWorkoutDetail\(activePlanWeekIndex, Number\(button\.dataset\.planDay\)\)/);
+  assert.match(source, /openWorkoutDetail\(activePlanWeekIndex, Number\(button\.dataset\.planDay\), "plan"\)/);
   assert.doesNotMatch(source, /当前训练天数采用过渡编排/);
   assert.doesNotMatch(source, /四周计划已按目标、体能水平与每周/);
 });

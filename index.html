@@ -2917,6 +2917,26 @@
         justify-self: start;
       }
 
+      .workout-back-icon {
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        justify-self: start;
+        padding: 0;
+        border: 1px solid #41484e;
+        border-radius: 50%;
+        color: #ffffff;
+        background: transparent;
+        font-size: 22px;
+        line-height: 1;
+      }
+
+      .workout-back-icon:active { background: #30353a; }
+
       .workout-overview {
         display: grid;
         gap: 8px;
@@ -8709,6 +8729,7 @@
       let isEditingPlan = false;
       let activePlanWeekIndex = 0;
       let activeWorkoutDay = null;
+      let workoutDetailReturnHash = "plan";
       let pendingPlanLogContext = null;
       let activeSupplementLogId = null;
       let activeCalendarSupplementId = null;
@@ -10809,11 +10830,13 @@
       }
 
       function adaptiveModeBannerTemplate() {
+        const unrecordedExerciseIds = getUnrecordedWorkoutExerciseIds(activeWorkoutDay);
         if (!adaptiveProgressionSetup
           || adaptiveProgressionSetup.mode === "skip"
-          || !getUnrecordedWorkoutExerciseIds(activeWorkoutDay).length
+          || !unrecordedExerciseIds.length
           || shouldShowAdaptiveSetup(activeWorkoutDay)) return "";
         const isGuide = adaptiveProgressionSetup.mode === "guide";
+        if (isGuide && unrecordedExerciseIds.every((exerciseId) => getExerciseCalibration(exerciseId)?.status === "confirmed")) return "";
         return `
           <section class="adaptive-mode-banner" aria-label="${appLanguage === "en" ? "Starting load setup" : "起始重量设置"}">
             <div>
@@ -11116,9 +11139,12 @@
       }
 
       function renderWorkoutDetail() {
+        const workoutBackLabel = workoutDetailReturnHash === "plan"
+          ? (appLanguage === "en" ? "Back to plan" : "返回计划页")
+          : (appLanguage === "en" ? "Back to home" : "返回首页");
         if (!activeWorkoutDay) {
           workoutDetail.innerHTML = `
-            <button class="ghost-btn detail-back" type="button" data-workout-back>返回首页</button>
+            <button class="workout-back-icon" type="button" data-workout-back aria-label="${workoutBackLabel}" title="${workoutBackLabel}">←</button>
             <div class="workout-overview"><h2>选择训练日</h2><p class="muted">请从首页的今日计划或计划页进入训练详情。</p></div>
           `;
           return;
@@ -11128,7 +11154,7 @@
         const preparation = getTargetedPreparation(workout);
         const recordedExercises = records.find((item) => item.planDayId === workout.id)?.exercises || [];
         workoutDetail.innerHTML = `
-          <button class="ghost-btn detail-back" type="button" data-workout-back>${appLanguage === "en" ? "Back to Home" : "返回首页"}</button>
+          <button class="workout-back-icon" type="button" data-workout-back aria-label="${workoutBackLabel}" title="${workoutBackLabel}">←</button>
           <div class="workout-overview">
             <span class="chip">${appLanguage === "en" ? `Plan week ${workout.weekIndex + 1} · Training day ${workout.dayIndex + 1}` : workout.title}</span>
             <h2>${translateInterfaceText(workout.name)}</h2>
@@ -11299,16 +11325,11 @@
         if (nextIndex >= 0) window.setTimeout(() => openWorkoutLogPanel(nextIndex, true), 250);
       }
 
-      function openWorkoutDetail(weekIndex, dayIndex) {
+      function openWorkoutDetail(weekIndex, dayIndex, returnHash = "plan") {
+        workoutDetailReturnHash = returnHash === "home" ? "home" : "plan";
         activeWorkoutDay = getWorkoutDay(weekIndex, dayIndex);
         renderWorkoutDetail();
         window.location.hash = "workout-detail";
-        if (adaptiveProgressionSetup?.mode === "guide"
-          && adaptiveProgressionSetup.planKey === activeWorkoutDay.planKey
-          && adaptiveProgressionSetup.planDayId === activeWorkoutDay.id) {
-          const pendingTrials = getTrialSetWorkoutExercises().filter(({ exercise }) => getExerciseCalibration(exercise.id)?.status !== "confirmed");
-          if (pendingTrials.length) window.setTimeout(() => openAdaptiveCalibrationDialog(), 0);
-        }
       }
 
       function recordFromWorkout(workout, completedAt = new Date()) {
@@ -13015,7 +13036,7 @@
       weekPlan?.addEventListener("click", (event) => {
         const button = event.target.closest("[data-plan-day]");
         if (!button) return;
-        openWorkoutDetail(activePlanWeekIndex, Number(button.dataset.planDay));
+        openWorkoutDetail(activePlanWeekIndex, Number(button.dataset.planDay), "plan");
       });
 
       document.querySelectorAll("[data-start-evaluation]").forEach((button) => {
@@ -13105,12 +13126,12 @@
       document.querySelector("#home").addEventListener("click", (event) => {
         const button = event.target.closest("[data-view-day]");
         if (!button) return;
-        openWorkoutDetail(Number(button.dataset.weekIndex), Number(button.dataset.dayIndex));
+        openWorkoutDetail(Number(button.dataset.weekIndex), Number(button.dataset.dayIndex), "home");
       });
 
       workoutDetail.addEventListener("click", (event) => {
         if (event.target.closest("[data-workout-back]")) {
-          window.location.hash = "home";
+          window.location.hash = workoutDetailReturnHash;
           return;
         }
         const adaptiveSetupButton = event.target.closest("[data-adaptive-setup]");
