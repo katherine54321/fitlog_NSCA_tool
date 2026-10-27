@@ -5098,18 +5098,32 @@
       .training-record-summary > div:nth-child(3) strong { color: #00e5ff; font-size: 15px; }
       .completed-training-history { margin-top: 12px; padding: 14px; }
       .completed-training-history h3 { margin: 0 0 9px; color: #fff; font-size: 17px; }
-      .completed-training-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
+      .completed-training-head { display: flex; align-items: center; justify-content: flex-start; gap: 10px; margin-bottom: 9px; }
       .completed-training-head h3 { margin: 0; }
-      .completed-training-head select {
-        width: min(190px, 48%);
+      .completed-training-controls {
+        width: 100%;
+        display: grid;
+        grid-template-columns: minmax(118px, 0.8fr) minmax(150px, 1.2fr);
+        gap: 8px;
+        align-items: center;
+      }
+      .completed-training-head select,
+      .completed-training-head input {
+        width: 100%;
         min-height: 36px;
         padding: 6px 9px;
-        color: #00e5ff;
+        color: #f4f7f5;
         background: #191b1e;
         border: 1px solid #454b53;
         border-radius: 8px;
         font: inherit;
         font-size: 12px;
+      }
+      .completed-training-head input::placeholder { color: #89928b; }
+      .completed-training-head select:focus,
+      .completed-training-head input:focus {
+        outline: none;
+        border-color: #7d8780;
       }
       .completed-training-item {
         display: grid;
@@ -5125,20 +5139,26 @@
       .completed-training-supplement {
         min-height: 32px;
         padding: 5px 9px;
-        color: #00e5ff;
+        color: #ffffff;
         background: transparent;
-        border: 1px solid rgba(0, 229, 255, .55);
+        border: 1px solid rgba(255, 255, 255, 0.42);
         border-radius: 7px;
         font: inherit;
         font-size: 12px;
         font-weight: 800;
         white-space: nowrap;
       }
-      .completed-training-supplement:hover { color: #39ff14; border-color: #39ff14; }
+      .completed-training-supplement:hover,
+      .completed-training-supplement:focus-visible {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(255, 255, 255, 0.7);
+        outline: none;
+      }
       .completed-training-supplement-form {
         grid-column: 1 / -1;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
         gap: 8px;
         align-items: end;
         padding: 9px;
@@ -5166,6 +5186,11 @@
         font: inherit;
         font-size: 12px;
         font-weight: 800;
+      }
+
+      @media (max-width: 520px) {
+        .completed-training-supplement-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .completed-training-supplement-form button { grid-column: 1 / -1; }
       }
 
       #home .day.is-done {
@@ -5654,6 +5679,37 @@
         margin-top: 0;
       }
 
+      .record-calendar-shell .calendar-head {
+        gap: 8px;
+      }
+
+      .record-calendar-shell .calendar-nav {
+        min-width: 0;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .record-calendar-shell .calendar-nav button {
+        width: 28px;
+        min-width: 28px;
+        min-height: 32px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        color: #c9d1cb;
+        background: transparent;
+        font-size: 25px;
+        font-weight: 400;
+        line-height: 1;
+      }
+
+      .record-calendar-shell .calendar-nav button:hover,
+      .record-calendar-shell .calendar-nav button:focus-visible {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.07);
+        outline: none;
+      }
+
       .record-calendar-shell .calendar-day {
         color: #dbe3dd;
       }
@@ -5664,6 +5720,14 @@
 
       .record-calendar-shell .calendar-day.has-record {
         color: #ffffff;
+        border: 0;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .record-calendar-shell .calendar-day.has-record[aria-pressed="true"] {
+        outline: 2px solid var(--brand-accent);
+        outline-offset: 2px;
       }
 
       .record-calendar-month {
@@ -5688,8 +5752,59 @@
         content: "";
       }
 
-      .completed-training-head {
-        justify-content: flex-end;
+      .record-calendar-detail {
+        gap: 10px;
+        margin-top: 12px;
+        padding: 12px;
+      }
+
+      .record-calendar-detail .record-detail-head span {
+        color: var(--text-secondary);
+        font-size: 11px;
+      }
+
+      .calendar-session-card {
+        display: grid;
+        gap: 9px;
+        padding: 11px;
+        border: 1px solid #363c42;
+        border-radius: 9px;
+        background: #191b1e;
+      }
+
+      .calendar-session-head strong,
+      .calendar-session-head span { display: block; }
+
+      .calendar-session-head strong { color: #fff; font-size: 14px; }
+      .calendar-session-head span { margin-top: 2px; color: #aeb7af; font-size: 11px; }
+
+      .calendar-exercise-list { display: grid; gap: 7px; }
+
+      .calendar-exercise-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 8px;
+        padding-top: 8px;
+        border-top: 1px solid #30363b;
+      }
+
+      .calendar-exercise-item strong,
+      .calendar-exercise-item span { display: block; }
+
+      .calendar-exercise-item strong { color: #f4f7f5; font-size: 13px; }
+      .calendar-exercise-item span { color: #aeb7af; font-size: 11px; }
+
+      .calendar-exercise-item .completed-training-supplement-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+      }
+
+      @media (max-width: 520px) {
+        .calendar-exercise-item .completed-training-supplement-form {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .calendar-exercise-item .completed-training-supplement-form button { grid-column: 1 / -1; }
       }
 
       /* Native-style account hub and assessment entry points. */
@@ -6179,6 +6294,54 @@
         gap: 8px;
       }
 
+      .adaptive-setup-card {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 14px;
+        padding: 14px;
+        border: 1px solid #3f474d;
+        border-radius: 10px;
+        background: #202428;
+      }
+
+      .adaptive-setup-card h3,
+      .adaptive-setup-card p { margin: 0; }
+
+      .adaptive-setup-card p {
+        color: var(--text-secondary);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .adaptive-setup-options {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .adaptive-setup-options button,
+      .workout-apply-all,
+      .workout-set-complete,
+      .workout-difficulty-option {
+        min-height: 36px;
+        border: 1px solid #4a5157;
+        border-radius: 7px;
+        color: var(--text-strong);
+        background: transparent;
+        font: inherit;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .adaptive-setup-options button:active,
+      .workout-apply-all:active,
+      .workout-difficulty-option:active { background: #30353a; }
+
+      .adaptive-setup-options button[data-adaptive-setup="guide"] {
+        border-color: #00b7c8;
+        color: #38e5f4;
+      }
+
       .workout-set-summary {
         display: flex;
         align-items: baseline;
@@ -6193,6 +6356,33 @@
         font-size: 10px;
       }
 
+      .workout-adaptive-hint,
+      .workout-progression-advice {
+        margin: 0;
+        color: #aeb8bf;
+        font-size: 10px;
+        line-height: 1.45;
+      }
+
+      .workout-progression-advice {
+        padding: 8px;
+        border: 1px solid #37434a;
+        border-radius: 7px;
+        color: #74edf7;
+        background: #152226;
+      }
+
+      .workout-set-tools {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .workout-apply-all {
+        min-height: 30px;
+        padding: 4px 8px;
+        color: #c6ced3;
+      }
+
       .workout-set-list {
         display: grid;
         gap: 7px;
@@ -6200,7 +6390,7 @@
 
       .workout-set-row {
         display: grid;
-        grid-template-columns: 30px repeat(2, minmax(0, 1fr));
+        grid-template-columns: 30px repeat(2, minmax(0, 1fr)) 38px;
         gap: 7px;
         align-items: end;
       }
@@ -6216,6 +6406,24 @@
         background: #24282b;
         font-size: 13px;
         font-weight: 800;
+      }
+
+      .workout-set-complete {
+        min-width: 38px;
+        padding: 0;
+        color: #879098;
+        font-size: 17px;
+      }
+
+      .workout-set-complete[aria-pressed="true"] {
+        border-color: #39ff14;
+        color: #39ff14;
+        background: rgba(57, 255, 20, 0.08);
+      }
+
+      .workout-set-row.is-complete .workout-set-number {
+        border-color: #39ff14;
+        color: #39ff14;
       }
 
       .workout-inline-field {
@@ -6237,6 +6445,37 @@
         border-radius: 7px;
         background: #121415;
         font-size: 14px !important;
+      }
+
+      .workout-last-set-difficulty {
+        display: grid;
+        gap: 6px;
+        padding-top: 2px;
+      }
+
+      .workout-last-set-difficulty > span {
+        color: var(--text-secondary);
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .workout-difficulty-options {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .workout-difficulty-option {
+        min-height: 34px;
+        padding: 4px;
+        color: #b9c1c6;
+        font-size: 10px;
+      }
+
+      .workout-difficulty-option[aria-pressed="true"] {
+        border-color: #00e5ff;
+        color: #00e5ff;
+        background: rgba(0, 229, 255, 0.08);
       }
 
       .workout-inline-save {
@@ -6262,6 +6501,11 @@
       }
 
       .workout-inline-status[data-state="error"] { color: #ff8f8f; }
+
+      @media (max-width: 520px) {
+        .adaptive-setup-options { grid-template-columns: 1fr; }
+        .workout-difficulty-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
 
       .exercise-detail-title {
         display: flex;
@@ -6992,19 +7236,47 @@
             <div class="tabs record-tabs" role="tablist" aria-label="记录类型切换" id="recordTabs">
               <button class="tab" type="button" aria-selected="true" data-record-tab="trainingCalendarPane">训练日历</button>
               <button class="tab" type="button" aria-selected="false" data-record-tab="actionRecordPane">动作记录</button>
-              <button class="tab" type="button" aria-selected="false" data-record-tab="trainingRecordPane">训练记录</button>
+              <button class="tab" type="button" aria-selected="false" data-record-tab="setLogPane">数据录入</button>
             </div>
             <div class="record-pane" id="trainingCalendarPane" data-record-pane>
               <section class="calendar-shell record-calendar-shell" aria-label="当月已完成训练日历">
                 <div class="calendar-head">
-                  <span class="record-calendar-month" id="recordCalendarMonth"></span>
+                  <div class="calendar-nav" aria-label="切换月份">
+                    <button type="button" data-record-calendar-nav="-1" aria-label="上个月">‹</button>
+                    <span class="record-calendar-month" id="recordCalendarMonth"></span>
+                    <button type="button" data-record-calendar-nav="1" aria-label="下个月">›</button>
+                  </div>
                   <span class="record-calendar-legend">已完成训练</span>
                 </div>
                 <div class="calendar-weekdays" aria-hidden="true"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
                 <div class="calendar-grid" id="recordCalendarGrid"></div>
               </section>
+              <section class="record-detail record-calendar-detail" id="recordCalendarDetail" aria-live="polite" hidden></section>
             </div>
             <div class="record-pane" id="actionRecordPane" data-record-pane hidden>
+              <section class="overload-monitor" id="overloadMonitor" aria-labelledby="overloadMonitorTitle">
+                <div class="overload-monitor-head">
+                  <div><span class="module-kicker">渐进负荷</span><h3 id="overloadMonitorTitle">力量进展</h3></div>
+                  <select id="overloadExerciseSelect" aria-label="选择要查看的动作"></select>
+                </div>
+                <div class="overload-stats" id="overloadStats"></div>
+                <div class="overload-chart-card">
+                  <div class="chart-legend"><span><i class="legend-onerm"></i>预估 1RM</span><span><i class="legend-weight"></i>实做重量</span></div>
+                  <div class="overload-chart" id="overloadChart"></div>
+                </div>
+                <p class="overload-advice" id="overloadAdvice">记录同一动作的训练组后，这里会显示负荷与预估 1RM 的变化。</p>
+              </section>
+              <section class="completed-training-history" aria-label="训练记录">
+                <div class="completed-training-head">
+                  <div class="completed-training-controls">
+                    <select id="completedTrainingFilter" aria-label="筛选已完成训练动作"></select>
+                    <input id="completedTrainingSearch" type="search" placeholder="搜索动作" aria-label="搜索已完成训练动作" autocomplete="off" />
+                  </div>
+                </div>
+                <div id="completedTrainingList"></div>
+              </section>
+            </div>
+            <div class="record-pane" id="setLogPane" data-record-pane hidden>
               <div class="data-logger-layout">
                 <form id="setLogForm" class="set-log-form">
                   <label class="form-field-wide">训练动作<select id="setLogExercise" required></select></label>
@@ -7020,30 +7292,10 @@
                     <span>本组预估 1RM</span><strong id="setLogOneRm">25.0 kg</strong><small id="setLogIntensity">约 80% 1RM</small>
                   </div>
                   <label>训练日期<input id="setLogDate" type="date" required /></label>
-                  <label>第几组（可选）<input id="setLogSetNumber" type="number" min="1" max="30" step="1" inputmode="numeric" placeholder="例如：第 3 组" /></label>
+                  <label>共几组（可选）<input id="setLogSetCount" type="number" min="1" max="30" step="1" inputmode="numeric" value="1" /></label>
                   <button class="secondary-btn set-log-submit" type="submit">保存训练数据</button>
                 </form>
               </div>
-              <section class="overload-monitor" id="overloadMonitor" aria-labelledby="overloadMonitorTitle">
-                <div class="overload-monitor-head">
-                  <div><span class="module-kicker">渐进负荷</span><h3 id="overloadMonitorTitle">力量进展</h3></div>
-                  <select id="overloadExerciseSelect" aria-label="选择要查看的动作"></select>
-                </div>
-                <div class="overload-stats" id="overloadStats"></div>
-                <div class="overload-chart-card">
-                  <div class="chart-legend"><span><i class="legend-onerm"></i>预估 1RM</span><span><i class="legend-weight"></i>实做重量</span></div>
-                  <div class="overload-chart" id="overloadChart"></div>
-                </div>
-                <p class="overload-advice" id="overloadAdvice">记录同一动作的训练组后，这里会显示负荷与预估 1RM 的变化。</p>
-              </section>
-            </div>
-            <div class="record-pane" id="trainingRecordPane" data-record-pane hidden>
-              <section class="completed-training-history" aria-label="训练记录">
-                <div class="completed-training-head">
-                  <select id="completedTrainingFilter" aria-label="筛选已完成训练动作"></select>
-                </div>
-                <div id="completedTrainingList"></div>
-              </section>
             </div>
           </section>
         </div>
@@ -7157,9 +7409,14 @@
         ["训练日历", "Training calendar"],
         ["动作记录", "Exercise log"],
         ["训练记录", "Workout history"],
+        ["数据录入", "Data entry"],
+        ["搜索动作", "Search exercises"],
+        ["搜索已完成训练动作", "Search completed exercises"],
+        ["筛选已完成训练动作", "Filter completed exercises"],
         ["训练动作", "Exercise"],
         ["完成次数", "Completed reps"],
         ["训练日期", "Training date"],
+        ["共几组（可选）", "Total sets (optional)"],
         ["保存训练数据", "Save training data"],
         ["渐进负荷", "Progressive overload"],
         ["力量进展", "Strength progress"],
@@ -7276,6 +7533,10 @@
         ["全屏查看动作示意", "View exercise demonstration full screen"],
         ["补充数据", "Add data"], ["保存", "Save"],
         ["每侧 20-30 秒", "20-30 sec per side"],
+        ["每方向 8-10 次", "8-10 reps each direction"],
+        ["每侧 6-8 次", "6-8 reps per side"],
+        ["8-10 次", "8-10 reps"],
+        ["6-10 次", "6-10 reps"],
         ["完成训练日后，记录会自动显示在这里。", "Completed workout exercises will appear here automatically."],
         ["历史峰值", "All-time peak"], ["最近 1RM", "Latest 1RM"], ["净变化", "Net change"], ["有效样本", "Valid sets"],
         ["约", "About"],
@@ -8117,17 +8378,20 @@
       const setLogWeight = document.querySelector("#setLogWeight");
       const setLogReps = document.querySelector("#setLogReps");
       const setLogDate = document.querySelector("#setLogDate");
-      const setLogSetNumber = document.querySelector("#setLogSetNumber");
+      const setLogSetCount = document.querySelector("#setLogSetCount");
       const setLogOneRm = document.querySelector("#setLogOneRm");
       const setLogIntensity = document.querySelector("#setLogIntensity");
       const setLogFilter = document.querySelector("#setLogFilter");
       const setLogList = document.querySelector("#setLogList");
       const setLogCount = document.querySelector("#setLogCount");
       const recordTabs = document.querySelector("#recordTabs");
+      const trainingCalendarPane = document.querySelector("#trainingCalendarPane");
       const recordCalendarMonth = document.querySelector("#recordCalendarMonth");
       const recordCalendarGrid = document.querySelector("#recordCalendarGrid");
+      const recordCalendarDetail = document.querySelector("#recordCalendarDetail");
       const completedTrainingList = document.querySelector("#completedTrainingList");
       const completedTrainingFilter = document.querySelector("#completedTrainingFilter");
+      const completedTrainingSearch = document.querySelector("#completedTrainingSearch");
       const overloadExerciseSelect = document.querySelector("#overloadExerciseSelect");
       const overloadStats = document.querySelector("#overloadStats");
       const overloadChart = document.querySelector("#overloadChart");
@@ -8151,6 +8415,7 @@
       const TRAINING_DAY_PREFERENCES_KEY = "fitlog-training-day-preferences";
       const FAVORITE_EXERCISES_KEY = "fitlog-favorite-exercises";
       const PLAN_EXERCISE_REPLACEMENTS_KEY = "fitlog-plan-exercise-replacements";
+      const ADAPTIVE_SETUP_KEY = "fitlog-adaptive-progression-setup";
 
       const libraryExercises = Array.isArray(window.EXERCISE_LIBRARY_DATA) ? window.EXERCISE_LIBRARY_DATA : [];
       const exercisesByLibraryType = (type) =>
@@ -8164,21 +8429,28 @@
       if (!Array.isArray(favoriteExerciseIds)) favoriteExerciseIds = [];
       let planExerciseReplacements = JSON.parse(localStorage.getItem(PLAN_EXERCISE_REPLACEMENTS_KEY) || "{}");
       if (!planExerciseReplacements || Array.isArray(planExerciseReplacements) || typeof planExerciseReplacements !== "object") planExerciseReplacements = {};
+      let adaptiveProgressionSetup = JSON.parse(localStorage.getItem(ADAPTIVE_SETUP_KEY) || "null");
+      if (!adaptiveProgressionSetup || typeof adaptiveProgressionSetup !== "object") adaptiveProgressionSetup = null;
       let exerciseReplacementContext = null;
       let libraryVisibleCount = 20;
       let exerciseSearchTimer = null;
       let libraryImageObserver = null;
       let exerciseAnimations = [];
       let records = JSON.parse(localStorage.getItem("fitlog-records") || "[]");
+      if (!Array.isArray(records)) records = [];
       let trainingSetLogs = JSON.parse(localStorage.getItem("fitlog-training-set-logs") || "[]");
       if (!Array.isArray(trainingSetLogs)) trainingSetLogs = [];
       let completedPlanDays = JSON.parse(localStorage.getItem("fitlog-plan-completed") || "[]");
+      if (!Array.isArray(completedPlanDays)) completedPlanDays = [];
       let planHistory = JSON.parse(localStorage.getItem("fitlog-plan-history") || "[]");
       let isEditingPlan = false;
       let activePlanWeekIndex = 0;
       let activeWorkoutDay = null;
       let pendingPlanLogContext = null;
       let activeSupplementLogId = null;
+      let activeCalendarSupplementId = null;
+      let activeRecordCalendarDate = null;
+      let recordCalendarCursor = parseLocalDate(`${today.slice(0, 7)}-01`);
       let deferredInstallPrompt = null;
       let scheduleDraftWeekdays = new Set();
       let scheduleDraftContext = null;
@@ -9830,29 +10102,87 @@
         };
       }
 
+      function getWorkoutPreparationPattern(workout) {
+        const exerciseTexts = (workout.exercises || []).map((exercise) => `${exercise.name || ""} ${exercise.focus || ""}`);
+        const lowerPattern = /下肢|臀|腿|股四头肌|腘绳肌|小腿|深蹲|腿举|硬拉|髋|箭步|提踵/;
+        const upperPattern = /上肢|胸|背|肩|肱二头|肱三头|卧推|推举|划船|下拉|飞鸟|侧平举|面拉/;
+        const posteriorPattern = /臀|腘绳肌|硬拉|髋主导|髋伸|后链|腿弯举/;
+        const kneePattern = /股四头肌|深蹲|腿举|膝主导|分腿蹲|箭步|提踵/;
+        const pushPattern = /胸|肩|肱三头|卧推|推举|俯卧撑|夹胸|侧平举|下压/;
+        const pullPattern = /背|肱二头|划船|下拉|面拉|弯举/;
+        const countMatches = (pattern) => exerciseTexts.filter((text) => pattern.test(text)).length;
+        const lowerScore = countMatches(lowerPattern);
+        const upperScore = countMatches(upperPattern);
+        if (lowerScore && upperScore && Math.abs(lowerScore - upperScore) <= 1) return "full-body";
+        if (lowerScore > upperScore) {
+          return countMatches(posteriorPattern) > countMatches(kneePattern) ? "posterior-chain" : "knee-dominant";
+        }
+        if (upperScore > lowerScore) {
+          const pushScore = countMatches(pushPattern);
+          const pullScore = countMatches(pullPattern);
+          if (pushScore > pullScore) return "upper-push";
+          if (pullScore > pushScore) return "upper-pull";
+          return "upper-mixed";
+        }
+        const description = `${workout.name || ""} ${workout.description || ""}`;
+        if (/下肢|深蹲|腿举|股四头肌/.test(description)) return "knee-dominant";
+        if (/硬拉|臀推|髋主导|后链|腘绳肌/.test(description)) return "posterior-chain";
+        if (/胸|肩|卧推|推举/.test(description)) return "upper-push";
+        if (/背|划船|下拉/.test(description)) return "upper-pull";
+        return "full-body";
+      }
+
       function getTargetedPreparation(workout) {
-        const description = `${workout.name} ${workout.description}`;
-        const isUpper = /上肢|推拉|上斜|卧推|肩推|下拉|划船/.test(description);
-        const isPosteriorChain = /硬拉|臀推|罗马尼亚|髋主导|后链/.test(description);
-        const isLower = /下肢|腿举|深蹲|分腿蹲|哈克/.test(description);
-        const warmup = isUpper
-          ? { exerciseId: "arm-circles", prescription: "2 组 × 每方向 10 次" }
-          : isPosteriorChain
-            ? { exerciseId: "standing-hip-circles", prescription: "2 组 × 每侧 8 次" }
-            : isLower
-              ? { exerciseId: "knee-circles", prescription: "2 组 × 每方向 10 次" }
-              : { exerciseId: "ankle-circles", prescription: "2 组 × 每方向 10 次" };
-        const stretch = isUpper
-          ? { exerciseId: "triceps-stretch", prescription: "每侧 20-30 秒" }
-          : isPosteriorChain
-            ? { exerciseId: "standing-hamstring-calf-stretch", prescription: "每侧 20-30 秒" }
-            : isLower
-              ? { exerciseId: "kneeling-hip-flexor", prescription: "每侧 20-30 秒" }
-              : { exerciseId: "upper-back-stretch", prescription: "20-30 秒" };
+        const pattern = getWorkoutPreparationPattern(workout);
+        const preparationByPattern = {
+          "upper-push": {
+            warmups: [
+              { exerciseId: "dynamic-chest-stretch", prescription: "8-10 次" },
+              { exerciseId: "shoulder-circles", prescription: "每方向 8-10 次" }
+            ],
+            stretch: "chest-front-shoulder-stretch"
+          },
+          "upper-pull": {
+            warmups: [
+              { exerciseId: "dynamic-back-stretch", prescription: "8-10 次" },
+              { exerciseId: "shoulder-circles", prescription: "每方向 8-10 次" }
+            ],
+            stretch: "overhead-lat-stretch"
+          },
+          "upper-mixed": {
+            warmups: [
+              { exerciseId: "arm-circles", prescription: "每方向 8-10 次" },
+              { exerciseId: "dynamic-back-stretch", prescription: "8-10 次" }
+            ],
+            stretch: "upper-back-stretch"
+          },
+          "posterior-chain": {
+            warmups: [
+              { exerciseId: "standing-hip-circles", prescription: "每方向 8-10 次" },
+              { exerciseId: "inchworm", prescription: "6-10 次" }
+            ],
+            stretch: "standing-hamstring-calf-stretch"
+          },
+          "knee-dominant": {
+            warmups: [
+              { exerciseId: "ankle-circles", prescription: "每方向 8-10 次" },
+              { exerciseId: "worlds-greatest-stretch", prescription: "每侧 6-8 次" }
+            ],
+            stretch: "kneeling-hip-flexor"
+          },
+          "full-body": {
+            warmups: [
+              { exerciseId: "worlds-greatest-stretch", prescription: "每侧 6-8 次" },
+              { exerciseId: "torso-rotation", prescription: "每方向 8-10 次" }
+            ],
+            stretch: "childs-pose"
+          }
+        };
+        const preparation = preparationByPattern[pattern] || preparationByPattern["full-body"];
         return {
-          logic: "热身和拉伸已按当天训练模式匹配；点击动作卡片可查看完整步骤与安全要点。",
-          warmups: [warmup],
-          stretches: [stretch]
+          logic: "依据当天主训练涉及的关节、肌群与动作模式，从一般动态活动逐步过渡到专项准备。",
+          warmups: preparation.warmups,
+          stretches: [{ exerciseId: preparation.stretch, prescription: "每侧 20-30 秒" }]
         };
       }
 
@@ -9876,6 +10206,55 @@
         });
       }
 
+      function getWorkoutLibraryExercise(item) {
+        const exerciseId = item.exerciseId || workoutExerciseAliases[item.name];
+        return exerciseId
+          ? resistanceExercises.find((exercise) => exercise.id === exerciseId)
+          : resistanceExercises.find((exercise) => exercise.nameZh === item.name);
+      }
+
+      function ensureUniqueWorkoutExercises(exercises) {
+        const usedIds = new Set();
+        const usedNames = new Set();
+        return exercises.reduce((unique, original) => {
+          let item = { ...original };
+          let libraryExercise = getWorkoutLibraryExercise(item);
+          let identity = libraryExercise?.id || item.exerciseId || "";
+          let displayName = libraryExercise?.nameZh || item.name || "";
+          const isDuplicate = (identity && usedIds.has(identity)) || (displayName && usedNames.has(displayName));
+          if (isDuplicate) {
+            const primaryMuscles = new Set(libraryExercise?.primaryMuscles || []);
+            const alternatives = resistanceExercises
+              .filter((exercise) => exercise.category === libraryExercise?.category && !usedIds.has(exercise.id) && !usedNames.has(exercise.nameZh))
+              .map((exercise) => ({
+                exercise,
+                score: exercise.primaryMuscles.reduce((total, muscle) => total + (primaryMuscles.has(muscle) ? 4 : 0), 0)
+                  + (exercise.mechanic === libraryExercise?.mechanic ? 2 : 0)
+                  + (exercise.force === libraryExercise?.force ? 1 : 0)
+              }))
+              .sort((a, b) => b.score - a.score || a.exercise.id.localeCompare(b.exercise.id));
+            const replacement = alternatives[0]?.exercise;
+            if (!replacement) return unique;
+            item = {
+              ...item,
+              name: replacement.nameZh,
+              focus: `${replacement.category} · ${replacement.primaryMuscles[0] || replacement.category}`,
+              cue: replacement.instructionsZh?.[0] || item.cue,
+              exerciseId: replacement.id
+            };
+            libraryExercise = replacement;
+            identity = replacement.id;
+            displayName = replacement.nameZh;
+          } else if (libraryExercise && !item.exerciseId) {
+            item.exerciseId = libraryExercise.id;
+          }
+          if (identity) usedIds.add(identity);
+          if (displayName) usedNames.add(displayName);
+          unique.push(item);
+          return unique;
+        }, []);
+      }
+
       function getWorkoutDay(weekIndex, dayIndex) {
         const profile = getProfile();
         const plan = buildPlan(profile);
@@ -9884,6 +10263,8 @@
         const period = plan.periodization?.[weekIndex] || plan.periodization?.[0];
         const date = getPlanDayDate(startDate, weekIndex, dayIndex, profile, plan);
         const id = planDayId(profile, plan, weekIndex, dayIndex, startDate);
+        const generatedExercises = getWorkoutExercises(dayIndex, plan, weekIndex);
+        const exercises = ensureUniqueWorkoutExercises(applyPlanExerciseReplacements(id, generatedExercises));
         return {
           id,
           weekIndex,
@@ -9894,7 +10275,7 @@
           description,
           plan,
           period,
-          exercises: applyPlanExerciseReplacements(id, getWorkoutExercises(dayIndex, plan, weekIndex))
+          exercises
         };
       }
 
@@ -9914,14 +10295,17 @@
           const libraryExercise = libraryExerciseForWorkout(exercise, "训练");
           const planLog = getPlanExerciseLog(workout.id, libraryExercise.id);
           const savedLoad = savedRecord?.exercises?.[index]?.loadKg;
-          const visibleSetEntries = [...workoutDetail.querySelectorAll(`[data-workout-set-row="${index}"]`)]
+          const visibleSetEntries = activeWorkoutDay?.id === workout.id
+            ? [...workoutDetail.querySelectorAll(`[data-workout-set-row="${index}"]`)]
             .map((row, setIndex) => {
+               const completed = row.querySelector("[data-set-completed]")?.value === "true";
               const weightValue = row.querySelector("[data-set-weight]")?.value ?? "";
               const repsValue = row.querySelector("[data-set-reps]")?.value ?? "";
-              if (weightValue === "" || repsValue === "") return null;
-              return { setNumber: setIndex + 1, weightKg: Number(weightValue), reps: Number(repsValue) };
+               if (!completed || weightValue === "" || repsValue === "") return null;
+               return { setNumber: setIndex + 1, weightKg: Number(weightValue), reps: Number(repsValue), completed: true };
             })
-            .filter(Boolean);
+            .filter(Boolean)
+            : [];
           const setEntries = visibleSetEntries.length ? visibleSetEntries : (planLog?.setEntries || []);
           const representativeSet = getBestWorkoutSet(setEntries);
           const loadKg = representativeSet?.weightKg ?? planLog?.weightKg ?? savedLoad;
@@ -9938,28 +10322,28 @@
 
       const workoutExerciseAliases = {
         "上斜哑铃推举": "incline-dumbbell-press",
-        "哑铃卧推": "incline-dumbbell-press",
-        "器械推胸": "barbell-bench-press",
-        "绳索夹胸": "push-up",
-        "俯身哑铃反向飞鸟": "side-lateral-raise",
-        "绳索面拉": "seated-cable-row",
+        "哑铃卧推": "dumbbell-bench-press",
+        "器械推胸": "leverage-chest-press",
+        "绳索夹胸": "cable-crossover",
+        "俯身哑铃反向飞鸟": "bent-over-dumbbell-rear-delt-raise",
+        "绳索面拉": "face-pull",
         "坐姿划船": "seated-cable-row",
-        "直臂下拉": "lat-pulldown",
-        "中立握高位下拉": "lat-pulldown",
-        "高脚杯深蹲": "barbell-squat",
-        "杯式箱式深蹲": "barbell-squat",
-        "保加利亚分腿蹲": "barbell-squat",
-        "反向箭步蹲": "barbell-squat",
-        "哈克深蹲": "barbell-squat",
-        "椅子深蹲": "barbell-squat",
+        "直臂下拉": "straight-arm-pulldown",
+        "中立握高位下拉": "vbar-pulldown",
+        "高脚杯深蹲": "goblet-squat",
+        "杯式箱式深蹲": "goblet-squat",
+        "保加利亚分腿蹲": "elevated-back-lunge",
+        "反向箭步蹲": "dumbbell-rear-lunge",
+        "哈克深蹲": "hack-squat",
+        "椅子深蹲": "dumbbell-squat",
         "哑铃推举": "dumbbell-shoulder-press",
-        "胸托哑铃划船": "one-arm-dumbbell-row",
-        "轻重量胸托划船": "one-arm-dumbbell-row",
-        "哑铃划船": "one-arm-dumbbell-row",
+        "胸托哑铃划船": "lying-tbar-row",
+        "轻重量胸托划船": "lying-tbar-row",
+        "哑铃划船": "bent-over-two-dumbbell-row",
         "哑铃罗马尼亚硬拉": "romanian-deadlift",
-        "坐姿腿弯举": "lying-leg-curls",
-        "站姿提踵": "leg-press",
-        "农夫行走": "weighted-sit-up",
+        "坐姿腿弯举": "seated-leg-curl",
+        "站姿提踵": "standing-calf-raises",
+        "农夫行走": "dumbbell-side-bend",
         "低强度步行或单车": "standing-hip-circles",
         "呼吸与活动度练习": "knee-circles"
       };
@@ -9991,7 +10375,13 @@
         const { exerciseIndex, category, currentExerciseId } = exerciseReplacementContext;
         const currentItem = activeWorkoutDay.exercises[exerciseIndex];
         const currentExercise = libraryExerciseForWorkout(currentItem, "训练");
-        const candidates = resistanceExercises.filter((exercise) => exercise.category === category && exercise.id !== currentExerciseId);
+        const usedExerciseIds = new Set(activeWorkoutDay.exercises
+          .filter((_, index) => index !== exerciseIndex)
+          .map((item) => libraryExerciseForWorkout(item, "训练")?.id)
+          .filter(Boolean));
+        const candidates = resistanceExercises.filter((exercise) => exercise.category === category
+          && exercise.id !== currentExerciseId
+          && !usedExerciseIds.has(exercise.id));
         const currentName = appLanguage === "en" ? (currentExercise.nameEn || currentExercise.nameZh) : currentExercise.nameZh;
         exerciseReplacePage.innerHTML = `
           <div class="exercise-replace-head">
@@ -10027,6 +10417,10 @@
         const replacement = resistanceExercises.find((exercise) => exercise.id === exerciseId);
         if (!replacement || replacement.category !== exerciseReplacementContext.category) return;
         const { planDayId, exerciseIndex, weekIndex, dayIndex } = exerciseReplacementContext;
+        const duplicatesAnotherExercise = activeWorkoutDay.exercises.some((item, index) =>
+          index !== exerciseIndex && libraryExerciseForWorkout(item, "训练")?.id === replacement.id
+        );
+        if (duplicatesAnotherExercise) return;
         planExerciseReplacements[planDayId] = {
           ...(planExerciseReplacements[planDayId] || {}),
           [String(exerciseIndex)]: replacement.id
@@ -10036,6 +10430,57 @@
         exerciseReplacementContext = null;
         renderWorkoutDetail();
         window.location.hash = "workout-detail";
+      }
+
+      function hasAnyAdaptiveTrainingData() {
+        return trainingSetLogs.some((log) => log.source === "plan" && hasRecordedPlanExerciseData(log));
+      }
+
+      function shouldShowAdaptiveSetup(workoutId) {
+        if (hasAnyAdaptiveTrainingData()) return false;
+        if (!adaptiveProgressionSetup) return true;
+        return adaptiveProgressionSetup.mode === "skip" && adaptiveProgressionSetup.planDayId !== workoutId;
+      }
+
+      function adaptiveSetupCardTemplate(workoutId) {
+        if (!shouldShowAdaptiveSetup(workoutId)) return "";
+        return `
+          <section class="adaptive-setup-card" aria-labelledby="adaptiveSetupTitle">
+            <span class="chip">${appLanguage === "en" ? "First workout setup" : "首次训练设置"}</span>
+            <h3 id="adaptiveSetupTitle">${appLanguage === "en" ? "How would you like to set your starting load?" : "你希望如何确定起始重量？"}</h3>
+            <p>${appLanguage === "en" ? "FitMine will learn from your logged working sets. A maximum-strength test is not required." : "FitMine 会根据你记录的正式组逐步学习，不需要先做最大力量测试。"}</p>
+            <div class="adaptive-setup-options">
+              <button type="button" data-adaptive-setup="known">${appLanguage === "en" ? "I know my working loads" : "我知道训练重量"}</button>
+              <button type="button" data-adaptive-setup="guide">${appLanguage === "en" ? "Help me find a starting load" : "引导寻找起始重量"}</button>
+              <button type="button" data-adaptive-setup="skip">${appLanguage === "en" ? "Skip for now" : "暂时跳过"}</button>
+            </div>
+          </section>
+        `;
+      }
+
+      function setAdaptiveProgressionSetup(mode) {
+        if (!activeWorkoutDay || !["known", "guide", "skip"].includes(mode)) return;
+        adaptiveProgressionSetup = {
+          mode,
+          planDayId: mode === "skip" ? activeWorkoutDay.id : null,
+          updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem(ADAPTIVE_SETUP_KEY, JSON.stringify(adaptiveProgressionSetup));
+        window.FitLogSync?.queueSync?.();
+        renderWorkoutDetail();
+      }
+
+      function difficultyOptionsTemplate(selectedDifficulty = "") {
+        const options = [
+          ["easy", "较轻松 · 还能做 4+ 次", "Comfortable · 4+ reps left"],
+          ["target", "合适 · 还能做 2–3 次", "On target · 2–3 reps left"],
+          ["hard", "很吃力 · 还能做 0–1 次", "Very hard · 0–1 reps left"],
+          ["missed", "未完成目标", "Missed target"],
+          ["pain", "出现疼痛", "Pain reported"]
+        ];
+        return options.map(([value, zh, en]) => `
+          <button class="workout-difficulty-option" type="button" data-set-difficulty="${value}" aria-pressed="${selectedDifficulty === value ? "true" : "false"}">${appLanguage === "en" ? en : zh}</button>
+        `).join("");
       }
 
       function workoutActionCardTemplate(item, index, type = "训练") {
@@ -10051,16 +10496,30 @@
           : appLanguage === "en" ? "Complete within a comfortable range" : "按舒适范围完成";
         const planLog = type === "训练" ? getPlanExerciseLog(activeWorkoutDay?.id, exercise.id) : null;
         const hasRecordedData = hasRecordedPlanExerciseData(planLog);
+        const previousLog = type === "训练" ? getLatestRecordedExerciseLog(exercise.id, activeWorkoutDay?.id) : null;
         const plannedSets = Math.max(1, getExerciseSetCount(item));
-        const plannedReps = workoutRepTarget(item.prescription);
-        const setEntries = getWorkoutSetEntries(planLog, plannedSets, item.loadKg, plannedReps);
+        const repRange = workoutRepRange(item.prescription);
+        const plannedReps = repRange.min;
+        const setEntries = getWorkoutSetEntries(planLog, previousLog, plannedSets, item.loadKg, plannedReps);
         const setRows = setEntries.map((setEntry, setIndex) => `
-          <div class="workout-set-row" data-workout-set-row="${index}">
+          <div class="workout-set-row${setEntry.completed ? " is-complete" : ""}" data-workout-set-row="${index}">
             <span class="workout-set-number" aria-label="${appLanguage === "en" ? `Set ${setIndex + 1}` : `第 ${setIndex + 1} 组`}">${setIndex + 1}</span>
-            <label class="workout-inline-field">${appLanguage === "en" ? "Weight (kg)" : "重量 (kg)"}<input type="number" name="weightKg" data-set-weight min="0" max="1000" step="0.5" value="${setEntry.weightKg}" inputmode="decimal" required></label>
-            <label class="workout-inline-field">${appLanguage === "en" ? "Reps" : "次数"}<input type="number" name="reps" data-set-reps min="1" max="100" step="1" value="${setEntry.reps}" required></label>
+            <label class="workout-inline-field">${appLanguage === "en" ? "Weight (kg)" : "重量 (kg)"}<input type="number" name="weightKg" data-set-weight min="0" max="1000" step="0.5" value="${setEntry.weightKg}" inputmode="decimal"></label>
+            <label class="workout-inline-field">${appLanguage === "en" ? "Reps" : "次数"}<input type="number" name="reps" data-set-reps min="1" max="100" step="1" value="${setEntry.reps}"></label>
+            <input type="hidden" data-set-completed value="${setEntry.completed ? "true" : "false"}">
+            <button class="workout-set-complete" type="button" data-toggle-set-complete aria-pressed="${setEntry.completed ? "true" : "false"}" aria-label="${appLanguage === "en" ? `Mark set ${setIndex + 1} complete` : `标记第 ${setIndex + 1} 组完成`}">✓</button>
           </div>
         `).join("");
+        const selectedDifficulty = planLog?.subjectiveDifficulty || "";
+        const recommendationSource = planLog?.progressionRecommendation ? planLog : previousLog;
+        const priorRecommendation = recommendationSource
+          ? (appLanguage === "en"
+            ? (recommendationSource.progressionRecommendationEn || recommendationSource.progressionRecommendation || "")
+            : (recommendationSource.progressionRecommendationZh || recommendationSource.progressionRecommendation || ""))
+          : "";
+        const guideHint = adaptiveProgressionSetup?.mode === "guide"
+          ? (appLanguage === "en" ? "Start light. Choose a load that lets you finish the target reps with about 2–3 reps left." : "从较轻重量开始，选择完成目标次数后大约还能做 2–3 次的重量。")
+          : "";
         const actionControls = type === "训练"
           ? `<div class="workout-card-footer">
               <button class="workout-inline-log-toggle" type="button" data-toggle-inline-workout-log="${index}" aria-expanded="false">${hasRecordedData ? (appLanguage === "en" ? "View data" : "查看数据") : (appLanguage === "en" ? "Log data" : "记录数据")}</button>
@@ -10073,8 +10532,19 @@
             </div>
             <div class="workout-inline-log-panel" data-inline-workout-log-panel="${index}" hidden>
               <form class="workout-inline-log-form" data-inline-workout-log="${index}">
-                <div class="workout-set-summary"><strong>${appLanguage === "en" ? `${plannedSets} planned sets` : `计划固定 ${plannedSets} 组`}</strong><span>${appLanguage === "en" ? "Enter each set" : "逐组填写重量与次数"}</span></div>
+                <input type="hidden" data-calibration-mode value="${adaptiveProgressionSetup?.mode || (previousLog ? "history" : "known")}">
+                <input type="hidden" data-selected-difficulty value="${selectedDifficulty}">
+                <input type="hidden" data-planned-rep-min value="${repRange.min}">
+                <input type="hidden" data-planned-rep-max value="${repRange.max}">
+                <div class="workout-set-summary"><strong>${appLanguage === "en" ? `${plannedSets} planned sets` : `计划固定 ${plannedSets} 组`}</strong><span>${appLanguage === "en" ? "Tap ✓ after each completed set" : "每完成一组点击一次 ✓"}</span></div>
+                <p class="workout-adaptive-hint">${guideHint || (appLanguage === "en" ? "Log your main exercise data so FitMine can adjust your next workout load." : "记录主训练数据后，FitMine可为下次训练调整重量。")}</p>
+                <div class="workout-set-tools"><button class="workout-apply-all" type="button" data-apply-first-set>${appLanguage === "en" ? "Apply set 1 to all" : "应用第 1 组到全部"}</button></div>
                 <div class="workout-set-list">${setRows}</div>
+                <div class="workout-last-set-difficulty">
+                  <span>${appLanguage === "en" ? "How did the final completed set feel?" : "最后一组主观难度"}</span>
+                  <div class="workout-difficulty-options">${difficultyOptionsTemplate(selectedDifficulty)}</div>
+                </div>
+                <p class="workout-progression-advice" data-progression-recommendation ${priorRecommendation ? "" : "hidden"}>${escapeLogText(priorRecommendation)}</p>
                 <button class="workout-inline-save" type="submit">${appLanguage === "en" ? "Save" : "保存记录"}</button>
                 <span class="workout-inline-status" data-inline-workout-status role="status" aria-live="polite"></span>
               </form>
@@ -10116,6 +10586,7 @@
             <p>${translateInterfaceText(workout.description)}</p>
             <p class="muted">${appLanguage === "en" ? `Scheduled date ${workout.date} · ${translateInterfaceText(workout.period?.title || "当周训练")} · ${workout.period?.rm || workout.plan.rm}` : `计划日期 ${workout.date} · ${workout.period?.title || "当周训练"} · ${workout.period?.rm || workout.plan.rm}`}</p>
           </div>
+          ${adaptiveSetupCardTemplate(workout.id)}
           <div class="workout-flow">
             <h3 class="flow-heading">训练前热身</h3>
             <div class="workout-action-grid workout-preparation-grid">
@@ -10143,30 +10614,46 @@
         window.location.hash = "workout-detail";
       }
 
-      function recordFromWorkout(workout) {
-        if (records.some((item) => item.planDayId === workout.id)) return;
+      function recordFromWorkout(workout, completedAt = new Date()) {
+        const completedAtDate = completedAt instanceof Date ? completedAt : new Date(completedAt);
+        const safeCompletedAt = Number.isNaN(completedAtDate.getTime()) ? new Date() : completedAtDate;
+        const completedDate = formatLocalDate(safeCompletedAt);
         const exercises = getWorkoutExerciseEntries(workout);
         const totalSets = exercises.reduce((sum, exercise) => sum + exercise.sets, 0);
-        records.unshift({
-          id: `plan-${workout.id}`,
+        const existingIndex = records.findIndex((item) => item.planDayId === workout.id);
+        const existing = existingIndex >= 0 ? records[existingIndex] : null;
+        const entry = {
+          ...existing,
+          id: existing?.id || `plan-${workout.id}`,
           planDayId: workout.id,
           source: "plan",
-          date: workout.date,
+          date: completedDate,
+          scheduledDate: workout.date,
           name: workout.name,
           description: workout.description,
           sets: totalSets,
           actions: exercises.length,
           rm: workout.plan.rm,
           exercises,
-          completedAt: new Date().toISOString()
-        });
+          completedAt: safeCompletedAt.toISOString()
+        };
+        if (existingIndex >= 0) records[existingIndex] = entry;
+        else records.unshift(entry);
         records = records.slice(0, 50);
         saveRecords();
+        return entry;
+      }
+
+      function workoutRepRange(prescription) {
+        const text = String(prescription || "");
+        const match = text.match(/(?:×|x)\s*(\d+)(?:\s*[-–]\s*(\d+))?|(?:^|\s)(\d+)(?:\s*[-–]\s*(\d+))?\s*次/);
+        const min = Number(match?.[1] || match?.[3] || 0);
+        const max = Number(match?.[2] || match?.[4] || min);
+        return { min, max: Math.max(min, max) };
       }
 
       function workoutRepTarget(prescription) {
-        const match = String(prescription || "").match(/(?:×|x)\s*(\d+)|(\d+)\s*次/);
-        return Number(match?.[1] || match?.[2] || 0);
+        return workoutRepRange(prescription).min;
       }
 
       function getPlanExerciseLog(planDayId, exerciseId) {
@@ -10180,7 +10667,8 @@
         if (!planLog) return false;
         const setEntries = Array.isArray(planLog.setEntries) ? planLog.setEntries : [];
         if (setEntries.length) {
-          return setEntries.every((setEntry) =>
+          const completedEntries = setEntries.filter((setEntry) => setEntry.completed !== false);
+          return completedEntries.length > 0 && completedEntries.every((setEntry) =>
             setEntry.weightKg !== null
             && setEntry.weightKg !== ""
             && Number.isFinite(Number(setEntry.weightKg))
@@ -10197,20 +10685,36 @@
           && Number(planLog.reps) > 0;
       }
 
-      function getWorkoutSetEntries(planLog, plannedSets, fallbackWeight, fallbackReps) {
+      function getLatestRecordedExerciseLog(exerciseId, excludedPlanDayId = "") {
+        return trainingSetLogs
+          .filter((log) => log.exerciseId === exerciseId && log.planDayId !== excludedPlanDayId && hasRecordedPlanExerciseData(log))
+          .sort((left, right) => {
+            const leftTime = Date.parse(left.updatedAt || left.createdAt || left.completedAt || left.date || "") || 0;
+            const rightTime = Date.parse(right.updatedAt || right.createdAt || right.completedAt || right.date || "") || 0;
+            return rightTime - leftTime;
+          })[0] || null;
+      }
+
+      function getWorkoutSetEntries(planLog, previousLog, plannedSets, fallbackWeight, fallbackReps) {
         const savedEntries = Array.isArray(planLog?.setEntries) ? planLog.setEntries : [];
+        const previousEntries = Array.isArray(previousLog?.setEntries)
+          ? previousLog.setEntries.filter((entry) => entry.completed !== false)
+          : [];
+        const hasCurrentData = hasRecordedPlanExerciseData(planLog);
         return Array.from({ length: plannedSets }, (_, setIndex) => {
           const savedEntry = savedEntries[setIndex] || {};
+          const previousEntry = previousEntries[setIndex] || {};
           return {
             setNumber: setIndex + 1,
-            weightKg: savedEntry.weightKg ?? planLog?.weightKg ?? fallbackWeight ?? "",
-            reps: savedEntry.reps || planLog?.reps || planLog?.plannedReps || fallbackReps || ""
+            weightKg: savedEntry.weightKg ?? planLog?.weightKg ?? previousEntry.weightKg ?? previousLog?.weightKg ?? fallbackWeight ?? "",
+            reps: savedEntry.reps || (hasCurrentData ? (planLog?.reps || planLog?.plannedReps) : null) || fallbackReps || "",
+            completed: hasCurrentData ? savedEntry.completed !== false : false
           };
         });
       }
 
       function getBestWorkoutSet(setEntries) {
-        return setEntries.reduce((best, current) => {
+        return setEntries.filter((entry) => entry.completed !== false).reduce((best, current) => {
           if (!best) return current;
           const bestOneRm = calculateBrzyckiOneRm(Number(best.weightKg), Number(best.reps));
           const currentOneRm = calculateBrzyckiOneRm(Number(current.weightKg), Number(current.reps));
@@ -10218,21 +10722,82 @@
         }, null);
       }
 
+      function buildProgressionRecommendation({ setEntries, plannedSets, repMin, repMax, difficulty, category }) {
+        const completedEntries = (Array.isArray(setEntries) ? setEntries : []).filter((entry) =>
+          entry.completed !== false
+          && Number.isFinite(Number(entry.weightKg))
+          && Number(entry.weightKg) >= 0
+          && Number.isFinite(Number(entry.reps))
+          && Number(entry.reps) > 0
+        );
+        const result = (action, zh, en, confidence = "medium") => ({ action, zh, en, confidence });
+        if (!completedEntries.length) return result("insufficient", "数据不足，暂不调整下次负荷。", "Not enough data to adjust the next load.", "low");
+        if (difficulty === "pain") return result("stop", "出现疼痛：下次不要自动加重，建议停止该动作或更换为无痛替代动作。", "Pain reported: do not increase the load; stop or switch to a pain-free alternative.", "high");
+        if (completedEntries.length < Number(plannedSets || 0)) return result("hold", "本次未完成全部计划组：下次保持重量，先完成全部计划组。", "Not all planned sets were completed. Keep the load and complete all planned sets first.", "medium");
+        const min = Number(repMin) || 1;
+        const max = Math.max(min, Number(repMax) || min);
+        const anyBelowMinimum = completedEntries.some((entry) => Number(entry.reps) < min);
+        const allAtMaximum = completedEntries.every((entry) => Number(entry.reps) >= max);
+        if (difficulty === "missed" || anyBelowMinimum) return result("reduce", "未达到目标次数：下次降低约 5% 或使用更小重量档位。", "Target reps were missed. Reduce the load by about 5% or use the next lighter increment.", "high");
+        if (difficulty === "hard") return result("hold", "最后一组很吃力：下次保持重量，不增加训练量。", "The last set was very hard. Keep the same load next time.", "high");
+        if (allAtMaximum && (difficulty === "easy" || difficulty === "target")) {
+          const lowerBody = /腿|臀|股|腘|小腿|lower|glute|quad|hamstring|calf/i.test(String(category || ""));
+          return lowerBody
+            ? result("increase-load", "全部组达到次数上限：下次增加最小可用重量，通常约 5%–10%。", "All sets reached the top of the rep range. Add the smallest available load next time, usually about 5%–10%.", "high")
+            : result("increase-load", "全部组达到次数上限：下次增加最小可用重量，通常约 2.5%–5%。", "All sets reached the top of the rep range. Add the smallest available load next time, usually about 2.5%–5%.", "high");
+        }
+        if (difficulty === "easy") return result("increase-reps", "当前重量较轻松：下次每组优先增加 1 次，达到上限后再加重量。", "This load felt comfortable. Add 1 rep per set next time, then increase load after reaching the top of the range.", "high");
+        return result("hold", "本次处于目标难度：下次保持重量和计划次数。", "This session matched the target effort. Keep the same load and planned reps next time.", "medium");
+      }
+
       function saveInlineWorkoutLog(form) {
         if (!activeWorkoutDay || !form.reportValidity()) return false;
         const saveButton = form.querySelector(".workout-inline-save");
         const status = form.querySelector("[data-inline-workout-status]");
+        const advice = form.querySelector("[data-progression-recommendation]");
+        const showValidationError = (message) => {
+          if (status) {
+            status.dataset.state = "error";
+            status.textContent = message;
+          }
+          return false;
+        };
         const exerciseIndex = Number(form.dataset.inlineWorkoutLog);
         const item = activeWorkoutDay.exercises[exerciseIndex];
         if (!item) return false;
         const exercise = libraryExerciseForWorkout(item, "训练");
         const plannedSets = Math.max(1, getExerciseSetCount(item));
-        const setEntries = [...form.querySelectorAll("[data-workout-set-row]")].map((row, setIndex) => ({
-          setNumber: setIndex + 1,
-          weightKg: Number(row.querySelector("[data-set-weight]")?.value),
-          reps: Number(row.querySelector("[data-set-reps]")?.value)
-        }));
-        if (setEntries.length !== plannedSets || setEntries.some((setEntry) => !Number.isFinite(setEntry.weightKg) || setEntry.weightKg < 0 || !setEntry.reps)) return false;
+        const setEntries = [...form.querySelectorAll("[data-workout-set-row]")].map((row, setIndex) => {
+          const completed = row.querySelector("[data-set-completed]")?.value === "true";
+          const weightValue = row.querySelector("[data-set-weight]")?.value ?? "";
+          const repsValue = row.querySelector("[data-set-reps]")?.value ?? "";
+          return {
+            setNumber: setIndex + 1,
+            weightKg: completed && weightValue !== "" ? Number(weightValue) : null,
+            reps: completed && repsValue !== "" ? Number(repsValue) : null,
+            completed
+          };
+        });
+        const completedEntries = setEntries.filter((entry) => entry.completed);
+        if (setEntries.length !== plannedSets || !completedEntries.length) {
+          return showValidationError(appLanguage === "en" ? "Tap ✓ for at least one completed set." : "请至少点击 ✓ 完成一组。");
+        }
+        if (completedEntries.some((entry) => !Number.isFinite(entry.weightKg) || entry.weightKg < 0 || !Number.isFinite(entry.reps) || entry.reps <= 0)) {
+          return showValidationError(appLanguage === "en" ? "Enter weight and reps for every completed set." : "请填写每个已完成组的重量和次数。");
+        }
+        const subjectiveDifficulty = form.querySelector("[data-selected-difficulty]")?.value || "";
+        if (!subjectiveDifficulty) {
+          return showValidationError(appLanguage === "en" ? "Select how the final completed set felt." : "请选择最后一组的主观难度。");
+        }
+        const repRange = workoutRepRange(item.prescription);
+        const recommendation = buildProgressionRecommendation({
+          setEntries,
+          plannedSets,
+          repMin: repRange.min,
+          repMax: repRange.max,
+          difficulty: subjectiveDifficulty,
+          category: exercise.category
+        });
         const bestSet = getBestWorkoutSet(setEntries);
         const sets = plannedSets;
         const weightKg = bestSet?.weightKg ?? 0;
@@ -10252,11 +10817,21 @@
           exerciseName: exercise.nameZh,
           category: exercise.category,
           sets,
+          completedSets: completedEntries.length,
           setEntries,
           plannedReps: workoutRepTarget(item.prescription),
+          plannedRepMin: repRange.min,
+          plannedRepMax: repRange.max,
           reps,
           weightKg,
           estimated1RM: calculateBrzyckiOneRm(weightKg, reps) || null,
+          calibrationMode: form.querySelector("[data-calibration-mode]")?.value || adaptiveProgressionSetup?.mode || "known",
+          subjectiveDifficulty,
+          progressionAction: recommendation.action,
+          progressionConfidence: recommendation.confidence,
+          progressionRecommendation: appLanguage === "en" ? recommendation.en : recommendation.zh,
+          progressionRecommendationZh: recommendation.zh,
+          progressionRecommendationEn: recommendation.en,
           notes: "计划动作负荷已记录",
           createdAt: existing?.createdAt || timestamp,
           updatedAt: timestamp
@@ -10274,11 +10849,14 @@
             && Number(log.sets) === sets
             && Number(log.weightKg) === weightKg
             && Number(log.reps) === reps
+            && log.subjectiveDifficulty === subjectiveDifficulty
+            && log.progressionAction === recommendation.action
             && Array.isArray(log.setEntries)
             && log.setEntries.length === plannedSets
             && log.setEntries.every((setEntry, setIndex) =>
-              Number(setEntry.weightKg) === setEntries[setIndex].weightKg
-              && Number(setEntry.reps) === setEntries[setIndex].reps
+              Boolean(setEntry.completed) === setEntries[setIndex].completed
+              && String(setEntry.weightKg ?? "") === String(setEntries[setIndex].weightKg ?? "")
+              && String(setEntry.reps ?? "") === String(setEntries[setIndex].reps ?? "")
             )
           );
           if (!persisted) throw new Error("Workout log persistence verification failed");
@@ -10293,16 +10871,18 @@
             status.dataset.state = "saved";
             status.textContent = appLanguage === "en" ? "Workout data saved." : "训练数据已保存。";
           }
+          if (advice) {
+            advice.hidden = false;
+            advice.textContent = appLanguage === "en" ? recommendation.en : recommendation.zh;
+          }
           window.setTimeout(() => {
             if (!document.body.contains(form)) return;
-            if (panel) panel.hidden = true;
-            if (toggle) toggle.setAttribute("aria-expanded", "false");
             if (saveButton) {
               saveButton.disabled = false;
               saveButton.textContent = appLanguage === "en" ? "Save" : "保存记录";
             }
             if (status) status.textContent = "";
-          }, 900);
+          }, 1200);
           return true;
         } catch (error) {
           console.error("Unable to save workout data", error);
@@ -10318,8 +10898,11 @@
         }
       }
 
-      function syncCompletedWorkoutToDataLogs(workout) {
-        const completedAt = new Date().toISOString();
+      function syncCompletedWorkoutToDataLogs(workout, completedAt = new Date()) {
+        const completedAtDate = completedAt instanceof Date ? completedAt : new Date(completedAt);
+        const safeCompletedAt = Number.isNaN(completedAtDate.getTime()) ? new Date() : completedAtDate;
+        const completedAtIso = safeCompletedAt.toISOString();
+        const completedDate = formatLocalDate(safeCompletedAt);
         workout.exercises.forEach((item, index) => {
           const exercise = libraryExerciseForWorkout(item, "训练");
           const existingIndex = trainingSetLogs.findIndex((log) =>
@@ -10329,17 +10912,19 @@
             id: `plan-set-${workout.id}-${index}`,
             source: "plan",
             planDayId: workout.id,
-            date: workout.date,
+            date: completedDate,
+            scheduledDate: workout.date,
             exerciseId: exercise.id,
             exerciseName: exercise.nameZh,
             category: exercise.category,
             sets: getExerciseSetCount(item),
             reps: workoutRepTarget(item.prescription),
             notes: `已完成 ${workout.name}`,
-            createdAt: completedAt
+            createdAt: completedAtIso,
+            completedAt: completedAtIso
           };
           if (existingIndex >= 0) {
-            trainingSetLogs[existingIndex] = { ...baseLog, ...trainingSetLogs[existingIndex], completedAt };
+            trainingSetLogs[existingIndex] = { ...baseLog, ...trainingSetLogs[existingIndex], date: completedDate, scheduledDate: workout.date, completedAt: completedAtIso };
           } else {
             trainingSetLogs.unshift({ ...baseLog, weightKg: null, estimated1RM: null });
           }
@@ -10364,17 +10949,21 @@
         if (button.dataset.logWorkoutDate) setLogDate.value = button.dataset.logWorkoutDate;
         updateSetLogPreview();
         renderOverloadMonitor(exerciseId);
-        setRecordPane("actionRecordPane");
+        setRecordPane("setLogPane");
         window.location.hash = "records";
         setTimeout(() => setLogForm?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
       }
 
       function completeWorkoutDay() {
         if (!activeWorkoutDay || completedPlanDays.includes(activeWorkoutDay.id)) return;
+        const completedAt = new Date();
         completedPlanDays = [...completedPlanDays, activeWorkoutDay.id];
         saveCompletedPlanDays();
-        recordFromWorkout(activeWorkoutDay);
-        syncCompletedWorkoutToDataLogs(activeWorkoutDay);
+        recordFromWorkout(activeWorkoutDay, completedAt);
+        syncCompletedWorkoutToDataLogs(activeWorkoutDay, completedAt);
+        recordCalendarCursor = parseLocalDate(`${formatLocalDate(completedAt).slice(0, 7)}-01`);
+        activeRecordCalendarDate = formatLocalDate(completedAt);
+        window.FitLogSync?.queueSync?.();
         renderHome();
         renderRecords();
         renderWorkoutDetail();
@@ -11311,6 +11900,9 @@
         const planLogs = trainingSetLogs.filter((log) =>
           log.source === "plan" && log.planDayId && completedPlanDays.includes(log.planDayId)
         );
+        const manualLogs = trainingSetLogs.filter((log) =>
+          !log.planDayId && log.exerciseId
+        );
         const synchronizedPlanIds = new Set(planLogs.map((log) => log.planDayId).filter(Boolean));
         const legacyActions = sessions
           .filter((session) => !synchronizedPlanIds.has(session.planDayId))
@@ -11325,7 +11917,7 @@
             reps: workoutRepTarget(exercise.prescription),
             source: "plan"
           })));
-        return [...planLogs, ...legacyActions]
+        return [...planLogs, ...manualLogs, ...legacyActions]
           .sort((a, b) => `${b.date}${b.createdAt || ""}`.localeCompare(`${a.date}${a.createdAt || ""}`));
       }
 
@@ -11333,6 +11925,7 @@
         const sessions = records.filter((item) => item.source === "plan" || item.planDayId);
         const completedActions = getCompletedTrainingActions(sessions);
         const selectedId = completedTrainingFilter.value || "all";
+        const searchTerm = String(completedTrainingSearch?.value || "").trim().toLocaleLowerCase();
         const actionChoices = [...new Map(completedActions.map((item) => [item.exerciseId || item.exerciseName, item.exerciseName])).entries()];
         completedTrainingFilter.innerHTML = `<option value="all">${appLanguage === "en" ? "All exercises" : "全部动作"}</option>${actionChoices.map(([id, name]) => {
           const exercise = getLoggableExercises().find((item) => item.id === id);
@@ -11340,7 +11933,14 @@
           return `<option value="${id}">${escapeLogText(displayName)}</option>`;
         }).join("")}`;
         completedTrainingFilter.value = actionChoices.some(([id]) => id === selectedId) ? selectedId : "all";
-        const visibleActions = completedActions.filter((item) => completedTrainingFilter.value === "all" || (item.exerciseId || item.exerciseName) === completedTrainingFilter.value);
+        const visibleActions = completedActions.filter((item) => {
+          if (completedTrainingFilter.value !== "all" && (item.exerciseId || item.exerciseName) !== completedTrainingFilter.value) return false;
+          if (!searchTerm) return true;
+          const exercise = getLoggableExercises().find((entry) => entry.id === item.exerciseId);
+          return [item.exerciseName, exercise?.nameZh, exercise?.nameEn]
+            .filter(Boolean)
+            .some((name) => String(name).toLocaleLowerCase().includes(searchTerm));
+        });
         completedTrainingList.innerHTML = visibleActions.length
           ? visibleActions.map((item) => {
               const volume = appLanguage === "en"
@@ -11354,26 +11954,32 @@
               <article class="completed-training-item${supplementOpen ? " is-expanded" : ""}">
                 <div><strong>${escapeLogText(displayName)}</strong><span>${item.date} · ${volume}${hasLoad ? ` · ${item.weightKg} kg` : ""}</span></div>
                 ${hasLoad ? "" : `<button class="completed-training-supplement" type="button" data-open-supplement="${item.id}">补充数据</button>`}
-                ${supplementOpen ? `<form class="completed-training-supplement-form" data-supplement-form="${item.id}" data-plan-day-id="${item.planDayId || ""}" data-exercise-id="${item.exerciseId || ""}" data-date="${item.date}" data-sets="${item.sets || ""}" data-planned-reps="${item.plannedReps || item.reps || ""}"><label>训练重量 kg<input type="number" min="0.5" max="500" step="0.5" value="${hasLoad ? item.weightKg : ""}" required></label><button type="submit">保存</button></form>` : ""}
+                ${supplementOpen ? `<form class="completed-training-supplement-form" data-supplement-form="${item.id}" data-plan-day-id="${item.planDayId || ""}" data-exercise-id="${item.exerciseId || ""}" data-date="${item.date}" data-sets="${item.sets || ""}" data-planned-reps="${item.plannedReps || item.reps || ""}"><label>${appLanguage === "en" ? "Weight (kg)" : "训练重量 kg"}<input data-supplement-weight type="number" min="0.5" max="500" step="0.5" value="${hasLoad ? item.weightKg : ""}" required></label><label>${appLanguage === "en" ? "Reps per set" : "每组次数"}<input data-supplement-reps type="number" min="1" max="100" step="1" value="${item.reps || item.plannedReps || ""}" required></label><button type="submit">${appLanguage === "en" ? "Save" : "保存"}</button></form>` : ""}
               </article>`;
             }).join("")
-          : '<p class="set-log-empty">完成训练日后，记录会自动显示在这里。</p>';
+          : `<p class="set-log-empty">${searchTerm
+            ? (appLanguage === "en" ? "No matching exercises." : "没有匹配的动作记录。")
+            : (appLanguage === "en" ? "Completed workout exercises will appear here automatically." : "完成训练日后，记录会自动显示在这里。")}</p>`;
       }
 
       function savePlanSupplement(form) {
         const planDayId = form.dataset.planDayId;
         const exerciseId = form.dataset.exerciseId;
-        const weightKg = Number(form.querySelector("input").value);
+        const weightKg = Number(form.querySelector("[data-supplement-weight]")?.value);
         const plannedReps = Number(form.dataset.plannedReps || 0);
-        const sets = Number(form.dataset.sets || 0);
+        const reps = Number(form.querySelector("[data-supplement-reps]")?.value || plannedReps);
+        const sets = Math.max(1, Number(form.dataset.sets || 0));
         const exercise = getLoggableExercises().find((item) => item.id === exerciseId);
-        if (!planDayId || !exercise || !weightKg || !plannedReps) return false;
-        const estimated1RM = calculateBrzyckiOneRm(weightKg, plannedReps);
+        if (!planDayId || !exercise || !weightKg || !reps) return false;
+        const estimated1RM = calculateBrzyckiOneRm(weightKg, reps);
         const existingIndex = trainingSetLogs.findIndex((log) =>
           log.source === "plan" && log.planDayId === planDayId && log.exerciseId === exerciseId
         );
+        const existing = existingIndex >= 0 ? trainingSetLogs[existingIndex] : null;
+        const timestamp = new Date().toISOString();
         const entry = {
-          id: existingIndex >= 0 ? trainingSetLogs[existingIndex].id : `plan-set-${planDayId}-${exerciseId}`,
+          ...existing,
+          id: existing?.id || `plan-set-${planDayId}-${exerciseId}`,
           source: "plan",
           planDayId,
           date: form.dataset.date || today,
@@ -11381,16 +11987,20 @@
           exerciseName: exercise.nameZh,
           category: exercise.category,
           sets,
-          plannedReps,
-          reps: plannedReps,
+          completedSets: sets,
+          setEntries: Array.from({ length: sets }, (_, index) => ({ setNumber: index + 1, weightKg, reps, completed: true })),
+          plannedReps: plannedReps || reps,
+          reps,
           weightKg,
           estimated1RM,
           notes: "计划动作负荷已记录",
-          createdAt: existingIndex >= 0 ? trainingSetLogs[existingIndex].createdAt : new Date().toISOString()
+          createdAt: existing?.createdAt || timestamp,
+          updatedAt: timestamp
         };
-        if (existingIndex >= 0) trainingSetLogs[existingIndex] = { ...trainingSetLogs[existingIndex], ...entry };
+        if (existingIndex >= 0) trainingSetLogs[existingIndex] = entry;
         else trainingSetLogs.unshift(entry);
         saveTrainingSetLogs();
+        window.FitLogSync?.queueSync?.();
         return true;
       }
 
@@ -11449,26 +12059,102 @@
         overloadChart.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="训练重量与预估一RM趋势"><line x1="${pad.left}" y1="${y(min)}" x2="${width - pad.right}" y2="${y(min)}" stroke="#3b4248"/><line x1="${pad.left}" y1="${y(max)}" x2="${width - pad.right}" y2="${y(max)}" stroke="#3b4248"/><text x="2" y="${y(max) + 3}">${max}</text><text x="2" y="${y(min) + 3}">${min}</text><polyline points="${line("weightKg")}" fill="none" stroke="#00e5ff" stroke-width="2" stroke-dasharray="4 3"/><polyline points="${line("estimated1RM")}" fill="none" stroke="#39ff14" stroke-width="2.5"/>${logs.map((log, index) => `<circle cx="${x(index).toFixed(1)}" cy="${y(Number(log.estimated1RM)).toFixed(1)}" r="3" fill="#39ff14"/>`).join("")}${dateLabels}</svg>`;
       }
 
+      function repairCompletedWorkoutRecords() {
+        if (!hasGeneratedPlan() || !completedPlanDays.length) return;
+        const profile = getProfile();
+        const plan = buildPlan(profile);
+        let changed = false;
+        getScheduledPlanDays(profile, plan).forEach((scheduled) => {
+          if (!completedPlanDays.includes(scheduled.id)) return;
+          const existing = records.find((record) => record.planDayId === scheduled.id);
+          if (existing?.scheduledDate && existing?.date) return;
+          const completionLog = trainingSetLogs
+            .filter((log) => log.planDayId === scheduled.id && (log.completedAt || log.updatedAt || log.createdAt))
+            .sort((left, right) => Date.parse(right.completedAt || right.updatedAt || right.createdAt) - Date.parse(left.completedAt || left.updatedAt || left.createdAt))[0];
+          const completedAt = existing?.completedAt || completionLog?.completedAt || completionLog?.updatedAt || completionLog?.createdAt || `${scheduled.date}T12:00:00`;
+          recordFromWorkout(getWorkoutDay(scheduled.weekIndex, scheduled.dayIndex), completedAt);
+          changed = true;
+        });
+        if (changed) window.FitLogSync?.queueSync?.();
+      }
+
+      function calendarSessionsForDate(dateValue) {
+        return records
+          .filter((record) => (record.source === "plan" || record.planDayId) && record.date === dateValue)
+          .sort((left, right) => String(right.completedAt || "").localeCompare(String(left.completedAt || "")));
+      }
+
+      function calendarExerciseData(session, exercise, index) {
+        const libraryExercise = libraryExerciseForWorkout(exercise, "训练");
+        const log = trainingSetLogs.find((entry) =>
+          entry.source === "plan" && entry.planDayId === session.planDayId && entry.exerciseId === libraryExercise.id
+        ) || null;
+        const plannedSets = Number(log?.sets || getExerciseSetCount(exercise) || 1);
+        const plannedReps = Number(log?.plannedReps || log?.reps || workoutRepTarget(exercise.prescription) || 1);
+        const completedEntries = Array.isArray(log?.setEntries)
+          ? log.setEntries.filter((entry) => entry.completed !== false && Number(entry.reps) > 0)
+          : [];
+        const hasData = hasRecordedPlanExerciseData(log);
+        const displayName = appLanguage === "en" ? (libraryExercise.nameEn || libraryExercise.nameZh) : libraryExercise.nameZh;
+        const summary = completedEntries.length
+          ? completedEntries.map((entry, setIndex) => `${appLanguage === "en" ? `Set ${setIndex + 1}` : `第${setIndex + 1}组`} ${Number(entry.weightKg) || 0} kg × ${entry.reps}`).join(" · ")
+          : hasData
+            ? `${Number(log.weightKg)} kg × ${log.reps || plannedReps} ${appLanguage === "en" ? "reps" : "次"}`
+            : appLanguage === "en"
+              ? `${plannedSets} sets × ${plannedReps} reps · Data not logged`
+              : `${plannedSets} 组 × ${plannedReps} 次 · 未记录数据`;
+        return { id: `${session.id}-${libraryExercise.id || index}`, libraryExercise, log, plannedSets, plannedReps, hasData, displayName, summary };
+      }
+
+      function renderRecordCalendarDetail() {
+        if (!recordCalendarDetail) return;
+        const sessions = activeRecordCalendarDate ? calendarSessionsForDate(activeRecordCalendarDate) : [];
+        if (!activeRecordCalendarDate || !sessions.length) {
+          recordCalendarDetail.hidden = true;
+          recordCalendarDetail.innerHTML = "";
+          return;
+        }
+        const dateLabel = appLanguage === "en"
+          ? new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(parseLocalDate(activeRecordCalendarDate))
+          : `${activeRecordCalendarDate.slice(0, 4)} 年 ${Number(activeRecordCalendarDate.slice(5, 7))} 月 ${Number(activeRecordCalendarDate.slice(8, 10))} 日`;
+        recordCalendarDetail.hidden = false;
+        recordCalendarDetail.innerHTML = `
+          <div class="record-detail-head"><h3>${dateLabel}</h3><span>${appLanguage === "en" ? `${sessions.length} completed workout${sessions.length === 1 ? "" : "s"}` : `${sessions.length} 次已完成训练`}</span></div>
+          ${sessions.map((session) => {
+            const sessionExercises = (session.exercises || []).map((exercise, index) => calendarExerciseData(session, exercise, index));
+            const scheduledLabel = session.scheduledDate && session.scheduledDate !== session.date
+              ? (appLanguage === "en" ? `Planned for ${session.scheduledDate}` : `原计划日期 ${session.scheduledDate}`)
+              : "";
+            return `
+              <article class="calendar-session-card">
+                <div class="calendar-session-head"><strong>${escapeLogText(translateInterfaceText(session.name || "已完成训练"))}</strong><span>${[scheduledLabel, session.rm || ""].filter(Boolean).map(escapeLogText).join(" · ")}</span></div>
+                <div class="calendar-exercise-list">
+                  ${sessionExercises.map((item) => {
+                    const supplementOpen = activeCalendarSupplementId === item.id;
+                    return `
+                      <div class="calendar-exercise-item">
+                        <div><strong>${escapeLogText(item.displayName)}</strong><span>${escapeLogText(item.summary)}</span></div>
+                        ${item.hasData ? "" : `<button class="completed-training-supplement" type="button" data-open-calendar-supplement="${item.id}">${appLanguage === "en" ? "Add data" : "补充数据"}</button>`}
+                        ${supplementOpen ? `<form class="completed-training-supplement-form" data-calendar-supplement-form="${item.id}" data-plan-day-id="${session.planDayId || ""}" data-exercise-id="${item.libraryExercise.id || ""}" data-date="${session.date}" data-sets="${item.plannedSets}" data-planned-reps="${item.plannedReps}"><label>${appLanguage === "en" ? "Weight (kg)" : "训练重量 kg"}<input data-supplement-weight type="number" min="0.5" max="500" step="0.5" required></label><label>${appLanguage === "en" ? "Reps per set" : "每组次数"}<input data-supplement-reps type="number" min="1" max="100" step="1" value="${item.plannedReps}" required></label><button type="submit">${appLanguage === "en" ? "Save" : "保存"}</button></form>` : ""}
+                      </div>`;
+                  }).join("")}
+                </div>
+              </article>`;
+          }).join("")}
+        `;
+      }
+
       function renderRecordCalendar() {
         if (!recordCalendarMonth || !recordCalendarGrid) return;
-        const cursor = parseLocalDate(`${today.slice(0, 7)}-01`);
+        const cursor = new Date(recordCalendarCursor.getFullYear(), recordCalendarCursor.getMonth(), 1);
         const year = cursor.getFullYear();
         const month = cursor.getMonth();
         const monthPrefix = `${year}-${String(month + 1).padStart(2, "0")}`;
         const completedDateCounts = new Map();
-        records.forEach((record) => {
+        records.filter((record) => record.source === "plan" || record.planDayId).forEach((record) => {
           if (!String(record.date || "").startsWith(monthPrefix)) return;
           completedDateCounts.set(record.date, (completedDateCounts.get(record.date) || 0) + 1);
         });
-        if (hasGeneratedPlan()) {
-          const profile = getProfile();
-          const plan = buildPlan(profile);
-          getScheduledPlanDays(profile, plan).forEach((item) => {
-            if (item.date.startsWith(monthPrefix) && completedPlanDays.includes(item.id)) {
-              completedDateCounts.set(item.date, Math.max(1, completedDateCounts.get(item.date) || 0));
-            }
-          });
-        }
 
         recordCalendarMonth.textContent = appLanguage === "en"
           ? new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(cursor)
@@ -11481,13 +12167,17 @@
           const calendarLabel = appLanguage === "en"
             ? `${new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric" }).format(parseLocalDate(dateValue))}${completedCount ? `, ${completedCount} completed workout${completedCount === 1 ? "" : "s"}` : ""}`
             : `${month + 1}月${index + 1}日${completedCount ? `，已完成 ${completedCount} 次训练` : ""}`;
-          return `<span class="calendar-day ${dateValue === today ? "is-today" : ""} ${completedCount ? "has-record" : ""}" role="gridcell" aria-label="${calendarLabel}">${index + 1}</span>`;
+          return completedCount
+            ? `<button class="calendar-day has-record ${dateValue === today ? "is-today" : ""}" type="button" role="gridcell" data-record-calendar-date="${dateValue}" aria-pressed="${activeRecordCalendarDate === dateValue}" aria-label="${calendarLabel}">${index + 1}</button>`
+            : `<span class="calendar-day ${dateValue === today ? "is-today" : ""}" role="gridcell" aria-label="${calendarLabel}">${index + 1}</span>`;
         }).join("");
         recordCalendarGrid.innerHTML = `${leading}${days}`;
+        renderRecordCalendarDetail();
       }
 
       function renderRecords() {
         if (!setLogForm) return;
+        repairCompletedWorkoutRecords();
         renderRecordCalendar();
         populateSetLogExerciseOptions();
         updateSetLogPreview();
@@ -11684,6 +12374,43 @@
           window.location.hash = "home";
           return;
         }
+        const adaptiveSetupButton = event.target.closest("[data-adaptive-setup]");
+        if (adaptiveSetupButton) {
+          setAdaptiveProgressionSetup(adaptiveSetupButton.dataset.adaptiveSetup);
+          return;
+        }
+        const applyFirstSetButton = event.target.closest("[data-apply-first-set]");
+        if (applyFirstSetButton) {
+          const form = applyFirstSetButton.closest("[data-inline-workout-log]");
+          const rows = [...(form?.querySelectorAll("[data-workout-set-row]") || [])];
+          const firstWeight = rows[0]?.querySelector("[data-set-weight]")?.value ?? "";
+          const firstReps = rows[0]?.querySelector("[data-set-reps]")?.value ?? "";
+          rows.slice(1).forEach((row) => {
+            const weightInput = row.querySelector("[data-set-weight]");
+            const repsInput = row.querySelector("[data-set-reps]");
+            if (weightInput) weightInput.value = firstWeight;
+            if (repsInput) repsInput.value = firstReps;
+          });
+          return;
+        }
+        const completeSetButton = event.target.closest("[data-toggle-set-complete]");
+        if (completeSetButton) {
+          const row = completeSetButton.closest("[data-workout-set-row]");
+          const completedInput = row?.querySelector("[data-set-completed]");
+          const nextCompleted = completeSetButton.getAttribute("aria-pressed") !== "true";
+          completeSetButton.setAttribute("aria-pressed", String(nextCompleted));
+          if (completedInput) completedInput.value = String(nextCompleted);
+          row?.classList.toggle("is-complete", nextCompleted);
+          return;
+        }
+        const difficultyButton = event.target.closest("[data-set-difficulty]");
+        if (difficultyButton) {
+          const form = difficultyButton.closest("[data-inline-workout-log]");
+          form?.querySelectorAll("[data-set-difficulty]").forEach((button) => button.setAttribute("aria-pressed", String(button === difficultyButton)));
+          const selectedInput = form?.querySelector("[data-selected-difficulty]");
+          if (selectedInput) selectedInput.value = difficultyButton.dataset.setDifficulty;
+          return;
+        }
         const inlineLogToggle = event.target.closest("[data-toggle-inline-workout-log]");
         if (inlineLogToggle) {
           const panel = workoutDetail.querySelector(`[data-inline-workout-log-panel="${inlineLogToggle.dataset.toggleInlineWorkoutLog}"]`);
@@ -11745,6 +12472,7 @@
         const exercise = getLoggableExercises().find((item) => item.id === setLogExercise.value);
         const weightKg = Number(setLogWeight.value);
         const reps = Number(setLogReps.value);
+        const sets = Math.max(1, Number(setLogSetCount.value) || 1);
         const estimated1RM = calculateBrzyckiOneRm(weightKg, reps);
         if (!exercise || !estimated1RM || !setLogForm.reportValidity()) return;
         const isPlanAction = pendingPlanLogContext?.exerciseId === exercise.id;
@@ -11754,10 +12482,11 @@
           exerciseId: exercise.id,
           exerciseName: exercise.nameZh,
           category: exercise.category,
+          source: "manual",
+          sets,
           weightKg,
           reps,
           estimated1RM,
-          setNumber: Number(setLogSetNumber.value) || null,
           createdAt: new Date().toISOString()
         };
         if (isPlanAction) {
@@ -11781,7 +12510,8 @@
         }
         pendingPlanLogContext = null;
         saveTrainingSetLogs();
-        setLogSetNumber.value = "";
+        window.FitLogSync?.queueSync?.();
+        setLogSetCount.value = "1";
         const submitButton = setLogForm.querySelector(".set-log-submit");
         if (submitButton) {
           submitButton.textContent = "已保存";
@@ -11815,7 +12545,43 @@
         if (!tab) return;
         setRecordPane(tab.dataset.recordTab);
       });
+      trainingCalendarPane?.addEventListener("click", (event) => {
+        const navigation = event.target.closest("[data-record-calendar-nav]");
+        if (navigation) {
+          recordCalendarCursor = new Date(recordCalendarCursor.getFullYear(), recordCalendarCursor.getMonth() + Number(navigation.dataset.recordCalendarNav), 1);
+          activeRecordCalendarDate = null;
+          activeCalendarSupplementId = null;
+          renderRecordCalendar();
+          return;
+        }
+        const dateButton = event.target.closest("[data-record-calendar-date]");
+        if (dateButton) {
+          activeRecordCalendarDate = activeRecordCalendarDate === dateButton.dataset.recordCalendarDate ? null : dateButton.dataset.recordCalendarDate;
+          activeCalendarSupplementId = null;
+          renderRecordCalendar();
+          return;
+        }
+        const supplementButton = event.target.closest("[data-open-calendar-supplement]");
+        if (supplementButton) {
+          activeCalendarSupplementId = activeCalendarSupplementId === supplementButton.dataset.openCalendarSupplement ? null : supplementButton.dataset.openCalendarSupplement;
+          renderRecordCalendarDetail();
+        }
+      });
+      trainingCalendarPane?.addEventListener("submit", (event) => {
+        const form = event.target.closest("[data-calendar-supplement-form]");
+        if (!form) return;
+        event.preventDefault();
+        if (!form.reportValidity() || !savePlanSupplement(form)) return;
+        activeCalendarSupplementId = null;
+        renderRecordCalendarDetail();
+        renderTrainingRecordSummary();
+        renderOverloadMonitor(form.dataset.exerciseId);
+      });
       completedTrainingFilter?.addEventListener("change", () => {
+        activeSupplementLogId = null;
+        renderTrainingRecordSummary();
+      });
+      completedTrainingSearch?.addEventListener("input", () => {
         activeSupplementLogId = null;
         renderTrainingRecordSummary();
       });

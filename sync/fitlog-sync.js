@@ -184,6 +184,17 @@
     const sets = new Map();
     const exerciseSortBySession = new Map();
 
+    function trainingLogVolume(log) {
+      const setEntries = Array.isArray(log?.setEntries) ? log.setEntries : [];
+      if (setEntries.length) {
+        return setEntries.reduce((sum, entry) => entry?.completed === false
+          ? sum
+          : sum + (numberOrNull(entry?.weightKg) || 0) * (positiveInt(entry?.reps) || 0), 0);
+      }
+      const setsCount = positiveInt(log?.sets) || 1;
+      return (numberOrNull(log?.weightKg) || 0) * (positiveInt(log?.reps || log?.plannedReps) || 0) * setsCount;
+    }
+
     function addSession(clientId, row) {
       if (!clientId) return null;
       const id = workoutSessionId(userId, clientId);
@@ -228,7 +239,7 @@
       return id;
     }
 
-    function addLogSet(workoutExerciseIdValue, log, setNumber, sourceKey = "fitlog-training-set-logs") {
+    function addLogSet(workoutExerciseIdValue, log, setNumber, sourceKey = "fitlog-training-set-logs", setEntry = null) {
       if (!workoutExerciseIdValue || !setNumber) return;
       const clientId = `${log.id || `${log.planDayId || log.date}-${log.exerciseId || log.exerciseName}`}:set:${setNumber}`;
       const id = workoutSetId(userId, clientId);
@@ -239,11 +250,11 @@
         source_snapshot_key: sourceKey,
         source_snapshot_version: 1,
         set_number: setNumber,
-        weight_kg: numberOrNull(log.weightKg),
-        reps: positiveInt(log.reps || log.plannedReps),
-        rm_actual: log.rmActual || null,
-        rest_seconds: positiveInt(log.restSeconds),
-        completed: true,
+        weight_kg: numberOrNull(setEntry?.weightKg ?? log.weightKg),
+        reps: positiveInt(setEntry?.reps ?? log.reps ?? log.plannedReps),
+        rm_actual: setEntry?.rmActual || log.rmActual || null,
+        rest_seconds: positiveInt(setEntry?.restSeconds ?? log.restSeconds),
+        completed: setEntry ? setEntry.completed !== false : true,
       });
     }
 
@@ -295,18 +306,20 @@
         completedAt: first.completedAt || first.createdAt,
         source_snapshot_key: "fitlog-training-set-logs",
         total_exercise_count: new Set(logs.map((log) => log.exerciseId || log.exerciseName)).size,
-        total_volume_kg: logs.reduce((sum, log) => {
-          const setsCount = positiveInt(log.sets) || 1;
-          return sum + (numberOrNull(log.weightKg) || 0) * (positiveInt(log.reps || log.plannedReps) || 0) * setsCount;
-        }, 0),
+        total_volume_kg: logs.reduce((sum, log) => sum + trainingLogVolume(log), 0),
         notes: first.notes || "Snapshot 训练记录迁移",
       });
       logs.forEach((log, index) => {
         const exerciseKey = exerciseClientKey(log, index);
         const exerciseId = findExercise(sessionId, exerciseKey, exerciseName(log))
           || addExercise(sessionId, sessionClientId, { ...log, sets: log.sets || 1 }, nextExerciseIndex(sessionId), "fitlog-training-set-logs");
-        const setCount = positiveInt(log.sets) || 1;
-        for (let setNumber = 1; setNumber <= setCount; setNumber += 1) addLogSet(exerciseId, log, setNumber);
+        const setEntries = Array.isArray(log.setEntries) ? log.setEntries : [];
+        if (setEntries.length) {
+          setEntries.forEach((setEntry, setIndex) => addLogSet(exerciseId, log, positiveInt(setEntry?.setNumber) || setIndex + 1, "fitlog-training-set-logs", setEntry));
+        } else {
+          const setCount = positiveInt(log.sets) || 1;
+          for (let setNumber = 1; setNumber <= setCount; setNumber += 1) addLogSet(exerciseId, log, setNumber);
+        }
       });
     });
 
@@ -318,23 +331,30 @@
         completedAt: first.createdAt,
         source_snapshot_key: "fitlog-training-set-logs",
         total_exercise_count: new Set(logs.map((log) => log.exerciseId || log.exerciseName)).size,
-        total_volume_kg: logs.reduce((sum, log) => sum + (numberOrNull(log.weightKg) || 0) * (positiveInt(log.reps) || 0), 0),
+        total_volume_kg: logs.reduce((sum, log) => sum + trainingLogVolume(log), 0),
         notes: "手动训练组记录",
       });
       logs.forEach((log, index) => {
         const exerciseKey = exerciseClientKey(log, index);
         const sessionExerciseKey = `${sessionClientId}:exercise:${exerciseKey}`;
+        const exerciseTotalSets = logs.reduce((sum, item, itemIndex) =>
+          exerciseClientKey(item, itemIndex) === exerciseKey ? sum + (positiveInt(item.sets) || 1) : sum, 0
+        );
         if (!exerciseSortBySession.has(sessionExerciseKey)) exerciseSortBySession.set(sessionExerciseKey, nextExerciseIndex(sessionId));
         const exerciseId = findExercise(sessionId, exerciseKey, exerciseName(log))
-          || addExercise(sessionId, sessionClientId, { ...log, sets: 1 }, exerciseSortBySession.get(sessionExerciseKey), "fitlog-training-set-logs");
+          || addExercise(sessionId, sessionClientId, { ...log, sets: exerciseTotalSets }, exerciseSortBySession.get(sessionExerciseKey), "fitlog-training-set-logs");
         const used = usedSetNumbers.get(exerciseId) || new Set();
         let setNumber = positiveInt(log.setNumber) || logs.filter((item, itemIndex) =>
           itemIndex <= index && exerciseClientKey(item, itemIndex) === exerciseKey
         ).length;
-        while (used.has(setNumber)) setNumber += 1;
-        used.add(setNumber);
+        const setCount = positiveInt(log.sets) || 1;
+        for (let offset = 0; offset < setCount; offset += 1) {
+          while (used.has(setNumber)) setNumber += 1;
+          used.add(setNumber);
+          addLogSet(exerciseId, log, setNumber);
+          setNumber += 1;
+        }
         usedSetNumbers.set(exerciseId, used);
-        addLogSet(exerciseId, log, setNumber);
       });
     });
 

@@ -9,14 +9,22 @@ const planLogHelperEnd = source.indexOf("function getWorkoutSetEntries", planLog
 const hasRecordedPlanExerciseData = new Function(
   `${source.slice(planLogHelperStart, planLogHelperEnd)}; return hasRecordedPlanExerciseData;`
 )();
+const recommendationStart = source.indexOf("function buildProgressionRecommendation(");
+const recommendationEnd = source.indexOf("function saveInlineWorkoutLog", recommendationStart);
+const buildProgressionRecommendation = new Function(
+  `${source.slice(recommendationStart, recommendationEnd)}; return buildProgressionRecommendation;`
+)();
 
 test("generated workout actions can be replaced by exercises from the same body category", () => {
   assert.match(source, /PLAN_EXERCISE_REPLACEMENTS_KEY = "fitlog-plan-exercise-replacements"/);
   assert.match(source, /data-replace-workout-exercise="\$\{index\}"/);
   assert.match(source, /function openWorkoutExerciseReplacement\(exerciseIndex\)/);
-  assert.match(source, /resistanceExercises\.filter\(\(exercise\) => exercise\.category === category && exercise\.id !== currentExerciseId\)/);
+  assert.match(source, /const usedExerciseIds = new Set\(activeWorkoutDay\.exercises/);
+  assert.match(source, /&& !usedExerciseIds\.has\(exercise\.id\)/);
   assert.match(source, /replacement\.category !== exerciseReplacementContext\.category/);
-  assert.match(source, /applyPlanExerciseReplacements\(id, getWorkoutExercises\(dayIndex, plan, weekIndex\)\)/);
+  assert.match(source, /const duplicatesAnotherExercise = activeWorkoutDay\.exercises\.some/);
+  assert.match(source, /const generatedExercises = getWorkoutExercises\(dayIndex, plan, weekIndex\)/);
+  assert.match(source, /ensureUniqueWorkoutExercises\(applyPlanExerciseReplacements\(id, generatedExercises\)\)/);
   assert.match(source, /localStorage\.setItem\(PLAN_EXERCISE_REPLACEMENTS_KEY, JSON\.stringify\(planExerciseReplacements\)\)/);
 });
 
@@ -53,6 +61,44 @@ test("workout cards use compact overflow actions and inline logging", () => {
   assert.doesNotMatch(source, /class="workout-action-actions"/);
 });
 
+test("adaptive progression setup and low-friction set logging are available", () => {
+  assert.match(source, /ADAPTIVE_SETUP_KEY = "fitlog-adaptive-progression-setup"/);
+  assert.match(source, /data-adaptive-setup="known"/);
+  assert.match(source, /data-adaptive-setup="guide"/);
+  assert.match(source, /data-adaptive-setup="skip"/);
+  assert.match(source, /data-apply-first-set/);
+  assert.match(source, /data-toggle-set-complete/);
+  assert.match(source, /data-selected-difficulty/);
+  assert.match(source, /data-set-difficulty="\$\{value\}"/);
+  assert.match(source, /记录主训练数据后，FitMine可为下次训练调整重量。/);
+  assert.match(source, /getLatestRecordedExerciseLog\(exercise\.id, activeWorkoutDay\?\.id\)/);
+  assert.match(source, /previousEntry\.weightKg \?\? previousLog\?\.weightKg/);
+});
+
+test("progression recommendation follows completion, rep range, and final-set difficulty", () => {
+  const sets = (reps, count = 3) => Array.from({ length: count }, (_, index) => ({
+    setNumber: index + 1,
+    weightKg: 40,
+    reps,
+    completed: true,
+  }));
+  assert.equal(buildProgressionRecommendation({
+    setEntries: sets(12), plannedSets: 3, repMin: 8, repMax: 12, difficulty: "target", category: "胸部",
+  }).action, "increase-load");
+  assert.equal(buildProgressionRecommendation({
+    setEntries: sets(10), plannedSets: 3, repMin: 8, repMax: 12, difficulty: "easy", category: "胸部",
+  }).action, "increase-reps");
+  assert.equal(buildProgressionRecommendation({
+    setEntries: sets(8), plannedSets: 3, repMin: 8, repMax: 12, difficulty: "hard", category: "背部",
+  }).action, "hold");
+  assert.equal(buildProgressionRecommendation({
+    setEntries: sets(6), plannedSets: 3, repMin: 8, repMax: 12, difficulty: "missed", category: "腿部",
+  }).action, "reduce");
+  assert.equal(buildProgressionRecommendation({
+    setEntries: sets(10), plannedSets: 3, repMin: 8, repMax: 12, difficulty: "pain", category: "腿部",
+  }).action, "stop");
+});
+
 test("completed-only plan logs do not appear as recorded workout data", () => {
   assert.equal(hasRecordedPlanExerciseData(null), false);
   assert.equal(hasRecordedPlanExerciseData({ weightKg: null, reps: 12, completedAt: "2026-10-24T00:00:00.000Z" }), false);
@@ -61,6 +107,12 @@ test("completed-only plan logs do not appear as recorded workout data", () => {
     setEntries: [
       { setNumber: 1, weightKg: 20, reps: 8 },
       { setNumber: 2, weightKg: 20, reps: 8 }
+    ]
+  }), true);
+  assert.equal(hasRecordedPlanExerciseData({
+    setEntries: [
+      { setNumber: 1, weightKg: 20, reps: 8, completed: true },
+      { setNumber: 2, weightKg: null, reps: null, completed: false }
     ]
   }), true);
 });

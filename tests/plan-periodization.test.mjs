@@ -118,6 +118,73 @@ test("workout prescriptions receive the selected week period", () => {
   assert.match(source, /workout\.period\?\.title/);
 });
 
+test("warm-ups follow the actual workout movement pattern", () => {
+  const start = source.indexOf("function getWorkoutPreparationPattern(workout)");
+  const end = source.indexOf("function savePlanExerciseReplacements", start);
+  assert.ok(start >= 0 && end > start);
+  const context = {};
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(start, end)}\nthis.getTargetedPreparation = getTargetedPreparation;`, context);
+
+  const lowerDay = {
+    name: "下肢推拉与深蹲发展",
+    description: "股四头肌、臀肌、腘绳肌与小腿；深蹲模式为主",
+    exercises: [
+      { name: "腿举", focus: "下肢 A · 股四头肌" },
+      { name: "保加利亚分腿蹲", focus: "下肢 A · 单腿臀腿" },
+      { name: "俯卧腿弯举", focus: "下肢 A · 腘绳肌" },
+      { name: "站姿提踵", focus: "下肢 A · 小腿" }
+    ]
+  };
+  const lowerWarmups = Array.from(context.getTargetedPreparation(lowerDay).warmups, (item) => item.exerciseId);
+  assert.deepEqual(lowerWarmups, ["ankle-circles", "worlds-greatest-stretch"]);
+  assert.ok(!lowerWarmups.includes("arm-circles"));
+
+  const posteriorDay = {
+    name: "下肢髋主导与后链发展",
+    description: "臀肌和腘绳肌；髋主导为主",
+    exercises: [
+      { name: "罗马尼亚硬拉", focus: "腿 B · 腘绳肌" },
+      { name: "杠铃臀推", focus: "腿 B · 臀大肌" },
+      { name: "坐姿腿弯举", focus: "腿 B · 腘绳肌" }
+    ]
+  };
+  assert.deepEqual(
+    Array.from(context.getTargetedPreparation(posteriorDay).warmups, (item) => item.exerciseId),
+    ["standing-hip-circles", "inchworm"]
+  );
+});
+
+test("generated workout days enforce unique exercise identities", () => {
+  assert.match(source, /function ensureUniqueWorkoutExercises\(exercises\)/);
+  assert.match(source, /ensureUniqueWorkoutExercises\(applyPlanExerciseReplacements\(id, generatedExercises\)\)/);
+  assert.match(source, /"站姿提踵": "standing-calf-raises"/);
+  assert.match(source, /"哑铃卧推": "dumbbell-bench-press"/);
+  assert.match(source, /"绳索夹胸": "cable-crossover"/);
+
+  const start = source.indexOf("function getWorkoutLibraryExercise(item)");
+  const end = source.indexOf("function getWorkoutDay", start);
+  assert.ok(start >= 0 && end > start);
+  const context = {
+    workoutExerciseAliases: {},
+    resistanceExercises: [
+      { id: "squat", nameZh: "深蹲", category: "腿部", primaryMuscles: ["股四头肌"], mechanic: "复合动作", force: "推", instructionsZh: ["稳定下蹲。"] },
+      { id: "split-squat", nameZh: "分腿蹲", category: "腿部", primaryMuscles: ["股四头肌"], mechanic: "复合动作", force: "推", instructionsZh: ["保持膝盖稳定。"] },
+      { id: "curl", nameZh: "腿弯举", category: "腿部", primaryMuscles: ["腘绳肌"], mechanic: "孤立动作", force: "拉", instructionsZh: ["控制回放。"] }
+    ]
+  };
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(start, end)}\nthis.ensureUniqueWorkoutExercises = ensureUniqueWorkoutExercises;`, context);
+  const unique = context.ensureUniqueWorkoutExercises([
+    { name: "深蹲", exerciseId: "squat", prescription: "3 组 × 8 次" },
+    { name: "重复深蹲", exerciseId: "squat", prescription: "3 组 × 8 次" },
+    { name: "腿弯举", exerciseId: "curl", prescription: "2 组 × 10 次" }
+  ]);
+  assert.equal(unique.length, 3);
+  assert.equal(new Set(unique.map((item) => item.exerciseId)).size, 3);
+  assert.equal(unique[1].exerciseId, "split-squat");
+});
+
 test("hypertrophy splits follow novice full body, intermediate upper lower, and advanced PPL structures", () => {
   assert.match(source, /function makeHypertrophySplit/);
   assert.match(source, /全身复合力量与动作基础/);

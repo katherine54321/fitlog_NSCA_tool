@@ -60,6 +60,64 @@ test("syncNow keeps the legacy snapshot and upserts structured training rows", a
   assert.equal(sets[0].weight_kg, 60);
 });
 
+test("structured sync preserves per-set adaptive workout entries", () => {
+  const page = createSyncClientHarness();
+  vm.runInNewContext(source, page.context);
+  const snapshot = {
+    "fitlog-records": "[]",
+    "fitlog-plan-completed": "[]",
+    "fitlog-training-set-logs": JSON.stringify([{
+      id: "adaptive-log-1",
+      source: "plan",
+      planDayId: "adaptive-day-1",
+      date: "2026-10-26",
+      exerciseId: "barbell-bench-press",
+      exerciseName: "杠铃卧推",
+      sets: 3,
+      plannedReps: 8,
+      setEntries: [
+        { setNumber: 1, weightKg: 40, reps: 10, completed: true },
+        { setNumber: 2, weightKg: 42.5, reps: 8, completed: true },
+        { setNumber: 3, weightKg: null, reps: null, completed: false },
+      ],
+    }]),
+  };
+  const rows = page.context.window.FitLogSync.__private.buildStructuredTrainingRows(snapshot, "user-123", "2026-10-26T00:00:00.000Z");
+
+  assert.equal(rows.sets.length, 3);
+  assert.deepEqual(Array.from(rows.sets, (set) => set.weight_kg), [40, 42.5, null]);
+  assert.deepEqual(Array.from(rows.sets, (set) => set.completed), [true, true, false]);
+  assert.equal(rows.sessions[0].total_volume_kg, 740);
+});
+
+test("structured sync expands manual total-set entries", () => {
+  const page = createSyncClientHarness();
+  vm.runInNewContext(source, page.context);
+  const snapshot = {
+    "fitlog-records": "[]",
+    "fitlog-plan-completed": "[]",
+    "fitlog-training-set-logs": JSON.stringify([{
+      id: "manual-log-1",
+      source: "manual",
+      date: "2026-10-27",
+      exerciseId: "barbell-bench-press",
+      exerciseName: "杠铃卧推",
+      sets: 3,
+      reps: 8,
+      weightKg: 20,
+      estimated1RM: 25,
+      createdAt: "2026-10-27T08:00:00.000Z",
+    }]),
+  };
+  const rows = page.context.window.FitLogSync.__private.buildStructuredTrainingRows(snapshot, "user-123", "2026-10-27T08:00:00.000Z");
+
+  assert.equal(rows.sessions.length, 1);
+  assert.equal(rows.sessions[0].total_volume_kg, 480);
+  assert.equal(rows.exercises[0].planned_sets, 3);
+  assert.equal(rows.sets.length, 3);
+  assert.deepEqual(Array.from(rows.sets, (set) => set.set_number), [1, 2, 3]);
+});
+
 test("pullLatest restores old snapshots and migrates them into structured tables", async () => {
   const remoteSnapshot = trainingSnapshot();
   const page = createSyncClientHarness({
