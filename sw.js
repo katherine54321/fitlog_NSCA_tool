@@ -1,4 +1,4 @@
-const CACHE_NAME = "fitlog-app-v89";
+const CACHE_NAME = "fitlog-app-v90";
 const IMAGE_CACHE_NAME = "fitlog-exercise-images-v1";
 const appUrl = (path) => new URL(path, self.registration.scope).pathname;
 const APP_SHELL = appUrl("index.html");

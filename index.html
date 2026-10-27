@@ -6342,6 +6342,115 @@
         color: #38e5f4;
       }
 
+      .adaptive-mode-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 14px;
+        padding: 10px 12px;
+        border: 1px solid #394147;
+        border-radius: 9px;
+        background: #1b1f22;
+      }
+
+      .adaptive-mode-banner strong,
+      .adaptive-mode-banner span { display: block; }
+      .adaptive-mode-banner strong { color: #f4f7f5; font-size: 12px; }
+      .adaptive-mode-banner span { margin-top: 2px; color: #9fa9a2; font-size: 10px; }
+
+      .adaptive-mode-banner button,
+      .calibration-action,
+      .calibration-feedback-option {
+        min-height: 34px;
+        padding: 5px 9px;
+        border: 1px solid #4a5157;
+        border-radius: 7px;
+        color: #f4f7f5;
+        background: transparent;
+        font: inherit;
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .calibration-guide {
+        display: grid;
+        gap: 9px;
+        margin-bottom: 10px;
+        padding: 11px;
+        border: 1px solid #3d4a50;
+        border-radius: 8px;
+        background: #172126;
+      }
+
+      .calibration-guide h4,
+      .calibration-guide p { margin: 0; }
+      .calibration-guide h4 { color: #ffffff; font-size: 13px; }
+      .calibration-guide p { color: #b7c0c5; font-size: 10px; line-height: 1.55; }
+
+      .calibration-progress {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 5px;
+      }
+
+      .calibration-progress span {
+        padding: 5px;
+        border: 1px solid #3f474d;
+        border-radius: 999px;
+        color: #7f898f;
+        font-size: 9px;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .calibration-progress span.is-active,
+      .calibration-progress span.is-done {
+        border-color: #00b7c8;
+        color: #62eef8;
+      }
+
+      .calibration-fields {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .calibration-feedback-options {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .calibration-feedback-option {
+        min-height: 42px;
+        color: #c5cdd2;
+      }
+
+      .calibration-result {
+        padding: 9px;
+        border: 1px solid #3c4c53;
+        border-radius: 7px;
+        color: #72edf7 !important;
+        background: #132328;
+      }
+
+      .calibration-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+
+      .calibration-action.is-primary {
+        border-color: #00b7c8;
+        color: #62eef8;
+      }
+
+      .calibration-action.is-danger {
+        border-color: #d45e68;
+        color: #ff9aa3;
+      }
+
       .workout-set-summary {
         display: flex;
         align-items: baseline;
@@ -6505,6 +6614,8 @@
       @media (max-width: 520px) {
         .adaptive-setup-options { grid-template-columns: 1fr; }
         .workout-difficulty-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .adaptive-mode-banner { align-items: flex-start; }
+        .calibration-feedback-options { grid-template-columns: 1fr; }
       }
 
       .exercise-detail-title {
@@ -8431,6 +8542,9 @@
       if (!planExerciseReplacements || Array.isArray(planExerciseReplacements) || typeof planExerciseReplacements !== "object") planExerciseReplacements = {};
       let adaptiveProgressionSetup = JSON.parse(localStorage.getItem(ADAPTIVE_SETUP_KEY) || "null");
       if (!adaptiveProgressionSetup || typeof adaptiveProgressionSetup !== "object") adaptiveProgressionSetup = null;
+      if (adaptiveProgressionSetup && (!adaptiveProgressionSetup.calibrations || typeof adaptiveProgressionSetup.calibrations !== "object")) {
+        adaptiveProgressionSetup.calibrations = {};
+      }
       let exerciseReplacementContext = null;
       let libraryVisibleCount = 20;
       let exerciseSearchTimer = null;
@@ -10436,7 +10550,78 @@
         return trainingSetLogs.some((log) => log.source === "plan" && hasRecordedPlanExerciseData(log));
       }
 
+      function saveAdaptiveProgressionSetup() {
+        if (!adaptiveProgressionSetup) localStorage.removeItem(ADAPTIVE_SETUP_KEY);
+        else localStorage.setItem(ADAPTIVE_SETUP_KEY, JSON.stringify(adaptiveProgressionSetup));
+        window.FitLogSync?.queueSync?.();
+      }
+
+      function getExerciseCalibration(exerciseId) {
+        return adaptiveProgressionSetup?.calibrations?.[exerciseId] || null;
+      }
+
+      function setExerciseCalibration(exerciseId, nextCalibration) {
+        if (!adaptiveProgressionSetup || adaptiveProgressionSetup.mode !== "guide") return;
+        adaptiveProgressionSetup.calibrations = {
+          ...(adaptiveProgressionSetup.calibrations || {}),
+          [exerciseId]: {
+            ...(adaptiveProgressionSetup.calibrations?.[exerciseId] || {}),
+            ...nextCalibration,
+            updatedAt: new Date().toISOString()
+          }
+        };
+        adaptiveProgressionSetup.updatedAt = new Date().toISOString();
+        saveAdaptiveProgressionSetup();
+      }
+
+      function isLowerBodyCategory(category) {
+        return /腿|臀|股|腘|小腿|lower|glute|quad|hamstring|calf/i.test(String(category || ""));
+      }
+
+      function roundedCalibrationLoad(value) {
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue) || numericValue <= 0) return 0;
+        return Math.max(0.5, Math.round(numericValue * 2) / 2);
+      }
+
+      function buildCalibrationRecommendation({ weightKg, feedback, category }) {
+        const weight = Math.max(0, Number(weightKg) || 0);
+        const lowerBody = isLowerBodyCategory(category);
+        if (feedback === "pain") {
+          return {
+            action: "stop",
+            recommendedWeight: null,
+            zh: "出现疼痛或动作失控：停止本次校准，不要进入正式组。可查看动作要点或更换无痛动作。",
+            en: "Pain or loss of control: stop calibration and do not begin working sets. Review technique or choose a pain-free alternative."
+          };
+        }
+        if (feedback === "easy") {
+          const increase = lowerBody ? 1.075 : 1.05;
+          return {
+            action: "retry-up",
+            recommendedWeight: roundedCalibrationLoad(weight * increase),
+            zh: weight > 0 ? "试做组较轻松：增加一个可用重量档位后再试一次。" : "徒手动作较轻松：提高动作难度或选择更具挑战的变式后再试一次。",
+            en: weight > 0 ? "The trial set was comfortable. Add one available load increment and try again." : "The bodyweight trial was comfortable. Use a more challenging variation and try again."
+          };
+        }
+        if (feedback === "hard" || feedback === "missed") {
+          return {
+            action: "retry-down",
+            recommendedWeight: roundedCalibrationLoad(weight * 0.95),
+            zh: weight > 0 ? "试做组过重或未完成：降低约 5% 或一个重量档位后再试一次。" : "当前动作难度过高：使用更容易的动作变式后再试一次。",
+            en: weight > 0 ? "The trial was too heavy or incomplete. Reduce the load by about 5% or one increment and try again." : "This variation was too difficult. Use an easier variation and try again."
+          };
+        }
+        return {
+          action: "confirm",
+          recommendedWeight: roundedCalibrationLoad(weight),
+          zh: "试做组处于目标难度，可以将该重量作为本次正式组的起始重量。",
+          en: "The trial set matched the target effort. Use this as the starting load for the working sets."
+        };
+      }
+
       function shouldShowAdaptiveSetup(workoutId) {
+        if (adaptiveProgressionSetup?.mode === "choose") return true;
         if (hasAnyAdaptiveTrainingData()) return false;
         if (!adaptiveProgressionSetup) return true;
         return adaptiveProgressionSetup.mode === "skip" && adaptiveProgressionSetup.planDayId !== workoutId;
@@ -10450,10 +10635,24 @@
             <h3 id="adaptiveSetupTitle">${appLanguage === "en" ? "How would you like to set your starting load?" : "你希望如何确定起始重量？"}</h3>
             <p>${appLanguage === "en" ? "FitMine will learn from your logged working sets. A maximum-strength test is not required." : "FitMine 会根据你记录的正式组逐步学习，不需要先做最大力量测试。"}</p>
             <div class="adaptive-setup-options">
-              <button type="button" data-adaptive-setup="known">${appLanguage === "en" ? "I know my working loads" : "我知道训练重量"}</button>
-              <button type="button" data-adaptive-setup="guide">${appLanguage === "en" ? "Help me find a starting load" : "引导寻找起始重量"}</button>
+              <button type="button" data-adaptive-setup="known">${appLanguage === "en" ? "Use my working weights" : "直接使用已知重量"}</button>
+              <button type="button" data-adaptive-setup="guide">${appLanguage === "en" ? "Find it with a trial set" : "通过试做组确定"}</button>
               <button type="button" data-adaptive-setup="skip">${appLanguage === "en" ? "Skip for now" : "暂时跳过"}</button>
             </div>
+          </section>
+        `;
+      }
+
+      function adaptiveModeBannerTemplate() {
+        if (!adaptiveProgressionSetup || adaptiveProgressionSetup.mode === "skip" || shouldShowAdaptiveSetup(activeWorkoutDay?.id)) return "";
+        const isGuide = adaptiveProgressionSetup.mode === "guide";
+        return `
+          <section class="adaptive-mode-banner" aria-label="${appLanguage === "en" ? "Starting load setup" : "起始重量设置"}">
+            <div>
+              <strong>${appLanguage === "en" ? (isGuide ? "Trial-set guidance is active" : "Using your working weights") : (isGuide ? "正在通过试做组确定重量" : "正在使用已知训练重量")}</strong>
+              <span>${appLanguage === "en" ? (isGuide ? "Calibrate each exercise once; trial sets are not counted as training volume." : "Enter the working load you already use, then log each completed set.") : (isGuide ? "每个动作只需校准一次；试做组不会计入训练量。" : "输入你熟悉的工作重量，再逐组记录完成情况。")}</span>
+            </div>
+            <button type="button" data-change-adaptive-setup>${appLanguage === "en" ? "Change" : "更改"}</button>
           </section>
         `;
       }
@@ -10463,11 +10662,81 @@
         adaptiveProgressionSetup = {
           mode,
           planDayId: mode === "skip" ? activeWorkoutDay.id : null,
+          activeExerciseId: mode === "skip" ? null : libraryExerciseForWorkout(activeWorkoutDay.exercises[0], "训练")?.id || null,
+          calibrations: mode === "guide" ? (adaptiveProgressionSetup?.calibrations || {}) : {},
           updatedAt: new Date().toISOString()
         };
-        localStorage.setItem(ADAPTIVE_SETUP_KEY, JSON.stringify(adaptiveProgressionSetup));
-        window.FitLogSync?.queueSync?.();
+        saveAdaptiveProgressionSetup();
         renderWorkoutDetail();
+        if (mode !== "skip") window.setTimeout(() => openWorkoutLogPanel(0, true), 0);
+      }
+
+      function resetAdaptiveProgressionSetup() {
+        adaptiveProgressionSetup = {
+          mode: "choose",
+          planDayId: activeWorkoutDay?.id || null,
+          calibrations: adaptiveProgressionSetup?.calibrations || {},
+          updatedAt: new Date().toISOString()
+        };
+        saveAdaptiveProgressionSetup();
+        renderWorkoutDetail();
+      }
+
+      function calibrationProgressTemplate(step) {
+        const labels = appLanguage === "en"
+          ? ["1 Trial load", "2 Feedback", "3 Confirm"]
+          : ["1 试做重量", "2 难度反馈", "3 确认重量"];
+        return `<div class="calibration-progress">${labels.map((label, index) => `<span class="${index + 1 < step ? "is-done" : index + 1 === step ? "is-active" : ""}">${label}</span>`).join("")}</div>`;
+      }
+
+      function calibrationGuideTemplate(exercise, item, exerciseIndex) {
+        const calibration = getExerciseCalibration(exercise.id) || {};
+        const repRange = workoutRepRange(item.prescription);
+        const trialReps = Number(calibration.trialReps) || Math.max(1, Math.min(8, repRange.min || 8));
+        const trialWeight = calibration.trialWeight ?? "";
+        if (calibration.status === "feedback") {
+          return `
+            <section class="calibration-guide" data-calibration-guide="${exerciseIndex}">
+              ${calibrationProgressTemplate(2)}
+              <h4>${appLanguage === "en" ? "How did the trial set feel?" : "这个试做组感觉如何？"}</h4>
+              <p>${appLanguage === "en" ? `${trialWeight || 0} kg × ${trialReps} reps. Choose the closest result; do not test to failure.` : `${trialWeight || 0} kg × ${trialReps} 次。选择最接近的结果，不需要做到力竭。`}</p>
+              <div class="calibration-feedback-options">
+                <button class="calibration-feedback-option" type="button" data-calibration-feedback="easy" data-exercise-index="${exerciseIndex}">${appLanguage === "en" ? "Too easy · 5+ reps left" : "太轻松 · 还能做 5+ 次"}</button>
+                <button class="calibration-feedback-option" type="button" data-calibration-feedback="target" data-exercise-index="${exerciseIndex}">${appLanguage === "en" ? "On target · 2–4 reps left" : "合适 · 还能做 2–4 次"}</button>
+                <button class="calibration-feedback-option" type="button" data-calibration-feedback="hard" data-exercise-index="${exerciseIndex}">${appLanguage === "en" ? "Too hard · 0–1 reps left" : "太重 · 只能再做 0–1 次"}</button>
+                <button class="calibration-feedback-option" type="button" data-calibration-feedback="missed" data-exercise-index="${exerciseIndex}">${appLanguage === "en" ? "Could not finish" : "未完成目标次数"}</button>
+                <button class="calibration-feedback-option" type="button" data-calibration-feedback="pain" data-exercise-index="${exerciseIndex}">${appLanguage === "en" ? "Pain or loss of control" : "疼痛或动作失控"}</button>
+              </div>
+            </section>`;
+        }
+        if (calibration.status === "review" || calibration.status === "stopped") {
+          const result = buildCalibrationRecommendation({ weightKg: trialWeight, feedback: calibration.feedback, category: exercise.category });
+          const recommendedWeight = calibration.recommendedWeight ?? result.recommendedWeight;
+          const canConfirm = result.action === "confirm";
+          return `
+            <section class="calibration-guide" data-calibration-guide="${exerciseIndex}">
+              ${calibrationProgressTemplate(3)}
+              <h4>${appLanguage === "en" ? (result.action === "stop" ? "Stop this calibration" : "Starting-load recommendation") : (result.action === "stop" ? "停止本次校准" : "起始重量建议")}</h4>
+              <p class="calibration-result">${appLanguage === "en" ? result.en : result.zh}${recommendedWeight !== null && result.action !== "stop" ? (appLanguage === "en" ? ` Suggested load: ${recommendedWeight} kg.` : ` 建议重量：${recommendedWeight} kg。`) : ""}</p>
+              <div class="calibration-actions">
+                ${canConfirm ? `<button class="calibration-action is-primary" type="button" data-confirm-calibration="${exerciseIndex}">${appLanguage === "en" ? "Use for working sets" : "用于正式训练组"}</button>` : ""}
+                ${result.action === "retry-up" || result.action === "retry-down" ? `<button class="calibration-action is-primary" type="button" data-retry-calibration="${exerciseIndex}">${appLanguage === "en" ? "Retry suggested load" : "按建议重量再试一组"}</button>` : ""}
+                ${result.action === "stop" ? `<button class="calibration-action is-danger" type="button" data-replace-workout-exercise="${exerciseIndex}">${appLanguage === "en" ? "Replace exercise" : "更换动作"}</button>` : ""}
+                <button class="calibration-action" type="button" data-restart-calibration="${exerciseIndex}">${appLanguage === "en" ? "Start over" : "重新开始"}</button>
+              </div>
+            </section>`;
+        }
+        return `
+          <form class="calibration-guide" data-calibration-trial-form="${exerciseIndex}">
+            ${calibrationProgressTemplate(1)}
+            <h4>${appLanguage === "en" ? "Choose a light trial load" : "选择较轻的试做重量"}</h4>
+            <p>${appLanguage === "en" ? "Use a load you can control comfortably. This trial set is separate from your working sets and will not count toward training volume." : "选择能稳定控制的轻重量。试做组与正式训练组分开，不会计入训练量。"}</p>
+            <div class="calibration-fields">
+              <label class="workout-inline-field">${appLanguage === "en" ? "Trial weight (kg)" : "试做重量 (kg)"}<input type="number" data-calibration-weight min="0" max="1000" step="0.5" value="${trialWeight}" inputmode="decimal" required></label>
+              <label class="workout-inline-field">${appLanguage === "en" ? "Trial reps" : "试做次数"}<input type="number" data-calibration-reps min="1" max="20" step="1" value="${trialReps}" required></label>
+            </div>
+            <button class="calibration-action is-primary" type="submit">${appLanguage === "en" ? "Trial set completed" : "已完成试做组"}</button>
+          </form>`;
       }
 
       function difficultyOptionsTemplate(selectedDifficulty = "") {
@@ -10497,10 +10766,17 @@
         const planLog = type === "训练" ? getPlanExerciseLog(activeWorkoutDay?.id, exercise.id) : null;
         const hasRecordedData = hasRecordedPlanExerciseData(planLog);
         const previousLog = type === "训练" ? getLatestRecordedExerciseLog(exercise.id, activeWorkoutDay?.id) : null;
+        const calibration = type === "训练" ? getExerciseCalibration(exercise.id) : null;
+        const guideCalibrationActive = type === "训练"
+          && adaptiveProgressionSetup?.mode === "guide"
+          && !hasRecordedData
+          && calibration?.status !== "confirmed"
+          && (Boolean(calibration) || !previousLog);
+        const calibratedWeight = calibration?.status === "confirmed" ? calibration.confirmedWeight : null;
         const plannedSets = Math.max(1, getExerciseSetCount(item));
         const repRange = workoutRepRange(item.prescription);
         const plannedReps = repRange.min;
-        const setEntries = getWorkoutSetEntries(planLog, previousLog, plannedSets, item.loadKg, plannedReps);
+        const setEntries = getWorkoutSetEntries(planLog, previousLog, plannedSets, calibratedWeight ?? item.loadKg, plannedReps);
         const setRows = setEntries.map((setEntry, setIndex) => `
           <div class="workout-set-row${setEntry.completed ? " is-complete" : ""}" data-workout-set-row="${index}">
             <span class="workout-set-number" aria-label="${appLanguage === "en" ? `Set ${setIndex + 1}` : `第 ${setIndex + 1} 组`}">${setIndex + 1}</span>
@@ -10517,8 +10793,8 @@
             ? (recommendationSource.progressionRecommendationEn || recommendationSource.progressionRecommendation || "")
             : (recommendationSource.progressionRecommendationZh || recommendationSource.progressionRecommendation || ""))
           : "";
-        const guideHint = adaptiveProgressionSetup?.mode === "guide"
-          ? (appLanguage === "en" ? "Start light. Choose a load that lets you finish the target reps with about 2–3 reps left." : "从较轻重量开始，选择完成目标次数后大约还能做 2–3 次的重量。")
+        const guideHint = calibration?.status === "confirmed"
+          ? (appLanguage === "en" ? `Trial-set starting load: ${calibration.confirmedWeight} kg. Complete the working sets below.` : `试做组已确认起始重量：${calibration.confirmedWeight} kg。请完成以下正式训练组。`)
           : "";
         const actionControls = type === "训练"
           ? `<div class="workout-card-footer">
@@ -10527,12 +10803,14 @@
                 <button class="workout-overflow-toggle" type="button" data-toggle-workout-menu aria-expanded="false" aria-label="${appLanguage === "en" ? "More exercise options" : "更多动作操作"}">•••</button>
                 <div class="workout-overflow-menu" hidden>
                   <button type="button" data-replace-workout-exercise="${index}">${appLanguage === "en" ? "Replace exercise" : "更换动作"}</button>
+                  <button type="button" data-recalibrate-workout-exercise="${index}">${appLanguage === "en" ? "Recalibrate starting load" : "重新校准起始重量"}</button>
                 </div>
               </div>
             </div>
             <div class="workout-inline-log-panel" data-inline-workout-log-panel="${index}" hidden>
-              <form class="workout-inline-log-form" data-inline-workout-log="${index}">
-                <input type="hidden" data-calibration-mode value="${adaptiveProgressionSetup?.mode || (previousLog ? "history" : "known")}">
+              ${guideCalibrationActive ? calibrationGuideTemplate(exercise, item, index) : ""}
+              <form class="workout-inline-log-form" data-inline-workout-log="${index}" ${guideCalibrationActive ? "hidden" : ""}>
+                <input type="hidden" data-calibration-mode value="${["known", "guide"].includes(adaptiveProgressionSetup?.mode) ? adaptiveProgressionSetup.mode : (previousLog ? "history" : "known")}">
                 <input type="hidden" data-selected-difficulty value="${selectedDifficulty}">
                 <input type="hidden" data-planned-rep-min value="${repRange.min}">
                 <input type="hidden" data-planned-rep-max value="${repRange.max}">
@@ -10587,6 +10865,7 @@
             <p class="muted">${appLanguage === "en" ? `Scheduled date ${workout.date} · ${translateInterfaceText(workout.period?.title || "当周训练")} · ${workout.period?.rm || workout.plan.rm}` : `计划日期 ${workout.date} · ${workout.period?.title || "当周训练"} · ${workout.period?.rm || workout.plan.rm}`}</p>
           </div>
           ${adaptiveSetupCardTemplate(workout.id)}
+          ${adaptiveModeBannerTemplate()}
           <div class="workout-flow">
             <h3 class="flow-heading">训练前热身</h3>
             <div class="workout-action-grid workout-preparation-grid">
@@ -10608,10 +10887,152 @@
         observeLibraryImages();
       }
 
+      function openWorkoutLogPanel(exerciseIndex, focusWeight = false) {
+        const panel = workoutDetail.querySelector(`[data-inline-workout-log-panel="${exerciseIndex}"]`);
+        const toggle = workoutDetail.querySelector(`[data-toggle-inline-workout-log="${exerciseIndex}"]`);
+        if (!panel || !toggle) return;
+        workoutDetail.querySelectorAll("[data-inline-workout-log-panel]").forEach((item) => { item.hidden = true; });
+        workoutDetail.querySelectorAll("[data-toggle-inline-workout-log]").forEach((item) => item.setAttribute("aria-expanded", "false"));
+        panel.hidden = false;
+        toggle.setAttribute("aria-expanded", "true");
+        adaptiveProgressionSetup = adaptiveProgressionSetup
+          ? { ...adaptiveProgressionSetup, activeExerciseId: libraryExerciseForWorkout(activeWorkoutDay.exercises[exerciseIndex], "训练")?.id || null }
+          : adaptiveProgressionSetup;
+        if (adaptiveProgressionSetup) saveAdaptiveProgressionSetup();
+        panel.scrollIntoView?.({ behavior: "smooth", block: "center" });
+        if (focusWeight) window.setTimeout(() => {
+          const target = panel.querySelector("[data-calibration-weight]") || panel.querySelector("[data-set-weight]");
+          target?.focus();
+        }, 0);
+      }
+
+      function rerenderWorkoutAndOpen(exerciseIndex, focusWeight = false) {
+        renderWorkoutDetail();
+        window.setTimeout(() => openWorkoutLogPanel(exerciseIndex, focusWeight), 0);
+      }
+
+      function workoutExerciseAt(exerciseIndex) {
+        const item = activeWorkoutDay?.exercises?.[exerciseIndex];
+        if (!item) return null;
+        return { item, exercise: libraryExerciseForWorkout(item, "训练") };
+      }
+
+      function saveCalibrationTrial(form) {
+        if (!form.reportValidity()) return false;
+        const exerciseIndex = Number(form.dataset.calibrationTrialForm);
+        const workoutExercise = workoutExerciseAt(exerciseIndex);
+        if (!workoutExercise) return false;
+        const trialWeight = Number(form.querySelector("[data-calibration-weight]")?.value);
+        const trialReps = Number(form.querySelector("[data-calibration-reps]")?.value);
+        if (!Number.isFinite(trialWeight) || trialWeight < 0 || !Number.isFinite(trialReps) || trialReps < 1) return false;
+        const previous = getExerciseCalibration(workoutExercise.exercise.id) || {};
+        setExerciseCalibration(workoutExercise.exercise.id, {
+          status: "feedback",
+          trialWeight,
+          trialReps,
+          feedback: "",
+          recommendedWeight: null,
+          attempts: Number(previous.attempts || 0) + 1
+        });
+        rerenderWorkoutAndOpen(exerciseIndex);
+        return true;
+      }
+
+      function setCalibrationFeedback(exerciseIndex, feedback) {
+        const workoutExercise = workoutExerciseAt(exerciseIndex);
+        if (!workoutExercise || !["easy", "target", "hard", "missed", "pain"].includes(feedback)) return;
+        const calibration = getExerciseCalibration(workoutExercise.exercise.id) || {};
+        const recommendation = buildCalibrationRecommendation({
+          weightKg: calibration.trialWeight,
+          feedback,
+          category: workoutExercise.exercise.category
+        });
+        setExerciseCalibration(workoutExercise.exercise.id, {
+          status: recommendation.action === "stop" ? "stopped" : "review",
+          feedback,
+          recommendedWeight: recommendation.recommendedWeight
+        });
+        rerenderWorkoutAndOpen(exerciseIndex);
+      }
+
+      function retryExerciseCalibration(exerciseIndex) {
+        const workoutExercise = workoutExerciseAt(exerciseIndex);
+        if (!workoutExercise) return;
+        const calibration = getExerciseCalibration(workoutExercise.exercise.id) || {};
+        setExerciseCalibration(workoutExercise.exercise.id, {
+          status: "trial",
+          trialWeight: calibration.recommendedWeight ?? calibration.trialWeight ?? "",
+          feedback: "",
+          recommendedWeight: null
+        });
+        rerenderWorkoutAndOpen(exerciseIndex, true);
+      }
+
+      function confirmExerciseCalibration(exerciseIndex) {
+        const workoutExercise = workoutExerciseAt(exerciseIndex);
+        if (!workoutExercise) return;
+        const calibration = getExerciseCalibration(workoutExercise.exercise.id) || {};
+        const confirmedWeight = calibration.recommendedWeight ?? calibration.trialWeight;
+        if (!Number.isFinite(Number(confirmedWeight)) || Number(confirmedWeight) < 0) return;
+        setExerciseCalibration(workoutExercise.exercise.id, {
+          status: "confirmed",
+          confirmedWeight: Number(confirmedWeight),
+          confirmedAt: new Date().toISOString()
+        });
+        rerenderWorkoutAndOpen(exerciseIndex);
+      }
+
+      function restartExerciseCalibration(exerciseIndex) {
+        const workoutExercise = workoutExerciseAt(exerciseIndex);
+        if (!workoutExercise) return;
+        setExerciseCalibration(workoutExercise.exercise.id, {
+          status: "trial",
+          trialWeight: "",
+          trialReps: Math.max(1, Math.min(8, workoutRepRange(workoutExercise.item.prescription).min || 8)),
+          feedback: "",
+          recommendedWeight: null
+        });
+        rerenderWorkoutAndOpen(exerciseIndex, true);
+      }
+
+      function recalibrateWorkoutExercise(exerciseIndex) {
+        const workoutExercise = workoutExerciseAt(exerciseIndex);
+        if (!workoutExercise) return;
+        adaptiveProgressionSetup = {
+          ...(adaptiveProgressionSetup || {}),
+          mode: "guide",
+          planDayId: null,
+          activeExerciseId: workoutExercise.exercise.id,
+          calibrations: adaptiveProgressionSetup?.calibrations || {},
+          updatedAt: new Date().toISOString()
+        };
+        saveAdaptiveProgressionSetup();
+        restartExerciseCalibration(exerciseIndex);
+      }
+
+      function openNextWorkoutLog(exerciseIndex) {
+        if (!activeWorkoutDay) return;
+        const nextIndex = activeWorkoutDay.exercises.findIndex((item, index) => {
+          if (index <= exerciseIndex) return false;
+          const exercise = libraryExerciseForWorkout(item, "训练");
+          return !hasRecordedPlanExerciseData(getPlanExerciseLog(activeWorkoutDay.id, exercise.id));
+        });
+        if (nextIndex >= 0) window.setTimeout(() => openWorkoutLogPanel(nextIndex, true), 250);
+      }
+
       function openWorkoutDetail(weekIndex, dayIndex) {
         activeWorkoutDay = getWorkoutDay(weekIndex, dayIndex);
         renderWorkoutDetail();
         window.location.hash = "workout-detail";
+        if (adaptiveProgressionSetup?.mode === "guide" && adaptiveProgressionSetup.activeExerciseId) {
+          const resumeIndex = activeWorkoutDay.exercises.findIndex((item) =>
+            libraryExerciseForWorkout(item, "训练")?.id === adaptiveProgressionSetup.activeExerciseId
+          );
+          const calibration = getExerciseCalibration(adaptiveProgressionSetup.activeExerciseId);
+          if (resumeIndex >= 0 && calibration?.status !== "confirmed") {
+            window.setTimeout(() => openWorkoutLogPanel(resumeIndex, true), 0);
+          }
+        }
       }
 
       function recordFromWorkout(workout, completedAt = new Date()) {
@@ -12379,6 +12800,30 @@
           setAdaptiveProgressionSetup(adaptiveSetupButton.dataset.adaptiveSetup);
           return;
         }
+        if (event.target.closest("[data-change-adaptive-setup]")) {
+          resetAdaptiveProgressionSetup();
+          return;
+        }
+        const calibrationFeedbackButton = event.target.closest("[data-calibration-feedback]");
+        if (calibrationFeedbackButton) {
+          setCalibrationFeedback(Number(calibrationFeedbackButton.dataset.exerciseIndex), calibrationFeedbackButton.dataset.calibrationFeedback);
+          return;
+        }
+        const retryCalibrationButton = event.target.closest("[data-retry-calibration]");
+        if (retryCalibrationButton) {
+          retryExerciseCalibration(Number(retryCalibrationButton.dataset.retryCalibration));
+          return;
+        }
+        const confirmCalibrationButton = event.target.closest("[data-confirm-calibration]");
+        if (confirmCalibrationButton) {
+          confirmExerciseCalibration(Number(confirmCalibrationButton.dataset.confirmCalibration));
+          return;
+        }
+        const restartCalibrationButton = event.target.closest("[data-restart-calibration]");
+        if (restartCalibrationButton) {
+          restartExerciseCalibration(Number(restartCalibrationButton.dataset.restartCalibration));
+          return;
+        }
         const applyFirstSetButton = event.target.closest("[data-apply-first-set]");
         if (applyFirstSetButton) {
           const form = applyFirstSetButton.closest("[data-inline-workout-log]");
@@ -12419,10 +12864,7 @@
           workoutDetail.querySelectorAll("[data-toggle-inline-workout-log]").forEach((item) => item.setAttribute("aria-expanded", "false"));
           workoutDetail.querySelectorAll(".workout-overflow-menu").forEach((item) => { item.hidden = true; });
           workoutDetail.querySelectorAll("[data-toggle-workout-menu]").forEach((item) => item.setAttribute("aria-expanded", "false"));
-          if (panel && shouldOpen) {
-            panel.hidden = false;
-            inlineLogToggle.setAttribute("aria-expanded", "true");
-          }
+          if (panel && shouldOpen) openWorkoutLogPanel(Number(inlineLogToggle.dataset.toggleInlineWorkoutLog));
           return;
         }
         const menuToggle = event.target.closest("[data-toggle-workout-menu]");
@@ -12442,6 +12884,11 @@
           openWorkoutExerciseReplacement(Number(replaceButton.dataset.replaceWorkoutExercise));
           return;
         }
+        const recalibrateButton = event.target.closest("[data-recalibrate-workout-exercise]");
+        if (recalibrateButton) {
+          recalibrateWorkoutExercise(Number(recalibrateButton.dataset.recalibrateWorkoutExercise));
+          return;
+        }
         const exerciseCard = event.target.closest("[data-open-workout-exercise]");
         if (exerciseCard) {
           openExerciseDetail(exerciseCard.dataset.openWorkoutExercise, "workout-detail");
@@ -12451,10 +12898,16 @@
       });
 
       workoutDetail.addEventListener("submit", (event) => {
+        const calibrationForm = event.target.closest("[data-calibration-trial-form]");
+        if (calibrationForm) {
+          event.preventDefault();
+          saveCalibrationTrial(calibrationForm);
+          return;
+        }
         const form = event.target.closest("[data-inline-workout-log]");
         if (!form) return;
         event.preventDefault();
-        saveInlineWorkoutLog(form);
+        if (saveInlineWorkoutLog(form)) openNextWorkoutLog(Number(form.dataset.inlineWorkoutLog));
       });
 
       exerciseReplacePage.addEventListener("click", (event) => {
