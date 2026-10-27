@@ -10531,6 +10531,7 @@
         const exercises = ensureUniqueWorkoutExercises(applyPlanExerciseReplacements(id, generatedExercises));
         return {
           id,
+          planKey: getPlanScheduleKey(profile, plan, startDate),
           weekIndex,
           dayIndex,
           date,
@@ -10696,10 +10697,6 @@
         window.location.hash = "workout-detail";
       }
 
-      function hasAnyAdaptiveTrainingData() {
-        return trainingSetLogs.some((log) => log.source === "plan" && hasRecordedPlanExerciseData(log));
-      }
-
       function saveAdaptiveProgressionSetup() {
         if (!adaptiveProgressionSetup) localStorage.removeItem(ADAPTIVE_SETUP_KEY);
         else localStorage.setItem(ADAPTIVE_SETUP_KEY, JSON.stringify(adaptiveProgressionSetup));
@@ -10707,11 +10704,14 @@
       }
 
       function getExerciseCalibration(exerciseId) {
+        if (activeWorkoutDay?.planKey && adaptiveProgressionSetup?.planKey !== activeWorkoutDay.planKey) return null;
         return adaptiveProgressionSetup?.calibrations?.[exerciseId] || null;
       }
 
       function setExerciseCalibration(exerciseId, nextCalibration) {
-        if (!adaptiveProgressionSetup || adaptiveProgressionSetup.mode !== "guide") return;
+        if (!adaptiveProgressionSetup
+          || adaptiveProgressionSetup.mode !== "guide"
+          || adaptiveProgressionSetup.planKey !== activeWorkoutDay?.planKey) return;
         adaptiveProgressionSetup.calibrations = {
           ...(adaptiveProgressionSetup.calibrations || {}),
           [exerciseId]: {
@@ -10770,15 +10770,30 @@
         };
       }
 
-      function shouldShowAdaptiveSetup(workoutId) {
-        if (adaptiveProgressionSetup?.mode === "choose") return true;
-        if (hasAnyAdaptiveTrainingData()) return false;
-        if (!adaptiveProgressionSetup) return true;
-        return adaptiveProgressionSetup.mode === "skip" && adaptiveProgressionSetup.planDayId !== workoutId;
+      function getUnrecordedWorkoutExerciseIds(workout) {
+        if (!workout?.id || !Array.isArray(workout.exercises)) return [];
+        return [...new Set(workout.exercises.map((item) => libraryExerciseForWorkout(item, "训练"))
+          .filter((exercise) => {
+            const currentLog = getPlanExerciseLog(workout.id, exercise.id);
+            const previousLog = getLatestRecordedExerciseLog(exercise.id, workout.id);
+            return !hasRecordedPlanExerciseData(currentLog) && !previousLog;
+          })
+          .map((exercise) => exercise.id))];
       }
 
-      function adaptiveSetupCardTemplate(workoutId) {
-        if (!shouldShowAdaptiveSetup(workoutId)) return "";
+      function shouldShowAdaptiveSetup(workout, newExerciseIds = getUnrecordedWorkoutExerciseIds(workout)) {
+        if (!workout?.id || !workout?.planKey) return false;
+        if (!newExerciseIds.length) return false;
+        if (!adaptiveProgressionSetup || adaptiveProgressionSetup.planKey !== workout.planKey) return true;
+        if (adaptiveProgressionSetup.mode === "choose") return true;
+        if (adaptiveProgressionSetup.planDayId !== workout.id) return true;
+        if (!["known", "guide", "skip"].includes(adaptiveProgressionSetup.mode)) return true;
+        const coveredExerciseIds = new Set(Array.isArray(adaptiveProgressionSetup.exerciseIds) ? adaptiveProgressionSetup.exerciseIds : []);
+        return newExerciseIds.some((exerciseId) => !coveredExerciseIds.has(exerciseId));
+      }
+
+      function adaptiveSetupCardTemplate(workout) {
+        if (!shouldShowAdaptiveSetup(workout)) return "";
         return `
           <section class="adaptive-setup-card" aria-labelledby="adaptiveSetupTitle">
             <span class="chip">${appLanguage === "en" ? "First workout setup" : "首次训练设置"}</span>
@@ -10794,7 +10809,10 @@
       }
 
       function adaptiveModeBannerTemplate() {
-        if (!adaptiveProgressionSetup || adaptiveProgressionSetup.mode === "skip" || shouldShowAdaptiveSetup(activeWorkoutDay?.id)) return "";
+        if (!adaptiveProgressionSetup
+          || adaptiveProgressionSetup.mode === "skip"
+          || !getUnrecordedWorkoutExerciseIds(activeWorkoutDay).length
+          || shouldShowAdaptiveSetup(activeWorkoutDay)) return "";
         const isGuide = adaptiveProgressionSetup.mode === "guide";
         return `
           <section class="adaptive-mode-banner" aria-label="${appLanguage === "en" ? "Starting load setup" : "起始重量设置"}">
@@ -10812,11 +10830,15 @@
 
       function setAdaptiveProgressionSetup(mode) {
         if (!activeWorkoutDay || !["known", "guide", "skip"].includes(mode)) return;
+        const samePlan = adaptiveProgressionSetup?.planKey === activeWorkoutDay.planKey;
+        const exerciseIds = getUnrecordedWorkoutExerciseIds(activeWorkoutDay);
         adaptiveProgressionSetup = {
           mode,
-          planDayId: mode === "skip" ? activeWorkoutDay.id : null,
+          planKey: activeWorkoutDay.planKey,
+          planDayId: activeWorkoutDay.id,
+          exerciseIds,
           activeExerciseId: null,
-          calibrations: mode === "guide" ? (adaptiveProgressionSetup?.calibrations || {}) : {},
+          calibrations: mode === "guide" && samePlan ? (adaptiveProgressionSetup?.calibrations || {}) : {},
           updatedAt: new Date().toISOString()
         };
         saveAdaptiveProgressionSetup();
@@ -10828,7 +10850,9 @@
       function resetAdaptiveProgressionSetup() {
         adaptiveProgressionSetup = {
           mode: "choose",
+          planKey: activeWorkoutDay?.planKey || null,
           planDayId: activeWorkoutDay?.id || null,
+          exerciseIds: [],
           calibrations: adaptiveProgressionSetup?.calibrations || {},
           updatedAt: new Date().toISOString()
         };
@@ -10903,11 +10927,8 @@
         if (Number.isInteger(forcedExerciseIndex)) {
           return entries.filter((entry) => entry.exerciseIndex === forcedExerciseIndex);
         }
-        return entries.filter(({ exercise }) => {
-          const currentLog = getPlanExerciseLog(activeWorkoutDay.id, exercise.id);
-          const previousLog = getLatestRecordedExerciseLog(exercise.id, activeWorkoutDay.id);
-          return !hasRecordedPlanExerciseData(currentLog) && !previousLog;
-        });
+        const unrecordedIds = new Set(getUnrecordedWorkoutExerciseIds(activeWorkoutDay));
+        return entries.filter(({ exercise }) => unrecordedIds.has(exercise.id));
       }
 
       function renderAdaptiveCalibrationDialog(focusWeight = false) {
@@ -11114,7 +11135,7 @@
             <p>${translateInterfaceText(workout.description)}</p>
             <p class="muted">${appLanguage === "en" ? `Scheduled date ${workout.date} · ${translateInterfaceText(workout.period?.title || "当周训练")} · ${workout.period?.rm || workout.plan.rm}` : `计划日期 ${workout.date} · ${workout.period?.title || "当周训练"} · ${workout.period?.rm || workout.plan.rm}`}</p>
           </div>
-          ${adaptiveSetupCardTemplate(workout.id)}
+          ${adaptiveSetupCardTemplate(workout)}
           ${adaptiveModeBannerTemplate()}
           <div class="workout-flow">
             <h3 class="flow-heading">训练前热身</h3>
@@ -11246,7 +11267,12 @@
         adaptiveProgressionSetup = {
           ...(adaptiveProgressionSetup || {}),
           mode: "guide",
-          planDayId: null,
+          planKey: activeWorkoutDay.planKey,
+          planDayId: activeWorkoutDay.id,
+          exerciseIds: [...new Set([
+            ...(Array.isArray(adaptiveProgressionSetup?.exerciseIds) ? adaptiveProgressionSetup.exerciseIds : []),
+            workoutExercise.exercise.id
+          ])],
           activeExerciseId: workoutExercise.exercise.id,
           calibrations: adaptiveProgressionSetup?.calibrations || {},
           updatedAt: new Date().toISOString()
@@ -11277,7 +11303,9 @@
         activeWorkoutDay = getWorkoutDay(weekIndex, dayIndex);
         renderWorkoutDetail();
         window.location.hash = "workout-detail";
-        if (adaptiveProgressionSetup?.mode === "guide") {
+        if (adaptiveProgressionSetup?.mode === "guide"
+          && adaptiveProgressionSetup.planKey === activeWorkoutDay.planKey
+          && adaptiveProgressionSetup.planDayId === activeWorkoutDay.id) {
           const pendingTrials = getTrialSetWorkoutExercises().filter(({ exercise }) => getExerciseCalibration(exercise.id)?.status !== "confirmed");
           if (pendingTrials.length) window.setTimeout(() => openAdaptiveCalibrationDialog(), 0);
         }

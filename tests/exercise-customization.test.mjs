@@ -63,6 +63,10 @@ test("workout cards use compact overflow actions and inline logging", () => {
 
 test("adaptive progression setup and low-friction set logging are available", () => {
   assert.match(source, /ADAPTIVE_SETUP_KEY = "fitlog-adaptive-progression-setup"/);
+  assert.match(source, /planKey: getPlanScheduleKey\(profile, plan, startDate\)/);
+  assert.match(source, /planKey: activeWorkoutDay\.planKey/);
+  assert.match(source, /adaptiveProgressionSetup\.planKey === activeWorkoutDay\.planKey/);
+  assert.doesNotMatch(source, /function hasAnyAdaptiveTrainingData\(\)/);
   assert.match(source, /data-adaptive-setup="known"/);
   assert.match(source, /data-adaptive-setup="guide"/);
   assert.match(source, /data-adaptive-setup="skip"/);
@@ -77,6 +81,8 @@ test("adaptive progression setup and low-friction set logging are available", ()
   assert.match(source, /id="adaptiveCalibrationDialog"/);
   assert.match(source, /function getTrialSetWorkoutExercises\(forcedExerciseIndex = null\)/);
   assert.match(source, /!hasRecordedPlanExerciseData\(currentLog\) && !previousLog/);
+  assert.match(source, /function getUnrecordedWorkoutExerciseIds\(workout\)/);
+  assert.match(source, /const exerciseIds = getUnrecordedWorkoutExerciseIds\(activeWorkoutDay\)/);
   assert.match(source, /openAdaptiveCalibrationDialog\(\)/);
   assert.match(source, /adaptiveCalibrationDialog\.showModal\(\)/);
   assert.match(source, /推荐重量已写入对应动作的“记录数据”默认重量/);
@@ -91,6 +97,27 @@ test("adaptive progression setup and low-friction set logging are available", ()
   assert.match(source, /记录主训练数据后，FitMine可为下次训练调整重量。/);
   assert.match(source, /getLatestRecordedExerciseLog\(exercise\.id, activeWorkoutDay\?\.id\)/);
   assert.match(source, /previousEntry\.weightKg \?\? previousLog\?\.weightKg/);
+});
+
+test("adaptive setup appears only for unrecorded exercises not covered by the current workout choice", () => {
+  const start = source.indexOf("function shouldShowAdaptiveSetup(workout, newExerciseIds");
+  const end = source.indexOf("function adaptiveSetupCardTemplate", start);
+  assert.ok(start >= 0 && end > start);
+  const shouldShow = (adaptiveProgressionSetup, workout, newExerciseIds) => new Function(
+    "adaptiveProgressionSetup",
+    "workout",
+    "newExerciseIds",
+    `${source.slice(start, end)}; return shouldShowAdaptiveSetup(workout, newExerciseIds);`
+  )(adaptiveProgressionSetup, workout, newExerciseIds);
+  const workout = { id: "plan-a-w1-d1", planKey: "plan-a" };
+  assert.equal(shouldShow(null, workout, []), false);
+  assert.equal(shouldShow(null, workout, ["new-lift"]), true);
+  assert.equal(shouldShow({ mode: "known" }, workout, ["new-lift"]), true);
+  assert.equal(shouldShow({ mode: "known", planKey: "plan-a", planDayId: workout.id, exerciseIds: ["new-lift"] }, workout, ["new-lift"]), false);
+  assert.equal(shouldShow({ mode: "known", planKey: "plan-a", planDayId: workout.id, exerciseIds: [] }, workout, ["new-lift"]), true);
+  assert.equal(shouldShow({ mode: "guide", planKey: "plan-b", planDayId: workout.id, exerciseIds: ["new-lift"] }, workout, ["new-lift"]), true);
+  assert.equal(shouldShow({ mode: "skip", planKey: "plan-a", planDayId: workout.id, exerciseIds: ["new-lift"] }, workout, ["new-lift"]), false);
+  assert.equal(shouldShow({ mode: "skip", planKey: "plan-a", planDayId: "plan-a-w1-d2", exerciseIds: ["new-lift"] }, workout, ["new-lift"]), true);
 });
 
 test("trial-set guidance produces safe per-exercise calibration decisions", () => {
