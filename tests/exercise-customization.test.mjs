@@ -74,6 +74,15 @@ test("adaptive progression setup and low-friction set logging are available", ()
   assert.match(source, /data-retry-calibration="\$\{exerciseIndex\}"/);
   assert.match(source, /data-recalibrate-workout-exercise="\$\{index\}"/);
   assert.match(source, /trial sets are not counted as training volume/);
+  assert.match(source, /id="adaptiveCalibrationDialog"/);
+  assert.match(source, /function getTrialSetWorkoutExercises\(forcedExerciseIndex = null\)/);
+  assert.match(source, /!hasRecordedPlanExerciseData\(currentLog\) && !previousLog/);
+  assert.match(source, /openAdaptiveCalibrationDialog\(\)/);
+  assert.match(source, /adaptiveCalibrationDialog\.showModal\(\)/);
+  assert.match(source, /推荐重量已写入对应动作的“记录数据”默认重量/);
+  assert.match(source, /const calibratedWeight = calibration\?\.status === "confirmed" \? calibration\.confirmedWeight : null/);
+  assert.match(source, /baseSetEntries\.map\(\(setEntry\) => \(\{ \.\.\.setEntry, weightKg: calibratedWeight \}\)\)/);
+  assert.doesNotMatch(source, /guideCalibrationActive/);
   assert.match(source, /window\.setTimeout\(\(\) => openWorkoutLogPanel\(0, true\), 0\)/);
   assert.match(source, /data-apply-first-set/);
   assert.match(source, /data-toggle-set-complete/);
