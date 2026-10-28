@@ -5491,6 +5491,25 @@
 
       .mobile-nav a { min-width: 0; min-height: 48px; }
 
+      @media (max-width: 720px) {
+        html,
+        body {
+          height: 100%;
+          overflow: hidden;
+        }
+
+        body { padding: 0; }
+
+        .app {
+          height: 100dvh;
+          min-height: 0;
+          overflow-x: hidden;
+          overflow-y: auto;
+          overscroll-behavior-y: contain;
+          -webkit-overflow-scrolling: touch;
+        }
+      }
+
       .home-today-schedule {
         grid-column: 1 / -1;
         display: grid;
@@ -9271,6 +9290,7 @@
           history.replaceState(null, "", `#${activeId}`);
         }
         window.requestAnimationFrame(() => {
+          document.querySelector("#appShell")?.scrollTo({ top: 0, left: 0, behavior: "instant" });
           window.scrollTo({ top: 0, left: 0, behavior: "instant" });
         });
         lastModuleId = activeId;
