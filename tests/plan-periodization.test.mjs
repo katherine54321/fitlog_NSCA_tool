@@ -268,11 +268,11 @@ test("phone plan layout uses its app container instead of the browser viewport",
   assert.match(source, /grid-auto-columns: minmax\(0, 78%\)/);
 });
 
-test("plan metrics preserve readable widths and contain long values", () => {
+test("plan metrics preserve readable widths and use compact aligned rows", () => {
   assert.match(source, /@container \(min-width: 620px\)\s*\{\s*#plan \.plan-metric-grid\s*\{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
   assert.match(source, /@container \(min-width: 980px\)\s*\{\s*#plan \.plan-metric-grid\s*\{\s*grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
-  assert.match(source, /#plan \.plan-metric strong\s*\{[\s\S]*?white-space: normal;[\s\S]*?overflow-wrap: anywhere;[\s\S]*?text-overflow: clip/);
-  assert.match(source, /#plan \.plan-metric\s*\{[\s\S]*?grid-template-rows: 3\.75em auto minmax\(2\.5em, auto\)/);
+  assert.match(source, /#plan \.plan-metric strong\s*\{[\s\S]*?white-space: normal;[\s\S]*?overflow-wrap: normal;[\s\S]*?word-break: keep-all;[\s\S]*?text-overflow: clip/);
+  assert.match(source, /#plan \.plan-metric\s*\{[\s\S]*?grid-template-rows: 2\.5em auto auto;[\s\S]*?gap: 3px;[\s\S]*?padding: 8px 10px/);
   assert.match(source, /<span>建议负荷<\/span><strong id="planMetricRm">67-85% 1RM<\/strong><small id="planMetricRmNote">约 6-12 RM<\/small>/);
   assert.match(source, /\["建议负荷", "Training load"\]/);
   assert.match(source, /#planMetricRm"\)\.textContent = plan\.load/);

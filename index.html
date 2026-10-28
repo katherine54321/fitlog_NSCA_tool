@@ -2235,17 +2235,6 @@
         margin: 0 0 12px;
       }
 
-      #riskBack {
-        justify-self: start;
-        display: inline-flex;
-        align-items: center;
-        min-height: 44px;
-        color: var(--brand);
-        font-size: 14px;
-        font-weight: 600;
-        text-decoration: none;
-      }
-
       #riskEntry .risk-page-header h2,
       #riskEntry .risk-page-header p {
         margin: 0;
@@ -2916,26 +2905,6 @@
       .detail-back {
         justify-self: start;
       }
-
-      .workout-back-icon {
-        width: 40px;
-        min-width: 40px;
-        height: 40px;
-        min-height: 40px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        justify-self: start;
-        padding: 0;
-        border: 1px solid #41484e;
-        border-radius: 50%;
-        color: #ffffff;
-        background: transparent;
-        font-size: 22px;
-        line-height: 1;
-      }
-
-      .workout-back-icon:active { background: #30353a; }
 
       .workout-overview {
         display: grid;
@@ -5240,12 +5209,12 @@
       }
 
       #plan .plan-metric {
-        min-height: 82px;
+        min-height: 0;
         display: grid;
-        grid-template-rows: 3.75em auto minmax(2.5em, auto);
+        grid-template-rows: 2.5em auto auto;
         align-content: start;
-        gap: 4px;
-        padding: 10px 12px;
+        gap: 3px;
+        padding: 8px 10px;
         min-width: 0;
         overflow: hidden;
       }
@@ -5268,7 +5237,8 @@
         line-height: 1.2;
         white-space: normal;
         overflow: visible;
-        overflow-wrap: anywhere;
+        overflow-wrap: normal;
+        word-break: keep-all;
         text-overflow: clip;
         letter-spacing: 0;
       }
@@ -5819,6 +5789,22 @@
         grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
       }
 
+      .muscle-volume { margin-top: 18px; padding: 18px; border: 1px solid var(--border); border-radius: 16px; background: var(--panel); }
+      .muscle-volume h3 { margin: 0 0 6px; font-size: 18px; }
+      .muscle-volume p { margin: 0 0 14px; font-size: 12px; }
+      .muscle-volume-grid { display: grid; gap: 9px; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
+      .muscle-volume-week { grid-column: 1 / -1; border-top: 1px solid var(--border); padding-top: 10px; }
+      .muscle-volume-week > strong { display: block; margin-bottom: 8px; font-size: 13px; }
+      .muscle-volume-week-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(122px, 1fr)); }
+      .muscle-volume-item { padding: 11px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-soft); }
+      .muscle-volume-item span, .muscle-volume-item strong { display: block; }
+      .muscle-volume-item span { color: var(--text-secondary); font-size: 12px; }
+      .muscle-volume-item strong { color: var(--brand); font-size: 21px; }
+      .workout-schedule-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+      .workout-schedule-actions button { border: 1px solid var(--border); border-radius: 9px; background: transparent; color: var(--text); padding: 8px 11px; font: inherit; font-size: 12px; cursor: pointer; }
+      .workout-schedule-actions button:hover, .workout-schedule-actions button:focus-visible { border-color: var(--brand); }
+      .workout-schedule-note { margin: 8px 0 0; color: var(--text-secondary); font-size: 12px; }
+
       @media (max-width: 520px) {
         .calendar-exercise-item .completed-training-supplement-form {
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5955,11 +5941,17 @@
         min-height: 40px;
         display: inline-flex;
         align-items: center;
-        color: var(--electric-blue);
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--text-strong);
         font-size: 14px;
         font-weight: 800;
         text-decoration: none;
+        cursor: pointer;
       }
+
+      .settings-back:focus-visible { outline: 2px solid var(--brand-accent); outline-offset: 3px; border-radius: 3px; }
 
       .settings-account-summary {
         display: grid;
@@ -6167,17 +6159,6 @@
         display: grid;
         gap: 8px;
         margin-bottom: 16px;
-      }
-
-      .assessment-detail-back {
-        justify-self: start;
-        min-height: 40px;
-        display: inline-flex;
-        align-items: center;
-        color: var(--brand);
-        font-size: 14px;
-        font-weight: 800;
-        text-decoration: none;
       }
 
       .assessment-detail-head h2,
@@ -7115,6 +7096,10 @@
                   <span data-i18n="languageSettings">语言设置</span>
                   <span class="settings-row-value"><span id="accountLanguageValue">简体中文</span> ›</span>
                 </a>
+                <a class="settings-row" href="#weight-settings">
+                  <span data-i18n="weightSettings">重量单位</span>
+                  <span class="settings-row-value"><span id="accountWeightUnitValue">KG</span> ›</span>
+                </a>
               </div>
             </div>
           </section>
@@ -7135,9 +7120,19 @@
             </div>
           </section>
 
+          <section class="panel section module-panel" id="weight-settings" data-module-panel hidden>
+            <div class="settings-page">
+              <a class="settings-back" href="#settings" data-i18n="backToSettings">← 返回设置</a>
+              <div class="language-options" role="radiogroup" aria-label="重量单位" data-i18n-aria-label="weightSettings">
+                <label class="language-option"><span>KG<small>千克 · Kilograms</small></span><input type="radio" name="weightUnit" value="kg" /></label>
+                <label class="language-option"><span>LB<small>磅 · Pounds</small></span><input type="radio" name="weightUnit" value="lb" /></label>
+              </div>
+            </div>
+          </section>
+
           <section class="panel section module-panel" id="evaluation" data-module-panel hidden>
             <div class="assessment-detail-head">
-              <a class="assessment-detail-back" href="#me">← 返回我的</a>
+              <a class="settings-back" href="#me" data-i18n="backToMe">← 返回我的</a>
               <h2 id="assessmentPageTitle">体能评估</h2>
               <p id="assessmentPageSummary">了解当前心肺能力与相对力量水平。</p>
             </div>
@@ -7156,7 +7151,7 @@
               </div>
               <div class="evaluation-entry" id="riskEntry" hidden>
                 <div class="risk-page-header" hidden>
-                  <a id="riskBack" href="#me">返回我的</a>
+                  <a class="settings-back" id="riskBack" href="#me" data-i18n="backToMe">← 返回我的</a>
                   <div>
                     <h2 id="riskEntryTitle">训练前风险评估</h2>
                     <p>请根据当前健康情况填写；存在红旗症状时应先获得医学许可。</p>
@@ -7254,7 +7249,7 @@
                   <form id="cardioAssessmentForm" class="assessment-form-card">
                     <label>年龄<input id="cardioAge" type="number" min="20" max="79" value="30" required /></label>
                     <label>生理性别<select id="cardioSex"><option value="male">男</option><option value="female">女</option></select></label>
-                    <label>当前体重 kg<input id="cardioWeight" type="number" min="25" max="250" step="0.1" inputmode="decimal" placeholder="填写体重" required /></label>
+                    <label><span id="cardioWeightLabel">当前体重 KG</span><input id="cardioWeight" type="number" min="25" max="250" step="any" inputmode="decimal" placeholder="填写体重" required /></label>
                     <label>静息心率 次/分<input id="restingHr" type="number" min="30" max="130" value="68" /></label>
                     <label class="form-field-wide">跑步测试<select id="runProtocol"><option value="runWalk">2.4 公里跑</option><option value="treadmill">跑步机 2.4 公里</option></select></label>
                     <label>完成时间 分钟<input id="runMinutes" type="number" min="1" max="60" step="0.01" inputmode="decimal" value="18" required /></label>
@@ -7276,9 +7271,9 @@
                   <form id="strengthAssessmentForm" class="assessment-form-card">
                     <label>年龄<input id="strengthAge" type="number" min="20" max="79" value="30" /></label>
                     <label>生理性别<select id="strengthSex"><option value="male">男</option><option value="female">女</option></select></label>
-                    <label>当前体重 kg<input id="assessmentWeight" type="number" min="25" max="250" step="0.1" value="70" /></label>
+                    <label><span id="assessmentWeightLabel">当前体重 KG</span><input id="assessmentWeight" type="number" min="25" max="250" step="any" value="70" /></label>
                     <label>测试动作<select id="strengthExercise"><option value="machineBenchPress" data-norm-key="machineBenchPress">Universal 器械卧推</option><option value="machineLegPress" data-norm-key="machineLegPress">Universal 器械腿举</option></select></label>
-                    <label>该动作 10RM kg<input id="strengthTenRm" type="number" min="0" max="500" step="0.5" value="50" /></label>
+                    <label><span id="strengthTenRmLabel">该动作 10RM KG</span><input id="strengthTenRm" type="number" min="0" max="500" step="any" value="50" /></label>
                     <label class="form-field-wide">最后两次动作质量<select id="formQuality"><option value="stable">稳定、无疼痛</option><option value="compensated">出现代偿或疼痛</option></select></label>
                   </form>
                   <button class="secondary-btn assessment-submit" id="runStrengthAssessment" type="button">抗阻力量评估</button>
@@ -7407,6 +7402,8 @@
                   </div>
                   <span class="chip" id="activeWeekPrescription">3 组 × 8-12 次</span>
                 </div>
+                <div class="workout-schedule-actions"><button id="planPauseToggle" type="button">暂停计划</button></div>
+                <p class="workout-schedule-note" id="planPauseNote" role="status"></p>
                 <div class="week" id="weekPlan"></div>
               </section>
               <div class="card">
@@ -7509,7 +7506,7 @@
 
           <section class="panel section module-panel" id="records" data-module-panel hidden>
             <div class="tabs record-tabs" role="tablist" aria-label="记录类型切换" id="recordTabs">
-              <button class="tab" type="button" aria-selected="true" data-record-tab="trainingCalendarPane">训练日历</button>
+              <button class="tab" type="button" aria-selected="true" data-record-tab="trainingCalendarPane" data-i18n="workoutHistory">训练记录</button>
               <button class="tab" type="button" aria-selected="false" data-record-tab="actionRecordPane">动作记录</button>
               <button class="tab" type="button" aria-selected="false" data-record-tab="setLogPane">数据录入</button>
             </div>
@@ -7526,7 +7523,11 @@
                 <div class="calendar-weekdays" aria-hidden="true"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
                 <div class="calendar-grid" id="recordCalendarGrid"></div>
               </section>
-              <section class="record-detail record-calendar-detail" id="recordCalendarDetail" aria-live="polite" hidden></section>
+              <section class="muscle-volume" aria-labelledby="muscleVolumeTitle">
+                <h3 id="muscleVolumeTitle" data-i18n="weeklyMuscleSets">每周肌群有效组数</h3>
+                <p id="muscleVolumeNote" class="muted"></p>
+                <div id="muscleVolumeGrid" class="muscle-volume-grid"></div>
+              </section>
             </div>
             <div class="record-pane" id="actionRecordPane" data-record-pane hidden>
               <section class="overload-monitor" id="overloadMonitor" aria-labelledby="overloadMonitorTitle">
@@ -7555,7 +7556,7 @@
               <div class="data-logger-layout">
                 <form id="setLogForm" class="set-log-form">
                   <label class="form-field-wide">训练动作<select id="setLogExercise" required></select></label>
-                  <label>训练重量 kg<input id="setLogWeight" type="number" min="0.5" max="500" step="0.5" value="20" inputmode="decimal" required /></label>
+                  <label><span id="setLogWeightLabel">训练重量 KG</span><input id="setLogWeight" type="number" min="0.1" max="1100" step="any" value="20" inputmode="decimal" required /></label>
                   <label>完成次数<input id="setLogReps" type="number" min="1" max="30" step="1" value="8" inputmode="numeric" required /></label>
                   <div class="weight-quick-actions" aria-label="快速调整重量">
                     <button type="button" data-log-weight="-2.5">-2.5</button><button type="button" data-log-weight="1.25">+1.25</button><button type="button" data-log-weight="2.5">+2.5</button><button type="button" data-log-weight="5">+5</button>
@@ -7571,6 +7572,12 @@
                   <button class="secondary-btn set-log-submit" type="submit">保存训练数据</button>
                 </form>
               </div>
+            </div>
+          </section>
+          <section class="panel section module-panel" id="record-day-detail" data-module-panel hidden>
+            <div class="settings-page">
+              <a class="settings-back" href="#records" id="recordDayBack" data-i18n="backToWorkoutHistory">← 返回训练记录</a>
+              <section class="record-detail record-calendar-detail" id="recordCalendarDetail" aria-live="polite"></section>
             </div>
           </section>
         </div>
@@ -7594,6 +7601,18 @@
     <script>
       const APP_LANGUAGE_KEY = "fitlog-language";
       let appLanguage = localStorage.getItem(APP_LANGUAGE_KEY) === "en" ? "en" : "zh";
+      const WEIGHT_UNIT_KEY = "fitlog-weight-unit";
+      let weightUnit = localStorage.getItem(WEIGHT_UNIT_KEY) === "lb" ? "lb" : "kg";
+      const KG_PER_LB = 0.45359237;
+      const displayWeight = (kg) => {
+        if (kg === "" || kg === null || kg === undefined) return "";
+        const scale = weightUnit === "lb" ? 10 : 100;
+        return Math.round((weightUnit === "lb" ? Number(kg) / KG_PER_LB : Number(kg)) * scale) / scale;
+      };
+      const storageWeight = (value) => weightUnit === "lb" ? Number(value) * KG_PER_LB : Number(value);
+      const weightText = (kg) => `${displayWeight(kg)} ${weightUnit}`;
+      const displayLoadAdvice = (text) => weightUnit === "kg" ? text : String(text).replace(/(\d+(?:\.\d+)?)(?:\s*[-–]\s*(\d+(?:\.\d+)?))?\s*kg\b/gi,
+        (_, start, end) => end ? `${displayWeight(start)}–${displayWeight(end)} lb` : `${displayWeight(start)} lb`);
       let appBootReady = false;
       const interfaceTranslations = {
         home: { zh: "首页", en: "Home" },
@@ -7616,6 +7635,10 @@
         currentAccount: { zh: "当前账户", en: "Current account" },
         appSettings: { zh: "设置", en: "Settings" },
         languageSettings: { zh: "语言设置", en: "Language" },
+        weightSettings: { zh: "重量单位", en: "Weight unit" },
+        workoutHistory: { zh: "训练记录", en: "Workout history" },
+        weeklyMuscleSets: { zh: "每周肌群有效组数", en: "Weekly working sets by muscle" },
+        backToWorkoutHistory: { zh: "← 返回训练记录", en: "← Back to workout history" },
         backToSettings: { zh: "← 返回设置", en: "← Back to settings" },
         signOut: { zh: "退出当前账户", en: "Sign out" },
         deleteAccount: { zh: "删除账户与云端数据", en: "Delete account and cloud data" },
@@ -8129,6 +8152,7 @@
         });
         const languageValue = document.querySelector("#accountLanguageValue");
         if (languageValue) languageValue.textContent = appLanguage === "en" ? "English" : "简体中文";
+        refreshWeightUnitUI();
         if (rerender && typeof rerenderInitializedModules === "function") rerenderInitializedModules();
         window.FitLogSync?.renderAccount?.();
         if (localize) queueLocalization();
@@ -8693,6 +8717,7 @@
       const today = formatLocalDate(new Date());
       const EXERCISE_PLACEHOLDER_IMAGE = "assets/exercise-placeholder.svg";
       const TRAINING_DAY_PREFERENCES_KEY = "fitlog-training-day-preferences";
+      const PLAN_ADJUSTMENTS_KEY = "fitlog-plan-adjustments";
       const FAVORITE_EXERCISES_KEY = "fitlog-favorite-exercises";
       const PLAN_EXERCISE_REPLACEMENTS_KEY = "fitlog-plan-exercise-replacements";
       const ADAPTIVE_SETUP_KEY = "fitlog-adaptive-progression-setup";
@@ -8868,6 +8893,12 @@
           if (setLogDate && !setLogDate.value) setLogDate.value = today;
           renderRecords();
         }
+        if (moduleId === "record-day-detail") {
+          if (!activeRecordCalendarDate) activeRecordCalendarDate = records
+            .filter((record) => record.source === "plan" || record.planDayId)
+            .map((record) => record.date).filter(Boolean).sort().at(-1) || null;
+          renderRecordCalendarDetail();
+        }
         if (moduleId === "evaluation") {
           if (savedCardioAssessment?.cardioWeight) renderCardioAssessment();
           renderAssessment();
@@ -8900,6 +8931,48 @@
         if (initializedModules.has("records")) renderRecords();
         if (activeLibraryExercise) renderExerciseDetail();
         if (exerciseReplacementContext) renderExerciseReplacementPage();
+      }
+
+      function refreshWeightUnitUI() {
+        document.querySelectorAll('input[name="weightUnit"]').forEach((input) => { input.checked = input.value === weightUnit; });
+        document.querySelector("#accountWeightUnitValue").textContent = weightUnit.toUpperCase();
+        document.querySelector("#setLogWeightLabel").textContent = `${appLanguage === "en" ? "Training weight" : "训练重量"} ${weightUnit.toUpperCase()}`;
+        document.querySelector("#cardioWeightLabel").textContent = `${appLanguage === "en" ? "Body weight" : "当前体重"} ${weightUnit.toUpperCase()}`;
+        document.querySelector("#assessmentWeightLabel").textContent = `${appLanguage === "en" ? "Body weight" : "当前体重"} ${weightUnit.toUpperCase()}`;
+        document.querySelector("#strengthTenRmLabel").textContent = `${appLanguage === "en" ? "Exercise 10RM" : "该动作 10RM"} ${weightUnit.toUpperCase()}`;
+        ["#cardioWeight", "#assessmentWeight"].forEach((selector) => {
+          const input = document.querySelector(selector);
+          input.min = String(displayWeight(25));
+          input.max = String(displayWeight(250));
+        });
+        document.querySelector("#strengthTenRm").max = String(displayWeight(500));
+        document.querySelectorAll("[data-log-weight]").forEach((button) => {
+          const increment = displayWeight(Math.abs(Number(button.dataset.logWeight)));
+          button.textContent = `${Number(button.dataset.logWeight) < 0 ? "-" : "+"}${increment}`;
+        });
+      }
+
+      function applyWeightUnit(unit) {
+        const previousKg = weightUnit === "lb" ? Number(setLogWeight.value) * KG_PER_LB : Number(setLogWeight.value);
+        const assessmentFields = ["#cardioWeight", "#assessmentWeight", "#strengthTenRm"].map((selector) => {
+          const input = document.querySelector(selector);
+          return [input, input.value === "" ? "" : (weightUnit === "lb" ? Number(input.value) * KG_PER_LB : Number(input.value))];
+        });
+        weightUnit = unit === "lb" ? "lb" : "kg";
+        localStorage.setItem(WEIGHT_UNIT_KEY, weightUnit);
+        setLogWeight.value = String(displayWeight(previousKg));
+        assessmentFields.forEach(([input, kg]) => { input.value = kg === "" ? "" : displayWeight(kg); });
+        refreshWeightUnitUI();
+        updateSetLogPreview();
+        rerenderInitializedModules();
+        if (activeWorkoutDay) renderWorkoutDetail();
+        if (initializedModules.has("records")) renderRecordCalendarDetail();
+        if (adaptiveCalibrationDialog.open) renderAdaptiveCalibrationDialog();
+        if (initializedModules.has("evaluation")) {
+          renderAssessment();
+          if (document.querySelector("#cardioWeight").value) renderCardioAssessment();
+        }
+        window.FitLogSync?.queueSync?.();
       }
 
       function completeAppBoot(activeId) {
@@ -8984,8 +9057,9 @@
         if (activeId === "exercise-detail") renderExerciseDetail();
         else if (activeId === "exercise-replace") renderExerciseReplacementPage();
         else cleanupExerciseAnimations();
-        const activeNavId = ["evaluation", "account-management", "settings", "language-settings"].includes(activeId)
+        const activeNavId = ["evaluation", "account-management", "settings", "language-settings", "weight-settings"].includes(activeId)
           ? "me"
+          : activeId === "record-day-detail" ? "records"
           : ["workout-detail", "exercise-replace"].includes(activeId)
             ? "plan"
             : activeId === "exercise-detail"
@@ -9325,7 +9399,7 @@
         const rows = table.percentiles
           .map((percentile, index) => {
             const isCurrent = result.percentile === percentile;
-            const targetLoad = weightIsValid ? `${(thresholds[index] * weight).toFixed(1)} kg` : "-";
+            const targetLoad = weightIsValid ? weightText(thresholds[index] * weight) : "-";
             return `<tr${isCurrent ? ' class="is-current"' : ""}><td>P${percentile}</td><td>${thresholds[index].toFixed(2)}${appLanguage === "en" ? " × body weight" : " 倍"}</td><td>${targetLoad}</td></tr>`;
           })
           .join("");
@@ -9379,14 +9453,14 @@
         const result = evaluateCardio({
           age: Number(document.querySelector("#cardioAge").value),
           sex,
-          weight: Number(document.querySelector("#cardioWeight").value),
+          weight: storageWeight(document.querySelector("#cardioWeight").value),
           minutes: Number(document.querySelector("#runMinutes").value)
         });
         const norms = document.querySelector("#cardioNorms");
         const metric = document.querySelector("#cardioVo2");
         norms.hidden = metric.hidden = Boolean(result.error);
         document.querySelector("#cardioTitle").textContent = result.error ? "请检查输入" : result.level;
-        document.querySelector("#cardioText").textContent = result.error || result.comparison;
+        document.querySelector("#cardioText").textContent = result.error ? displayLoadAdvice(result.error) : result.comparison;
         if (result.error) {
           norms.replaceChildren();
           metric.textContent = "";
@@ -9412,9 +9486,9 @@
       function renderAssessment() {
         const strengthSex = document.querySelector("#strengthSex").value;
         const strengthAge = Number(document.querySelector("#strengthAge").value);
-        const weight = Number(document.querySelector("#assessmentWeight").value);
+        const weight = storageWeight(document.querySelector("#assessmentWeight").value);
         const strengthExerciseSelect = document.querySelector("#strengthExercise");
-        const load = Number(document.querySelector("#strengthTenRm").value);
+        const load = storageWeight(document.querySelector("#strengthTenRm").value);
         const formQuality = document.querySelector("#formQuality").value;
         const strengthNorm = resolveStrengthNorm(strengthExerciseSelect);
         const strengthTable = strengthNorm.table;
@@ -9427,7 +9501,7 @@
 
         if (!hasValidStrengthInputs) {
           document.querySelector("#strengthTitle").textContent = appLanguage === "en" ? "Check your entries" : "请检查输入";
-          document.querySelector("#strengthText").textContent = appLanguage === "en" ? "Age must be 20-79, body weight 25-250 kg, and 10RM greater than 0 kg." : "年龄需为 20-79 岁，体重 25-250 kg，10RM 需大于 0 kg。";
+          document.querySelector("#strengthText").textContent = displayLoadAdvice(appLanguage === "en" ? "Age must be 20-79, body weight 25-250 kg, and 10RM greater than 0 kg." : "年龄需为 20-79 岁，体重 25-250 kg，10RM 需大于 0 kg。");
           document.querySelector("#strengthDetails").innerHTML = "";
           renderStrengthNorms({
             table: strengthTable,
@@ -9455,10 +9529,10 @@
               ? appLanguage === "en" ? "In the lowest 10% of the reference group for the same age and sex; the exact comparison is unavailable." : "处于同年龄、同性别参考人群最低 10% 区间，具体超过比例未知。"
               : appLanguage === "en" ? `Above about ${strengthResult.percentile}% of the reference group for the same age and sex.` : `${percentileComparison(strengthResult)} 的同年龄、同性别参考人群`;
         document.querySelector("#strengthDetails").innerHTML = (appLanguage === "en" ? [
-          `Estimated 1RM ${estimatedLoad.toFixed(1)} kg · Relative strength ${relativeLoad.toFixed(2)} × body weight`,
+          `Estimated 1RM ${weightText(estimatedLoad)} · Relative strength ${relativeLoad.toFixed(2)} × body weight`,
           hasCompensation ? "Recommendation: address compensation or pain before retesting." : strengthResult.percentile >= 50 ? "Recommendation: maintain movement quality while gradually increasing load or training volume." : "Recommendation: prioritize technique and foundational volume before increasing load."
         ] : [
-          `估算 1RM ${estimatedLoad.toFixed(1)} kg · 相对力量 ${relativeLoad.toFixed(2)} 倍体重`,
+          `估算 1RM ${weightText(estimatedLoad)} · 相对力量 ${relativeLoad.toFixed(2)} 倍体重`,
           hasCompensation ? "建议：先处理动作代偿或疼痛，再进行下一次测试。" : strengthResult.percentile >= 50 ? "建议：保持动作质量，逐步增加负荷或训练容量。" : "建议：优先练习动作技术与基础容量，再提高负荷。"
         ]).map((item) => `<li>${item}</li>`).join("");
         renderStrengthNorms({
@@ -9790,18 +9864,53 @@
           .slice(0, days);
       }
 
-      function getPlanDayDate(startDate, weekIndex, dayIndex, profile, plan) {
+      function getBasePlanDayDate(startDate, weekIndex, dayIndex, profile, plan) {
         const weekdays = getPlanTrainingWeekdays(profile, plan, weekIndex, startDate);
         const offset = getTrainingDayOffsets(plan.days, startDate, weekdays)[dayIndex] ?? dayIndex;
         return addDays(startDate, weekIndex * 7 + offset);
+      }
+
+      function loadPlanAdjustments(profile, plan, startDate = getPlanStartDate()) {
+        try {
+          const saved = JSON.parse(localStorage.getItem(PLAN_ADJUSTMENTS_KEY) || "null");
+          return saved?.planKey === getPlanScheduleKey(profile, plan, startDate)
+            ? { ...saved, overrides: saved.overrides || {}, pauses: Array.isArray(saved.pauses) ? saved.pauses : [] }
+            : { planKey: getPlanScheduleKey(profile, plan, startDate), overrides: {}, pauses: [], pausedAt: null };
+        } catch {
+          return { planKey: getPlanScheduleKey(profile, plan, startDate), overrides: {}, pauses: [], pausedAt: null };
+        }
+      }
+
+      function getResolvedPlanSchedule(profile, plan, startDate = getPlanStartDate()) {
+        const changes = loadPlanAdjustments(profile, plan, startDate);
+        let lastScheduledDate = "";
+        return Array.from({ length: 4 }, (_, weekIndex) => plan.split.map((_, dayIndex) => {
+          const id = planDayId(profile, plan, weekIndex, dayIndex, startDate);
+          const baseDate = getBasePlanDayDate(startDate, weekIndex, dayIndex, profile, plan);
+          const shift = changes.pauses.reduce((days, pause) => days + (baseDate >= pause.start ? Math.max(0, Number(pause.days) || 0) : 0), 0);
+          const requestedDate = addDays(baseDate, shift + (changes.overrides[id]?.deferDays || 0));
+          const date = lastScheduledDate && requestedDate <= lastScheduledDate ? addDays(lastScheduledDate, 1) : requestedDate;
+          const skipped = changes.overrides[id]?.status === "skipped";
+          const paused = Boolean(changes.pausedAt && baseDate >= changes.pausedAt);
+          if (!skipped && !paused) lastScheduledDate = date;
+          return { id, date, skipped, paused, weekIndex, dayIndex };
+        })).flat();
+      }
+
+      function getPlanDayDate(startDate, weekIndex, dayIndex, profile, plan) {
+        return getResolvedPlanSchedule(profile, plan, startDate).find((item) => item.weekIndex === weekIndex && item.dayIndex === dayIndex)?.date
+          || getBasePlanDayDate(startDate, weekIndex, dayIndex, profile, plan);
       }
 
       function getPlanStartDate() {
         return localStorage.getItem("fitlog-plan-start-date") || today;
       }
 
-      function getCurrentPlanWeek(startDate) {
-        const diff = Math.floor((parseLocalDate(today) - parseLocalDate(startDate)) / 86400000);
+      function getCurrentPlanWeek(startDate, profile = getProfile(), plan = buildPlan(profile)) {
+        const changes = loadPlanAdjustments(profile, plan, startDate);
+        const pausedDays = changes.pauses.reduce((sum, pause) => sum + (pause.start <= today ? Math.max(0, Number(pause.days) || 0) : 0), 0)
+          + (changes.pausedAt ? Math.max(0, Math.floor((parseLocalDate(today) - parseLocalDate(changes.pausedAt)) / 86400000)) : 0);
+        const diff = Math.floor((parseLocalDate(today) - parseLocalDate(startDate)) / 86400000) - pausedDays;
         return Math.max(0, Math.min(3, Math.floor(diff / 7)));
       }
 
@@ -10571,7 +10680,7 @@
 
       function formatExerciseCapacity(exercise) {
         const hasLoad = exercise.loadKg !== null && exercise.loadKg !== undefined && exercise.loadKg !== "";
-        const load = hasLoad && Number.isFinite(Number(exercise.loadKg)) ? `${Number(exercise.loadKg)} kg` : "未记录负重";
+        const load = hasLoad && Number.isFinite(Number(exercise.loadKg)) ? weightText(exercise.loadKg) : "未记录负重";
         return `${load} × ${getExerciseSetCount(exercise)} 组`;
       }
 
@@ -10588,7 +10697,7 @@
               const weightValue = row.querySelector("[data-set-weight]")?.value ?? "";
               const repsValue = row.querySelector("[data-set-reps]")?.value ?? "";
                if (!completed || weightValue === "" || repsValue === "") return null;
-               return { setNumber: setIndex + 1, weightKg: Number(weightValue), reps: Number(repsValue), completed: true };
+               return { setNumber: setIndex + 1, weightKg: storageWeight(weightValue), reps: Number(repsValue), completed: true };
             })
             .filter(Boolean)
             : [];
@@ -10655,7 +10764,7 @@
 
       function renderExerciseReplacementPage() {
         if (!exerciseReplacementContext || !activeWorkoutDay) {
-          exerciseReplacePage.innerHTML = `<button class="ghost-btn" type="button" data-replacement-back>${appLanguage === "en" ? "Back to workout" : "返回训练日"}</button>`;
+          exerciseReplacePage.innerHTML = `<button class="settings-back" type="button" data-replacement-back>← ${appLanguage === "en" ? "Back to workout" : "返回训练日"}</button>`;
           return;
         }
         const { exerciseIndex, category, currentExerciseId } = exerciseReplacementContext;
@@ -10671,7 +10780,7 @@
         const currentName = appLanguage === "en" ? (currentExercise.nameEn || currentExercise.nameZh) : currentExercise.nameZh;
         exerciseReplacePage.innerHTML = `
           <div class="exercise-replace-head">
-            <button class="ghost-btn" type="button" data-replacement-back>${appLanguage === "en" ? "Back to workout" : "返回训练日"}</button>
+            <button class="settings-back" type="button" data-replacement-back>← ${appLanguage === "en" ? "Back to workout" : "返回训练日"}</button>
             <span class="chip">${translateInterfaceText(category)}</span>
             <h2>${appLanguage === "en" ? "Replace exercise" : "更换动作"}</h2>
             <p>${appLanguage === "en" ? `Replacing ${currentName}. Select another exercise for the same body area.` : `正在更换「${currentName}」，请选择同部位动作。`}</p>
@@ -10900,7 +11009,7 @@
             <section class="calibration-guide" data-calibration-guide="${exerciseIndex}">
               ${calibrationProgressTemplate(2)}
               <h4>${appLanguage === "en" ? "How did the trial set feel?" : "这个试做组感觉如何？"}</h4>
-              <p>${appLanguage === "en" ? `${trialWeight || 0} kg × ${trialReps} reps. Choose the closest result; do not test to failure.` : `${trialWeight || 0} kg × ${trialReps} 次。选择最接近的结果，不需要做到力竭。`}</p>
+              <p>${appLanguage === "en" ? `${weightText(trialWeight || 0)} × ${trialReps} reps. Choose the closest result; do not test to failure.` : `${weightText(trialWeight || 0)} × ${trialReps} 次。选择最接近的结果，不需要做到力竭。`}</p>
               <div class="calibration-feedback-options">
                 <button class="calibration-feedback-option" type="button" data-calibration-feedback="easy" data-exercise-index="${exerciseIndex}">${appLanguage === "en" ? "Too easy · 5+ reps left" : "太轻松 · 还能做 5+ 次"}</button>
                 <button class="calibration-feedback-option" type="button" data-calibration-feedback="target" data-exercise-index="${exerciseIndex}">${appLanguage === "en" ? "On target · 2–4 reps left" : "合适 · 还能做 2–4 次"}</button>
@@ -10918,7 +11027,7 @@
             <section class="calibration-guide" data-calibration-guide="${exerciseIndex}">
               ${calibrationProgressTemplate(3)}
               <h4>${appLanguage === "en" ? (result.action === "stop" ? "Stop this calibration" : "Starting-load recommendation") : (result.action === "stop" ? "停止本次校准" : "起始重量建议")}</h4>
-              <p class="calibration-result">${appLanguage === "en" ? result.en : result.zh}${recommendedWeight !== null && result.action !== "stop" ? (appLanguage === "en" ? ` Suggested load: ${recommendedWeight} kg.` : ` 建议重量：${recommendedWeight} kg。`) : ""}</p>
+              <p class="calibration-result">${appLanguage === "en" ? result.en : result.zh}${recommendedWeight !== null && result.action !== "stop" ? (appLanguage === "en" ? ` Suggested load: ${weightText(recommendedWeight)}.` : ` 建议重量：${weightText(recommendedWeight)}。`) : ""}</p>
               <div class="calibration-actions">
                 ${canConfirm ? `<button class="calibration-action is-primary" type="button" data-confirm-calibration="${exerciseIndex}">${appLanguage === "en" ? "Use for working sets" : "用于正式训练组"}</button>` : ""}
                 ${result.action === "retry-up" || result.action === "retry-down" ? `<button class="calibration-action is-primary" type="button" data-retry-calibration="${exerciseIndex}">${appLanguage === "en" ? "Retry suggested load" : "按建议重量再试一组"}</button>` : ""}
@@ -10933,7 +11042,7 @@
             <h4>${appLanguage === "en" ? "Choose a light trial load" : "选择较轻的试做重量"}</h4>
             <p>${appLanguage === "en" ? "Use a load you can control comfortably. This trial set is separate from your working sets and will not count toward training volume." : "选择能稳定控制的轻重量。试做组与正式训练组分开，不会计入训练量。"}</p>
             <div class="calibration-fields">
-              <label class="workout-inline-field">${appLanguage === "en" ? "Trial weight (kg)" : "试做重量 (kg)"}<input type="number" data-calibration-weight min="0" max="1000" step="0.5" value="${trialWeight}" inputmode="decimal" required></label>
+              <label class="workout-inline-field">${appLanguage === "en" ? "Trial weight" : "试做重量"} (${weightUnit})<input type="number" data-calibration-weight min="0" max="2200" step="any" value="${displayWeight(trialWeight)}" inputmode="decimal" required></label>
               <label class="workout-inline-field">${appLanguage === "en" ? "Trial reps" : "试做次数"}<input type="number" data-calibration-reps min="1" max="20" step="1" value="${trialReps}" required></label>
             </div>
             <button class="calibration-action is-primary" type="submit">${appLanguage === "en" ? "Trial set completed" : "已完成试做组"}</button>
@@ -11075,7 +11184,7 @@
         const setRows = setEntries.map((setEntry, setIndex) => `
           <div class="workout-set-row${setEntry.completed ? " is-complete" : ""}" data-workout-set-row="${index}">
             <span class="workout-set-number" aria-label="${appLanguage === "en" ? `Set ${setIndex + 1}` : `第 ${setIndex + 1} 组`}">${setIndex + 1}</span>
-            <label class="workout-inline-field">${appLanguage === "en" ? "Weight (kg)" : "重量 (kg)"}<input type="number" name="weightKg" data-set-weight min="0" max="1000" step="0.5" value="${setEntry.weightKg}" inputmode="decimal"></label>
+            <label class="workout-inline-field">${appLanguage === "en" ? "Weight" : "重量"} (${weightUnit})<input type="number" name="weightKg" data-set-weight min="0" max="2200" step="any" value="${displayWeight(setEntry.weightKg)}" inputmode="decimal"></label>
             <label class="workout-inline-field">${appLanguage === "en" ? "Reps" : "次数"}<input type="number" name="reps" data-set-reps min="1" max="100" step="1" value="${setEntry.reps}"></label>
             <input type="hidden" data-set-completed value="${setEntry.completed ? "true" : "false"}">
             <button class="workout-set-complete" type="button" data-toggle-set-complete aria-pressed="${setEntry.completed ? "true" : "false"}" aria-label="${appLanguage === "en" ? `Mark set ${setIndex + 1} complete` : `标记第 ${setIndex + 1} 组完成`}">✓</button>
@@ -11089,7 +11198,7 @@
             : (recommendationSource.progressionRecommendationZh || recommendationSource.progressionRecommendation || ""))
           : "";
         const guideHint = calibration?.status === "confirmed"
-          ? (appLanguage === "en" ? `Trial-set starting load: ${calibration.confirmedWeight} kg. Complete the working sets below.` : `试做组已确认起始重量：${calibration.confirmedWeight} kg。请完成以下正式训练组。`)
+          ? (appLanguage === "en" ? `Trial-set starting load: ${weightText(calibration.confirmedWeight)}. Complete the working sets below.` : `试做组已确认起始重量：${weightText(calibration.confirmedWeight)}。请完成以下正式训练组。`)
           : "";
         const actionControls = type === "训练"
           ? `<div class="workout-card-footer">
@@ -11116,7 +11225,7 @@
                   <span>${appLanguage === "en" ? "How did the final completed set feel?" : "最后一组主观难度"}</span>
                   <div class="workout-difficulty-options">${difficultyOptionsTemplate(selectedDifficulty)}</div>
                 </div>
-                <p class="workout-progression-advice" data-progression-recommendation ${priorRecommendation ? "" : "hidden"}>${escapeLogText(priorRecommendation)}</p>
+                <p class="workout-progression-advice" data-progression-recommendation ${priorRecommendation ? "" : "hidden"}>${escapeLogText(displayLoadAdvice(priorRecommendation))}</p>
                 <button class="workout-inline-save" type="submit">${appLanguage === "en" ? "Save" : "保存记录"}</button>
                 <span class="workout-inline-status" data-inline-workout-status role="status" aria-live="polite"></span>
               </form>
@@ -11144,22 +11253,29 @@
           : (appLanguage === "en" ? "Back to home" : "返回首页");
         if (!activeWorkoutDay) {
           workoutDetail.innerHTML = `
-            <button class="workout-back-icon" type="button" data-workout-back aria-label="${workoutBackLabel}" title="${workoutBackLabel}">←</button>
+            <button class="settings-back" type="button" data-workout-back>← ${workoutBackLabel}</button>
             <div class="workout-overview"><h2>选择训练日</h2><p class="muted">请从首页的今日计划或计划页进入训练详情。</p></div>
           `;
           return;
         }
         const workout = activeWorkoutDay;
         const completed = completedPlanDays.includes(workout.id);
+        const adjustments = loadPlanAdjustments(getProfile(), workout.plan);
+        const skipped = adjustments.overrides[workout.id]?.status === "skipped";
+        const paused = Boolean(adjustments.pausedAt);
         const preparation = getTargetedPreparation(workout);
         const recordedExercises = records.find((item) => item.planDayId === workout.id)?.exercises || [];
         workoutDetail.innerHTML = `
-          <button class="workout-back-icon" type="button" data-workout-back aria-label="${workoutBackLabel}" title="${workoutBackLabel}">←</button>
+          <button class="settings-back" type="button" data-workout-back>← ${workoutBackLabel}</button>
           <div class="workout-overview">
             <span class="chip">${appLanguage === "en" ? `Plan week ${workout.weekIndex + 1} · Training day ${workout.dayIndex + 1}` : workout.title}</span>
             <h2>${translateInterfaceText(workout.name)}</h2>
             <p>${translateInterfaceText(workout.description)}</p>
             <p class="muted">${appLanguage === "en" ? `Scheduled date ${workout.date} · ${translateInterfaceText(workout.period?.title || "当周训练")} · ${workout.period?.rm || workout.plan.rm}` : `计划日期 ${workout.date} · ${workout.period?.title || "当周训练"} · ${workout.period?.rm || workout.plan.rm}`}</p>
+            ${!completed ? `<div class="workout-schedule-actions">${skipped
+              ? `<button type="button" data-workout-schedule="restore">${appLanguage === "en" ? "Restore workout" : "恢复本次训练"}</button>`
+              : `<button type="button" data-workout-schedule="defer" ${paused ? "disabled" : ""}>${appLanguage === "en" ? "Move to tomorrow" : "推迟到明天"}</button><button type="button" data-workout-schedule="skip" ${paused ? "disabled" : ""}>${appLanguage === "en" ? "Skip this workout" : "跳过本次"}</button>`}</div>` : ""}
+            ${skipped || paused ? `<p class="workout-schedule-note">${appLanguage === "en" ? (skipped ? "This workout is skipped." : "Plan is paused. Resume it from the Plan page.") : (skipped ? "本次训练已跳过。" : "计划已暂停，可在计划页恢复。")}</p>` : ""}
           </div>
           ${adaptiveSetupCardTemplate(workout)}
           ${adaptiveModeBannerTemplate()}
@@ -11177,7 +11293,7 @@
               ${preparation.stretches.map((item, index) => workoutActionCardTemplate(item, index, "拉伸")).join("")}
             </div>
           </div>
-          <button class="primary-btn workout-complete" type="button" data-complete-workout ${completed ? "disabled" : ""}>
+          <button class="primary-btn workout-complete" type="button" data-complete-workout ${completed || skipped || paused ? "disabled" : ""}>
             ${appLanguage === "en" ? (completed ? "Completed" : "Complete workout") : (completed ? "已完成" : "完成训练")}
           </button>
         `;
@@ -11214,7 +11330,7 @@
         const exerciseIndex = Number(form.dataset.calibrationTrialForm);
         const workoutExercise = workoutExerciseAt(exerciseIndex);
         if (!workoutExercise) return false;
-        const trialWeight = Number(form.querySelector("[data-calibration-weight]")?.value);
+        const trialWeight = storageWeight(form.querySelector("[data-calibration-weight]")?.value);
         const trialReps = Number(form.querySelector("[data-calibration-reps]")?.value);
         if (!Number.isFinite(trialWeight) || trialWeight < 0 || !Number.isFinite(trialReps) || trialReps < 1) return false;
         const previous = getExerciseCalibration(workoutExercise.exercise.id) || {};
@@ -11491,7 +11607,7 @@
           const repsValue = row.querySelector("[data-set-reps]")?.value ?? "";
           return {
             setNumber: setIndex + 1,
-            weightKg: completed && weightValue !== "" ? Number(weightValue) : null,
+            weightKg: completed && weightValue !== "" ? storageWeight(weightValue) : null,
             reps: completed && repsValue !== "" ? Number(repsValue) : null,
             completed
           };
@@ -11591,8 +11707,9 @@
           }
           if (advice) {
             advice.hidden = false;
-            advice.textContent = appLanguage === "en" ? recommendation.en : recommendation.zh;
+            advice.textContent = displayLoadAdvice(appLanguage === "en" ? recommendation.en : recommendation.zh);
           }
+          if (initializedModules.has("records")) renderMuscleVolume();
           window.setTimeout(() => {
             if (!document.body.contains(form)) return;
             if (saveButton) {
@@ -11732,13 +11849,22 @@
         activeWeekPrescription.textContent = appLanguage === "en" ? `${activePeriod.sets} sets × ${translateInterfaceText(activePeriod.reps)}` : `${activePeriod.sets} 组 × ${activePeriod.reps}`;
         document.querySelector("#planMetricSetsNote").textContent = appLanguage === "en" ? `${activePeriod.sets} sets this week` : `本周 ${activePeriod.sets} 组`;
         const planStartDate = getPlanStartDate();
+        const adjustments = loadPlanAdjustments(profile, plan, planStartDate);
+        const resolvedSchedule = getResolvedPlanSchedule(profile, plan, planStartDate);
+        document.querySelector("#planPauseToggle").textContent = adjustments.pausedAt
+          ? (appLanguage === "en" ? "Resume plan" : "恢复计划")
+          : (appLanguage === "en" ? "Pause plan" : "暂停计划");
+        document.querySelector("#planPauseNote").textContent = adjustments.pausedAt
+          ? (appLanguage === "en" ? "Upcoming workouts are hidden until you resume." : "暂停期间不安排后续训练，恢复后顺延。") : "";
         weekPlan.innerHTML = plan.split
           .map(([day, text], index) => {
-            const scheduledDate = getPlanDayDate(planStartDate, activePlanWeekIndex, index, profile, plan);
+            const scheduleEntry = resolvedSchedule.find((item) => item.weekIndex === activePlanWeekIndex && item.dayIndex === index);
+            const scheduledDate = scheduleEntry.date;
+            const scheduleState = scheduleEntry.skipped ? (appLanguage === "en" ? "Skipped" : "已跳过") : scheduleEntry.paused ? (appLanguage === "en" ? "Paused" : "已暂停") : formatPlanDateLabel(scheduledDate);
             return `
               <button class="day plan-training-day" type="button" data-plan-day="${index}" aria-label="${appLanguage === "en" ? `View week ${activePlanWeekIndex + 1}, training day ${index + 1}` : `查看${activePeriod.label}训练日${index + 1}的动作详情`}">
                 <strong>${appLanguage === "en" ? `Training day ${index + 1} · ${translateInterfaceText(day)}` : `训练日${index + 1} · ${day}`}</strong>
-                <span>${translateInterfaceText(text)}<br><small class="muted">${formatPlanDateLabel(scheduledDate)} · ${appLanguage === "en" ? `Main lifts ${activePeriod.sets} sets × ${translateInterfaceText(activePeriod.reps)} · Rest ${translateInterfaceText(activePeriod.rest)}` : `主项 ${activePeriod.sets} 组 × ${activePeriod.reps} · 间歇 ${activePeriod.rest}`}</small></span>
+                <span>${translateInterfaceText(text)}<br><small class="muted">${scheduleState} · ${appLanguage === "en" ? `Main lifts ${activePeriod.sets} sets × ${translateInterfaceText(activePeriod.reps)} · Rest ${translateInterfaceText(activePeriod.rest)}` : `主项 ${activePeriod.sets} 组 × ${activePeriod.reps} · 间歇 ${activePeriod.rest}`}</small></span>
               </button>
             `;
           })
@@ -11749,7 +11875,9 @@
             : `本周主项：${activePeriod.sets} 组 × ${activePeriod.reps}，建议负荷 ${activePeriod.load}（${activePeriod.rm}）。`,
           "动作顺序：爆发力动作（如适用）→ 核心多关节动作 → 辅助动作 → 躯干稳定与整理。",
           "2-for-2：最后一组连续两次训练均能多完成 2 次以上，再增加负重。",
-          "上肢每次增加 1-2.5 kg 或 2.5%-5%；下肢增加 2.5-5 kg 或 5%-10%。",
+          displayLoadAdvice(appLanguage === "en"
+            ? "Increase upper-body loads by 1-2.5 kg or 2.5%-5%; increase lower-body loads by 2.5-5 kg or 5%-10%."
+            : "上肢每次增加 1-2.5 kg 或 2.5%-5%；下肢增加 2.5-5 kg 或 5%-10%。"),
           "第 4 周减少约 40%-50% 训练组数，为下一周期恢复。"
         ];
         if (plan.experience === "beginner") rules.unshift("初级阶段优先固定动作模式和线性递进，不自动编排每周 4 天以上的抗阻训练。");
@@ -11885,7 +12013,10 @@
       function saveCurrentPlan({ templateId = null } = {}) {
         const replacingPlan = hasGeneratedPlan() && isEditingPlan;
         if (replacingPlan) archiveCurrentPlan();
-        if (replacingPlan) localStorage.removeItem(TRAINING_DAY_PREFERENCES_KEY);
+        if (replacingPlan) {
+          localStorage.removeItem(TRAINING_DAY_PREFERENCES_KEY);
+          localStorage.removeItem(PLAN_ADJUSTMENTS_KEY);
+        }
         if (templateId) {
           localStorage.setItem("fitlog-plan-template", templateId);
         } else {
@@ -11940,17 +12071,45 @@
       function getScheduledPlanDays(profile, plan) {
         if (!hasGeneratedPlan()) return [];
         const startDate = getPlanStartDate();
-        return Array.from({ length: 4 }, (_, weekIndex) =>
-          plan.split.map(([day, text], dayIndex) => ({
-            id: planDayId(profile, plan, weekIndex, dayIndex, startDate),
-            date: getPlanDayDate(startDate, weekIndex, dayIndex, profile, plan),
-            weekIndex,
-            dayIndex,
-            day,
-            text,
-            period: plan.periodization[weekIndex] || plan.periodization[0]
-          }))
-        ).flat();
+        return getResolvedPlanSchedule(profile, plan, startDate)
+          .filter((item) => !item.skipped && !item.paused)
+          .map((item) => ({
+            ...item,
+            day: plan.split[item.dayIndex][0],
+            text: plan.split[item.dayIndex][1],
+            period: plan.periodization[item.weekIndex] || plan.periodization[0]
+          }));
+      }
+
+      function changePlanSchedule(action, workout = activeWorkoutDay) {
+        const profile = getProfile();
+        const plan = buildPlan(profile);
+        const changes = loadPlanAdjustments(profile, plan);
+        if (action === "pause") {
+          if (changes.pausedAt) return;
+          changes.pausedAt = today;
+        } else if (action === "resume") {
+          if (!changes.pausedAt) return;
+          const days = Math.max(0, Math.floor((parseLocalDate(today) - parseLocalDate(changes.pausedAt)) / 86400000));
+          changes.pauses.push({ start: changes.pausedAt, days });
+          changes.pausedAt = null;
+        } else {
+          if (!workout || completedPlanDays.includes(workout.id) || changes.pausedAt) return;
+          if (action === "restore") delete changes.overrides[workout.id];
+          else {
+            const tomorrow = addDays(today, 1);
+            const daysUntilTomorrow = Math.ceil((parseLocalDate(tomorrow) - parseLocalDate(workout.date)) / 86400000);
+            changes.overrides[workout.id] = action === "skip"
+              ? { status: "skipped" }
+              : { deferDays: Number(changes.overrides[workout.id]?.deferDays || 0) + Math.max(1, daysUntilTomorrow) };
+          }
+        }
+        localStorage.setItem(PLAN_ADJUSTMENTS_KEY, JSON.stringify(changes));
+        window.FitLogSync?.queueSync?.();
+        if (workout && ["defer", "skip", "restore"].includes(action)) activeWorkoutDay = getWorkoutDay(workout.weekIndex, workout.dayIndex);
+        renderPlan();
+        if (initializedModules.has("records")) renderRecords();
+        if (workout && ["defer", "skip", "restore"].includes(action)) renderWorkoutDetail();
       }
 
       function formatPlanDateLabel(value) {
@@ -12498,7 +12657,7 @@
           ? (appLanguage === "en" ? "Back to workout" : "返回训练日")
           : (appLanguage === "en" ? "Back to exercises" : "返回动作库");
         if (!activeLibraryExercise) {
-          exerciseDetailPage.innerHTML = `<button class="ghost-btn exercise-detail-back" type="button" data-exercise-back>${backLabel}</button><div class="library-empty">请选择一个动作查看详情。</div>`;
+          exerciseDetailPage.innerHTML = `<button class="settings-back exercise-detail-back" type="button" data-exercise-back>← ${backLabel}</button><div class="library-empty">请选择一个动作查看详情。</div>`;
           return;
         }
         const exercise = activeLibraryExercise;
@@ -12507,7 +12666,7 @@
         const instructions = appLanguage === "en" ? exercise.instructionsEn : exercise.instructionsZh;
         const favorite = isFavoriteExercise(exercise.id);
         exerciseDetailPage.innerHTML = `
-          <button class="ghost-btn exercise-detail-back" type="button" data-exercise-back>${backLabel}</button>
+          <button class="settings-back exercise-detail-back" type="button" data-exercise-back>← ${backLabel}</button>
           ${animationTemplate(exercise)}
           <div class="exercise-detail-title">
             <div class="exercise-detail-heading"><h2>${displayName}</h2>${secondaryName ? `<p>${secondaryName}</p>` : ""}</div>
@@ -12602,9 +12761,10 @@
       }
 
       function updateSetLogPreview() {
-        const oneRm = calculateBrzyckiOneRm(Number(setLogWeight.value), Number(setLogReps.value));
-        const intensity = oneRm ? Math.min(100, Math.round((Number(setLogWeight.value) / oneRm) * 100)) : 0;
-        setLogOneRm.textContent = oneRm ? `${oneRm.toFixed(1)} kg` : "-";
+        const enteredKg = storageWeight(setLogWeight.value);
+        const oneRm = calculateBrzyckiOneRm(enteredKg, Number(setLogReps.value));
+        const intensity = oneRm ? Math.min(100, Math.round((enteredKg / oneRm) * 100)) : 0;
+        setLogOneRm.textContent = oneRm ? weightText(oneRm) : "-";
         setLogIntensity.textContent = oneRm
           ? appLanguage === "en" ? `About ${intensity}% 1RM` : `约 ${intensity}% 1RM`
           : appLanguage === "en" ? "Enter load and reps to calculate" : "填写重量与次数后计算";
@@ -12670,9 +12830,9 @@
               const displayName = appLanguage === "en" ? (exercise?.nameEn || item.exerciseName) : item.exerciseName;
               return `
               <article class="completed-training-item${supplementOpen ? " is-expanded" : ""}">
-                <div><strong>${escapeLogText(displayName)}</strong><span>${item.date} · ${volume}${hasLoad ? ` · ${item.weightKg} kg` : ""}</span></div>
+                <div><strong>${escapeLogText(displayName)}</strong><span>${item.date} · ${volume}${hasLoad ? ` · ${weightText(item.weightKg)}` : ""}</span></div>
                 ${hasLoad ? "" : `<button class="completed-training-supplement" type="button" data-open-supplement="${item.id}">补充数据</button>`}
-                ${supplementOpen ? `<form class="completed-training-supplement-form" data-supplement-form="${item.id}" data-plan-day-id="${item.planDayId || ""}" data-exercise-id="${item.exerciseId || ""}" data-date="${item.date}" data-sets="${item.sets || ""}" data-planned-reps="${item.plannedReps || item.reps || ""}"><label>${appLanguage === "en" ? "Weight (kg)" : "训练重量 kg"}<input data-supplement-weight type="number" min="0.5" max="500" step="0.5" value="${hasLoad ? item.weightKg : ""}" required></label><label>${appLanguage === "en" ? "Reps per set" : "每组次数"}<input data-supplement-reps type="number" min="1" max="100" step="1" value="${item.reps || item.plannedReps || ""}" required></label><button type="submit">${appLanguage === "en" ? "Save" : "保存"}</button></form>` : ""}
+                ${supplementOpen ? `<form class="completed-training-supplement-form" data-supplement-form="${item.id}" data-plan-day-id="${item.planDayId || ""}" data-exercise-id="${item.exerciseId || ""}" data-date="${item.date}" data-sets="${item.sets || ""}" data-planned-reps="${item.plannedReps || item.reps || ""}"><label>${appLanguage === "en" ? "Weight" : "训练重量"} (${weightUnit})<input data-supplement-weight type="number" min="0.1" max="1100" step="any" value="${hasLoad ? displayWeight(item.weightKg) : ""}" required></label><label>${appLanguage === "en" ? "Reps per set" : "每组次数"}<input data-supplement-reps type="number" min="1" max="100" step="1" value="${item.reps || item.plannedReps || ""}" required></label><button type="submit">${appLanguage === "en" ? "Save" : "保存"}</button></form>` : ""}
               </article>`;
             }).join("")
           : `<p class="set-log-empty">${searchTerm
@@ -12683,7 +12843,7 @@
       function savePlanSupplement(form) {
         const planDayId = form.dataset.planDayId;
         const exerciseId = form.dataset.exerciseId;
-        const weightKg = Number(form.querySelector("[data-supplement-weight]")?.value);
+        const weightKg = storageWeight(form.querySelector("[data-supplement-weight]")?.value);
         const plannedReps = Number(form.dataset.plannedReps || 0);
         const reps = Number(form.querySelector("[data-supplement-reps]")?.value || plannedReps);
         const sets = Math.max(1, Number(form.dataset.sets || 0));
@@ -12744,9 +12904,9 @@
         const gain = logs.length > 1 ? (Number(latest.estimated1RM) - Number(first.estimated1RM)) : 0;
         const gainPercent = logs.length > 1 && Number(first.estimated1RM) ? gain / Number(first.estimated1RM) * 100 : 0;
         overloadStats.innerHTML = [
-          ["历史峰值", maxOneRm ? `${maxOneRm.toFixed(1)} kg` : "-"],
-          ["最近 1RM", latest ? `${Number(latest.estimated1RM).toFixed(1)} kg` : "-"],
-          ["净变化", logs.length > 1 ? `${gain >= 0 ? "+" : ""}${gain.toFixed(1)} kg` : "-"],
+          ["历史峰值", maxOneRm ? weightText(maxOneRm) : "-"],
+          ["最近 1RM", latest ? weightText(latest.estimated1RM) : "-"],
+          ["净变化", logs.length > 1 ? `${gain >= 0 ? "+" : ""}${weightText(Math.abs(gain))}` : "-"],
           ["有效样本", `${logs.length} 组`]
         ].map(([label, value]) => `<div class="overload-stat"><span>${translateInterfaceText(label)}</span><b>${translateInterfaceText(value)}</b></div>`).join("");
         renderOverloadChart(logs);
@@ -12755,8 +12915,8 @@
         overloadAdvice.textContent = logs.length < 2
           ? appLanguage === "en" ? "Log at least two sets of the same exercise to identify a trend." : "至少记录同一动作两组以上，才能判断变化趋势。"
           : appLanguage === "en"
-            ? `Change from the first set: ${gain >= 0 ? "+" : "-"}${Math.abs(gain).toFixed(1)} kg (${gainPercent >= 0 ? "+" : ""}${gainPercent.toFixed(1)}%). When the final set exceeds the planned rep ceiling by 2 reps with stable form in two consecutive workouts, use the 2-for-2 rule to add ${lowerBody ? "2.5-5 kg" : "1-2.5 kg"}.`
-            : `当前相对首组${gain >= 0 ? "提升" : "下降"} ${Math.abs(gain).toFixed(1)} kg（${gainPercent >= 0 ? "+" : ""}${gainPercent.toFixed(1)}%）。连续两次训练的最后一组均比计划次数上限多完成 2 次且动作稳定时，可按 2-for-2 原则尝试增加 ${lowerBody ? "2.5-5 kg" : "1-2.5 kg"}。`;
+            ? `Change from the first set: ${gain >= 0 ? "+" : "-"}${weightText(Math.abs(gain))} (${gainPercent >= 0 ? "+" : ""}${gainPercent.toFixed(1)}%). When the final set exceeds the planned rep ceiling by 2 reps with stable form in two consecutive workouts, use the 2-for-2 rule to add ${lowerBody ? `${weightText(2.5)}–${weightText(5)}` : `${weightText(1)}–${weightText(2.5)}`}.`
+            : `当前相对首组${gain >= 0 ? "提升" : "下降"} ${weightText(Math.abs(gain))}（${gainPercent >= 0 ? "+" : ""}${gainPercent.toFixed(1)}%）。连续两次训练的最后一组均比计划次数上限多完成 2 次且动作稳定时，可按 2-for-2 原则尝试增加 ${lowerBody ? `${weightText(2.5)}–${weightText(5)}` : `${weightText(1)}–${weightText(2.5)}`}。`;
       }
 
       function renderOverloadChart(logs) {
@@ -12767,14 +12927,15 @@
         const width = 320;
         const height = 154;
         const pad = { top: 16, right: 10, bottom: 25, left: 35 };
-        const values = logs.flatMap((log) => [Number(log.weightKg), Number(log.estimated1RM)]);
+        const unitLogs = logs.map((log) => ({ ...log, weightKg: Number(displayWeight(log.weightKg)), estimated1RM: Number(displayWeight(log.estimated1RM)) }));
+        const values = unitLogs.flatMap((log) => [Number(log.weightKg), Number(log.estimated1RM)]);
         const min = Math.max(0, Math.floor((Math.min(...values) - 5) / 5) * 5);
         const max = Math.ceil((Math.max(...values) + 5) / 5) * 5 || 10;
         const x = (index) => logs.length === 1 ? (width - pad.left - pad.right) / 2 + pad.left : pad.left + index * (width - pad.left - pad.right) / (logs.length - 1);
         const y = (value) => pad.top + (max - value) * (height - pad.top - pad.bottom) / Math.max(1, max - min);
-        const line = (key) => logs.map((log, index) => `${x(index).toFixed(1)},${y(Number(log[key])).toFixed(1)}`).join(" ");
+        const line = (key) => unitLogs.map((log, index) => `${x(index).toFixed(1)},${y(Number(log[key])).toFixed(1)}`).join(" ");
         const dateLabels = logs.map((log, index) => `<text x="${x(index).toFixed(1)}" y="${height - 7}" text-anchor="middle">${log.date.slice(5)}</text>`).join("");
-        overloadChart.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="训练重量与预估一RM趋势"><line x1="${pad.left}" y1="${y(min)}" x2="${width - pad.right}" y2="${y(min)}" stroke="#3b4248"/><line x1="${pad.left}" y1="${y(max)}" x2="${width - pad.right}" y2="${y(max)}" stroke="#3b4248"/><text x="2" y="${y(max) + 3}">${max}</text><text x="2" y="${y(min) + 3}">${min}</text><polyline points="${line("weightKg")}" fill="none" stroke="#00e5ff" stroke-width="2" stroke-dasharray="4 3"/><polyline points="${line("estimated1RM")}" fill="none" stroke="#39ff14" stroke-width="2.5"/>${logs.map((log, index) => `<circle cx="${x(index).toFixed(1)}" cy="${y(Number(log.estimated1RM)).toFixed(1)}" r="3" fill="#39ff14"/>`).join("")}${dateLabels}</svg>`;
+        overloadChart.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="训练重量与预估一RM趋势"><line x1="${pad.left}" y1="${y(min)}" x2="${width - pad.right}" y2="${y(min)}" stroke="#3b4248"/><line x1="${pad.left}" y1="${y(max)}" x2="${width - pad.right}" y2="${y(max)}" stroke="#3b4248"/><text x="2" y="${y(max) + 3}">${max}</text><text x="2" y="${y(min) + 3}">${min}</text><polyline points="${line("weightKg")}" fill="none" stroke="#00e5ff" stroke-width="2" stroke-dasharray="4 3"/><polyline points="${line("estimated1RM")}" fill="none" stroke="#39ff14" stroke-width="2.5"/>${unitLogs.map((log, index) => `<circle cx="${x(index).toFixed(1)}" cy="${y(Number(log.estimated1RM)).toFixed(1)}" r="3" fill="#39ff14"/>`).join("")}${dateLabels}</svg>`;
       }
 
       function repairCompletedWorkoutRecords() {
@@ -12815,9 +12976,9 @@
         const hasData = hasRecordedPlanExerciseData(log);
         const displayName = appLanguage === "en" ? (libraryExercise.nameEn || libraryExercise.nameZh) : libraryExercise.nameZh;
         const summary = completedEntries.length
-          ? completedEntries.map((entry, setIndex) => `${appLanguage === "en" ? `Set ${setIndex + 1}` : `第${setIndex + 1}组`} ${Number(entry.weightKg) || 0} kg × ${entry.reps}`).join(" · ")
+          ? completedEntries.map((entry, setIndex) => `${appLanguage === "en" ? `Set ${setIndex + 1}` : `第${setIndex + 1}组`} ${weightText(Number(entry.weightKg) || 0)} × ${entry.reps}`).join(" · ")
           : hasData
-            ? `${Number(log.weightKg)} kg × ${log.reps || plannedReps} ${appLanguage === "en" ? "reps" : "次"}`
+            ? `${weightText(Number(log.weightKg))} × ${log.reps || plannedReps} ${appLanguage === "en" ? "reps" : "次"}`
             : appLanguage === "en"
               ? `${plannedSets} sets × ${plannedReps} reps · Data not logged`
               : `${plannedSets} 组 × ${plannedReps} 次 · 未记录数据`;
@@ -12853,7 +13014,7 @@
                       <div class="calendar-exercise-item">
                         <div><strong>${escapeLogText(item.displayName)}</strong><span>${escapeLogText(item.summary)}</span></div>
                         ${item.hasData ? "" : `<button class="completed-training-supplement" type="button" data-open-calendar-supplement="${item.id}">${appLanguage === "en" ? "Add data" : "补充数据"}</button>`}
-                        ${supplementOpen ? `<form class="completed-training-supplement-form" data-calendar-supplement-form="${item.id}" data-plan-day-id="${session.planDayId || ""}" data-exercise-id="${item.libraryExercise.id || ""}" data-date="${session.date}" data-sets="${item.plannedSets}" data-planned-reps="${item.plannedReps}"><label>${appLanguage === "en" ? "Weight (kg)" : "训练重量 kg"}<input data-supplement-weight type="number" min="0.5" max="500" step="0.5" required></label><label>${appLanguage === "en" ? "Reps per set" : "每组次数"}<input data-supplement-reps type="number" min="1" max="100" step="1" value="${item.plannedReps}" required></label><button type="submit">${appLanguage === "en" ? "Save" : "保存"}</button></form>` : ""}
+                        ${supplementOpen ? `<form class="completed-training-supplement-form" data-calendar-supplement-form="${item.id}" data-plan-day-id="${session.planDayId || ""}" data-exercise-id="${item.libraryExercise.id || ""}" data-date="${session.date}" data-sets="${item.plannedSets}" data-planned-reps="${item.plannedReps}"><label>${appLanguage === "en" ? "Weight" : "训练重量"} (${weightUnit})<input data-supplement-weight type="number" min="0.1" max="1100" step="any" required></label><label>${appLanguage === "en" ? "Reps per set" : "每组次数"}<input data-supplement-reps type="number" min="1" max="100" step="1" value="${item.plannedReps}" required></label><button type="submit">${appLanguage === "en" ? "Save" : "保存"}</button></form>` : ""}
                       </div>`;
                   }).join("")}
                 </div>
@@ -12890,7 +13051,37 @@
             : `<span class="calendar-day ${dateValue === today ? "is-today" : ""}" role="gridcell" aria-label="${calendarLabel}">${index + 1}</span>`;
         }).join("");
         recordCalendarGrid.innerHTML = `${leading}${days}`;
-        renderRecordCalendarDetail();
+        renderMuscleVolume();
+      }
+
+      function renderMuscleVolume() {
+        const grid = document.querySelector("#muscleVolumeGrid");
+        const note = document.querySelector("#muscleVolumeNote");
+        if (!grid || !note) return;
+        note.textContent = appLanguage === "en"
+          ? "Last 4 weeks · completed working sets with logged reps, credited to primary muscles only."
+          : "近 4 周 · 仅统计已记录次数的正式训练组，归入动作主要肌群。";
+        const monday = parseLocalDate(today);
+        monday.setDate(monday.getDate() - (monday.getDay() + 6) % 7);
+        const exerciseById = new Map(getLoggableExercises().map((exercise) => [exercise.id, exercise]));
+        grid.innerHTML = Array.from({ length: 4 }, (_, index) => {
+          const weekStart = addDays(formatLocalDate(monday), (index - 3) * 7);
+          const weekEnd = addDays(weekStart, 6);
+          const counts = new Map();
+          trainingSetLogs.filter((log) => log.date >= weekStart && log.date <= weekEnd).forEach((log) => {
+            const entries = Array.isArray(log.setEntries) ? log.setEntries.filter((entry) => entry.completed !== false && Number(entry.reps) > 0 && entry.weightKg !== null && entry.weightKg !== "" && Number.isFinite(Number(entry.weightKg))) : [];
+            const sets = Array.isArray(log.setEntries) ? entries.length
+              : (log.weightKg !== "" && log.weightKg !== null && log.weightKg !== undefined && Number(log.weightKg) >= 0 && Number(log.reps) > 0
+                ? Math.max(1, Number(log.completedSets || log.sets || 1)) : 0);
+            if (!sets) return;
+            const exercise = exerciseById.get(log.exerciseId);
+            const muscles = exercise?.primaryMuscles?.length ? exercise.primaryMuscles : [exercise?.category || log.category || "其他"];
+            [...new Set(muscles)].forEach((muscle) => counts.set(muscle, (counts.get(muscle) || 0) + sets));
+          });
+          return `<div class="muscle-volume-week"><strong>${weekStart.slice(5)} – ${weekEnd.slice(5)}</strong><div class="muscle-volume-week-grid">${counts.size
+            ? [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([muscle, sets]) => `<div class="muscle-volume-item"><span>${escapeLogText(translateInterfaceText(muscle))}</span><strong>${sets} ${appLanguage === "en" ? "sets" : "组"}</strong></div>`).join("")
+            : `<span class="muted">${appLanguage === "en" ? "No working sets logged" : "暂无有效组记录"}</span>`}</div></div>`;
+        }).join("");
       }
 
       function renderRecords() {
@@ -12902,6 +13093,7 @@
         renderTrainingSetLogs();
         renderTrainingRecordSummary();
         renderOverloadMonitor(setLogExercise.value);
+        renderMuscleVolume();
       }
 
       form.addEventListener("submit", (event) => {
@@ -12944,7 +13136,7 @@
           JSON.stringify({
             cardioAge: document.querySelector("#cardioAge").value,
             cardioSex: document.querySelector("#cardioSex").value,
-            cardioWeight: document.querySelector("#cardioWeight").value,
+            cardioWeight: storageWeight(document.querySelector("#cardioWeight").value),
             restingHr: document.querySelector("#restingHr").value,
             runProtocol: document.querySelector("#runProtocol").value,
             runMinutes: document.querySelector("#runMinutes").value,
@@ -12959,7 +13151,7 @@
           percentileBand: ["<20", "20-<50", "50-<80", ">=80"][result.index],
           data: [
             `${document.querySelector("#cardioAge").value} 岁 · ${document.querySelector("#cardioSex").value === "male" ? "男" : "女"}`,
-            `体重 ${document.querySelector("#cardioWeight").value} kg`,
+            `体重 ${weightText(storageWeight(document.querySelector("#cardioWeight").value))}`,
             `静息心率 ${document.querySelector("#restingHr").value} 次/分`,
             `2.4 公里 ${document.querySelector("#runMinutes").value} 分钟`,
             `跑后 1 分钟 ${document.querySelector("#recoveryHr").value} 次/分`,
@@ -12978,9 +13170,9 @@
           JSON.stringify({
             strengthAge: document.querySelector("#strengthAge").value,
             strengthSex: document.querySelector("#strengthSex").value,
-            weight: document.querySelector("#assessmentWeight").value,
+            weight: storageWeight(document.querySelector("#assessmentWeight").value),
             strengthExercise: document.querySelector("#strengthExercise").value,
-            strengthTenRm: document.querySelector("#strengthTenRm").value,
+            strengthTenRm: storageWeight(document.querySelector("#strengthTenRm").value),
             formQuality: document.querySelector("#formQuality").value
           })
         );
@@ -12990,8 +13182,8 @@
           type: "抗阻力量评估",
           conclusion: document.querySelector("#strengthTitle").textContent,
           data: [
-            `${document.querySelector("#strengthAge").value} 岁 · ${document.querySelector("#strengthSex").value === "male" ? "男" : "女"} · ${document.querySelector("#assessmentWeight").value} kg`,
-            `${document.querySelector("#strengthExercise").selectedOptions[0].text} 10RM ${document.querySelector("#strengthTenRm").value} kg`,
+            `${document.querySelector("#strengthAge").value} 岁 · ${document.querySelector("#strengthSex").value === "male" ? "男" : "女"} · ${weightText(storageWeight(document.querySelector("#assessmentWeight").value))}`,
+            `${document.querySelector("#strengthExercise").selectedOptions[0].text} 10RM ${weightText(storageWeight(document.querySelector("#strengthTenRm").value))}`,
             document.querySelector("#strengthText").textContent,
             document.querySelector("#strengthDetails li").textContent,
             `动作质量：${document.querySelector("#formQuality").selectedOptions[0].text}`
@@ -13063,6 +13255,11 @@
       });
 
       adjustTrainingDays.addEventListener("click", openScheduleDialog);
+      document.querySelector("#planPauseToggle").addEventListener("click", () => {
+        const profile = getProfile();
+        const plan = buildPlan(profile);
+        changePlanSchedule(loadPlanAdjustments(profile, plan).pausedAt ? "resume" : "pause", null);
+      });
       document.querySelector("#scheduleDialogClose").addEventListener("click", () => scheduleDialog.close());
       document.querySelector("#scheduleCancel").addEventListener("click", () => scheduleDialog.close());
       document.querySelector("#scheduleSave").addEventListener("click", saveTrainingDayPreferences);
@@ -13132,6 +13329,11 @@
       workoutDetail.addEventListener("click", (event) => {
         if (event.target.closest("[data-workout-back]")) {
           window.location.hash = workoutDetailReturnHash;
+          return;
+        }
+        const scheduleButton = event.target.closest("[data-workout-schedule]");
+        if (scheduleButton) {
+          changePlanSchedule(scheduleButton.dataset.workoutSchedule);
           return;
         }
         const adaptiveSetupButton = event.target.closest("[data-adaptive-setup]");
@@ -13240,7 +13442,7 @@
       setLogForm?.addEventListener("submit", (event) => {
         event.preventDefault();
         const exercise = getLoggableExercises().find((item) => item.id === setLogExercise.value);
-        const weightKg = Number(setLogWeight.value);
+        const weightKg = storageWeight(setLogWeight.value);
         const reps = Number(setLogReps.value);
         const sets = Math.max(1, Number(setLogSetCount.value) || 1);
         const estimated1RM = calculateBrzyckiOneRm(weightKg, reps);
@@ -13298,7 +13500,8 @@
       setLogExercise?.addEventListener("change", () => renderOverloadMonitor(setLogExercise.value));
       document.querySelectorAll("[data-log-weight]").forEach((button) => {
         button.addEventListener("click", () => {
-          const next = Math.max(0, Number(setLogWeight.value || 0) + Number(button.dataset.logWeight));
+          const increment = Number(button.dataset.logWeight);
+          const next = Math.max(0, Number(setLogWeight.value || 0) + Math.sign(increment) * Number(displayWeight(Math.abs(increment))));
           setLogWeight.value = String(Math.round(next * 100) / 100);
           updateSetLogPreview();
         });
@@ -13326,18 +13529,21 @@
         }
         const dateButton = event.target.closest("[data-record-calendar-date]");
         if (dateButton) {
-          activeRecordCalendarDate = activeRecordCalendarDate === dateButton.dataset.recordCalendarDate ? null : dateButton.dataset.recordCalendarDate;
+          activeRecordCalendarDate = dateButton.dataset.recordCalendarDate;
           activeCalendarSupplementId = null;
-          renderRecordCalendar();
+          renderRecordCalendarDetail();
+          window.location.hash = "record-day-detail";
           return;
         }
+      });
+      recordCalendarDetail?.addEventListener("click", (event) => {
         const supplementButton = event.target.closest("[data-open-calendar-supplement]");
         if (supplementButton) {
           activeCalendarSupplementId = activeCalendarSupplementId === supplementButton.dataset.openCalendarSupplement ? null : supplementButton.dataset.openCalendarSupplement;
           renderRecordCalendarDetail();
         }
       });
-      trainingCalendarPane?.addEventListener("submit", (event) => {
+      recordCalendarDetail?.addEventListener("submit", (event) => {
         const form = event.target.closest("[data-calendar-supplement-form]");
         if (!form) return;
         event.preventDefault();
@@ -13346,6 +13552,7 @@
         renderRecordCalendarDetail();
         renderTrainingRecordSummary();
         renderOverloadMonitor(form.dataset.exerciseId);
+        renderMuscleVolume();
       });
       completedTrainingFilter?.addEventListener("change", () => {
         activeSupplementLogId = null;
@@ -13369,6 +13576,7 @@
         activeSupplementLogId = null;
         renderTrainingRecordSummary();
         renderOverloadMonitor(form.dataset.exerciseId);
+        renderMuscleVolume();
       });
       setLogList?.addEventListener("click", (event) => {
         const button = event.target.closest("[data-delete-set-log]");
@@ -13378,6 +13586,7 @@
         renderTrainingSetLogs();
         renderTrainingRecordSummary();
         renderOverloadMonitor();
+        renderMuscleVolume();
       });
       overloadExerciseSelect?.addEventListener("change", renderOverloadMonitor);
       document.querySelector("#clearSetLogs")?.addEventListener("click", () => {
@@ -13387,6 +13596,7 @@
         renderTrainingSetLogs();
         renderTrainingRecordSummary();
         renderOverloadMonitor();
+        renderMuscleVolume();
       });
       document.querySelector("#exportSetLogs")?.addEventListener("click", () => {
         const blob = new Blob([JSON.stringify(trainingSetLogs, null, 2)], { type: "application/json" });
@@ -13401,6 +13611,11 @@
       document.querySelectorAll('input[name="appLanguage"]').forEach((input) => {
         input.addEventListener("change", () => {
           if (input.checked) applyLanguage(input.value);
+        });
+      });
+      document.querySelectorAll('input[name="weightUnit"]').forEach((input) => {
+        input.addEventListener("change", () => {
+          if (input.checked) applyWeightUnit(input.value);
         });
       });
 
@@ -13447,6 +13662,12 @@
           if (input && value !== undefined) input.value = value;
         });
       }
+
+      setLogWeight.value = String(displayWeight(Number(setLogWeight.value)));
+      ["#cardioWeight", "#assessmentWeight", "#strengthTenRm"].forEach((selector) => {
+        const input = document.querySelector(selector);
+        if (input.value !== "") input.value = String(displayWeight(Number(input.value)));
+      });
 
       applyLanguage(appLanguage, { persist: false, rerender: false, localize: false });
       const activeModuleId = syncModuleTabs() || "home";

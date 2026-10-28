@@ -7,8 +7,8 @@ const section = (start, end) => html.slice(html.indexOf(start), html.indexOf(end
 const source = section('const cardioVo2Norms =', 'const strengthNormDefinitions =')
   + section('function ageBand(', 'function percentileFromTable(')
   + section('function classifyCardioVo2(', 'function renderAssessment()');
-const api = new Function('document', 'sexLabels', source + '; return { evaluateCardio, classifyCardioVo2, cardioVo2Norms, renderCardioAssessment };');
-const { evaluateCardio, classifyCardioVo2, cardioVo2Norms } = api({}, {});
+const api = new Function('document', 'sexLabels', 'storageWeight', 'displayLoadAdvice', source + '; return { evaluateCardio, classifyCardioVo2, cardioVo2Norms, renderCardioAssessment };');
+const { evaluateCardio, classifyCardioVo2, cardioVo2Norms } = api({}, {}, Number, String);
 
 test('example and weight-dependent estimate', () => {
   const data = { age: 35, sex: 'male', weight: 70, minutes: 12 };
@@ -55,7 +55,7 @@ test('result rendering uses entered data and remains unchanged until explicitly 
   Object.assign(nodes.cardioAge, { value: '35' });
   Object.assign(nodes.cardioWeight, { value: '70' });
   Object.assign(nodes.runMinutes, { value: '12' });
-  const { renderCardioAssessment } = api({ querySelector: selector => nodes[selector.slice(1)] }, { male: '男', female: '女' });
+  const { renderCardioAssessment } = api({ querySelector: selector => nodes[selector.slice(1)] }, { male: '男', female: '女' }, Number, String);
   renderCardioAssessment();
   assert.equal(nodes.cardioTitle.textContent, '良好');
   assert.match(nodes.cardioVo2.textContent, /47\.0/);

@@ -101,7 +101,7 @@ test("adaptive progression setup and low-friction set logging are available", ()
   const openDetailEnd = source.indexOf("function recordFromWorkout", openDetailStart);
   assert.ok(openDetailStart >= 0 && openDetailEnd > openDetailStart);
   assert.doesNotMatch(source.slice(openDetailStart, openDetailEnd), /openAdaptiveCalibrationDialog/);
-  assert.match(source, /class="workout-back-icon"[\s\S]*?aria-label="\$\{workoutBackLabel\}"[\s\S]*?>←<\/button>/);
+  assert.match(source, /class="settings-back" type="button" data-workout-back>← \$\{workoutBackLabel\}<\/button>/);
   assert.match(source, /window\.location\.hash = workoutDetailReturnHash/);
   assert.match(source, /openWorkoutDetail\(activePlanWeekIndex, Number\(button\.dataset\.planDay\), "plan"\)/);
   assert.match(source, /openWorkoutDetail\(Number\(button\.dataset\.weekIndex\), Number\(button\.dataset\.dayIndex\), "home"\)/);
