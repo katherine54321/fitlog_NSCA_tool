@@ -46,6 +46,13 @@ FitMine 提供的是运动训练参考，不替代医疗诊断、治疗或专业
 - 风险与体能评估是训练参考，不构成医疗功能或诊断。
 - 账户删除入口：账户与同步 > 删除账户与云端数据。
 
+## Apple 登录上线前配置
+
+1. 在 Apple Developer 的现有 App ID `com.fitlog.sciencefitness` 启用 **Sign in with Apple**。重新生成 App Store provisioning profile，并在 Codemagic 更新该 profile；启用能力后旧 profile 不能继续用于签名。
+2. 在 Supabase Authentication > Providers > Apple 启用 Apple，并在 Client IDs 中加入 `com.fitlog.sciencefitness`。在 Authentication 设置中启用 **Manual identity linking**，让已登录的邮箱用户可在账户管理页关联 Apple；关联后核对 Supabase user ID 保持不变。
+3. 为账户删除时撤销 Apple 授权，在 Apple Developer 创建 Sign in with Apple key。把 `APPLE_TEAM_ID`、`APPLE_KEY_ID`、`APPLE_CLIENT_ID`（`com.fitlog.sciencefitness`）和 `APPLE_PRIVATE_KEY`（下载的 `.p8` 内容）仅作为 Supabase Edge Function secrets 配置，重新部署 `delete-account`。不要将 `.p8` 或密钥写入仓库、Codemagic 公开变量或 PWA 配置。
+4. 在 iPhone TestFlight 验证：新用户 Apple 登录；既有邮箱用户关联 Apple 后仍看到同一训练记录；退出后另一账户看不到前一账户数据；删除 Apple 账户时 Apple 授权被撤销。若撤销失败，删除仍会完成，App 会提示用户到 iPhone 设置中手动停止 FitMine 的 Apple 授权。
+
 ## 提交前人工待办
 
 1. 确认 `support@fitminetech.com` 可以正常收件，隐私政策和支持页面在线可访问。

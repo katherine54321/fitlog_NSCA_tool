@@ -3,6 +3,9 @@
   const storagePrefix = "fitlog-";
   const sessionKey = "fitlog-sync-session";
   const stateKey = "fitlog-sync-state";
+  const devicePreferences = new Set(["fitlog-language", "fitlog-weight-unit"]);
+  const ownerKey = "fitmine-local-owner-v1";
+  const scopedKey = (owner) => `fitmine-local-scope-v1:${owner}`;
   const backupTable = "user_sync_snapshots";
   const structuredTables = {
     sessions: "workout_sessions",
@@ -36,6 +39,37 @@
     localStorage.removeItem(stateKey);
   }
 
+  function clearTrainingData() {
+    const keys = Object.keys(storageSnapshot());
+    keys.forEach((key) => localStorage.removeItem(key));
+    localStorage.removeItem(stateKey);
+  }
+
+  function enterAccount(userId) {
+    if (!userId) throw new Error("Account identity is missing.");
+    const owner = localStorage.getItem(ownerKey);
+    const next = `user:${userId}`;
+    if (owner === next) return;
+    if (owner || Object.keys(storageSnapshot()).length) {
+      localStorage.setItem(scopedKey(owner || "guest"), JSON.stringify(storageSnapshot()));
+      clearTrainingData();
+      try { restoreSnapshot(JSON.parse(localStorage.getItem(scopedKey(next)) || "{}")); } catch {}
+    }
+    localStorage.setItem(ownerKey, next);
+    markSnapshotSynced();
+  }
+
+  function leaveAccount() {
+    const session = loadSession();
+    const owner = session?.userId ? `user:${session.userId}` : localStorage.getItem(ownerKey);
+    if (owner) localStorage.setItem(scopedKey(owner), JSON.stringify(storageSnapshot()));
+    clearTrainingData();
+    clearSession();
+    localStorage.setItem(ownerKey, "guest");
+    try { restoreSnapshot(JSON.parse(localStorage.getItem(scopedKey("guest")) || "{}")); } catch {}
+    markSnapshotSynced();
+  }
+
   function clearLocalFitLogData() {
     const keys = [];
     for (let index = 0; index < localStorage.length; index += 1) {
@@ -54,11 +88,13 @@
     }
   }
 
+  const appleLinkedInUser = (user) => Boolean(user?.app_metadata?.providers?.includes("apple") || user?.identities?.some((identity) => identity.provider === "apple"));
+
   function storageSnapshot() {
     const snapshot = {};
     for (let index = 0; index < localStorage.length; index += 1) {
       const key = localStorage.key(index);
-      if (key?.startsWith(storagePrefix) && key !== sessionKey && key !== stateKey) {
+      if (key?.startsWith(storagePrefix) && key !== sessionKey && key !== stateKey && !devicePreferences.has(key)) {
         snapshot[key] = localStorage.getItem(key);
       }
     }
@@ -95,7 +131,7 @@
   function restoreSnapshot(snapshot) {
     if (!snapshot || typeof snapshot !== "object") return;
     Object.entries(snapshot).forEach(([key, value]) => {
-      if (key.startsWith(storagePrefix) && typeof value === "string") localStorage.setItem(key, value);
+      if (key.startsWith(storagePrefix) && key !== sessionKey && key !== stateKey && !devicePreferences.has(key) && typeof value === "string") localStorage.setItem(key, value);
     });
   }
 
@@ -400,11 +436,13 @@
     if (!session.access_token || !session.refresh_token) {
       throw new Error("验证码未返回有效会话，请重新发送验证码。");
     }
+    enterAccount(session.user?.id || userIdFromToken(session.access_token));
     saveSession({
       accessToken: session.access_token,
       refreshToken: session.refresh_token,
       email: session.user?.email || email,
       userId: session.user?.id || userIdFromToken(session.access_token),
+      appleLinked: appleLinkedInUser(session.user),
     });
   }
 
@@ -413,6 +451,7 @@
     const accessToken = hash.get("access_token");
     const refreshToken = hash.get("refresh_token");
     if (!accessToken || !refreshToken) return false;
+    enterAccount(userIdFromToken(accessToken));
     saveSession({ accessToken, refreshToken, email: hash.get("email") || "", userId: userIdFromToken(accessToken) });
     history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
     return true;
@@ -448,14 +487,59 @@
     if (!session.access_token || !session.refresh_token) {
       throw new Error("登录链接未返回有效会话，请改用邮箱验证码重新登录。");
     }
+    enterAccount(session.user?.id || userIdFromToken(session.access_token));
     saveSession({
       accessToken: session.access_token,
       refreshToken: session.refresh_token,
       email: session.user?.email || "",
       userId: session.user?.id || userIdFromToken(session.access_token),
+      appleLinked: appleLinkedInUser(session.user),
     });
     clearEmailVerificationParams();
     return true;
+  }
+
+  function appleAuthAvailable() {
+    return Boolean(window.Capacitor?.isNativePlatform?.() && window.Capacitor?.getPlatform?.() === "ios" && window.Capacitor?.Plugins?.FitMineAppleAuth?.signIn);
+  }
+
+  async function appleCredentials() {
+    if (!appleAuthAvailable()) throw new Error(uiText("请在 iPhone App 中使用 Apple 登录。", "Apple sign-in is available in the iPhone app."));
+    const result = await window.Capacitor.Plugins.FitMineAppleAuth.signIn();
+    if (!result?.idToken || !result?.nonce) throw new Error(uiText("Apple 未返回有效登录凭证。", "Apple did not return valid sign-in credentials."));
+    return result;
+  }
+
+  async function exchangeAppleToken({ idToken, nonce }, link = false) {
+    if (!configured()) throw new Error(uiText("云端服务尚未配置。", "Cloud service is not configured."));
+    const current = loadSession();
+    if (link && !current?.accessToken) throw new Error(uiText("请先登录邮箱账户。", "Sign in to your email account first."));
+    const response = await fetch(api("/auth/v1/token?grant_type=id_token"), {
+      method: "POST",
+      headers: headers(link ? current.accessToken : null, { "Content-Type": "application/json" }),
+      body: JSON.stringify({ provider: "apple", id_token: idToken, nonce, ...(link ? { link_identity: true } : {}) }),
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(String(body.error_description || body.msg || body.message || uiText("Apple 登录失败，请稍后重试。", "Apple sign-in failed. Try again later.")).slice(0, 160));
+    }
+    const result = await response.json();
+    if (!result.access_token || !result.refresh_token || !result.user?.id) throw new Error(uiText("Apple 登录未返回有效会话。", "Apple sign-in did not return a valid session."));
+    if (link && result.user.id !== current.userId) throw new Error(uiText("关联账户不匹配，请联系支持。", "Linked account does not match. Contact support."));
+    if (!link) enterAccount(result.user.id);
+    saveSession({ accessToken: result.access_token, refreshToken: result.refresh_token, email: result.user.email || current?.email || "", userId: result.user.id, appleLinked: true });
+    return result;
+  }
+
+  async function signInWithApple() {
+    await exchangeAppleToken(await appleCredentials());
+    await completeSignIn();
+  }
+
+  async function linkAppleIdentity() {
+    await exchangeAppleToken(await appleCredentials(), true);
+    renderAccount();
+    setMessage(uiText("Apple 账户已关联。", "Apple account linked."));
   }
 
   async function completeSignIn() {
@@ -570,13 +654,21 @@
   async function deleteAccount() {
     const session = loadSession();
     if (!configured() || !session?.accessToken) throw new Error("请先登录账户。");
+    let authorizationCode = "";
+    if (session.appleLinked && appleAuthAvailable()) {
+      try { authorizationCode = (await appleCredentials()).authorizationCode || ""; } catch {}
+    }
     const response = await fetch(api("/functions/v1/delete-account"), {
       method: "POST",
       headers: headers(session.accessToken, { "Content-Type": "application/json" }),
-      body: "{}",
+      body: JSON.stringify({ appleAuthorizationCode: authorizationCode }),
     });
     if (!response.ok) throw new Error("账户删除未完成，请稍后重试或联系支持人员。");
+    const result = await response.json();
+    localStorage.removeItem(scopedKey(`user:${session.userId}`));
+    localStorage.removeItem(ownerKey);
     clearLocalFitLogData();
+    return result;
   }
 
   function renderAccount() {
@@ -586,6 +678,10 @@
     const email = document.querySelector("#accountEmailValue");
     if (signedOut) signedOut.hidden = false;
     if (email) email.textContent = session?.email || "—";
+    const appleButton = document.querySelector("#accountAppleSignIn");
+    const linkButton = document.querySelector("#accountLinkApple");
+    if (appleButton) appleButton.hidden = !appleAuthAvailable();
+    if (linkButton) linkButton.hidden = !signedIn || !appleAuthAvailable() || Boolean(session?.appleLinked);
     const myAccountTitle = document.querySelector("#myAccountTitle");
     const myAccountHint = document.querySelector("#myAccountHint");
     const myAccountAction = document.querySelector("#myAccountAction");
@@ -657,20 +753,32 @@
       setOtpStep(false);
       setMessage(uiText("可重新填写邮箱并获取验证码。", "Enter another email to request a new code."));
     });
+    document.querySelector("#accountAppleSignIn")?.addEventListener("click", async () => {
+      if (!document.querySelector("#accountConsent")?.checked) return setMessage(uiText("请先阅读并同意隐私政策。", "Please read and accept the Privacy Policy first."));
+      setMessage(uiText("正在使用 Apple 登录…", "Signing in with Apple…"));
+      try { await signInWithApple(); } catch (error) { setMessage(error.message || uiText("Apple 登录失败。", "Apple sign-in failed.")); }
+    });
+    document.querySelector("#accountLinkApple")?.addEventListener("click", async () => {
+      setMessage(uiText("正在关联 Apple 账户…", "Linking Apple account…"));
+      try { await linkAppleIdentity(); } catch (error) { setMessage(error.message || uiText("账户关联失败。", "Account linking failed.")); }
+    });
     document.querySelector("#accountSignOut")?.addEventListener("click", () => {
-      clearSession();
+      leaveAccount();
       renderAccount();
       window.location.hash = "me";
       setMessage("");
+      window.location.reload();
     });
     document.querySelector("#accountDelete")?.addEventListener("click", async () => {
       if (!window.confirm(uiText("删除后将无法恢复云端训练数据。确定继续吗？", "Cloud training data cannot be recovered after deletion. Continue?"))) return;
       setMessage(uiText("正在删除账户与云端数据…", "Deleting account and cloud data…"));
       try {
-        await deleteAccount();
+        const result = await deleteAccount();
         renderAccount();
         window.location.hash = "me";
-        setMessage(uiText("账户与云端数据已删除，本机数据也已清除。", "Account, cloud data, and local data have been deleted."));
+        setMessage(result.appleRevocationRequired
+          ? uiText("账户与数据已删除。请到 iPhone 设置 > Apple 账户 > 通过 Apple 登录，停止对 FitMine 的授权。", "Account and data deleted. In iPhone Settings > Apple Account > Sign in with Apple, stop using FitMine.")
+          : uiText("账户与云端数据已删除，此账户的本机数据也已清除。", "Account, cloud data, and this account's local data have been deleted."));
       } catch (error) {
         setMessage(error.message || uiText("删除失败，请稍后重试。", "Deletion failed. Try again later."));
       }
@@ -685,6 +793,9 @@
 
   window.FitLogSync = {
     async init() {
+      const existingSession = loadSession();
+      if (!existingSession?.userId && localStorage.getItem(ownerKey)?.startsWith("user:")) leaveAccount();
+      if (existingSession?.userId && !localStorage.getItem(ownerKey)) localStorage.setItem(ownerKey, `user:${existingSession.userId}`);
       let signedInFromLink = captureHashSession();
       bindUi();
       renderAccount();

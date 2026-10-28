@@ -217,6 +217,65 @@ test("email code login reveals OTP input immediately and completes verification"
   assert.equal(session.userId, "user-123");
 });
 
+test("Apple sign-in isolates the previous account's local training records", async () => {
+  const page = createSyncClientHarness({ appleUserId: "user-apple" });
+  page.localStorage.setItem("fitlog-sync-session", JSON.stringify({ accessToken: jwt({ sub: "user-123" }), refreshToken: "old-refresh", email: "old@example.com", userId: "user-123" }));
+  page.localStorage.setItem("fitlog-records", "old account records");
+  vm.runInNewContext(source, page.context);
+  await page.context.window.FitLogSync.init();
+  await page.elements.accountSignOut.click();
+  assert.equal(page.localStorage.getItem("fitlog-records"), null);
+  assert.equal(JSON.parse(page.localStorage.getItem("fitmine-local-scope-v1:user:user-123"))["fitlog-records"], "old account records");
+  page.elements.accountConsent.checked = true;
+  await page.elements.accountAppleSignIn.click();
+  assert.equal(JSON.parse(page.localStorage.getItem("fitlog-sync-session")).userId, "user-apple");
+  const upload = page.fetchCalls.find((call) => call.url.includes("user_sync_snapshots?on_conflict") && JSON.parse(call.options.body).user_id === "user-apple");
+  assert.ok(upload);
+  assert.equal(JSON.parse(upload.options.body).snapshot["fitlog-records"], undefined);
+  const tokenCall = page.fetchCalls.find((call) => call.url.endsWith("/auth/v1/token?grant_type=id_token"));
+  assert.equal(JSON.parse(tokenCall.options.body).provider, "apple");
+  assert.equal(JSON.parse(tokenCall.options.body).nonce, "test-nonce");
+});
+
+test("signing back into the same account restores its local records", async () => {
+  const page = createSyncClientHarness({ appleUserId: "user-123" });
+  page.localStorage.setItem("fitlog-sync-session", JSON.stringify({ accessToken: jwt({ sub: "user-123" }), refreshToken: "old-refresh", email: "old@example.com", userId: "user-123" }));
+  page.localStorage.setItem("fitlog-records", "saved account records");
+  vm.runInNewContext(source, page.context);
+  await page.context.window.FitLogSync.init();
+  await page.elements.accountSignOut.click();
+  page.elements.accountConsent.checked = true;
+  await page.elements.accountAppleSignIn.click();
+  assert.equal(page.localStorage.getItem("fitlog-records"), "saved account records");
+});
+
+test("linking Apple keeps the existing Supabase user ID", async () => {
+  const page = createSyncClientHarness({ appleUserId: "user-123" });
+  page.localStorage.setItem("fitlog-sync-session", JSON.stringify({ accessToken: jwt({ sub: "user-123" }), refreshToken: "old-refresh", email: "old@example.com", userId: "user-123" }));
+  vm.runInNewContext(source, page.context);
+  await page.context.window.FitLogSync.init();
+  await page.elements.accountLinkApple.click();
+  const tokenCall = page.fetchCalls.find((call) => call.url.endsWith("/auth/v1/token?grant_type=id_token"));
+  assert.equal(JSON.parse(tokenCall.options.body).link_identity, true);
+  assert.match(tokenCall.options.headers.Authorization, /^Bearer header\./);
+  assert.equal(JSON.parse(page.localStorage.getItem("fitlog-sync-session")).userId, "user-123");
+  assert.equal(JSON.parse(page.localStorage.getItem("fitlog-sync-session")).appleLinked, true, page.elements.accountManagementMessage.textContent);
+  assert.equal(page.elements.accountLinkApple.hidden, true);
+});
+
+test("deleting an Apple account sends a fresh authorization code for server-side revocation", async () => {
+  const page = createSyncClientHarness();
+  page.localStorage.setItem("fitlog-sync-session", JSON.stringify({ accessToken: jwt({ sub: "user-123" }), refreshToken: "old-refresh", email: "apple@example.com", userId: "user-123", appleLinked: true }));
+  page.localStorage.setItem("fitlog-records", "private records");
+  vm.runInNewContext(source, page.context);
+  await page.context.window.FitLogSync.init();
+  await page.elements.accountDelete.click();
+  const deletion = page.fetchCalls.find((call) => call.url.endsWith("/functions/v1/delete-account"));
+  assert.equal(JSON.parse(deletion.options.body).appleAuthorizationCode, "fresh-apple-code");
+  assert.equal(page.localStorage.getItem("fitlog-sync-session"), null);
+  assert.equal(page.localStorage.getItem("fitlog-records"), null);
+});
+
 function createSyncClientHarness(options = {}) {
   let resolveOtpRequest;
   const fetchCalls = [];
@@ -238,6 +297,8 @@ function createSyncClientHarness(options = {}) {
     "accountVerifyCode",
     "accountChangeEmail",
     "accountSignOut",
+    "accountAppleSignIn",
+    "accountLinkApple",
     "accountDelete",
     "accountMessage",
     "accountManagementMessage",
@@ -255,8 +316,8 @@ function createSyncClientHarness(options = {}) {
         return selector.startsWith("#") ? elements[selector.slice(1)] || null : null;
       },
     },
-    fetch: async (url, options = {}) => {
-      fetchCalls.push({ url, options });
+    fetch: async (url, requestOptions = {}) => {
+      fetchCalls.push({ url, options: requestOptions });
       if (url.endsWith("/auth/v1/otp")) {
         await new Promise((resolve) => {
           resolveOtpRequest = resolve;
@@ -270,6 +331,11 @@ function createSyncClientHarness(options = {}) {
           user: { id: "user-123", email: "user@example.com" },
         });
       }
+      if (url.endsWith("/auth/v1/token?grant_type=id_token")) {
+        const userId = options.appleUserId || "user-apple";
+        return okResponse({ access_token: jwt({ sub: userId }), refresh_token: "apple-refresh", user: { id: userId, email: "apple@example.com" } });
+      }
+      if (url.endsWith("/functions/v1/delete-account")) return okResponse({ deleted: true, appleRevocationRequired: false });
       if (url.includes("/rest/v1/user_sync_snapshots?user_id=")) return okResponse(remoteSnapshots);
       if (url.includes("/rest/v1/user_sync_snapshots?on_conflict=")) return okResponse([]);
       if (/\/rest\/v1\/(workout_sessions|workout_exercises|workout_sets)\?on_conflict=id/.test(url)) return okResponse([]);
@@ -281,6 +347,11 @@ function createSyncClientHarness(options = {}) {
     URL,
     URLSearchParams,
     window: {
+      Capacitor: {
+        isNativePlatform: () => true,
+        getPlatform: () => "ios",
+        Plugins: { FitMineAppleAuth: { signIn: async () => ({ idToken: "test-id-token", nonce: "test-nonce", authorizationCode: "fresh-apple-code" }) } },
+      },
       FITLOG_RUNTIME: {
         supabaseUrl: "https://fitmine.example",
         supabaseAnonKey: "anon-key",

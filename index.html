@@ -365,6 +365,44 @@
         margin-top: 8px;
       }
 
+      .account-dialog .apple-sign-in-btn {
+        position: relative;
+        min-height: 44px;
+        border: 1px solid #fff;
+        border-radius: 10px;
+        background: #000;
+        color: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        overflow: hidden;
+      }
+
+      .apple-sign-in-btn .official-apple-button {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      html[lang="zh-CN"] .official-apple-button-en,
+      html[lang="en"] .official-apple-button-zh {
+        display: none;
+      }
+
+      #accountAppleSignIn[hidden],
+      #accountLinkApple[hidden] {
+        display: none;
+      }
+
+      .apple-sign-in-btn .apple-mark {
+        margin-right: 8px;
+        font-size: 24px;
+        font-weight: 400;
+        vertical-align: -1px;
+      }
+
       .account-email-label,
       .account-email {
         display: block;
@@ -6970,6 +7008,7 @@
           <input id="accountEmail" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" />
           <label class="account-consent"><input id="accountConsent" type="checkbox" /> <span data-i18n="privacyConsent">我已阅读并同意</span><a id="accountPrivacyLink" href="./legal/privacy.html" target="_blank" rel="noopener" data-i18n="privacyPolicy">隐私政策</a></label>
           <button class="primary-btn" id="accountSendCode" type="button" data-i18n="sendCode">发送验证码</button>
+          <button class="secondary-btn apple-sign-in-btn" id="accountAppleSignIn" type="button" hidden><span class="apple-mark" aria-hidden="true"></span><span data-i18n="signInWithApple">通过 Apple 登录</span><img class="official-apple-button official-apple-button-en" src="https://appleid.cdn-apple.com/appleid/button?type=sign-in&amp;color=black&amp;border=true&amp;border_radius=10&amp;width=350&amp;height=44&amp;scale=2&amp;locale=en_US" alt="" aria-hidden="true" /><img class="official-apple-button official-apple-button-zh" src="https://appleid.cdn-apple.com/appleid/button?type=sign-in&amp;color=black&amp;border=true&amp;border_radius=10&amp;width=350&amp;height=44&amp;scale=2&amp;locale=zh_CN" alt="" aria-hidden="true" /></button>
           <div id="accountOtpStep" hidden>
             <label class="account-email-label" for="accountOtp" data-i18n="emailCode">邮箱验证码</label>
             <input id="accountOtp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="输入 6 位验证码" />
@@ -7161,6 +7200,7 @@
                 <strong id="accountEmailValue">—</strong>
               </div>
               <div class="settings-list">
+                <button class="settings-row" id="accountLinkApple" type="button" data-i18n="linkAppleAccount" hidden>关联 Apple 账户</button>
                 <button class="settings-row settings-row-danger" id="accountSignOut" type="button">
                   <span data-i18n="signOut">退出当前账户</span><span aria-hidden="true">›</span>
                 </button>
@@ -7736,6 +7776,8 @@
         privacyPolicy: { zh: "隐私政策", en: "Privacy Policy" },
         supportPage: { zh: "支持", en: "Support" },
         sendCode: { zh: "发送验证码", en: "Send code" },
+        signInWithApple: { zh: "通过 Apple 登录", en: "Sign in with Apple" },
+        linkAppleAccount: { zh: "关联 Apple 账户", en: "Link Apple account" },
         emailCode: { zh: "邮箱验证码", en: "Email verification code" },
         verifyAndSignIn: { zh: "验证并登录", en: "Verify and sign in" },
         changeEmail: { zh: "更换邮箱", en: "Change email" },

@@ -50,3 +50,18 @@ test("iOS target contains privacy manifest, branded app icon, and auth URL schem
   assert.match(sharedScheme, /BlueprintName = "App"/);
   assert.match(sharedScheme, /buildForArchiving = "YES"/);
 });
+
+test("iOS native Apple sign-in bridge and entitlement are registered", async () => {
+  const [swift, storyboard, entitlements, project] = await Promise.all([
+    readFile(new URL("ios/App/App/AppDelegate.swift", root), "utf8"),
+    readFile(new URL("ios/App/App/Base.lproj/Main.storyboard", root), "utf8"),
+    readFile(new URL("ios/App/App/App.entitlements", root), "utf8"),
+    readFile(new URL("ios/App/App.xcodeproj/project.pbxproj", root), "utf8"),
+  ]);
+  assert.match(swift, /registerPluginInstance\(FitMineAppleAuthPlugin\(\)\)/);
+  assert.match(swift, /request\.nonce = digest/);
+  assert.match(swift, /ASAuthorizationAppleIDProvider/);
+  assert.match(storyboard, /customClass="FitMineBridgeViewController"/);
+  assert.match(entitlements, /com\.apple\.developer\.applesignin/);
+  assert.match(project, /CODE_SIGN_ENTITLEMENTS = App\/App\.entitlements/);
+});

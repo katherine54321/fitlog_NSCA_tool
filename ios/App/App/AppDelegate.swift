@@ -1,5 +1,80 @@
 import UIKit
 import Capacitor
+import AuthenticationServices
+import CryptoKit
+
+@objc(FitMineBridgeViewController)
+class FitMineBridgeViewController: CAPBridgeViewController {
+    override func capacitorDidLoad() {
+        super.capacitorDidLoad()
+        bridge?.registerPluginInstance(FitMineAppleAuthPlugin())
+    }
+}
+
+@objc(FitMineAppleAuthPlugin)
+public class FitMineAppleAuthPlugin: CAPPlugin, CAPBridgedPlugin, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    public let identifier = "FitMineAppleAuthPlugin"
+    public let jsName = "FitMineAppleAuth"
+    public let pluginMethods: [CAPPluginMethod] = [CAPPluginMethod(name: "signIn", returnType: CAPPluginReturnPromise)]
+
+    private var pendingCall: CAPPluginCall?
+    private var nonce: String?
+    private var anchor: ASPresentationAnchor?
+
+    @objc public func signIn(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard self.pendingCall == nil else {
+                call.reject("Apple sign-in is already in progress.")
+                return
+            }
+            guard let window = self.bridge?.viewController?.view.window else {
+                call.reject("Apple sign-in window is unavailable.")
+                return
+            }
+            let nonce = UUID().uuidString
+            let digest = SHA256.hash(data: Data(nonce.utf8)).map { String(format: "%02x", $0) }.joined()
+            let request = ASAuthorizationAppleIDProvider().createRequest()
+            request.requestedScopes = [.email, .fullName]
+            request.nonce = digest
+            self.pendingCall = call
+            self.nonce = nonce
+            self.anchor = window
+            let controller = ASAuthorizationController(authorizationRequests: [request])
+            controller.delegate = self
+            controller.presentationContextProvider = self
+            controller.performRequests()
+        }
+    }
+
+    public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return anchor ?? UIWindow()
+    }
+
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+              let token = credential.identityToken,
+              let idToken = String(data: token, encoding: .utf8),
+              let nonce = nonce else {
+            pendingCall?.reject("Apple did not return an identity token.")
+            reset()
+            return
+        }
+        let code = credential.authorizationCode.flatMap { String(data: $0, encoding: .utf8) }
+        pendingCall?.resolve(["idToken": idToken, "nonce": nonce, "authorizationCode": code ?? ""])
+        reset()
+    }
+
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        pendingCall?.reject(error.localizedDescription)
+        reset()
+    }
+
+    private func reset() {
+        pendingCall = nil
+        nonce = nil
+        anchor = nil
+    }
+}
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
