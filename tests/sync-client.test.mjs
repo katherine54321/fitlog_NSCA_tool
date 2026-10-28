@@ -23,6 +23,7 @@ test("sync payload excludes its own credential and revision keys", () => {
   assert.match(source, /workout_sets/);
   assert.match(source, /functions\/v1\/delete-account/);
   assert.match(source, /accountConsent/);
+  assert.match(source, /policy_version: "2026-10-24"/);
 });
 
 test("syncNow keeps the legacy snapshot and upserts structured training rows", async () => {

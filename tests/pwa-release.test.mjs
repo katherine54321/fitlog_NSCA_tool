@@ -9,9 +9,24 @@ test("release build includes PWA runtime and exercise assets", async () => {
   const expected = [
     "index.html", "manifest.webmanifest", "sw.js", "config/fitlog-runtime.js",
     "sync/fitlog-sync.js", "data/exercises-v1.json", "assets/exercise-placeholder.svg",
-    "legal/privacy.html", "legal/support.html",
+    "legal/privacy.html", "legal/support.html", "legal/privacy-choices.html",
+    "legal/privacy-en.html", "legal/support-en.html", "legal/privacy-choices-en.html",
   ];
   await Promise.all(expected.map((file) => access(new URL(file, output))));
+});
+
+test("English legal pages expose support and account deletion information", async () => {
+  const [privacy, choices, support] = await Promise.all([
+    readFile(new URL("legal/privacy-en.html", output), "utf8"),
+    readFile(new URL("legal/privacy-choices-en.html", output), "utf8"),
+    readFile(new URL("legal/support-en.html", output), "utf8"),
+  ]);
+  assert.match(privacy, /<html lang="en">/);
+  assert.match(privacy, /Supabase/);
+  assert.match(privacy, /Resend/);
+  assert.match(privacy, /privacy-choices-en\.html/);
+  assert.match(choices, /Delete account and cloud data/);
+  assert.match(support, /mailto:support@fitminetech\.com/);
 });
 
 test("PWA document declares installable and offline delivery assets", async () => {
@@ -53,6 +68,10 @@ test("PWA document declares installable and offline delivery assets", async () =
   assert.match(html, /id="language-settings"/);
   assert.match(html, /id="language-settings"[\s\S]*?href="#settings"/);
   assert.match(html, /name="appLanguage" value="en"/);
+  assert.match(html, /id="accountPrivacyLink" href="\.\/legal\/privacy\.html"/);
+  assert.match(html, /appLanguage === "en" \? "\.\/legal\/privacy-en\.html" : "\.\/legal\/privacy\.html"/);
+  assert.match(html, /id="settingsPrivacyLink" href="\.\/legal\/privacy\.html"/);
+  assert.match(html, /id="settingsSupportLink" href="\.\/legal\/support\.html"/);
   assert.match(html, /function localizeInterfaceAttributes/);
   assert.match(html, /function findUnexpectedChinese/);
   assert.match(html, /window\.FitMineI18n/);
@@ -62,6 +81,8 @@ test("PWA document declares installable and offline delivery assets", async () =
   assert.doesNotMatch(html, /id="accountSyncNow"/);
   assert.doesNotMatch(html, /训练数据备份/);
   assert.equal(JSON.parse(manifest).display, "standalone");
+  assert.equal(JSON.parse(manifest).name, "FitMine");
+  assert.equal(JSON.parse(manifest).short_name, "FitMine");
   assert.equal(JSON.parse(manifest).scope, "./");
   assert.match(serviceWorker, /manifest\.webmanifest/);
   assert.match(serviceWorker, /self\.registration\.scope/);

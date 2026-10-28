@@ -555,7 +555,7 @@
     const consentRows = ["privacy", "health_data"].map((consent_type) => ({
       user_id: session.userId,
       consent_type,
-      policy_version: "2026-09-15",
+      policy_version: "2026-10-24",
     }));
     await fetch(api("/rest/v1/user_consents?on_conflict=user_id,consent_type,policy_version"), {
       method: "POST",

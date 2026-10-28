@@ -4,14 +4,14 @@
 
 | 项目 | 建议值 |
 | --- | --- |
-| App 名称 | FitMine 科学力量训练 |
-| 副标题 | 科学训练计划与记录 |
+| App 名称（首版英语区，已在 App Store Connect 创建） | FitMine:Scientific Training |
+| 副标题（首版英语区） | Strength Plans & Workout Logs |
 | Bundle ID | `com.fitlog.sciencefitness`，提交前确认 Apple 开发者后台可用 |
 | SKU | `fitlog-ios-001` |
 | 分类 | 健康健美 / 教育 |
 | 年龄分级 | 依据实际问卷重新填写；不要将评估表述为医疗诊断 |
-| 支持 URL | `https://fitminetech.com/legal/support.html` |
-| 隐私政策 URL | `https://fitminetech.com/legal/privacy.html` |
+| 支持 URL | `https://fitminetech.com/legal/support-en.html` |
+| 隐私政策 URL | `https://fitminetech.com/legal/privacy-en.html` |
 
 ## 中文商店文案
 

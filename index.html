@@ -6968,7 +6968,7 @@
         <div id="accountSignedOut">
           <label class="account-email-label" for="accountEmail" data-i18n="email">邮箱</label>
           <input id="accountEmail" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" />
-          <label class="account-consent"><input id="accountConsent" type="checkbox" /> <span data-i18n="privacyConsent">我已阅读并同意</span><a href="./legal/privacy.html" target="_blank" rel="noopener" data-i18n="privacyPolicy">隐私政策</a></label>
+          <label class="account-consent"><input id="accountConsent" type="checkbox" /> <span data-i18n="privacyConsent">我已阅读并同意</span><a id="accountPrivacyLink" href="./legal/privacy.html" target="_blank" rel="noopener" data-i18n="privacyPolicy">隐私政策</a></label>
           <button class="primary-btn" id="accountSendCode" type="button" data-i18n="sendCode">发送验证码</button>
           <div id="accountOtpStep" hidden>
             <label class="account-email-label" for="accountOtp" data-i18n="emailCode">邮箱验证码</label>
@@ -7183,6 +7183,14 @@
                 <a class="settings-row" href="#weight-settings">
                   <span data-i18n="weightSettings">重量单位</span>
                   <span class="settings-row-value"><span id="accountWeightUnitValue">KG</span> ›</span>
+                </a>
+                <a class="settings-row" id="settingsPrivacyLink" href="./legal/privacy.html" target="_blank" rel="noopener">
+                  <span data-i18n="privacyPolicy">隐私政策</span>
+                  <span class="settings-row-value" aria-hidden="true">›</span>
+                </a>
+                <a class="settings-row" id="settingsSupportLink" href="./legal/support.html" target="_blank" rel="noopener">
+                  <span data-i18n="supportPage">支持</span>
+                  <span class="settings-row-value" aria-hidden="true">›</span>
                 </a>
               </div>
             </div>
@@ -7726,6 +7734,7 @@
         email: { zh: "邮箱", en: "Email" },
         privacyConsent: { zh: "我已阅读并同意", en: "I have read and agree to the" },
         privacyPolicy: { zh: "隐私政策", en: "Privacy Policy" },
+        supportPage: { zh: "支持", en: "Support" },
         sendCode: { zh: "发送验证码", en: "Send code" },
         emailCode: { zh: "邮箱验证码", en: "Email verification code" },
         verifyAndSignIn: { zh: "验证并登录", en: "Verify and sign in" },
@@ -8245,6 +8254,9 @@
         if (persist) localStorage.setItem(APP_LANGUAGE_KEY, appLanguage);
         document.documentElement.lang = appLanguage === "en" ? "en" : "zh-CN";
         document.title = appLanguage === "en" ? "FitMine Strength Training" : "FitMine 科学力量训练";
+        document.querySelector("#accountPrivacyLink").href = appLanguage === "en" ? "./legal/privacy-en.html" : "./legal/privacy.html";
+        document.querySelector("#settingsPrivacyLink").href = appLanguage === "en" ? "./legal/privacy-en.html" : "./legal/privacy.html";
+        document.querySelector("#settingsSupportLink").href = appLanguage === "en" ? "./legal/support-en.html" : "./legal/support.html";
         document.querySelectorAll("[data-i18n]").forEach((element) => {
           const value = interfaceTranslations[element.dataset.i18n]?.[appLanguage];
           if (value) element.textContent = value;
