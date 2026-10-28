@@ -31,6 +31,16 @@ test("iOS target contains privacy manifest, branded app icon, and auth URL schem
   assert.doesNotMatch(plist, /UISupportedInterfaceOrientations~ipad/);
   assert.match(plist, /<key>ITSAppUsesNonExemptEncryption<\/key>\s*<false\/>/);
   assert.ok(icon.length > 10_000);
+  assert.equal(icon.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
+  assert.equal(icon.readUInt32BE(16), 1024);
+  assert.equal(icon.readUInt32BE(20), 1024);
+  assert.equal(icon[25], 2, "App Store icon must be RGB without an alpha channel");
+  for (let offset = 8; offset < icon.length;) {
+    const length = icon.readUInt32BE(offset);
+    const type = icon.toString("ascii", offset + 4, offset + 8);
+    assert.notEqual(type, "tRNS", "App Store icon must not include transparency");
+    offset += 12 + length;
+  }
   assert.match(codemagic, /instance_type: mac_mini_m2/);
   assert.match(codemagic, /xcode: 26\.4/);
   assert.match(codemagic, /bundle_identifier: com\.fitlog\.sciencefitness/);
