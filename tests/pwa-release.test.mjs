@@ -22,6 +22,7 @@ test("PWA document declares installable and offline delivery assets", async () =
     readFile(new URL("sw.js", output), "utf8"),
   ]);
   assert.match(html, /<meta name="apple-mobile-web-app-capable" content="yes"/);
+  assert.match(html, /<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/);
   assert.match(html, /src="\.\/sync\/fitlog-sync\.js"/);
   assert.match(html, /id="accountButton"/);
   assert.match(html, /id="myAccountButton"/);

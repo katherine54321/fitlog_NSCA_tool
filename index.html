@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <title>FitMine 科学力量训练 | NSCA-CPT 训练知识库</title>
     <meta name="theme-color" content="#1b1d20" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -545,6 +545,8 @@
         min-height: 44px;
         margin: 0;
       }
+
+      #planNoticeDialog .schedule-dialog-actions { display: block; }
 
       .mobile-nav {
         position: fixed;
@@ -2293,9 +2295,13 @@
       .evaluation-entry[hidden],
       .fitness-evaluation-pane[hidden],
       .plan-empty-state[hidden],
+      #plan [data-plan-current-content][hidden],
+      #planTemplateLibrary[hidden],
       .record-detail[hidden] {
         display: none;
       }
+
+      #planTemplateFormCancel[hidden] { display: none; }
 
       .fitness-tabs {
         margin: 0 0 10px;
@@ -2690,6 +2696,11 @@
         gap: 10px;
       }
 
+      .plan-template-library { margin-top: 18px; }
+      .plan-template-library h3 { margin: 0 0 12px; }
+      .plan-template-library h4 { margin: 16px 0 10px; }
+      .plan-template-library .resistance-template p { margin: 0; }
+
       .history-plan {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
@@ -2700,6 +2711,35 @@
         border-radius: 8px;
         background: #fff;
       }
+
+      .history-plan-trigger {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .history-plan-trigger:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; }
+
+      .history-plan-title { display: block; font-size: 16px; font-weight: 700; }
+      .history-plan-meta { display: block; margin-top: 5px; font-size: 12px; color: var(--text-secondary); }
+
+      .history-week { margin-top: 12px; }
+      .history-week h4 { margin: 0 0 6px; }
+      .history-workout { padding: 12px 0; border-top: 1px solid var(--border-subtle); }
+      .history-workout strong,
+      .history-workout small { display: block; }
+      .history-workout small { margin-top: 4px; color: var(--text-secondary); }
+      .history-workout ul { margin: 8px 0 0; padding-left: 20px; }
+      .history-workout li { margin-top: 4px; }
 
       .history-plan h3,
       .history-plan p {
@@ -5469,6 +5509,9 @@
         grid-template-columns: 1fr;
       }
 
+      .home-today-card.has-actions { grid-template-columns: 1fr; }
+      .home-today-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; margin-top: 12px; }
+
       .home-today-kicker {
         display: inline-flex;
         margin-bottom: 6px;
@@ -5518,7 +5561,23 @@
         background: transparent;
         font-size: 13px;
         font-weight: 900;
+        text-decoration: none;
+        cursor: pointer;
       }
+
+      .home-today-action.is-complete { color: var(--brand); background: transparent; }
+      .home-today-secondary {
+        min-height: 44px;
+        padding: 0 4px;
+        border: 0;
+        background: transparent;
+        color: var(--text-secondary);
+        font: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .home-today-secondary:focus-visible, .home-today-action:focus-visible { outline: 2px solid var(--brand-accent); outline-offset: 2px; }
 
       .home-next-plan {
         display: grid;
@@ -5804,6 +5863,8 @@
       .workout-schedule-actions button { border: 1px solid var(--border); border-radius: 9px; background: transparent; color: var(--text); padding: 8px 11px; font: inherit; font-size: 12px; cursor: pointer; }
       .workout-schedule-actions button:hover, .workout-schedule-actions button:focus-visible { border-color: var(--brand); }
       .workout-schedule-note { margin: 8px 0 0; color: var(--text-secondary); font-size: 12px; }
+      .workout-missing-data { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; padding: 12px 14px; border: 1px solid var(--border-subtle); border-radius: 10px; color: var(--text-secondary); font-size: 12px; }
+      .workout-missing-data button { min-height: 40px; padding: 0; border: 0; background: transparent; color: var(--text-strong); font: inherit; font-weight: 700; cursor: pointer; }
 
       @media (max-width: 520px) {
         .calendar-exercise-item .completed-training-supplement-form {
@@ -6954,6 +7015,29 @@
         </div>
       </dialog>
 
+      <dialog class="schedule-dialog" id="planTemplateDialog" aria-labelledby="planTemplateDialogTitle">
+        <div class="schedule-dialog-head">
+          <div>
+            <h2 id="planTemplateDialogTitle"></h2>
+            <p class="schedule-dialog-summary" id="planTemplateDialogConditions"></p>
+          </div>
+          <button class="icon-btn" id="planTemplateDialogClose" type="button" aria-label="关闭">×</button>
+        </div>
+        <p class="schedule-dialog-summary" id="planTemplateDialogProfile"></p>
+        <p class="schedule-dialog-summary" id="planTemplateDialogStatus" role="status"></p>
+        <div class="schedule-dialog-actions">
+          <button class="ghost-btn" id="planTemplateDialogCancel" type="button">取消</button>
+          <button class="primary-btn" id="planTemplateDialogContinue" type="button"></button>
+        </div>
+      </dialog>
+
+      <dialog class="schedule-dialog" id="planNoticeDialog" aria-labelledby="planNoticeTitle">
+        <h2 id="planNoticeTitle"></h2>
+        <div class="schedule-dialog-actions">
+          <button class="primary-btn" id="planNoticeConfirm" type="button">确定</button>
+        </div>
+      </dialog>
+
       <dialog class="adaptive-calibration-dialog" id="adaptiveCalibrationDialog" aria-labelledby="adaptiveCalibrationTitle">
         <div class="adaptive-calibration-head">
           <div>
@@ -7299,7 +7383,6 @@
               </div>
               <div class="plan-actions">
                 <button class="secondary-btn" id="editPlan" type="button" hidden>修改训练计划</button>
-                <button class="secondary-btn" id="savePlan" type="button">保存方案</button>
               </div>
             </div>
             <div class="tabs plan-tabs" role="tablist" aria-label="计划内容切换" id="planTabs">
@@ -7308,11 +7391,16 @@
             </div>
             <div class="plan-pane" id="currentPlanPane" data-plan-pane>
               <div class="plan-empty-state" id="planEmptyState">
-                <span class="chip">当前计划</span>
-                <h3>还没有训练计划</h3>
-                <p class="muted">选择训练目标、训练历史和每周可训练天数；可按需设置一个重点部位与加强目的。</p>
+                <h3>当前无计划</h3>
                 <button class="primary-btn" id="startPlan" type="button">生成训练计划</button>
               </div>
+              <section class="plan-template-library" id="planTemplateLibrary" hidden aria-labelledby="planTemplateTitle">
+                <h3 id="planTemplateTitle">计划模板</h3>
+                <h4>历史训练计划</h4>
+                <div class="template-list" id="historyTemplateList"></div>
+                <h4>官方训练计划模板</h4>
+                <div class="template-list" id="officialTemplateList"></div>
+              </section>
               <div class="card plan-generator" id="profileEditor" aria-labelledby="profileTitle">
                 <div class="plan-generator-head">
                   <div>
@@ -7320,7 +7408,7 @@
                   </div>
                   <span class="chip">4 周计划</span>
                 </div>
-                <form id="profileForm">
+                <form id="profileForm" novalidate>
                   <div class="plan-input-grid">
                     <label>
                       <span>训练目标</span>
@@ -7334,7 +7422,8 @@
                     </label>
                     <label>
                       <span>训练历史</span>
-                      <select id="experience">
+                      <select id="experience" required>
+                        <option value="" selected disabled>请选择训练经验</option>
                         <option value="beginner">初学者：规律抗阻 &lt; 6 个月</option>
                         <option value="intermediate">中级：规律抗阻 6-12 个月</option>
                         <option value="advanced">高级：系统抗阻 &gt; 1 年</option>
@@ -7379,6 +7468,8 @@
                       <small>调整重点动作的顺序、次数范围和辅助训练方式。</small>
                     </label>
                   </div>
+                  <p class="plan-form-note" id="planTemplateFormHint" hidden></p>
+                  <button class="ghost-btn" id="planTemplateFormCancel" type="button" hidden>返回计划模板</button>
                   <button class="primary-btn" type="submit">生成 4 周周期课表</button>
                   <p class="plan-form-note">风险评估结果会作为训练安全提示；如有疼痛、疾病或医生限制，请先完成风险评估。</p>
                 </form>
@@ -7421,6 +7512,15 @@
             <div class="plan-pane" id="historyPlanPane" data-plan-pane hidden>
               <div class="history-list" id="planHistoryList"></div>
             </div>
+          </section>
+
+          <section class="panel section module-panel" id="plan-edit" data-module-panel hidden>
+            <button class="settings-back" id="planEditBack" type="button">← 返回计划</button>
+            <div id="planEditFormHost"></div>
+          </section>
+
+          <section class="panel section module-panel" id="plan-history-detail" data-module-panel hidden>
+            <div id="planHistoryDetail"></div>
           </section>
 
           <section class="panel section module-panel" id="training" data-module-panel hidden>
@@ -7681,11 +7781,17 @@
         ["修改训练计划", "Edit plan"],
         ["保存方案", "Save plan"],
         ["历史训练计划", "Plan history"],
+        ["计划模板", "Plan templates"],
+        ["官方训练计划模板", "Official plans"],
         ["还没有训练计划", "No training plan yet"],
+        ["当前无计划", "No current plan"],
         ["生成训练计划", "Create training plan"],
         ["生成周期化课表", "Create periodized plan"],
         ["训练目标", "Training goal"],
         ["训练历史", "Training experience"],
+        ["请选择训练经验", "Select training experience"],
+        ["返回计划模板", "Back to plan templates"],
+        ["返回计划", "Back to plan"],
         ["每周可训练天数", "Training days per week"],
         ["增肌", "Hypertrophy"],
         ["肌耐力", "Muscular endurance"],
@@ -8421,6 +8527,24 @@
 
       const resistanceTemplates = [
         {
+          id: "hypertrophy-3",
+          name: "增肌",
+          days: 3,
+          goal: "hypertrophy",
+          minExperience: "beginner",
+          conditions: "初学者及以上；每周可训练 3 天，训练日间留出恢复时间。",
+          conditionsEn: "Beginner or above; available for 3 training days per week with recovery between sessions."
+        },
+        {
+          id: "hypertrophy-4",
+          name: "增肌",
+          days: 4,
+          goal: "hypertrophy",
+          minExperience: "intermediate",
+          conditions: "中级及以上；每周可训练 4 天，能稳定完成基础动作并恢复。",
+          conditionsEn: "Intermediate or above; available for 4 training days per week and able to recover between sessions."
+        },
+        {
           id: "full-body-2",
           name: "全身基础抗阻",
           level: "初学者",
@@ -8664,14 +8788,22 @@
       const libraryResultText = document.querySelector("#libraryResultText");
       const exerciseDetailPage = document.querySelector("#exerciseDetailPage");
       const profileEditor = document.querySelector("#profileEditor");
+      document.querySelector("#planEditFormHost").append(profileEditor);
       const profileSnapshot = document.querySelector("#profileSnapshot");
       const profileFacts = document.querySelector("#profileFacts");
       const editPlanButton = document.querySelector("#editPlan");
-      const savePlanButton = document.querySelector("#savePlan");
+      const planNoticeDialog = document.querySelector("#planNoticeDialog");
       const planEmptyState = document.querySelector("#planEmptyState");
       const startPlanButton = document.querySelector("#startPlan");
       const planHistoryList = document.querySelector("#planHistoryList");
+      const planHistoryDetail = document.querySelector("#planHistoryDetail");
       const resistanceTemplateList = document.querySelector("#resistanceTemplateList");
+      const planTemplateLibrary = document.querySelector("#planTemplateLibrary");
+      const historyTemplateList = document.querySelector("#historyTemplateList");
+      const officialTemplateList = document.querySelector("#officialTemplateList");
+      const planTemplateDialog = document.querySelector("#planTemplateDialog");
+      const planTemplateFormHint = document.querySelector("#planTemplateFormHint");
+      const planTemplateFormCancel = document.querySelector("#planTemplateFormCancel");
       const setLogForm = document.querySelector("#setLogForm");
       const setLogExercise = document.querySelector("#setLogExercise");
       const setLogWeight = document.querySelector("#setLogWeight");
@@ -8751,6 +8883,9 @@
       let completedPlanDays = JSON.parse(localStorage.getItem("fitlog-plan-completed") || "[]");
       if (!Array.isArray(completedPlanDays)) completedPlanDays = [];
       let planHistory = JSON.parse(localStorage.getItem("fitlog-plan-history") || "[]");
+      let activeHistoryPlanIndex = null;
+      let pendingOfficialTemplateId = null;
+      let lastModuleId = "";
       let isEditingPlan = false;
       let activePlanWeekIndex = 0;
       let activeWorkoutDay = null;
@@ -8885,6 +9020,7 @@
           renderPlanHistory();
           renderResistanceTemplates();
         }
+        if (moduleId === "plan-history-detail") renderHistoryPlanDetail(activeHistoryPlanIndex ?? 0);
         if (moduleId === "training") {
           const activePane = document.querySelector("#training")?.dataset.activePane || "movesPane";
           initializeTrainingPane(activePane);
@@ -8929,6 +9065,7 @@
           observeLibraryImages();
         }
         if (initializedModules.has("records")) renderRecords();
+        if (initializedModules.has("plan-history-detail")) renderHistoryPlanDetail(activeHistoryPlanIndex ?? 0);
         if (activeLibraryExercise) renderExerciseDetail();
         if (exerciseReplacementContext) renderExerciseReplacementPage();
       }
@@ -9019,6 +9156,11 @@
         if (requested === "moves") setTrainingPane("movesPane");
         const normalized = aliases[requested] || requested;
         const activeId = modules.some((panel) => panel.id === normalized) ? normalized : "home";
+        if (lastModuleId === "plan-edit" && activeId !== "plan-edit" && isEditingPlan) cancelPlanEditing();
+        if (activeId === "plan-edit" && !isEditingPlan) {
+          isEditingPlan = true;
+          renderPlan();
+        }
         const riskDetail = requested === "risk-assessment";
         const fitnessDetail = requested === "fitness-assessment";
         const assessmentDetail = riskDetail || fitnessDetail;
@@ -9060,7 +9202,7 @@
         const activeNavId = ["evaluation", "account-management", "settings", "language-settings", "weight-settings"].includes(activeId)
           ? "me"
           : activeId === "record-day-detail" ? "records"
-          : ["workout-detail", "exercise-replace"].includes(activeId)
+          : ["workout-detail", "exercise-replace", "plan-history-detail", "plan-edit"].includes(activeId)
             ? "plan"
             : activeId === "exercise-detail"
               ? (exerciseDetailReturnHash === "workout-detail" ? "plan" : "training")
@@ -9077,6 +9219,7 @@
         window.requestAnimationFrame(() => {
           window.scrollTo({ top: 0, left: 0, behavior: "instant" });
         });
+        lastModuleId = activeId;
         return activeId;
       }
 
@@ -9183,6 +9326,19 @@
         const button = event.target.closest("[data-plan-tab]");
         if (!button) return;
         setPlanPane(button.dataset.planTab);
+      });
+
+      planHistoryList.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-history-plan-index]");
+        if (!button) return;
+        activeHistoryPlanIndex = Number(button.dataset.historyPlanIndex);
+        renderHistoryPlanDetail(activeHistoryPlanIndex);
+        window.location.hash = "plan-history-detail";
+      });
+      planHistoryDetail.addEventListener("click", (event) => {
+        if (!event.target.closest("[data-history-plan-back]")) return;
+        setPlanPane("historyPlanPane");
+        window.location.hash = "plan";
       });
 
       function getProfile() {
@@ -9684,17 +9840,19 @@
         return resistanceTemplates.find((template) => template.id === id) || null;
       }
 
-      function buildPlan(profile) {
+      function buildPlan(profile, templateId = localStorage.getItem("fitlog-plan-template")) {
+        const selectedTemplate = resistanceTemplates.find((item) => item.id === templateId) || null;
         const risk = getPlanRisk(profile);
         const prescription = getGoalPrescription(profile.goal, profile.experience, risk.level);
         const { load, rm, reps, setRange, baseSetCount, rest } = prescription;
-        const requestedDays = Math.max(2, Math.min(6, profile.days));
+        const requestedDays = Math.max(2, Math.min(6, selectedTemplate?.days || profile.days));
         const days = risk.level === "high"
           ? Math.min(2, requestedDays)
           : profile.experience === "beginner"
             ? Math.min(3, requestedDays)
             : requestedDays;
         let split = makeSplit(days, profile.goal, profile.experience);
+        if (selectedTemplate?.split?.length === days && risk.level !== "high") split = selectedTemplate.split;
         if (risk.level === "high") {
           split = [
             ["医学确认前", "暂停高强度、最大力量、冲刺间歇和屏气用力训练，先处理红旗症状或疾病限制"],
@@ -9737,7 +9895,7 @@
           split,
           risk,
           periodization,
-          template: null
+          template: selectedTemplate
         };
       }
 
@@ -9912,6 +10070,16 @@
           + (changes.pausedAt ? Math.max(0, Math.floor((parseLocalDate(today) - parseLocalDate(changes.pausedAt)) / 86400000)) : 0);
         const diff = Math.floor((parseLocalDate(today) - parseLocalDate(startDate)) / 86400000) - pausedDays;
         return Math.max(0, Math.min(3, Math.floor(diff / 7)));
+      }
+
+      function getPlanCycleEndDate(profile, plan, startDate = getPlanStartDate()) {
+        const dates = getResolvedPlanSchedule(profile, plan, startDate).map((item) => item.date);
+        return dates.sort().at(-1) || addDays(startDate, 27);
+      }
+
+      function isPlanCycleExpired(profile, plan, startDate = getPlanStartDate()) {
+        return !loadPlanAdjustments(profile, plan, startDate).pausedAt
+          && today > getPlanCycleEndDate(profile, plan, startDate);
       }
 
       function planDayId(profile, plan, weekIndex, dayIndex, startDate) {
@@ -10913,6 +11081,7 @@
 
       function shouldShowAdaptiveSetup(workout, newExerciseIds = getUnrecordedWorkoutExerciseIds(workout)) {
         if (!workout?.id || !workout?.planKey) return false;
+        if (completedPlanDays.includes(workout.id)) return false;
         if (!newExerciseIds.length) return false;
         if (!adaptiveProgressionSetup || adaptiveProgressionSetup.planKey !== workout.planKey) return true;
         if (adaptiveProgressionSetup.mode === "choose") return true;
@@ -10939,6 +11108,7 @@
       }
 
       function adaptiveModeBannerTemplate() {
+        if (completedPlanDays.includes(activeWorkoutDay?.id)) return "";
         const unrecordedExerciseIds = getUnrecordedWorkoutExerciseIds(activeWorkoutDay);
         if (!adaptiveProgressionSetup
           || adaptiveProgressionSetup.mode === "skip"
@@ -11160,6 +11330,7 @@
 
       function workoutActionCardTemplate(item, index, type = "训练") {
         const exercise = libraryExerciseForWorkout(item, type);
+        const workoutCompleted = completedPlanDays.includes(activeWorkoutDay?.id);
         const displayName = appLanguage === "en" ? (exercise.nameEn || exercise.nameZh) : exercise.nameZh;
         const secondaryName = appLanguage === "en" ? "" : exercise.nameEn;
         const prescription = item.prescription
@@ -11197,17 +11368,17 @@
             ? (recommendationSource.progressionRecommendationEn || recommendationSource.progressionRecommendation || "")
             : (recommendationSource.progressionRecommendationZh || recommendationSource.progressionRecommendation || ""))
           : "";
-        const guideHint = calibration?.status === "confirmed"
+        const guideHint = !workoutCompleted && calibration?.status === "confirmed"
           ? (appLanguage === "en" ? `Trial-set starting load: ${weightText(calibration.confirmedWeight)}. Complete the working sets below.` : `试做组已确认起始重量：${weightText(calibration.confirmedWeight)}。请完成以下正式训练组。`)
           : "";
         const actionControls = type === "训练"
           ? `<div class="workout-card-footer">
-              <button class="workout-inline-log-toggle" type="button" data-toggle-inline-workout-log="${index}" aria-expanded="false">${hasRecordedData ? (appLanguage === "en" ? "View data" : "查看数据") : (appLanguage === "en" ? "Log data" : "记录数据")}</button>
+              <button class="workout-inline-log-toggle" type="button" data-toggle-inline-workout-log="${index}" aria-expanded="false">${hasRecordedData ? (appLanguage === "en" ? "View data" : "查看数据") : workoutCompleted ? (appLanguage === "en" ? "Add missing data" : "补录数据") : (appLanguage === "en" ? "Log data" : "记录数据")}</button>
               <div class="workout-overflow">
                 <button class="workout-overflow-toggle" type="button" data-toggle-workout-menu aria-expanded="false" aria-label="${appLanguage === "en" ? "More exercise options" : "更多动作操作"}">•••</button>
                 <div class="workout-overflow-menu" hidden>
                   <button type="button" data-replace-workout-exercise="${index}">${appLanguage === "en" ? "Replace exercise" : "更换动作"}</button>
-                  <button type="button" data-recalibrate-workout-exercise="${index}">${appLanguage === "en" ? "Recalibrate starting load" : "重新校准起始重量"}</button>
+                  ${workoutCompleted ? "" : `<button type="button" data-recalibrate-workout-exercise="${index}">${appLanguage === "en" ? "Recalibrate starting load" : "重新校准起始重量"}</button>`}
                 </div>
               </div>
             </div>
@@ -11218,7 +11389,7 @@
                 <input type="hidden" data-planned-rep-min value="${repRange.min}">
                 <input type="hidden" data-planned-rep-max value="${repRange.max}">
                 <div class="workout-set-summary"><strong>${appLanguage === "en" ? `${plannedSets} planned sets` : `计划固定 ${plannedSets} 组`}</strong><span>${appLanguage === "en" ? "Tap ✓ after each completed set" : "每完成一组点击一次 ✓"}</span></div>
-                <p class="workout-adaptive-hint">${guideHint || (appLanguage === "en" ? "Log your main exercise data so FitMine can adjust your next workout load." : "记录主训练数据后，FitMine可为下次训练调整重量。")}</p>
+                <p class="workout-adaptive-hint">${workoutCompleted ? (appLanguage === "en" ? "Add the loads and reps from this completed workout." : "可补录本次已完成训练的重量与次数。") : guideHint || (appLanguage === "en" ? "Log your main exercise data so FitMine can adjust your next workout load." : "记录主训练数据后，FitMine可为下次训练调整重量。")}</p>
                 <div class="workout-set-tools"><button class="workout-apply-all" type="button" data-apply-first-set>${appLanguage === "en" ? "Apply set 1 to all" : "应用第 1 组到全部"}</button></div>
                 <div class="workout-set-list">${setRows}</div>
                 <div class="workout-last-set-difficulty">
@@ -11265,6 +11436,9 @@
         const paused = Boolean(adjustments.pausedAt);
         const preparation = getTargetedPreparation(workout);
         const recordedExercises = records.find((item) => item.planDayId === workout.id)?.exercises || [];
+        const missingDataIndexes = completed ? workout.exercises.map((item, index) => ({ index, exercise: libraryExerciseForWorkout(item, "训练") }))
+          .filter(({ exercise }) => !hasRecordedPlanExerciseData(getPlanExerciseLog(workout.id, exercise.id)))
+          .map(({ index }) => index) : [];
         workoutDetail.innerHTML = `
           <button class="settings-back" type="button" data-workout-back>← ${workoutBackLabel}</button>
           <div class="workout-overview">
@@ -11272,13 +11446,11 @@
             <h2>${translateInterfaceText(workout.name)}</h2>
             <p>${translateInterfaceText(workout.description)}</p>
             <p class="muted">${appLanguage === "en" ? `Scheduled date ${workout.date} · ${translateInterfaceText(workout.period?.title || "当周训练")} · ${workout.period?.rm || workout.plan.rm}` : `计划日期 ${workout.date} · ${workout.period?.title || "当周训练"} · ${workout.period?.rm || workout.plan.rm}`}</p>
-            ${!completed ? `<div class="workout-schedule-actions">${skipped
-              ? `<button type="button" data-workout-schedule="restore">${appLanguage === "en" ? "Restore workout" : "恢复本次训练"}</button>`
-              : `<button type="button" data-workout-schedule="defer" ${paused ? "disabled" : ""}>${appLanguage === "en" ? "Move to tomorrow" : "推迟到明天"}</button><button type="button" data-workout-schedule="skip" ${paused ? "disabled" : ""}>${appLanguage === "en" ? "Skip this workout" : "跳过本次"}</button>`}</div>` : ""}
             ${skipped || paused ? `<p class="workout-schedule-note">${appLanguage === "en" ? (skipped ? "This workout is skipped." : "Plan is paused. Resume it from the Plan page.") : (skipped ? "本次训练已跳过。" : "计划已暂停，可在计划页恢复。")}</p>` : ""}
           </div>
-          ${adaptiveSetupCardTemplate(workout)}
-          ${adaptiveModeBannerTemplate()}
+          ${completed
+            ? missingDataIndexes.length ? `<div class="workout-missing-data"><span>${appLanguage === "en" ? `${missingDataIndexes.length} exercises have no logged loads and reps.` : `还有 ${missingDataIndexes.length} 个动作未记录重量与次数。`}</span><button type="button" data-open-missing-workout-log="${missingDataIndexes[0]}">${appLanguage === "en" ? "Add missing data" : "补录数据"}</button></div>` : ""
+            : `${adaptiveSetupCardTemplate(workout)}${adaptiveModeBannerTemplate()}`}
           <div class="workout-flow">
             <h3 class="flow-heading">训练前热身</h3>
             <div class="workout-action-grid workout-preparation-grid">
@@ -11438,7 +11610,14 @@
           const exercise = libraryExerciseForWorkout(item, "训练");
           return !hasRecordedPlanExerciseData(getPlanExerciseLog(activeWorkoutDay.id, exercise.id));
         });
-        if (nextIndex >= 0) window.setTimeout(() => openWorkoutLogPanel(nextIndex, true), 250);
+        if (nextIndex >= 0) {
+          window.setTimeout(() => openWorkoutLogPanel(nextIndex, true), 250);
+        } else {
+          const panel = workoutDetail.querySelector(`[data-inline-workout-log-panel="${exerciseIndex}"]`);
+          const toggle = workoutDetail.querySelector(`[data-toggle-inline-workout-log="${exerciseIndex}"]`);
+          if (panel) panel.hidden = true;
+          toggle?.setAttribute("aria-expanded", "false");
+        }
       }
 
       function openWorkoutDetail(weekIndex, dayIndex, returnHash = "plan") {
@@ -11815,8 +11994,9 @@
         const plan = buildPlan(profile);
         const goalName = translateInterfaceText(planNames[profile.goal]);
         const title = appLanguage === "en" ? `${goalName} · ${plan.days} days/week` : `${planNames[profile.goal]} · 每周 ${plan.days} 天`;
-        const planVisible = hasGeneratedPlan() || isEditingPlan;
-        document.querySelector("#planTitle").textContent = planVisible ? title : "训练计划";
+        const activeSavedPlan = hasGeneratedPlan() && !isPlanCycleExpired(profile, plan);
+        const planVisible = activeSavedPlan || (isEditingPlan && !pendingOfficialTemplateId);
+        document.querySelector("#planTitle").textContent = planVisible ? title : (appLanguage === "en" ? "Training plan" : "训练计划");
         const focusSummary = plan.focusArea
           ? appLanguage === "en"
             ? ` · Focus: ${focusAreaDisplayName(plan.focusArea)} / ${focusPurposeDisplayName(plan.focusPurpose)}`
@@ -11824,9 +12004,7 @@
           : "";
         document.querySelector("#planSummary").textContent = planVisible
           ? `${appLanguage === "en" ? "Four-week periodized training plan" : "4 周周期训练计划"}${focusSummary}`
-          : appLanguage === "en"
-            ? "Choose your training settings to create a periodized plan."
-            : "选择训练信息，生成周期训练计划。";
+          : "";
         document.querySelector("#planMetricRm").textContent = plan.load;
         document.querySelector("#planMetricRmNote").textContent = appLanguage === "en" ? `Approx. ${plan.rm}` : `约 ${plan.rm}`;
         document.querySelector("#planMetricReps").textContent = plan.reps;
@@ -11843,7 +12021,10 @@
             </button>
           `)
           .join("");
-        activeWeekKicker.textContent = appLanguage === "en" ? `Current microcycle · Week ${activePlanWeekIndex + 1}` : `当前微周期 · ${activePeriod.label}`;
+        const cycleExpired = hasGeneratedPlan() && !isEditingPlan && !activeSavedPlan;
+        activeWeekKicker.textContent = cycleExpired
+          ? (appLanguage === "en" ? `Past plan · Week ${activePlanWeekIndex + 1}` : `已结束的计划 · ${activePeriod.label}`)
+          : (appLanguage === "en" ? `Current microcycle · Week ${activePlanWeekIndex + 1}` : `当前微周期 · ${activePeriod.label}`);
         activeWeekTitle.textContent = translateInterfaceText(activePeriod.title);
         activeWeekFocus.textContent = translateInterfaceText(activePeriod.focus);
         activeWeekPrescription.textContent = appLanguage === "en" ? `${activePeriod.sets} sets × ${translateInterfaceText(activePeriod.reps)}` : `${activePeriod.sets} 组 × ${activePeriod.reps}`;
@@ -11851,11 +12032,18 @@
         const planStartDate = getPlanStartDate();
         const adjustments = loadPlanAdjustments(profile, plan, planStartDate);
         const resolvedSchedule = getResolvedPlanSchedule(profile, plan, planStartDate);
-        document.querySelector("#planPauseToggle").textContent = adjustments.pausedAt
-          ? (appLanguage === "en" ? "Resume plan" : "恢复计划")
-          : (appLanguage === "en" ? "Pause plan" : "暂停计划");
-        document.querySelector("#planPauseNote").textContent = adjustments.pausedAt
-          ? (appLanguage === "en" ? "Upcoming workouts are hidden until you resume." : "暂停期间不安排后续训练，恢复后顺延。") : "";
+        const pauseToggle = document.querySelector("#planPauseToggle");
+        pauseToggle.hidden = !activeSavedPlan || isEditingPlan;
+        pauseToggle.disabled = pauseToggle.hidden;
+        pauseToggle.textContent = cycleExpired
+          ? (appLanguage === "en" ? "Cycle ended" : "周期已结束")
+          : adjustments.pausedAt
+            ? (appLanguage === "en" ? "Resume plan" : "恢复计划")
+            : (appLanguage === "en" ? "Pause plan" : "暂停计划");
+        document.querySelector("#planPauseNote").textContent = cycleExpired
+          ? (appLanguage === "en" ? "This four-week schedule has ended. Edit the plan to start a new cycle." : "本次四周排程已结束。修改训练计划可开始新周期。")
+          : adjustments.pausedAt
+            ? (appLanguage === "en" ? "Upcoming workouts are hidden until you resume." : "暂停期间不安排后续训练，恢复后顺延。") : "";
         weekPlan.innerHTML = plan.split
           .map(([day, text], index) => {
             const scheduleEntry = resolvedSchedule.find((item) => item.weekIndex === activePlanWeekIndex && item.dayIndex === index);
@@ -11900,6 +12088,7 @@
         document.querySelector("#loadBar").style.setProperty("--w", `${Math.min(88, activePeriod.sets * 21)}%`);
         document.querySelector("#volumeHint").textContent = translateInterfaceText(`${activePeriod.focus} ${plan.risk.level === "unassessed" ? "建议在正式训练前完成风险评估。" : ""}`);
         updatePlanMode(profile, plan);
+        if (!planVisible) renderPlanTemplateLibrary();
         renderHome();
       }
 
@@ -11929,15 +12118,44 @@
       }
 
       function updatePlanMode(profile, plan) {
-        const generated = hasGeneratedPlan();
+        const generated = hasGeneratedPlan() && !isPlanCycleExpired(profile, plan);
         const showEditor = isEditingPlan;
         if (planEmptyState) planEmptyState.hidden = generated || showEditor;
+        if (planTemplateLibrary) planTemplateLibrary.hidden = generated || showEditor;
         document.querySelectorAll("[data-plan-current-content]").forEach((element) => {
-          element.hidden = !generated && !showEditor;
+          element.hidden = Boolean(pendingOfficialTemplateId) || (!generated && !showEditor);
         });
         if (profileEditor) profileEditor.hidden = !showEditor;
-        if (savePlanButton) savePlanButton.hidden = !showEditor;
         if (editPlanButton) editPlanButton.hidden = !generated || showEditor;
+      }
+
+      function getViewablePlanHistory() {
+        if (!hasGeneratedPlan()) return planHistory;
+        const profile = JSON.parse(localStorage.getItem("fitlog-profile") || "null") || getProfile();
+        const plan = buildPlan(profile);
+        const startDate = getPlanStartDate();
+        if (!isPlanCycleExpired(profile, plan, startDate)) return planHistory;
+        const ids = allPlanDayIds(profile, plan, startDate);
+        return [{
+          id: `ended-${getPlanScheduleKey(profile, plan, startDate)}`,
+          title: `${planNames[profile.goal]} · 每周 ${plan.days} 天`,
+          startDate,
+          endedAt: getPlanCycleEndDate(profile, plan, startDate),
+          completed: ids.filter((id) => completedPlanDays.includes(id)).length,
+          total: ids.length,
+          profile,
+          templateId: localStorage.getItem("fitlog-plan-template"),
+          planSnapshot: plan,
+          scheduleSnapshot: getResolvedPlanSchedule(profile, plan, startDate)
+        }, ...planHistory];
+      }
+
+      function historyPlanDisplayTitle(item) {
+        if (appLanguage === "en" && planNames[item.profile?.goal]) {
+          const days = item.planSnapshot?.days || (item.total ? item.total / 4 : item.profile.days);
+          return `${translateInterfaceText(planNames[item.profile.goal])} · ${days} days/week`;
+        }
+        return item.title || (appLanguage === "en" ? "Training plan" : "训练计划");
       }
 
       function archiveCurrentPlan() {
@@ -11951,33 +12169,139 @@
           title: `${planNames[savedProfile.goal]} · 每周 ${savedPlan.days} 天`,
           startDate,
           savedAt: today,
+          endedAt: isPlanCycleExpired(savedProfile, savedPlan, startDate)
+            ? getPlanCycleEndDate(savedProfile, savedPlan, startDate) : today,
           completed: ids.filter((id) => completedPlanDays.includes(id)).length,
           total: ids.length,
-          profile: savedProfile
+          profile: savedProfile,
+          templateId: localStorage.getItem("fitlog-plan-template")
         });
         planHistory = planHistory.slice(0, 12);
         localStorage.setItem("fitlog-plan-history", JSON.stringify(planHistory));
       }
 
       function renderPlanHistory() {
-        if (!planHistory.length) {
+        const entries = getViewablePlanHistory();
+        if (!entries.length) {
           planHistoryList.innerHTML = '<p class="muted">无</p>';
           return;
         }
-        planHistoryList.innerHTML = planHistory
-          .map((item) => {
+        planHistoryList.innerHTML = entries
+          .map((item, index) => {
             const percent = item.total ? Math.round((item.completed / item.total) * 100) : 0;
             return `
               <article class="history-plan">
-                <div>
-                  <h3>${item.title}</h3>
-                  <p class="muted">开始于 ${item.startDate} · 归档于 ${item.savedAt}</p>
-                </div>
-                <div class="history-progress">${item.completed}/${item.total}<br>${percent}%</div>
+                <button class="history-plan-trigger" type="button" data-history-plan-index="${index}">
+                  <span><span class="history-plan-title">${escapeLogText(historyPlanDisplayTitle(item))}</span><span class="history-plan-meta">${appLanguage === "en" ? "Started" : "开始于"} ${escapeLogText(item.startDate)} · ${appLanguage === "en" ? "Ended" : "结束于"} ${escapeLogText(item.endedAt || item.savedAt)}</span></span>
+                  <span class="history-progress">${Number(item.completed) || 0}/${Number(item.total) || 0}<br>${percent}%</span>
+                </button>
               </article>
             `;
           })
           .join("");
+      }
+
+      function renderHistoryPlanDetail(index) {
+        const item = getViewablePlanHistory()[index];
+        if (!item) {
+          planHistoryDetail.innerHTML = `<button class="settings-back" type="button" data-history-plan-back>← ${appLanguage === "en" ? "Back" : "返回"}</button>`;
+          return;
+        }
+        const profile = item.profile || getProfile();
+        const plan = item.planSnapshot || buildPlan(profile, item.templateId || null);
+        const schedule = item.scheduleSnapshot || getResolvedPlanSchedule(profile, plan, item.startDate);
+        const weekCards = plan.periodization.map((period, weekIndex) => {
+          const days = schedule.filter((day) => day.weekIndex === weekIndex).map((day) => {
+            const [name, description] = plan.split[day.dayIndex] || [];
+            const recorded = records.find((entry) => entry.planDayId === day.id)?.exercises;
+            const exercises = recorded?.length ? recorded : ensureUniqueWorkoutExercises(applyPlanExerciseReplacements(
+              day.id, getWorkoutExercises(day.dayIndex, plan, weekIndex)
+            ));
+            const completed = completedPlanDays.includes(day.id) || records.some((entry) => entry.planDayId === day.id && entry.source === "plan");
+            const status = day.skipped
+              ? (appLanguage === "en" ? "Skipped" : "已跳过")
+              : completed
+                ? (appLanguage === "en" ? "Completed" : "已完成")
+                : (appLanguage === "en" ? "Not completed" : "未完成");
+            return `<div class="history-workout">
+              <strong>${appLanguage === "en" ? `Training day ${day.dayIndex + 1}` : `训练日${day.dayIndex + 1}`} · ${escapeLogText(translateInterfaceText(name || ""))}</strong>
+              <small>${escapeLogText(day.date)} · ${status} · ${escapeLogText(translateInterfaceText(description || ""))}</small>
+              <ul>${exercises.map((exercise) => `<li>${escapeLogText(translateInterfaceText(exercise.name || ""))}${exercise.prescription ? ` · ${escapeLogText(translateInterfaceText(exercise.prescription))}` : ""}</li>`).join("")}</ul>
+            </div>`;
+          }).join("");
+          return `<section class="card history-week">
+            <h4>${appLanguage === "en" ? `Week ${weekIndex + 1}` : `第 ${weekIndex + 1} 周`} · ${escapeLogText(translateInterfaceText(period.title))}</h4>
+            <p class="muted">${period.sets} ${appLanguage === "en" ? "sets" : "组"} × ${escapeLogText(translateInterfaceText(period.reps))} · ${escapeLogText(translateInterfaceText(period.load))}</p>
+            ${days}
+          </section>`;
+        }).join("");
+        planHistoryDetail.innerHTML = `
+          <button class="settings-back" type="button" data-history-plan-back>← ${appLanguage === "en" ? "Back to plan history" : "返回历史计划"}</button>
+          <h3>${escapeLogText(historyPlanDisplayTitle(item))}</h3>
+          <p class="muted">${escapeLogText(item.startDate)} – ${escapeLogText(item.endedAt || item.savedAt)} · ${Number(item.completed) || 0}/${Number(item.total) || 0} ${appLanguage === "en" ? "workouts completed" : "次训练已完成"}</p>
+          ${weekCards}`;
+      }
+
+      function getUniqueHistoryPlanTemplates() {
+        const seen = new Set();
+        return getViewablePlanHistory().map((item, index) => ({ item, index })).filter(({ item }) => {
+          const profile = item.profile || {};
+          const templateId = item.templateId || item.planSnapshot?.template?.id || "";
+          const selectedTemplate = resistanceTemplates.find((template) => template.id === templateId);
+          const key = JSON.stringify([
+            selectedTemplate?.split?.length ? templateId : "",
+            profile.goal || "", profile.experience || "", item.planSnapshot?.days || profile.days || 0,
+            profile.focusArea || "", profile.focusPurpose || ""
+          ]);
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      }
+
+      function officialTemplateMismatch(template, profile) {
+        const levels = { beginner: 0, intermediate: 1, advanced: 2 };
+        if (!(profile.experience in levels)) return appLanguage === "en" ? "Select your training experience." : "请选择训练经验。";
+        if (levels[profile.experience] < levels[template.minExperience || "beginner"]) {
+          return appLanguage === "en" ? "This plan requires intermediate training experience." : "该计划需要中级及以上训练经验。";
+        }
+        if (Number(profile.days) < template.days) {
+          return appLanguage === "en" ? `Select at least ${template.days} training days per week.` : `请选择每周至少 ${template.days} 个训练日。`;
+        }
+        return "";
+      }
+
+      function renderPlanTemplateLibrary() {
+        if (!historyTemplateList || !officialTemplateList) return;
+        const entries = getUniqueHistoryPlanTemplates();
+        const unavailable = assessRisk().level === "high";
+        const unavailableLabel = appLanguage === "en" ? "Medical clearance required" : "需先获得医学确认";
+        historyTemplateList.innerHTML = entries.length
+          ? entries.map(({ item, index }) => {
+            const experience = appLanguage === "en"
+              ? ({ beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced" }[item.profile?.experience] || "")
+              : (experienceLabels[item.profile?.experience]?.split(" · ")[0] || "");
+            const focus = item.profile?.focusArea
+              ? `${appLanguage === "en" ? "Focus" : "重点"} ${focusAreaDisplayName(item.profile.focusArea)}${item.profile.focusPurpose ? ` / ${focusPurposeDisplayName(item.profile.focusPurpose)}` : ""}`
+              : "";
+            return `
+              <article class="resistance-template">
+                <strong>${escapeLogText(historyPlanDisplayTitle(item))}</strong>
+                <p class="muted">${escapeLogText([experience, focus, `${appLanguage === "en" ? "Ended" : "结束于"} ${item.endedAt || item.savedAt || ""}`].filter(Boolean).join(" · "))}</p>
+                <button class="secondary-btn" type="button" data-use-history-template-index="${index}" ${unavailable ? "disabled" : ""}>${unavailable ? unavailableLabel : appLanguage === "en" ? "Use this plan" : "使用该计划"}</button>
+              </article>`;
+          }).join("")
+          : `<p class="muted">${appLanguage === "en" ? "No previous plans" : "暂无历史计划"}</p>`;
+        officialTemplateList.innerHTML = resistanceTemplates
+          .filter((template) => template.goal === "hypertrophy")
+          .map((template) => {
+            return `
+            <article class="resistance-template">
+              <strong>${appLanguage === "en" ? `Hypertrophy · ${template.days} days/week` : `${escapeLogText(template.name)} · 每周 ${template.days} 天`}</strong>
+              <p class="muted">${escapeLogText(appLanguage === "en" ? template.conditionsEn : template.conditions)}</p>
+              <button class="secondary-btn" type="button" data-use-official-template="${template.id}" ${unavailable ? "disabled" : ""}>${unavailable ? unavailableLabel : appLanguage === "en" ? "Use this plan" : "使用该计划"}</button>
+            </article>`;
+          }).join("");
       }
 
       function renderResistanceTemplates() {
@@ -12010,7 +12334,46 @@
           .join("");
       }
 
-      function saveCurrentPlan({ templateId = null } = {}) {
+      function planSelectionsMatchSaved() {
+        try {
+          const saved = JSON.parse(localStorage.getItem("fitlog-profile") || "null");
+          if (!saved) return false;
+          const current = getProfile();
+          return ["goal", "experience", "days", "focusArea", "focusPurpose"]
+            .every((key) => String(saved[key] ?? "") === String(current[key] ?? ""));
+        } catch {
+          return false;
+        }
+      }
+
+      function cancelPlanEditing() {
+        try {
+          const saved = JSON.parse(localStorage.getItem("fitlog-profile") || "null");
+          if (saved) {
+            const fields = { goal: "goal", experience: "experience", days: "trainingDays", focusArea: "focusArea", focusPurpose: "focusPurpose" };
+            Object.entries(fields).forEach(([key, id]) => {
+              const input = document.querySelector(`#${id}`);
+              if (input) input.value = String(saved[key] ?? "");
+            });
+          }
+        } catch {}
+        clearPendingOfficialTemplate();
+        isEditingPlan = false;
+        renderPlan();
+      }
+
+      function showPlanNotice(kind) {
+        planNoticeDialog.dataset.kind = kind;
+        document.querySelector("#planNoticeTitle").textContent = kind === "same"
+          ? (appLanguage === "en" ? "An identical plan already exists" : "已有相同计划")
+          : (appLanguage === "en" ? "Select your training experience" : "请选择训练经验");
+        document.querySelector("#planNoticeConfirm").textContent = appLanguage === "en" ? "OK" : "确定";
+        if (!planNoticeDialog.open) planNoticeDialog.showModal();
+      }
+
+      function saveCurrentPlan({ templateId = null, preventSamePlan = false } = {}) {
+        if (preventSamePlan && isEditingPlan && hasGeneratedPlan() && planSelectionsMatchSaved()
+          && !isPlanCycleExpired(getProfile(), buildPlan(getProfile()))) return false;
         const replacingPlan = hasGeneratedPlan() && isEditingPlan;
         if (replacingPlan) archiveCurrentPlan();
         if (replacingPlan) {
@@ -12031,15 +12394,101 @@
         isEditingPlan = false;
         renderPlanHistory();
         renderResistanceTemplates();
+        return true;
+      }
+
+      function clearPendingOfficialTemplate() {
+        pendingOfficialTemplateId = null;
+        planTemplateFormHint.hidden = true;
+        planTemplateFormCancel.hidden = true;
+        form.querySelector('button[type="submit"]').textContent = appLanguage === "en" ? "Create 4-week plan" : "生成 4 周周期课表";
+      }
+
+      function beginOfficialTemplateSelection(templateId) {
+        const template = resistanceTemplates.find((item) => item.id === templateId);
+        if (!template) return;
+        pendingOfficialTemplateId = templateId;
+        document.querySelector("#goal").value = template.goal;
+        document.querySelector("#trainingDays").value = String(template.days);
+        isEditingPlan = true;
+        activePlanWeekIndex = 0;
+        renderPlan();
+        window.location.hash = "plan-edit";
+        planTemplateFormHint.textContent = appLanguage === "en"
+          ? "Select your training experience and review the plan options before confirming this template."
+          : "请先选择训练经验并核对计划选项，然后确认适用。";
+        planTemplateFormHint.hidden = false;
+        planTemplateFormCancel.hidden = false;
+        planTemplateFormCancel.textContent = appLanguage === "en" ? "Back to plan templates" : "返回计划模板";
+        form.querySelector('button[type="submit"]').textContent = appLanguage === "en" ? "Review suitability" : "检查适用条件";
+        window.requestAnimationFrame(() => {
+          profileEditor.scrollIntoView({ behavior: "smooth", block: "start" });
+          document.querySelector("#experience").focus({ preventScroll: true });
+        });
+      }
+
+      function showOfficialTemplateConfirmation(templateId) {
+        const template = resistanceTemplates.find((item) => item.id === templateId);
+        if (!template || assessRisk().level === "high") return;
+        const profile = getProfile();
+        const mismatch = officialTemplateMismatch(template, profile);
+        planTemplateDialog.dataset.templateId = templateId;
+        planTemplateDialog.dataset.needsAdjustment = mismatch ? "true" : "false";
+        document.querySelector("#planTemplateDialogTitle").textContent = appLanguage === "en"
+          ? `Hypertrophy · ${template.days} days/week`
+          : `增肌 · 每周 ${template.days} 天`;
+        document.querySelector("#planTemplateDialogConditions").textContent = appLanguage === "en" ? template.conditionsEn : template.conditions;
+        document.querySelector("#planTemplateDialogProfile").textContent = appLanguage === "en"
+          ? `Your selection: ${{ beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced" }[profile.experience] || "—"} · ${profile.days} days/week`
+          : `当前选择：${profile.experience ? experienceLabels[profile.experience]?.split(" · ")[0] || profile.experience : "未选训练经验"} · 每周 ${profile.days} 天`;
+        document.querySelector("#planTemplateDialogStatus").textContent = mismatch || (appLanguage === "en" ? "Confirm that this plan suits you." : "请确认该计划适合你。");
+        document.querySelector("#planTemplateDialogCancel").textContent = appLanguage === "en" ? "Cancel" : "取消";
+        document.querySelector("#planTemplateDialogClose").setAttribute("aria-label", appLanguage === "en" ? "Close" : "关闭");
+        document.querySelector("#planTemplateDialogContinue").textContent = mismatch
+          ? (appLanguage === "en" ? "Adjust options" : "调整选项")
+          : (appLanguage === "en" ? "Confirm and use plan" : "确认适用并使用");
+        if (!planTemplateDialog.open) planTemplateDialog.showModal();
+      }
+
+      function requestOfficialTemplate(templateId) {
+        if (!resistanceTemplates.some((item) => item.id === templateId)) return;
+        if (assessRisk().level === "high") return;
+        if (!localStorage.getItem("fitlog-profile")) {
+          beginOfficialTemplateSelection(templateId);
+          return;
+        }
+        showOfficialTemplateConfirmation(templateId);
       }
 
       function applyResistanceTemplate(templateId) {
-        if (!resistanceTemplates.some((template) => template.id === templateId)) return;
+        const template = resistanceTemplates.find((item) => item.id === templateId);
+        if (!template) return;
         if (assessRisk().level === "high") return;
+        if (officialTemplateMismatch(template, getProfile())) return;
+        if (template.goal) document.querySelector("#goal").value = template.goal;
+        document.querySelector("#trainingDays").value = String(template.days);
         isEditingPlan = hasGeneratedPlan();
+        activePlanWeekIndex = 0;
         saveCurrentPlan({ templateId });
+        clearPendingOfficialTemplate();
         renderPlan();
         renderHome();
+        setPlanPane("currentPlanPane");
+        window.location.hash = "plan";
+      }
+
+      function applyHistoryPlanTemplate(index) {
+        const item = getViewablePlanHistory()[index];
+        if (!item?.profile || assessRisk().level === "high") return;
+        const fields = { goal: "goal", experience: "experience", days: "trainingDays", focusArea: "focusArea", focusPurpose: "focusPurpose" };
+        Object.entries(fields).forEach(([key, id]) => {
+          const input = document.querySelector(`#${id}`);
+          if (input && item.profile[key] != null) input.value = String(item.profile[key]);
+        });
+        isEditingPlan = hasGeneratedPlan();
+        activePlanWeekIndex = 0;
+        saveCurrentPlan({ templateId: item.templateId || null });
+        renderPlan();
         setPlanPane("currentPlanPane");
       }
 
@@ -12095,21 +12544,27 @@
           changes.pausedAt = null;
         } else {
           if (!workout || completedPlanDays.includes(workout.id) || changes.pausedAt) return;
-          if (action === "restore") delete changes.overrides[workout.id];
-          else {
+          const currentWorkout = getWorkoutDay(workout.weekIndex, workout.dayIndex);
+          if (currentWorkout.id !== workout.id || currentWorkout.date !== today) return;
+          const skipped = changes.overrides[workout.id]?.status === "skipped";
+          if (action === "restore") {
+            if (!skipped) return;
+            delete changes.overrides[workout.id];
+          } else if ((action === "defer" || action === "skip") && !skipped) {
             const tomorrow = addDays(today, 1);
             const daysUntilTomorrow = Math.ceil((parseLocalDate(tomorrow) - parseLocalDate(workout.date)) / 86400000);
             changes.overrides[workout.id] = action === "skip"
               ? { status: "skipped" }
               : { deferDays: Number(changes.overrides[workout.id]?.deferDays || 0) + Math.max(1, daysUntilTomorrow) };
-          }
+          } else return;
         }
         localStorage.setItem(PLAN_ADJUSTMENTS_KEY, JSON.stringify(changes));
         window.FitLogSync?.queueSync?.();
-        if (workout && ["defer", "skip", "restore"].includes(action)) activeWorkoutDay = getWorkoutDay(workout.weekIndex, workout.dayIndex);
+        const updateOpenWorkout = workout && activeWorkoutDay?.id === workout.id && ["defer", "skip", "restore"].includes(action);
+        if (updateOpenWorkout) activeWorkoutDay = getWorkoutDay(workout.weekIndex, workout.dayIndex);
         renderPlan();
         if (initializedModules.has("records")) renderRecords();
-        if (workout && ["defer", "skip", "restore"].includes(action)) renderWorkoutDetail();
+        if (updateOpenWorkout) renderWorkoutDetail();
       }
 
       function formatPlanDateLabel(value) {
@@ -12124,10 +12579,15 @@
       function renderHomeTodayPlan(profile, plan, saved) {
         const container = document.querySelector("#homeTodayPlan");
         document.querySelector("#homeTodayDate").textContent = formatPlanDateLabel(today);
+        const previousPlanLabel = (title, endDate) => appLanguage === "en"
+          ? `Previous plan: ${title} · Ended ${endDate}`
+          : `上一个计划：${title} · 结束日期 ${endDate}`;
         if (!saved) {
+          const previousPlan = planHistory[0];
           container.innerHTML = `
             <article class="home-today-card is-rest">
-              <div><span class="home-today-kicker">${appLanguage === "en" ? "Not scheduled" : "未安排"}</span><h3>${appLanguage === "en" ? "No workout scheduled today" : "今日暂无训练计划"}</h3><p>${appLanguage === "en" ? "Save a training plan to see today's workout here." : "保存训练计划后，这里会显示当天训练内容。"}</p></div>
+              <div><h3>${appLanguage === "en" ? "No current plan" : "当前无计划"}</h3>${previousPlan ? `<small class="home-today-meta">${escapeLogText(previousPlanLabel(historyPlanDisplayTitle(previousPlan), previousPlan.endedAt || previousPlan.savedAt))}</small>` : ""}</div>
+              <div class="home-today-actions"><a class="home-today-action" href="#plan">${appLanguage === "en" ? "Create a plan" : "去定制计划"}</a></div>
             </article>
           `;
           return;
@@ -12138,16 +12598,40 @@
         if (todayWorkout) {
           const completed = completedPlanDays.includes(todayWorkout.id);
           container.innerHTML = `
-            <article class="home-today-card">
+            <article class="home-today-card has-actions">
               <div>
                 <span class="home-today-kicker">${appLanguage === "en" ? (completed ? "Completed" : `Week ${todayWorkout.weekIndex + 1}`) : (completed ? "已完成" : todayWorkout.period?.label || "今日训练")}</span>
                 <h3>${appLanguage === "en" ? `Training day ${todayWorkout.dayIndex + 1} · ${translateInterfaceText(todayWorkout.day)}` : `训练日${todayWorkout.dayIndex + 1} · ${todayWorkout.day}`}</h3>
                 <p>${translateInterfaceText(todayWorkout.text)}</p>
                 <small class="home-today-meta">${appLanguage === "en" ? `Main lifts ${todayWorkout.period?.sets || "-"} sets × ${translateInterfaceText(todayWorkout.period?.reps || plan.reps)} · Rest ${translateInterfaceText(todayWorkout.period?.rest || plan.rest)}` : `主项 ${todayWorkout.period?.sets || "-"} 组 × ${todayWorkout.period?.reps || plan.reps} · 间歇 ${todayWorkout.period?.rest || plan.rest}`}</small>
               </div>
-              <button class="home-today-action" type="button" data-view-day data-week-index="${todayWorkout.weekIndex}" data-day-index="${todayWorkout.dayIndex}">${appLanguage === "en" ? (completed ? "View details" : "Start workout") : (completed ? "查看详情" : "开始训练")}</button>
+              <div class="home-today-actions">
+                <button class="home-today-action${completed ? " is-complete" : ""}" type="button" data-view-day data-week-index="${todayWorkout.weekIndex}" data-day-index="${todayWorkout.dayIndex}">${appLanguage === "en" ? (completed ? "View details" : "Start workout") : (completed ? "查看详情" : "开始训练")}</button>
+                ${completed ? "" : `<button class="home-today-secondary" type="button" data-home-schedule="defer" data-week-index="${todayWorkout.weekIndex}" data-day-index="${todayWorkout.dayIndex}">${appLanguage === "en" ? "Move to tomorrow" : "推迟到明天"}</button><button class="home-today-secondary" type="button" data-home-schedule="skip" data-week-index="${todayWorkout.weekIndex}" data-day-index="${todayWorkout.dayIndex}">${appLanguage === "en" ? "Skip this workout" : "跳过本次"}</button>`}
+              </div>
             </article>
           `;
+          return;
+        }
+
+        const skippedToday = getResolvedPlanSchedule(profile, plan).find((item) => item.date === today && item.skipped);
+        if (skippedToday) {
+          container.innerHTML = `
+            <article class="home-today-card is-rest">
+              <div><span class="home-today-kicker">${appLanguage === "en" ? "Skipped" : "已跳过"}</span><h3>${appLanguage === "en" ? "Today's workout was skipped" : "今日训练已跳过"}</h3></div>
+              <div class="home-today-actions"><button class="home-today-secondary" type="button" data-home-schedule="restore" data-week-index="${skippedToday.weekIndex}" data-day-index="${skippedToday.dayIndex}">${appLanguage === "en" ? "Undo skip" : "撤销跳过"}</button></div>
+            </article>`;
+          return;
+        }
+
+        if (isPlanCycleExpired(profile, plan)) {
+          const planName = translateInterfaceText(plan.template?.name || planNames[profile.goal]);
+          const previousTitle = appLanguage === "en" ? `${planName} · ${plan.days} days/week` : `${plan.template?.name || planNames[profile.goal]} · 每周 ${plan.days} 天`;
+          container.innerHTML = `
+            <article class="home-today-card is-rest">
+              <div><h3>${appLanguage === "en" ? "No current plan" : "当前无计划"}</h3><small class="home-today-meta">${escapeLogText(previousPlanLabel(previousTitle, getPlanCycleEndDate(profile, plan)))}</small></div>
+              <div class="home-today-actions"><a class="home-today-action" href="#plan">${appLanguage === "en" ? "Create a plan" : "去定制计划"}</a></div>
+            </article>`;
           return;
         }
 
@@ -12172,7 +12656,7 @@
       function renderHomeTrainingCalendar(profile, plan, saved) {
         const grid = document.querySelector("#homeTrainingCalendarGrid");
         const range = document.querySelector("#homeCalendarRange");
-        adjustTrainingDays.disabled = !saved;
+        adjustTrainingDays.disabled = !saved || isPlanCycleExpired(profile, plan);
         const firstDate = parseLocalDate(today);
         const lastValue = addDays(today, 27);
         const lastDate = parseLocalDate(lastValue);
@@ -12267,18 +12751,35 @@
         const title = appLanguage === "en" ? `${planName} · ${plan.days} days/week` : `${plan.template?.name || planNames[profile.goal]} · 每周 ${plan.days} 天`;
         const homeTitle = document.querySelector("#homeTitle");
         const homeSummary = document.querySelector("#homeSummary");
+        const heroCopy = document.querySelector("#home .hero-copy");
         renderHomeTodayPlan(profile, plan, saved);
         renderHomeTrainingCalendar(profile, plan, saved);
 
         if (!saved) {
+          heroCopy.hidden = true;
           planConsole.hidden = true;
-          homeTitle.textContent = "还没有保存训练计划。";
-          homeSummary.textContent = "选择目标、训练历史和每周训练天数，即可生成并保存四周周期课表。";
+          homeTitle.textContent = appLanguage === "en" ? "No current plan" : "当前无计划";
+          const previousPlan = planHistory[0];
+          homeSummary.textContent = previousPlan
+            ? (appLanguage === "en" ? `Previous plan: ${historyPlanDisplayTitle(previousPlan)} · Ended ${previousPlan.endedAt || previousPlan.savedAt}` : `上一个计划：${historyPlanDisplayTitle(previousPlan)} · 结束日期 ${previousPlan.endedAt || previousPlan.savedAt}`)
+            : "";
           return;
         }
 
         const startDate = getPlanStartDate();
         const weekIndex = getCurrentPlanWeek(startDate);
+        const cycleExpired = isPlanCycleExpired(profile, plan, startDate);
+        const cycleEndDate = cycleExpired ? getPlanCycleEndDate(profile, plan, startDate) : "";
+        if (cycleExpired) {
+          heroCopy.hidden = true;
+          planConsole.hidden = true;
+          homeTitle.textContent = appLanguage === "en" ? "No current plan" : "当前无计划";
+          homeSummary.textContent = appLanguage === "en"
+            ? `Previous plan: ${title} · Ended ${cycleEndDate}`
+            : `上一个计划：${title} · 结束日期 ${cycleEndDate}`;
+          return;
+        }
+        heroCopy.hidden = false;
         const weekNames = ["第一周", "第二周", "第三周", "第四周"];
         const validIds = allPlanDayIds(profile, plan, startDate);
         const doneCount = validIds.filter((id) => completedPlanDays.includes(id)).length;
@@ -13065,7 +13566,7 @@
         monday.setDate(monday.getDate() - (monday.getDay() + 6) % 7);
         const exerciseById = new Map(getLoggableExercises().map((exercise) => [exercise.id, exercise]));
         grid.innerHTML = Array.from({ length: 4 }, (_, index) => {
-          const weekStart = addDays(formatLocalDate(monday), (index - 3) * 7);
+          const weekStart = addDays(formatLocalDate(monday), -index * 7);
           const weekEnd = addDays(weekStart, 6);
           const counts = new Map();
           trainingSetLogs.filter((log) => log.date >= weekStart && log.date <= weekEnd).forEach((log) => {
@@ -13098,8 +13599,19 @@
 
       form.addEventListener("submit", (event) => {
         event.preventDefault();
+        if (!document.querySelector("#experience").value) {
+          showPlanNotice("experience");
+          return;
+        }
+        if (pendingOfficialTemplateId) {
+          showOfficialTemplateConfirmation(pendingOfficialTemplateId);
+          return;
+        }
+        if (!saveCurrentPlan({ preventSamePlan: true })) {
+          showPlanNotice("same");
+          return;
+        }
         activePlanWeekIndex = 0;
-        saveCurrentPlan();
         renderPlan();
         setPlanPane("currentPlanPane");
         window.location.hash = "plan";
@@ -13193,29 +13705,63 @@
         renderEvaluationOverview();
       });
 
-      savePlanButton.addEventListener("click", () => {
-        saveCurrentPlan();
-        renderPlan();
-        savePlanButton.textContent = "已保存";
-        setTimeout(() => (savePlanButton.textContent = "保存方案"), 1300);
-      });
-
       editPlanButton.addEventListener("click", () => {
         isEditingPlan = true;
         renderPlan();
-        profileEditor.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.location.hash = "plan-edit";
       });
 
       startPlanButton.addEventListener("click", () => {
         isEditingPlan = true;
+        activePlanWeekIndex = 0;
         renderPlan();
-        profileEditor.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.location.hash = "plan-edit";
+      });
+
+      document.querySelector("#planEditBack").addEventListener("click", () => { window.location.hash = "plan"; });
+      document.querySelector("#planNoticeConfirm").addEventListener("click", () => {
+        const kind = planNoticeDialog.dataset.kind;
+        planNoticeDialog.close();
+        if (kind === "same") {
+          isEditingPlan = false;
+          renderPlan();
+          setPlanPane("currentPlanPane");
+          window.location.hash = "plan";
+        } else {
+          document.querySelector("#experience").focus();
+        }
       });
 
       resistanceTemplateList?.addEventListener("click", (event) => {
         const button = event.target.closest("[data-use-template]");
         if (!button || button.disabled) return;
         applyResistanceTemplate(button.dataset.useTemplate);
+      });
+      officialTemplateList.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-use-official-template]");
+        if (button) requestOfficialTemplate(button.dataset.useOfficialTemplate);
+      });
+      document.querySelector("#planTemplateDialogContinue").addEventListener("click", () => {
+        const templateId = planTemplateDialog.dataset.templateId;
+        const needsAdjustment = planTemplateDialog.dataset.needsAdjustment === "true";
+        planTemplateDialog.close();
+        if (needsAdjustment) beginOfficialTemplateSelection(templateId);
+        else applyResistanceTemplate(templateId);
+      });
+      const cancelOfficialTemplateDialog = () => {
+        planTemplateDialog.close();
+        clearPendingOfficialTemplate();
+      };
+      document.querySelector("#planTemplateDialogCancel").addEventListener("click", cancelOfficialTemplateDialog);
+      document.querySelector("#planTemplateDialogClose").addEventListener("click", cancelOfficialTemplateDialog);
+      planTemplateDialog.addEventListener("cancel", () => clearPendingOfficialTemplate());
+      planTemplateFormCancel.addEventListener("click", () => {
+        cancelPlanEditing();
+        window.location.hash = "plan";
+      });
+      historyTemplateList.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-use-history-template-index]");
+        if (button) applyHistoryPlanTemplate(Number(button.dataset.useHistoryTemplateIndex));
       });
 
       periodizationWeeks?.addEventListener("click", (event) => {
@@ -13321,6 +13867,13 @@
       });
 
       document.querySelector("#home").addEventListener("click", (event) => {
+        if (event.target.closest('.home-today-action[href="#plan"]')) setPlanPane("currentPlanPane");
+        const scheduleButton = event.target.closest("[data-home-schedule]");
+        if (scheduleButton) {
+          const workout = getWorkoutDay(Number(scheduleButton.dataset.weekIndex), Number(scheduleButton.dataset.dayIndex));
+          changePlanSchedule(scheduleButton.dataset.homeSchedule, workout);
+          return;
+        }
         const button = event.target.closest("[data-view-day]");
         if (!button) return;
         openWorkoutDetail(Number(button.dataset.weekIndex), Number(button.dataset.dayIndex), "home");
@@ -13331,9 +13884,9 @@
           window.location.hash = workoutDetailReturnHash;
           return;
         }
-        const scheduleButton = event.target.closest("[data-workout-schedule]");
-        if (scheduleButton) {
-          changePlanSchedule(scheduleButton.dataset.workoutSchedule);
+        const missingDataButton = event.target.closest("[data-open-missing-workout-log]");
+        if (missingDataButton) {
+          openWorkoutLogPanel(Number(missingDataButton.dataset.openMissingWorkoutLog));
           return;
         }
         const adaptiveSetupButton = event.target.closest("[data-adaptive-setup]");
@@ -13426,7 +13979,10 @@
         const form = event.target.closest("[data-inline-workout-log]");
         if (!form) return;
         event.preventDefault();
-        if (saveInlineWorkoutLog(form)) openNextWorkoutLog(Number(form.dataset.inlineWorkoutLog));
+        if (saveInlineWorkoutLog(form)) {
+          if (completedPlanDays.includes(activeWorkoutDay.id)) renderWorkoutDetail();
+          openNextWorkoutLog(Number(form.dataset.inlineWorkoutLog));
+        }
       });
 
       exerciseReplacePage.addEventListener("click", (event) => {

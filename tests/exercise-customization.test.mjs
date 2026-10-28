@@ -53,7 +53,7 @@ test("workout cards use compact overflow actions and inline logging", () => {
   assert.match(source, /Workout log persistence verification failed/);
   assert.match(source, /data-inline-workout-status role="status" aria-live="polite"/);
   assert.match(source, /function hasRecordedPlanExerciseData\(planLog\)/);
-  assert.match(source, /hasRecordedData \? \(appLanguage === "en" \? "View data" : "查看数据"\) : \(appLanguage === "en" \? "Log data" : "记录数据"\)/);
+  assert.match(source, /hasRecordedData \? \(appLanguage === "en" \? "View data" : "查看数据"\) : workoutCompleted \? \(appLanguage === "en" \? "Add missing data" : "补录数据"\)/);
   assert.match(source, /if \(toggle\) toggle\.textContent = appLanguage === "en" \? "View data" : "查看数据"/);
   assert.doesNotMatch(source, /planLog \? \(appLanguage === "en" \? "Recorded" : "已记录"\)/);
   assert.match(source, /workoutDetail\.addEventListener\("submit"/);
@@ -111,12 +111,13 @@ test("adaptive setup appears only for unrecorded exercises not covered by the cu
   const start = source.indexOf("function shouldShowAdaptiveSetup(workout, newExerciseIds");
   const end = source.indexOf("function adaptiveSetupCardTemplate", start);
   assert.ok(start >= 0 && end > start);
-  const shouldShow = (adaptiveProgressionSetup, workout, newExerciseIds) => new Function(
+  const shouldShow = (adaptiveProgressionSetup, workout, newExerciseIds, completedPlanDays = []) => new Function(
     "adaptiveProgressionSetup",
     "workout",
     "newExerciseIds",
+    "completedPlanDays",
     `${source.slice(start, end)}; return shouldShowAdaptiveSetup(workout, newExerciseIds);`
-  )(adaptiveProgressionSetup, workout, newExerciseIds);
+  )(adaptiveProgressionSetup, workout, newExerciseIds, completedPlanDays);
   const workout = { id: "plan-a-w1-d1", planKey: "plan-a" };
   assert.equal(shouldShow(null, workout, []), false);
   assert.equal(shouldShow(null, workout, ["new-lift"]), true);
@@ -126,6 +127,7 @@ test("adaptive setup appears only for unrecorded exercises not covered by the cu
   assert.equal(shouldShow({ mode: "guide", planKey: "plan-b", planDayId: workout.id, exerciseIds: ["new-lift"] }, workout, ["new-lift"]), true);
   assert.equal(shouldShow({ mode: "skip", planKey: "plan-a", planDayId: workout.id, exerciseIds: ["new-lift"] }, workout, ["new-lift"]), false);
   assert.equal(shouldShow({ mode: "skip", planKey: "plan-a", planDayId: "plan-a-w1-d2", exerciseIds: ["new-lift"] }, workout, ["new-lift"]), true);
+  assert.equal(shouldShow(null, workout, ["new-lift"], [workout.id]), false);
 });
 
 test("trial-set guidance produces safe per-exercise calibration decisions", () => {

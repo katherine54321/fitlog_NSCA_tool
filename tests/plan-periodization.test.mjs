@@ -14,7 +14,7 @@ test("plan generator supports core inputs plus one optional focus area and goal"
   assert.match(source, /<option value="power">爆发力<\/option>/);
   assert.doesNotMatch(source, /<option value="health">/);
   assert.doesNotMatch(source, /<option value="fatloss">/);
-  assert.match(source, /<select id="experience">/);
+  assert.match(source, /<select id="experience" required>/);
   assert.match(source, /<select id="trainingDays">/);
   assert.match(source, /<select id="focusArea">/);
   assert.match(source, /<option value="chest">胸<\/option>/);
