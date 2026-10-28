@@ -5510,6 +5510,14 @@
           overscroll-behavior-y: contain;
           -webkit-overflow-scrolling: touch;
         }
+
+        html.pwa-reserved-bottom-space {
+          --bottom-nav-height: 64px;
+        }
+
+        html.pwa-reserved-bottom-space .mobile-nav {
+          padding-bottom: 8px;
+        }
       }
 
       .home-today-schedule {
@@ -5819,6 +5827,11 @@
       }
 
       .record-calendar-shell .calendar-day {
+        width: min(100%, 42px);
+        min-height: 0;
+        aspect-ratio: 1;
+        justify-self: center;
+        border-radius: 50%;
         color: #dbe3dd;
       }
 
@@ -5827,10 +5840,15 @@
       }
 
       .record-calendar-shell .calendar-day.has-record {
-        color: #ffffff;
-        border: 0;
+        color: var(--brand);
+        border: 1px solid var(--brand);
+        background: transparent;
         font: inherit;
         cursor: pointer;
+      }
+
+      .record-calendar-shell .calendar-day.has-record::after {
+        display: none;
       }
 
       .record-calendar-shell .calendar-day.has-record[aria-pressed="true"] {
@@ -5853,10 +5871,11 @@
       }
 
       .record-calendar-legend::before {
-        width: 7px;
-        height: 7px;
+        width: 9px;
+        height: 9px;
+        border: 1px solid var(--brand);
         border-radius: 50%;
-        background: var(--brand);
+        background: transparent;
         content: "";
       }
 
@@ -7768,6 +7787,21 @@
     <script src="./config/fitlog-runtime.js"></script>
     <script src="./sync/fitlog-sync.js"></script>
     <script>
+      function adaptStandaloneViewport() {
+        const standalone = window.navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+        if (!standalone || !/iPhone|iPod/.test(window.navigator.userAgent)) return;
+        const probe = document.createElement("span");
+        probe.style.paddingTop = "env(safe-area-inset-top, 0px)";
+        document.body.append(probe);
+        const safeTop = Number.parseFloat(window.getComputedStyle(probe).paddingTop) || 0;
+        probe.remove();
+        const missingViewportHeight = window.screen.height - window.innerHeight;
+        if (safeTop >= 30 && missingViewportHeight >= safeTop - 8) {
+          document.documentElement.classList.add("pwa-reserved-bottom-space");
+        }
+      }
+      adaptStandaloneViewport();
+
       const APP_LANGUAGE_KEY = "fitlog-language";
       let appLanguage = localStorage.getItem(APP_LANGUAGE_KEY) === "en" ? "en" : "zh";
       const WEIGHT_UNIT_KEY = "fitlog-weight-unit";
