@@ -2738,7 +2738,10 @@
       .plan-template-library h4 { margin: 16px 0 10px; }
       .plan-template-library .resistance-template p { margin: 0; }
       #historyTemplateSection[hidden] { display: none; }
+      .plan-template-detail-content { display: grid; gap: 12px; }
       .plan-template-detail-action { width: 100%; }
+      .plan-template-exercises { margin: -2px 0 6px; }
+      .plan-template-exercises .history-workout:first-child { border-top: 0; }
 
       .history-plan {
         display: grid;
@@ -4869,7 +4872,7 @@
       #evaluation .risk-card.moderate { border-color: rgba(255, 191, 0, 0.7); }
       #evaluation .risk-card.high { border-color: rgba(255, 101, 85, 0.75); }
 
-      #plan .plan-metric-grid {
+      :is(#plan, #plan-template-detail) .plan-metric-grid {
         display: grid;
         grid-auto-flow: column;
         grid-auto-columns: minmax(0, 84%);
@@ -4881,11 +4884,11 @@
         scrollbar-width: none;
       }
 
-      #plan .plan-metric-grid::-webkit-scrollbar {
+      :is(#plan, #plan-template-detail) .plan-metric-grid::-webkit-scrollbar {
         display: none;
       }
 
-      #plan .plan-metric {
+      :is(#plan, #plan-template-detail) .plan-metric {
         min-height: 116px;
         display: grid;
         align-content: start;
@@ -4894,14 +4897,14 @@
         scroll-snap-align: start;
       }
 
-      #plan .plan-metric span {
+      :is(#plan, #plan-template-detail) .plan-metric span {
         color: var(--text-secondary);
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         font-size: 11px;
         letter-spacing: 0;
       }
 
-      #plan .plan-metric strong {
+      :is(#plan, #plan-template-detail) .plan-metric strong {
         margin: 2px 0 0;
         color: var(--brand);
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -4909,44 +4912,44 @@
         line-height: 1.2;
       }
 
-      #plan .plan-metric:nth-child(2) strong { color: var(--brand-accent); }
-      #plan .plan-metric:nth-child(3) strong { color: #ffd65b; }
-      #plan .plan-metric:nth-child(4) strong { color: #2cf5b4; }
+      :is(#plan, #plan-template-detail) .plan-metric:nth-child(2) strong { color: var(--brand-accent); }
+      :is(#plan, #plan-template-detail) .plan-metric:nth-child(3) strong { color: #ffd65b; }
+      :is(#plan, #plan-template-detail) .plan-metric:nth-child(4) strong { color: #2cf5b4; }
 
-      #plan .plan-periodization {
+      :is(#plan, #plan-template-detail) .plan-periodization {
         margin-top: 8px;
         padding: 12px;
       }
 
-      #plan .periodization-grid {
+      :is(#plan, #plan-template-detail) .periodization-grid {
         grid-auto-columns: minmax(0, 84%);
         gap: 10px;
       }
 
-      #plan .period-card {
+      :is(#plan, #plan-template-detail) .period-card {
         min-height: 108px;
         padding: 13px;
       }
 
-      #plan .period-card small {
+      :is(#plan, #plan-template-detail) .period-card small {
         color: var(--text-secondary);
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       }
 
-      #plan .period-card strong {
+      :is(#plan, #plan-template-detail) .period-card strong {
         color: #ffffff;
         font-size: 16px;
       }
 
       @container (min-width: 620px) {
-        #plan .plan-metric-grid {
+        :is(#plan, #plan-template-detail) .plan-metric-grid {
           grid-auto-flow: initial;
           grid-auto-columns: initial;
           grid-template-columns: repeat(4, minmax(0, 1fr));
           overflow: visible;
         }
 
-        #plan .plan-periodization .periodization-grid {
+        :is(#plan, #plan-template-detail) .plan-periodization .periodization-grid {
           grid-auto-columns: minmax(180px, 1fr);
         }
       }
@@ -5287,7 +5290,7 @@
         border-color: #39ff14;
       }
 
-      #plan .plan-metric {
+      :is(#plan, #plan-template-detail) .plan-metric {
         min-height: 0;
         display: grid;
         grid-template-rows: 2.5em auto auto;
@@ -5298,20 +5301,20 @@
         overflow: hidden;
       }
 
-      #plan .plan-metric span,
-      #plan .plan-metric strong {
+      :is(#plan, #plan-template-detail) .plan-metric span,
+      :is(#plan, #plan-template-detail) .plan-metric strong {
         margin: 0;
         min-width: 0;
       }
 
-      #plan .plan-metric span {
+      :is(#plan, #plan-template-detail) .plan-metric span {
         align-self: start;
         overflow-wrap: normal;
         word-break: normal;
         line-height: 1.25;
       }
 
-      #plan .plan-metric strong {
+      :is(#plan, #plan-template-detail) .plan-metric strong {
         font-size: clamp(13px, 4.4cqw, 16px);
         line-height: 1.2;
         white-space: normal;
@@ -5322,13 +5325,13 @@
         letter-spacing: 0;
       }
 
-      #plan .plan-metric small {
+      :is(#plan, #plan-template-detail) .plan-metric small {
         margin-top: 0;
         font-size: 10px;
         line-height: 1.25;
       }
 
-      #plan .period-card {
+      :is(#plan, #plan-template-detail) .period-card {
         min-height: 62px;
         display: grid;
         align-content: center;
@@ -5336,8 +5339,8 @@
         padding: 10px 12px;
       }
 
-      #plan .period-card small,
-      #plan .period-card span {
+      :is(#plan, #plan-template-detail) .period-card small,
+      :is(#plan, #plan-template-detail) .period-card span {
         margin: 0;
         color: var(--text-secondary);
         font-size: 11px;
@@ -5345,14 +5348,14 @@
         line-height: 1.25;
       }
 
-      #plan .period-card[aria-pressed="true"] span { color: var(--brand); }
+      :is(#plan, #plan-template-detail) .period-card[aria-pressed="true"] span { color: var(--brand); }
 
-      #plan .plan-periodization {
+      :is(#plan, #plan-template-detail) .plan-periodization {
         margin: 8px 0 12px;
         padding: 10px;
       }
 
-      #plan .periodization-grid {
+      :is(#plan, #plan-template-detail) .periodization-grid {
         grid-auto-flow: initial;
         grid-auto-columns: initial;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -5361,21 +5364,21 @@
         padding-bottom: 2px;
       }
 
-      #plan .period-card {
+      :is(#plan, #plan-template-detail) .period-card {
         min-height: 102px;
         align-content: start;
         gap: 5px;
         padding: 10px 8px;
       }
 
-      #plan .period-card small {
+      :is(#plan, #plan-template-detail) .period-card small {
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         font-size: 10px;
         letter-spacing: 0.05em;
         text-transform: uppercase;
       }
 
-      #plan .period-card strong {
+      :is(#plan, #plan-template-detail) .period-card strong {
         display: block;
         min-height: 2.5em;
         min-width: 0;
@@ -5391,18 +5394,18 @@
         -webkit-line-clamp: unset;
       }
 
-      html[lang="en"] #plan .period-card strong {
+      html[lang="en"] :is(#plan, #plan-template-detail) .period-card strong {
         font-size: clamp(8px, 2.1cqw, 9px);
         letter-spacing: -0.02em;
       }
 
-      #plan .period-card span {
+      :is(#plan, #plan-template-detail) .period-card span {
         color: var(--text-secondary);
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         font-size: 11px;
       }
 
-      #plan .active-week-kicker {
+      :is(#plan, #plan-template-detail) .active-week-kicker {
         display: inline-flex;
         margin-bottom: 6px;
         color: var(--brand-accent);
@@ -5413,20 +5416,20 @@
         text-transform: uppercase;
       }
 
-      #plan .week-schedule {
+      :is(#plan, #plan-template-detail) .week-schedule {
         padding: 14px;
         border: 1px solid var(--border-subtle);
         border-radius: 10px;
         background: var(--panel);
       }
 
-      #plan .week-schedule-head {
+      :is(#plan, #plan-template-detail) .week-schedule-head {
         align-items: center;
         padding-bottom: 10px;
         border-bottom: 1px solid var(--border-subtle);
       }
 
-      #plan .week-schedule-head h3 {
+      :is(#plan, #plan-template-detail) .week-schedule-head h3 {
         color: #ffffff;
         font-size: 18px;
         line-height: 1.3;
@@ -5435,13 +5438,13 @@
       /* Keep metrics readable in a phone-sized shell. Four columns are only safe
          once the container can keep each card at a usable minimum width. */
       @container (min-width: 620px) {
-        #plan .plan-metric-grid {
+        :is(#plan, #plan-template-detail) .plan-metric-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
 
       @container (min-width: 980px) {
-        #plan .plan-metric-grid {
+        :is(#plan, #plan-template-detail) .plan-metric-grid {
           grid-template-columns: repeat(4, minmax(0, 1fr));
         }
       }
@@ -7614,7 +7617,7 @@
           </section>
 
           <section class="panel section module-panel" id="plan-template-detail" data-module-panel hidden>
-            <div class="settings-page" id="officialTemplateDetail"></div>
+            <div class="plan-template-detail-content" id="officialTemplateDetail"></div>
           </section>
 
           <section class="panel section module-panel" id="training" data-module-panel hidden>
@@ -9000,6 +9003,8 @@
       let planHistory = JSON.parse(localStorage.getItem("fitlog-plan-history") || "[]");
       let activeHistoryPlanIndex = null;
       let activeOfficialTemplateId = null;
+      let activeOfficialTemplateWeekIndex = 0;
+      let activeOfficialTemplateDayIndex = null;
       let pendingOfficialTemplateId = null;
       let lastModuleId = "";
       let isEditingPlan = false;
@@ -9254,7 +9259,12 @@
         ) return "home";
         const [requested, routeQuery = ""] = (window.location.hash || "#home").slice(1).split("?");
         if (requested === "plan-template-detail") {
-          activeOfficialTemplateId = new URLSearchParams(routeQuery).get("id");
+          const templateId = new URLSearchParams(routeQuery).get("id");
+          if (templateId !== activeOfficialTemplateId) {
+            activeOfficialTemplateWeekIndex = 0;
+            activeOfficialTemplateDayIndex = null;
+          }
+          activeOfficialTemplateId = templateId;
         }
         const aliases = {
           evaluation: "me",
@@ -12404,29 +12414,61 @@
         const prescription = getGoalPrescription(template.goal, template.minExperience, "low");
         const weeks = createPeriodization({ goal: template.goal, experience: template.minExperience, ...prescription });
         const days = makeHypertrophySplit(template.days, template.minExperience);
+        activeOfficialTemplateWeekIndex = Math.max(0, Math.min(activeOfficialTemplateWeekIndex, weeks.length - 1));
+        const period = weeks[activeOfficialTemplateWeekIndex];
+        const previewPlan = {
+          ...prescription, goal: template.goal, experience: template.minExperience,
+          days: template.days, split: days, periodization: weeks, template,
+          focusArea: "", risk: { level: "low" }
+        };
         const unavailable = assessRisk().level === "high";
         officialTemplateDetail.innerHTML = `
           <button class="settings-back" type="button" data-official-template-back>← ${backLabel}</button>
-          <section class="card">
+          <div class="section-head"><div>
             <h2>${appLanguage === "en" ? `Hypertrophy · ${template.days} days/week` : `${escapeLogText(template.name)} · 每周 ${template.days} 天`}</h2>
-            <p class="muted">${appLanguage === "en" ? "4-week training plan" : "4 周周期训练计划"}</p>
-            <h3>${appLanguage === "en" ? "Who this plan is for" : "适用条件"}</h3>
-            <p>${escapeLogText(appLanguage === "en" ? template.conditionsEn : template.conditions)}</p>
+            <p>${appLanguage === "en" ? "Four-week periodized training plan" : "4 周周期训练计划"} · ${escapeLogText(appLanguage === "en" ? template.conditionsEn : template.conditions)}</p>
+          </div></div>
+          <div class="plan-metric-grid">
+            <div class="plan-metric"><span>${appLanguage === "en" ? "Main intensity" : "建议负荷"}</span><strong>${escapeLogText(prescription.load)}</strong><small>${appLanguage === "en" ? "Approx." : "约"} ${escapeLogText(prescription.rm)}</small></div>
+            <div class="plan-metric"><span>${appLanguage === "en" ? "Reps per set" : "每组次数"}</span><strong>${escapeLogText(translateInterfaceText(prescription.reps))}</strong><small>${appLanguage === "en" ? "Recommended range for main exercises" : "主训练动作建议范围"}</small></div>
+            <div class="plan-metric"><span>${appLanguage === "en" ? "Rest between sets" : "组间恢复"}</span><strong>${escapeLogText(translateInterfaceText(prescription.rest))}</strong><small>${appLanguage === "en" ? "Based on training goal" : "按训练目标安排"}</small></div>
+            <div class="plan-metric"><span>${appLanguage === "en" ? "Sets per exercise" : "每动作容量"}</span><strong>${escapeLogText(translateInterfaceText(prescription.setRange))}</strong><small>${appLanguage === "en" ? `${period.sets} sets this week` : `本周 ${period.sets} 组`}</small></div>
+          </div>
+          <section class="card plan-periodization" aria-label="${appLanguage === "en" ? "Four-week periodization" : "四周周期安排"}">
+            <div class="periodization-grid">${weeks.map((week, index) => `
+              <button class="period-card" type="button" data-official-template-week="${index}" aria-pressed="${index === activeOfficialTemplateWeekIndex}">
+                <small>Week ${String(index + 1).padStart(2, "0")}</small>
+                <strong>${escapeLogText(translateInterfaceText(week.title))}</strong>
+                <span>${escapeLogText(formatPeriodIntensity(week.load))}</span>
+              </button>`).join("")}</div>
           </section>
-          <section class="card">
-            <h3>${appLanguage === "en" ? "Weekly schedule" : "每周训练安排"}</h3>
-            ${days.map(([name, description], index) => `<div class="history-workout">
-              <strong>${appLanguage === "en" ? `Training day ${index + 1}` : `训练日 ${index + 1}`} · ${escapeLogText(translateInterfaceText(name))}</strong>
-              <small>${escapeLogText(translateInterfaceText(description))}</small>
-            </div>`).join("")}
-          </section>
-          <section class="card">
-            <h3>${appLanguage === "en" ? "4-week progression" : "四周训练安排"}</h3>
-            ${weeks.map((week, index) => `<div class="history-workout">
-              <strong>${appLanguage === "en" ? `Week ${index + 1}` : `第 ${index + 1} 周`} · ${escapeLogText(translateInterfaceText(week.title))}</strong>
-              <small>${week.sets} ${appLanguage === "en" ? "sets" : "组"} × ${escapeLogText(translateInterfaceText(week.reps))} · ${escapeLogText(week.load)}</small>
-            </div>`).join("")}
-          </section>
+          <div class="plan-grid">
+            <section class="week-schedule">
+              <div class="week-schedule-head"><div>
+                <span class="active-week-kicker">${appLanguage === "en" ? `Week ${activeOfficialTemplateWeekIndex + 1}` : escapeLogText(period.label)}</span>
+                <h3>${escapeLogText(translateInterfaceText(period.title))}</h3>
+                <p>${escapeLogText(translateInterfaceText(period.focus))}</p>
+              </div><span class="chip">${appLanguage === "en" ? `${period.sets} sets × ${escapeLogText(translateInterfaceText(period.reps))}` : `${period.sets} 组 × ${escapeLogText(period.reps)}`}</span></div>
+              <div class="week">${days.map(([name, description], index) => `
+                <button class="day plan-training-day" type="button" data-official-template-day="${index}" aria-expanded="${index === activeOfficialTemplateDayIndex}">
+                  <strong>${appLanguage === "en" ? `Training day ${index + 1}` : `训练日${index + 1}`} · ${escapeLogText(translateInterfaceText(name))}</strong>
+                  <span>${escapeLogText(translateInterfaceText(description))}<br><small class="muted">${appLanguage === "en" ? `Main lifts ${period.sets} sets × ${escapeLogText(translateInterfaceText(period.reps))} · Rest ${escapeLogText(translateInterfaceText(period.rest))}` : `主项 ${period.sets} 组 × ${escapeLogText(period.reps)} · 间歇 ${escapeLogText(period.rest)}`}</small></span>
+                </button>
+                ${index === activeOfficialTemplateDayIndex ? `<div class="card plan-template-exercises">${getWorkoutExercises(index, previewPlan, activeOfficialTemplateWeekIndex).map((exercise) => `<div class="history-workout"><strong>${escapeLogText(translateInterfaceText(exercise.name))}</strong><small>${escapeLogText(translateInterfaceText(exercise.prescription || ""))}${exercise.rest ? ` · ${appLanguage === "en" ? "Rest" : "间歇"} ${escapeLogText(translateInterfaceText(exercise.rest))}` : ""}</small></div>`).join("")}</div>` : ""}
+              `).join("")}</div>
+            </section>
+            <div class="card"><h3>${appLanguage === "en" ? "Load rules" : "负荷规则"}</h3>
+              <ul class="mini-list">
+                <li>${appLanguage === "en" ? `Main lifts this week: ${period.sets} sets × ${escapeLogText(translateInterfaceText(period.reps))}, suggested load ${escapeLogText(period.load)} (${escapeLogText(period.rm)}).` : `本周主项：${period.sets} 组 × ${escapeLogText(period.reps)}，建议负荷 ${escapeLogText(period.load)}（${escapeLogText(period.rm)}）。`}</li>
+                <li>${escapeLogText(translateInterfaceText("动作顺序：爆发力动作（如适用）→ 核心多关节动作 → 辅助动作 → 躯干稳定与整理。"))}</li>
+                <li>${escapeLogText(translateInterfaceText("2-for-2：最后一组连续两次训练均能多完成 2 次以上，再增加负重。"))}</li>
+                <li>${escapeLogText(translateInterfaceText(displayLoadAdvice(appLanguage === "en" ? "Increase upper-body loads by 1-2.5 kg or 2.5%-5%; increase lower-body loads by 2.5-5 kg or 5%-10%." : "上肢每次增加 1-2.5 kg 或 2.5%-5%；下肢增加 2.5-5 kg 或 5%-10%。")))}</li>
+                <li>${escapeLogText(translateInterfaceText("第 4 周减少约 40%-50% 训练组数，为下一周期恢复。"))}</li>
+              </ul>
+              <div class="load-bar" aria-hidden="true" style="margin-top: 16px"><span style="--w: ${Math.min(88, period.sets * 21)}%"></span></div>
+              <p class="muted">${escapeLogText(translateInterfaceText(period.focus))}</p>
+            </div>
+          </div>
           <button class="primary-btn plan-template-detail-action" type="button" data-official-template-use="${template.id}" ${unavailable ? "disabled" : ""}>${unavailable ? (appLanguage === "en" ? "Medical clearance required" : "需先获得医学确认") : (appLanguage === "en" ? "Use this plan" : "使用该计划")}</button>`;
       }
 
@@ -13905,6 +13947,21 @@
         if (event.target.closest("[data-official-template-back]")) {
           setPlanPane("currentPlanPane");
           window.location.hash = "plan";
+          return;
+        }
+        const weekButton = event.target.closest("[data-official-template-week]");
+        if (weekButton) {
+          activeOfficialTemplateWeekIndex = Number(weekButton.dataset.officialTemplateWeek);
+          activeOfficialTemplateDayIndex = null;
+          renderOfficialTemplateDetail();
+          return;
+        }
+        const dayButton = event.target.closest("[data-official-template-day]");
+        if (dayButton) {
+          const dayIndex = Number(dayButton.dataset.officialTemplateDay);
+          activeOfficialTemplateDayIndex = activeOfficialTemplateDayIndex === dayIndex ? null : dayIndex;
+          renderOfficialTemplateDetail();
+          return;
         }
         const button = event.target.closest("[data-official-template-use]");
         if (button && !button.disabled) requestOfficialTemplate(button.dataset.officialTemplateUse);

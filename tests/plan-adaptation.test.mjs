@@ -530,23 +530,46 @@ test("official template detail previews schedule before offering plan use", () =
   const end = source.indexOf("function renderPlanTemplateLibrary()", start);
   const detail = { innerHTML: "" };
   const context = {
-    appLanguage: "zh", activeOfficialTemplateId: "hypertrophy-3", officialTemplateDetail: detail,
-    resistanceTemplates: [{ id: "hypertrophy-3", goal: "hypertrophy", name: "增肌", days: 3, minExperience: "beginner", conditions: "初学者及以上" }],
-    getGoalPrescription: () => ({ baseSetCount: 3 }),
-    createPeriodization: () => [{ title: "动作适应周", sets: 2, reps: "8-12 次", load: "70% 1RM" }],
+    appLanguage: "zh", activeOfficialTemplateId: "hypertrophy-3", activeOfficialTemplateWeekIndex: 0,
+    activeOfficialTemplateDayIndex: null, officialTemplateDetail: detail,
+    resistanceTemplates: [{ id: "hypertrophy-3", goal: "hypertrophy", name: "增肌", days: 3, minExperience: "beginner", conditions: "初学者及以上", conditionsEn: "Beginner or above" }],
+    getGoalPrescription: () => ({ baseSetCount: 3, load: "67-85% 1RM", rm: "6-12 RM", reps: "6-12 次", setRange: "3-6 组", rest: "30-90 秒" }),
+    createPeriodization: () => [
+      { label: "第 1 周", title: "动作适应周", focus: "熟悉动作", sets: 2, reps: "8-12 次", rm: "8-12 RM", load: "70% 1RM", rest: "30-90 秒" },
+      { label: "第 2 周", title: "容量递进周", focus: "逐渐加量", sets: 3, reps: "8-10 次", rm: "8-10 RM", load: "75% 1RM", rest: "30-90 秒" }
+    ],
     makeHypertrophySplit: () => [["全身训练", "上下肢复合动作"]],
+    getWorkoutExercises: () => [{ name: "杠铃深蹲", prescription: "3 组 × 8 次", rest: "60 秒" }],
     assessRisk: () => ({ level: "low" }), translateInterfaceText: (value) => value,
-    escapeLogText: (value) => value
+    escapeLogText: (value) => value, formatPeriodIntensity: (value) => `强度 ${value}`,
+    displayLoadAdvice: (value) => value
   };
   vm.createContext(context);
   vm.runInContext(`${source.slice(start, end)}\nthis.render = renderOfficialTemplateDetail;`, context);
   context.render();
-  assert.match(detail.innerHTML, /适用条件/);
   assert.match(detail.innerHTML, /初学者及以上/);
   assert.match(detail.innerHTML, /全身训练/);
   assert.match(detail.innerHTML, /动作适应周/);
+  assert.match(detail.innerHTML, /class="plan-metric-grid"/);
+  assert.match(detail.innerHTML, /class="periodization-grid"/);
+  assert.match(detail.innerHTML, /class="week-schedule"/);
+  assert.match(detail.innerHTML, /class="plan-grid"/);
+  assert.match(detail.innerHTML, /负荷规则/);
+  assert.match(detail.innerHTML, /data-official-template-week="1"/);
+  assert.match(detail.innerHTML, /data-official-template-day="0"/);
   assert.match(detail.innerHTML, /data-official-template-use="hypertrophy-3"/);
   assert.ok(detail.innerHTML.lastIndexOf("使用该计划") > detail.innerHTML.lastIndexOf("动作适应周"));
+  context.activeOfficialTemplateWeekIndex = 1;
+  context.activeOfficialTemplateDayIndex = 0;
+  context.render();
+  assert.match(detail.innerHTML, /容量递进周/);
+  assert.match(detail.innerHTML, /杠铃深蹲/);
+  assert.match(detail.innerHTML, /data-official-template-day="0" aria-expanded="true"/);
+  context.appLanguage = "en";
+  context.render();
+  assert.match(detail.innerHTML, /Hypertrophy · 3 days\/week/);
+  assert.match(detail.innerHTML, /Beginner or above/);
+  assert.match(detail.innerHTML, /Use this plan/);
   assert.doesNotMatch(source, /id="planTemplateFormCancel"/);
 });
 
