@@ -7,11 +7,11 @@ const source = await readFile(new URL("../index.html", import.meta.url), "utf8")
 const exerciseData = JSON.parse(await readFile(new URL("../data/exercises-v1.json", import.meta.url), "utf8"));
 
 test("plan generator supports core inputs plus one optional focus area and goal", () => {
-  assert.match(source, /<select id="goal">/);
-  assert.match(source, /<option value="hypertrophy">增肌<\/option>/);
-  assert.match(source, /<option value="endurance">肌耐力<\/option>/);
-  assert.match(source, /<option value="strength">力量<\/option>/);
-  assert.match(source, /<option value="power">爆发力<\/option>/);
+  assert.match(source, /<select id="goal" required>/);
+  assert.match(source, /<option value="hypertrophy">增肌 · 增加肌肉量<\/option>/);
+  assert.match(source, /<option value="endurance">肌耐力 · 提升肌肉抗疲劳能力<\/option>/);
+  assert.match(source, /<option value="strength">力量 · 提高最大力量<\/option>/);
+  assert.match(source, /<option value="power">爆发力 · 提高快速发力能力<\/option>/);
   assert.doesNotMatch(source, /<option value="health">/);
   assert.doesNotMatch(source, /<option value="fatloss">/);
   assert.match(source, /<select id="experience" required>/);
@@ -205,7 +205,9 @@ test("program design centralizes goal prescriptions and recovery-aware split sel
   assert.match(source, /≥85% 1RM/);
   assert.match(source, /75-90% 1RM/);
   assert.match(source, /≤67% 1RM/);
-  assert.match(source, /profile\.experience === "beginner"\s*\? Math\.min\(3, requestedDays\)/);
+  assert.match(source, /function getPlanSelectionConflict\(profile\)/);
+  assert.match(source, /if \(Number\(profile\.days\) >= 4\) return "beginnerDays"/);
+  assert.match(source, /if \(profile\.goal === "power"\) return "beginnerPower"/);
   assert.match(source, /2-for-2/);
   assert.match(source, /至少 48 小时恢复时间/);
 });
@@ -269,10 +271,9 @@ test("phone plan layout uses its app container instead of the browser viewport",
 });
 
 test("plan metrics preserve readable widths and use compact aligned rows", () => {
-  assert.match(source, /@container \(min-width: 620px\)\s*\{\s*#plan \.plan-metric-grid\s*\{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
-  assert.match(source, /@container \(min-width: 980px\)\s*\{\s*#plan \.plan-metric-grid\s*\{\s*grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
-  assert.match(source, /#plan \.plan-metric strong\s*\{[\s\S]*?white-space: normal;[\s\S]*?overflow-wrap: normal;[\s\S]*?word-break: keep-all;[\s\S]*?text-overflow: clip/);
-  assert.match(source, /#plan \.plan-metric\s*\{[\s\S]*?grid-template-rows: 2\.5em auto auto;[\s\S]*?gap: 3px;[\s\S]*?padding: 8px 10px/);
+  assert.match(source, /@container \(min-width: 620px\)\s*\{\s*:is\(#plan, #plan-template-detail\) \.plan-metric-grid\s*\{[\s\S]*?grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
+  assert.match(source, /:is\(#plan, #plan-template-detail\) \.plan-metric strong\s*\{[\s\S]*?white-space: normal;[\s\S]*?overflow-wrap: normal;[\s\S]*?word-break: keep-all;[\s\S]*?text-overflow: clip/);
+  assert.match(source, /:is\(#plan, #plan-template-detail\) \.plan-metric\s*\{[\s\S]*?grid-template-rows: 2\.5em auto auto;[\s\S]*?gap: 3px;[\s\S]*?padding: 8px 10px/);
   assert.match(source, /<span>建议负荷<\/span><strong id="planMetricRm">67-85% 1RM<\/strong><small id="planMetricRmNote">约 6-12 RM<\/small>/);
   assert.match(source, /\["建议负荷", "Training load"\]/);
   assert.match(source, /#planMetricRm"\)\.textContent = plan\.load/);
@@ -285,6 +286,6 @@ test("period cards show a compact week hierarchy without a redundant section hea
   assert.match(source, /<small>Week \$\{String\(index \+ 1\)\.padStart\(2, "0"\)\}<\/small>/);
   assert.match(source, /<strong>\$\{translateInterfaceText\(period\.title\)\}<\/strong>/);
   assert.match(source, /id="activeWeekKicker"/);
-  assert.match(source, /#plan \.periodization-grid\s*\{[\s\S]*?grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
-  assert.match(source, /#plan \.period-card strong\s*\{[\s\S]*?font-size: clamp\(9px, 2\.4cqw, 11px\)[\s\S]*?-webkit-line-clamp: unset/);
+  assert.match(source, /:is\(#plan, #plan-template-detail\) \.periodization-grid\s*\{[\s\S]*?grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
+  assert.match(source, /:is\(#plan, #plan-template-detail\) \.period-card strong\s*\{[\s\S]*?font-size: clamp\(9px, 2\.4cqw, 11px\)[\s\S]*?-webkit-line-clamp: unset/);
 });

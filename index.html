@@ -584,7 +584,8 @@
         margin: 0;
       }
 
-      #planNoticeDialog .schedule-dialog-actions { display: block; }
+      #planNoticeDialog:not([data-conflict="true"]) .schedule-dialog-actions { display: block; }
+      #planNoticeSource { color: var(--brand); }
 
       .mobile-nav {
         position: fixed;
@@ -2745,6 +2746,7 @@
       .plan-template-library h3 { margin: 0 0 12px; }
       .plan-template-library h4 { margin: 16px 0 10px; }
       .plan-template-library .resistance-template p { margin: 0; }
+      .plan-template-coming { margin-top: 16px; padding: 14px; border: 1px solid var(--border-subtle); border-radius: 10px; color: var(--text-secondary); background: var(--panel); font-size: 13px; }
       #historyTemplateSection[hidden] { display: none; }
       .plan-template-detail-content { display: grid; gap: 12px; }
       .plan-template-detail-action { width: 100%; }
@@ -5950,17 +5952,45 @@
         grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
       }
 
-      .muscle-volume { margin-top: 18px; padding: 18px; border: 1px solid var(--border); border-radius: 16px; background: var(--panel); }
+      .muscle-volume { margin-top: 18px; padding: 18px; border: 1px solid var(--border-subtle); border-radius: 16px; background: var(--panel); }
       .muscle-volume h3 { margin: 0 0 6px; font-size: 18px; }
-      .muscle-volume p { margin: 0 0 14px; font-size: 12px; }
-      .muscle-volume-grid { display: grid; gap: 9px; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
-      .muscle-volume-week { grid-column: 1 / -1; border-top: 1px solid var(--border); padding-top: 10px; }
-      .muscle-volume-week > strong { display: block; margin-bottom: 8px; font-size: 13px; }
-      .muscle-volume-week-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(122px, 1fr)); }
-      .muscle-volume-item { padding: 11px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-soft); }
-      .muscle-volume-item span, .muscle-volume-item strong { display: block; }
-      .muscle-volume-item span { color: var(--text-secondary); font-size: 12px; }
-      .muscle-volume-item strong { color: var(--brand); font-size: 21px; }
+      .muscle-volume > p { margin: 0 0 16px; color: var(--text-secondary); font-size: 12px; line-height: 1.5; }
+      .muscle-volume-grid { display: grid; gap: 16px; min-width: 0; }
+      .muscle-volume-overview { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .muscle-volume-stat { display: grid; align-content: start; gap: 5px; padding: 12px; border: 1px solid var(--border-subtle); border-radius: 10px; background: var(--surface-soft); }
+      .muscle-volume-stat:first-child { border-left: 2px solid var(--brand); }
+      .muscle-volume-stat:last-child { border-left: 2px solid var(--brand-accent); }
+      .muscle-volume-stat span { color: var(--text-secondary); font-size: 12px; }
+      .muscle-volume-stat strong { color: var(--brand); font-size: 24px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+      .muscle-volume-stat:last-child strong { color: var(--brand-accent); }
+      .muscle-volume-stat small { margin-left: 4px; color: var(--text-secondary); font-size: 12px; font-weight: 500; }
+      .muscle-volume-trend { padding: 14px 12px 10px; border: 1px solid var(--border-subtle); border-radius: 10px; background: var(--surface-soft); }
+      .muscle-volume-trend-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+      .muscle-volume-trend-head strong { font-size: 13px; }
+      .muscle-volume-trend-legend { display: flex; gap: 8px; color: var(--text-secondary); font-size: 10px; white-space: nowrap; }
+      .muscle-volume-trend-legend span { display: inline-flex; align-items: center; gap: 3px; }
+      .muscle-volume-trend-legend i { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+      .muscle-volume-trend-legend span:last-child i { background: var(--brand-accent); }
+      .muscle-volume-trend-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: end; }
+      .muscle-volume-trend-week { display: grid; justify-items: center; gap: 6px; min-width: 0; color: var(--text-secondary); font-size: 11px; text-align: center; }
+      .muscle-volume-trend-week strong { color: var(--text-strong); font-size: 13px; font-variant-numeric: tabular-nums; }
+      .muscle-volume-trend-track { display: flex; align-items: end; width: min(100%, 48px); height: 70px; border-radius: 6px 6px 3px 3px; background: var(--border-subtle); overflow: hidden; }
+      .muscle-volume-trend-fill { display: block; width: 100%; height: var(--bar-height); border-radius: 6px 6px 0 0; background: var(--brand); }
+      .muscle-volume-trend-week:not(:first-child) .muscle-volume-trend-fill { background: var(--brand-accent); }
+      .muscle-volume-week { padding-top: 14px; border-top: 1px solid var(--border-subtle); }
+      .muscle-volume-week-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+      .muscle-volume-week-head strong { font-size: 13px; font-variant-numeric: tabular-nums; }
+      .muscle-volume-week-head span { color: var(--text-secondary); font-size: 12px; white-space: nowrap; }
+      .muscle-volume-week-grid { display: grid; gap: 10px; }
+      .muscle-volume-item { display: grid; gap: 6px; min-width: 0; }
+      .muscle-volume-item-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+      .muscle-volume-item-head span { color: var(--text-secondary); font-size: 12px; }
+      .muscle-volume-item-head strong { color: var(--brand); font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .muscle-volume-item.is-accent .muscle-volume-item-head strong { color: var(--brand-accent); }
+      .muscle-volume-item-track { display: block; height: 5px; border-radius: 999px; background: var(--border-subtle); overflow: hidden; }
+      .muscle-volume-item-fill { display: block; width: var(--bar-width); height: 100%; border-radius: inherit; background: var(--brand); }
+      .muscle-volume-item.is-accent .muscle-volume-item-fill { background: var(--brand-accent); }
+      .muscle-volume-empty { color: var(--text-secondary); font-size: 12px; }
       .workout-schedule-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
       .workout-schedule-actions button { border: 1px solid var(--border); border-radius: 9px; background: transparent; color: var(--text); padding: 8px 11px; font: inherit; font-size: 12px; cursor: pointer; }
       .workout-schedule-actions button:hover, .workout-schedule-actions button:focus-visible { border-color: var(--brand); }
@@ -7136,7 +7166,10 @@
 
       <dialog class="schedule-dialog" id="planNoticeDialog" aria-labelledby="planNoticeTitle">
         <h2 id="planNoticeTitle"></h2>
+        <p class="schedule-dialog-summary" id="planNoticeBody" hidden></p>
+        <a class="schedule-dialog-summary" id="planNoticeSource" href="https://www.nsca.com/education/articles/kinetic-select/determination-of-resistance-training-frequency/" target="_blank" rel="noopener noreferrer" hidden>NSCA · Determination of Resistance Training Frequency ↗</a>
         <div class="schedule-dialog-actions">
+          <button class="ghost-btn" id="planNoticeSecondary" type="button" hidden></button>
           <button class="primary-btn" id="planNoticeConfirm" type="button">确定</button>
         </div>
       </dialog>
@@ -7519,7 +7552,7 @@
               <div class="card plan-generator" id="profileEditor" aria-labelledby="profileTitle">
                 <div class="plan-generator-head">
                   <div>
-                    <h3 id="profileTitle">生成周期化课表</h3>
+                    <h3 id="profileTitle">生成抗阻训练计划</h3>
                   </div>
                   <span class="chip">4 周计划</span>
                 </div>
@@ -7556,6 +7589,7 @@
                         <option value="6">每周 6 天</option>
                       </select>
                       <small>决定全身训练或分化训练的课表结构。</small>
+                      <small id="beginnerDaysHint" hidden>初学者建议每周 2–3 天，训练日不连续。</small>
                     </label>
                     <label>
                       <span>期望加强部位</span>
@@ -7632,6 +7666,7 @@
                 <h4 id="officialTemplateTabHeading">官方训练计划模板</h4>
                 <div class="template-list" id="officialTemplateTabList"></div>
               </section>
+              <section class="plan-template-coming" aria-label="更多计划模板">更多计划模板开发中</section>
             </div>
           </section>
 
@@ -7929,7 +7964,9 @@
         ["还没有训练计划", "No training plan yet"],
         ["当前无计划", "No current plan"],
         ["生成训练计划", "Create training plan"],
-        ["生成周期化课表", "Create periodized plan"],
+        ["生成抗阻训练计划", "Create resistance training plan"],
+        ["更多计划模板", "More plan templates"],
+        ["更多计划模板开发中", "More plan templates are in development"],
         ["训练目标", "Training goal"],
         ["请选择训练目标", "Select a training goal"],
         ["增肌 · 增加肌肉量", "Muscle growth · Increase muscle size"],
@@ -7942,6 +7979,7 @@
         ["返回计划模板", "Back to plan templates"],
         ["返回计划", "Back to plan"],
         ["每周可训练天数", "Training days per week"],
+        ["初学者建议每周 2–3 天，训练日不连续。", "Beginners: 2–3 nonconsecutive training days per week."],
         ["增肌", "Hypertrophy"],
         ["肌耐力", "Muscular endurance"],
         ["力量", "Strength"],
@@ -9512,18 +9550,43 @@
 
       function getProfile() {
         const value = (selector, fallback = "") => document.querySelector(selector)?.value || fallback;
+        let savedRuleVersion = 2;
+        try {
+          const saved = JSON.parse(localStorage.getItem("fitlog-profile") || "null");
+          if (saved) savedRuleVersion = Number(saved.planRuleVersion) || 1;
+        } catch {}
         return {
           age: Number(value("#age", 0)),
           sex: value("#sex"),
           experience: value("#experience", "beginner"),
           goal: value("#goal"),
           days: Number(value("#trainingDays", 3)),
+          planRuleVersion: savedRuleVersion,
           focusArea: value("#focusArea"),
           focusPurpose: value("#focusPurpose"),
           sleep: value("#sleep", "normal"),
           stress: value("#stress", "normal"),
           limits: value("#limits").trim()
         };
+      }
+
+      function updateBeginnerTrainingDaysHint() {
+        const beginner = document.querySelector("#experience").value === "beginner";
+        document.querySelector("#beginnerDaysHint").hidden = !beginner;
+      }
+
+      function getPlanSelectionConflict(profile) {
+        if (profile.experience !== "beginner") return "";
+        if (Number(profile.days) >= 4) return "beginnerDays";
+        if (profile.goal === "power") return "beginnerPower";
+        return "";
+      }
+
+      function warnOnPlanSelectionChange() {
+        updateBeginnerTrainingDaysHint();
+        if (document.querySelector("#experience").value !== "beginner") return;
+        const conflict = getPlanSelectionConflict(getProfile());
+        if (conflict && (!planNoticeDialog.open || planNoticeDialog.dataset.kind !== conflict)) showPlanNotice(conflict);
       }
 
       function getRiskAnswers() {
@@ -10018,7 +10081,7 @@
         const days = risk.level === "high"
           ? Math.min(2, requestedDays)
           : profile.experience === "beginner"
-            ? Math.min(3, requestedDays)
+            ? Math.min(Number(profile.planRuleVersion) >= 2 ? 4 : 3, requestedDays)
             : requestedDays;
         let split = makeSplit(days, profile.goal, profile.experience);
         if (selectedTemplate?.split?.length === days && risk.level !== "high") split = selectedTemplate.split;
@@ -10088,7 +10151,7 @@
           ["背阔肌划船与手臂补量", "背部、后三角、肱二头肌；划船与背阔肌补量"],
           ["髋主导臀腿后侧发展", "臀肌、腘绳肌、股四头肌与小腿；髋主导为主"]
         ];
-        if (experience === "beginner") return fullBody.slice(0, Math.min(days, 3));
+        if (experience === "beginner") return days === 4 ? upperLower : fullBody.slice(0, days);
         if (experience === "intermediate") {
           return days >= 5 ? ppl.slice(0, days) : days === 4 ? upperLower : fullBody.slice(0, days);
         }
@@ -10118,7 +10181,7 @@
           ["背部拉力弱项补强", "背部、后三角、肱二头肌；弱项辅助"],
           ["臀腿后侧弱项补强", "臀腿与小腿；弱项辅助"]
         ];
-        if (experience === "beginner") return fullBody.slice(0, Math.min(days, 3));
+        if (experience === "beginner") return days === 4 ? upperLower : fullBody.slice(0, days);
         if (days <= 2) return fullBody.slice(0, days);
         if (days === 3) return experience === "advanced" ? ppl.slice(0, 3) : fullBody;
         if (days === 4) return upperLower;
@@ -10158,6 +10221,14 @@
         if (!Array.isArray(value)) return null;
         const normalized = [...new Set(value.map(Number).filter((day) => Number.isInteger(day) && day >= 0 && day <= 6))];
         return normalized.length === days ? normalized : null;
+      }
+
+      function hasBeginnerRecoverySpacing(weekdays) {
+        const ordered = [...weekdays].sort((a, b) => a - b);
+        return ordered.every((day, index) => {
+          const next = ordered[(index + 1) % ordered.length];
+          return ((next - day + 7) % 7) >= 2;
+        });
       }
 
       function getPlanScheduleKey(profile, plan, startDate = getPlanStartDate()) {
@@ -10218,7 +10289,9 @@
           const override = changes.overrides[id] || {};
           const shiftedDate = addDays(baseDate, shift + (override.deferDays || 0));
           const requestedDate = override.deferTo && override.deferTo > shiftedDate ? override.deferTo : shiftedDate;
-          const date = lastScheduledDate && requestedDate <= lastScheduledDate ? addDays(lastScheduledDate, 1) : requestedDate;
+          const recoveryDays = profile.experience === "beginner" && plan.days <= 3 ? 2 : 1;
+          const earliestDate = lastScheduledDate ? addDays(lastScheduledDate, recoveryDays) : "";
+          const date = earliestDate && requestedDate < earliestDate ? earliestDate : requestedDate;
           const skipped = changes.overrides[id]?.status === "skipped";
           const paused = Boolean(changes.pausedAt && baseDate >= changes.pausedAt);
           if (!skipped && !paused) lastScheduledDate = date;
@@ -10605,7 +10678,7 @@
           ? pplHypertrophyTemplates
           : plan.experience === "advanced" && plan.days === 3
             ? pplHypertrophyTemplates
-            : plan.experience !== "beginner" && plan.days === 4
+            : plan.days === 4
               ? fourDaySplitTemplates
               : hypertrophyTemplates;
         const generalProgram = plan.experience !== "beginner" && plan.days >= 5
@@ -12606,16 +12679,53 @@
 
       function showPlanNotice(kind) {
         planNoticeDialog.dataset.kind = kind;
+        const beginnerDays = kind === "beginnerDays";
+        const beginnerPower = kind === "beginnerPower";
+        const conflict = beginnerDays || beginnerPower;
+        planNoticeDialog.dataset.conflict = String(conflict);
         document.querySelector("#planNoticeTitle").textContent = kind === "same"
           ? (appLanguage === "en" ? "An identical plan already exists" : "已有相同计划")
           : kind === "goal"
             ? (appLanguage === "en" ? "Select a training goal" : "请选择训练目标")
-            : (appLanguage === "en" ? "Select your training experience" : "请选择训练经验");
-        document.querySelector("#planNoticeConfirm").textContent = appLanguage === "en" ? "OK" : "确定";
+            : conflict
+              ? (appLanguage === "en" ? "NSCA safety and progression conflict" : "NSCA 安全与进阶冲突警告")
+              : (appLanguage === "en" ? "Select your training experience" : "请选择训练经验");
+        const body = document.querySelector("#planNoticeBody");
+        body.hidden = !conflict;
+        body.textContent = beginnerDays
+          ? (appLanguage === "en"
+            ? "NSCA recommends 2–3 nonconsecutive full-body resistance sessions per week for beginners. Four or more days calls for greater training experience and recovery capacity. Choose 2–3 days, or correct your training experience if selected in error."
+            : "NSCA 建议初学者每周进行 2–3 次非连续的全身抗阻训练；每周 4 天及以上需要更高的训练经验与恢复能力。请选择 2–3 天，或更正误选的训练经验。")
+          : beginnerPower
+            ? (appLanguage === "en"
+              ? "FitMine does not automatically prescribe power-focused plans to beginners. Build movement skill and foundational strength first, then progress toward power training. Choose another goal, or correct your training experience if selected in error."
+              : "FitMine 暂不为初学者自动生成以爆发力为主目标的计划。请先建立动作技术与基础力量，再逐步进阶；请选择其他目标，或更正误选的训练经验。")
+            : "";
+        const sourceLink = document.querySelector("#planNoticeSource");
+        sourceLink.hidden = !conflict;
+        sourceLink.href = beginnerPower
+          ? "https://www.nsca.com/contentassets/8323553f698a466a98220b21d9eb9a65/foundationsoffitnessprogramming_201508.pdf"
+          : "https://www.nsca.com/education/articles/kinetic-select/determination-of-resistance-training-frequency/";
+        sourceLink.textContent = beginnerPower
+          ? "NSCA · Foundations of Fitness Programming ↗"
+          : "NSCA · Determination of Resistance Training Frequency ↗";
+        const secondary = document.querySelector("#planNoticeSecondary");
+        secondary.hidden = !conflict;
+        secondary.textContent = appLanguage === "en" ? "Correct experience" : "更正训练经验";
+        document.querySelector("#planNoticeConfirm").textContent = beginnerDays
+          ? (appLanguage === "en" ? "Choose 3 days" : "改为每周 3 天")
+          : beginnerPower
+            ? (appLanguage === "en" ? "Choose another goal" : "选择其他目标")
+            : (appLanguage === "en" ? "OK" : "确定");
         if (!planNoticeDialog.open) planNoticeDialog.showModal();
       }
 
       function saveCurrentPlan({ templateId = null, preventSamePlan = false } = {}) {
+        const conflict = getPlanSelectionConflict(getProfile());
+        if (conflict) {
+          showPlanNotice(conflict);
+          return false;
+        }
         if (preventSamePlan && isEditingPlan && hasGeneratedPlan() && planSelectionsMatchSaved()
           && !isPlanCycleExpired(getProfile(), buildPlan(getProfile()))) return false;
         const replacingPlan = hasGeneratedPlan() && isEditingPlan;
@@ -12629,7 +12739,7 @@
         } else {
           localStorage.removeItem("fitlog-plan-template");
         }
-        localStorage.setItem("fitlog-profile", JSON.stringify(getProfile()));
+        localStorage.setItem("fitlog-profile", JSON.stringify({ ...getProfile(), planRuleVersion: 2 }));
         localStorage.setItem("fitlog-risk", JSON.stringify(getRiskAnswers()));
         localStorage.setItem("fitlog-plan-saved", "true");
         if (replacingPlan || !localStorage.getItem("fitlog-plan-start-date")) {
@@ -12722,7 +12832,7 @@
         document.querySelector("#trainingDays").value = String(template.days);
         isEditingPlan = hasGeneratedPlan();
         activePlanWeekIndex = 0;
-        saveCurrentPlan({ templateId });
+        if (!saveCurrentPlan({ templateId })) return;
         clearPendingOfficialTemplate();
         renderPlan();
         renderHome();
@@ -12740,7 +12850,7 @@
         });
         isEditingPlan = hasGeneratedPlan();
         activePlanWeekIndex = 0;
-        saveCurrentPlan({ templateId: item.templateId || null });
+        if (!saveCurrentPlan({ templateId: item.templateId || null })) return;
         renderPlan();
         setPlanPane("currentPlanPane");
       }
@@ -13002,6 +13112,12 @@
         const { profile, plan, startDate, weekIndex } = scheduleDraftContext;
         if (scheduleDraftWeekdays.size !== plan.days) {
           scheduleSelectionHint.textContent = appLanguage === "en" ? `Select ${plan.days} days before saving.` : `需要选择 ${plan.days} 天后才能保存。`;
+          return;
+        }
+        if (profile.experience === "beginner" && plan.days <= 3 && !hasBeginnerRecoverySpacing(scheduleDraftWeekdays)) {
+          scheduleSelectionHint.textContent = appLanguage === "en"
+            ? "Beginners need at least one rest day between full-body sessions, including across weeks."
+            : "初学者全身训练之间需至少间隔一天，跨周也需遵守。";
           return;
         }
         const planKey = getPlanScheduleKey(profile, plan, startDate);
@@ -13841,29 +13957,61 @@
         const note = document.querySelector("#muscleVolumeNote");
         if (!grid || !note) return;
         note.textContent = appLanguage === "en"
-          ? "Last 4 weeks · completed working sets with logged reps, credited to primary muscles only."
-          : "近 4 周 · 仅统计已记录次数的正式训练组，归入动作主要肌群。";
+          ? "Last 4 weeks · working sets with logged load and reps. A set may count toward more than one primary muscle."
+          : "近 4 周 · 仅统计已记录重量和次数的正式训练组；同一组可计入多个主要肌群。";
         const monday = parseLocalDate(today);
         monday.setDate(monday.getDate() - (monday.getDay() + 6) % 7);
         const exerciseById = new Map(getLoggableExercises().map((exercise) => [exercise.id, exercise]));
-        grid.innerHTML = Array.from({ length: 4 }, (_, index) => {
+        const weeks = Array.from({ length: 4 }, (_, index) => {
           const weekStart = addDays(formatLocalDate(monday), -index * 7);
           const weekEnd = addDays(weekStart, 6);
           const counts = new Map();
+          let totalSets = 0;
           trainingSetLogs.filter((log) => log.date >= weekStart && log.date <= weekEnd).forEach((log) => {
             const entries = Array.isArray(log.setEntries) ? log.setEntries.filter((entry) => entry.completed !== false && Number(entry.reps) > 0 && entry.weightKg !== null && entry.weightKg !== "" && Number.isFinite(Number(entry.weightKg))) : [];
             const sets = Array.isArray(log.setEntries) ? entries.length
               : (log.weightKg !== "" && log.weightKg !== null && log.weightKg !== undefined && Number(log.weightKg) >= 0 && Number(log.reps) > 0
                 ? Math.max(1, Number(log.completedSets || log.sets || 1)) : 0);
             if (!sets) return;
+            totalSets += sets;
             const exercise = exerciseById.get(log.exerciseId);
             const muscles = exercise?.primaryMuscles?.length ? exercise.primaryMuscles : [exercise?.category || log.category || "其他"];
             [...new Set(muscles)].forEach((muscle) => counts.set(muscle, (counts.get(muscle) || 0) + sets));
           });
-          return `<div class="muscle-volume-week"><strong>${weekStart.slice(5)} – ${weekEnd.slice(5)}</strong><div class="muscle-volume-week-grid">${counts.size
-            ? [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([muscle, sets]) => `<div class="muscle-volume-item"><span>${escapeLogText(translateInterfaceText(muscle))}</span><strong>${sets} ${appLanguage === "en" ? "sets" : "组"}</strong></div>`).join("")
-            : `<span class="muted">${appLanguage === "en" ? "No working sets logged" : "暂无有效组记录"}</span>`}</div></div>`;
-        }).join("");
+          return { weekStart, weekEnd, counts, totalSets };
+        });
+        const maxWeekSets = Math.max(1, ...weeks.map((week) => week.totalSets));
+        const maxMuscleSets = Math.max(1, ...weeks.flatMap((week) => [...week.counts.values()]));
+        const muscleTotals = new Map();
+        weeks.forEach((week) => week.counts.forEach((sets, muscle) => muscleTotals.set(muscle, (muscleTotals.get(muscle) || 0) + sets)));
+        const accentMuscles = new Set([...muscleTotals].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])))
+          .filter((_, index) => index % 2 === 1).map(([muscle]) => muscle));
+        const setUnit = appLanguage === "en" ? "sets" : "组";
+        grid.innerHTML = `
+          <div class="muscle-volume-overview">
+            <div class="muscle-volume-stat"><span>${appLanguage === "en" ? "Sets logged this week" : "本周已记录"}</span><strong>${weeks[0].totalSets}<small>${setUnit}</small></strong></div>
+            <div class="muscle-volume-stat"><span>${appLanguage === "en" ? "Muscles trained this week" : "本周涉及肌群"}</span><strong>${weeks[0].counts.size}<small>${appLanguage === "en" ? "muscles" : "个"}</small></strong></div>
+          </div>
+          <div class="muscle-volume-trend">
+            <div class="muscle-volume-trend-head"><strong>${appLanguage === "en" ? "Sets logged by week" : "每周已记录组数"}</strong><div class="muscle-volume-trend-legend"><span><i aria-hidden="true"></i>${appLanguage === "en" ? "This week" : "本周"}</span><span><i aria-hidden="true"></i>${appLanguage === "en" ? "Earlier" : "往期"}</span></div></div>
+            <div class="muscle-volume-trend-grid">${weeks.map((week) => `
+              <div class="muscle-volume-trend-week">
+                <strong>${week.totalSets}</strong>
+                <span class="muscle-volume-trend-track" aria-hidden="true"><span class="muscle-volume-trend-fill" style="--bar-height: ${week.totalSets ? Math.max(10, Math.round(week.totalSets / maxWeekSets * 100)) : 0}%"></span></span>
+                <span>${week.weekStart.slice(5)}</span>
+              </div>`).join("")}</div>
+          </div>
+          ${weeks.map((week) => `
+            <div class="muscle-volume-week">
+              <div class="muscle-volume-week-head"><strong>${week.weekStart.slice(5)} – ${week.weekEnd.slice(5)}</strong><span>${week.totalSets} ${setUnit}</span></div>
+              <div class="muscle-volume-week-grid">${week.counts.size
+                ? [...week.counts.entries()].sort((a, b) => b[1] - a[1]).map(([muscle, sets]) => `
+                  <div class="muscle-volume-item${accentMuscles.has(muscle) ? " is-accent" : ""}">
+                    <div class="muscle-volume-item-head"><span>${escapeLogText(translateInterfaceText(muscle))}</span><strong>${sets} ${setUnit}</strong></div>
+                    <span class="muscle-volume-item-track" aria-hidden="true"><span class="muscle-volume-item-fill" style="--bar-width: ${Math.round(sets / maxMuscleSets * 100)}%"></span></span>
+                  </div>`).join("")
+                : `<span class="muscle-volume-empty">${appLanguage === "en" ? "No working sets logged" : "暂无有效组记录"}</span>`}</div>
+            </div>`).join("")}`;
       }
 
       function renderRecords() {
@@ -13886,6 +14034,11 @@
         }
         if (!document.querySelector("#experience").value) {
           showPlanNotice("experience");
+          return;
+        }
+        const conflict = getPlanSelectionConflict(getProfile());
+        if (conflict) {
+          showPlanNotice(conflict);
           return;
         }
         if (pendingOfficialTemplateId) {
@@ -14012,9 +14165,19 @@
           renderPlan();
           setPlanPane("currentPlanPane");
           window.location.hash = "plan";
+        } else if (kind === "beginnerDays") {
+          document.querySelector("#trainingDays").value = "3";
+          document.querySelector("#trainingDays").focus();
+          warnOnPlanSelectionChange();
+        } else if (kind === "beginnerPower") {
+          document.querySelector("#goal").focus();
         } else {
           document.querySelector(kind === "goal" ? "#goal" : "#experience").focus();
         }
+      });
+      document.querySelector("#planNoticeSecondary").addEventListener("click", () => {
+        planNoticeDialog.close();
+        document.querySelector("#experience").focus();
       });
 
       resistanceTemplateList?.addEventListener("click", (event) => {
@@ -14487,6 +14650,9 @@
         });
       });
 
+      ["#experience", "#trainingDays", "#goal"].forEach((selector) => {
+        document.querySelector(selector).addEventListener("change", warnOnPlanSelectionChange);
+      });
       const savedProfile = JSON.parse(localStorage.getItem("fitlog-profile") || "null");
       if (savedProfile) {
         const profileFieldIds = { days: "trainingDays" };
@@ -14495,6 +14661,7 @@
           if (input) input.value = value;
         });
       }
+      updateBeginnerTrainingDaysHint();
       const savedRisk = JSON.parse(localStorage.getItem("fitlog-risk") || "null");
       if (savedRisk) {
         Object.entries(savedRisk).forEach(([key, value]) => {

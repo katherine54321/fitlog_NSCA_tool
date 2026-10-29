@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FitMine 肌群有效组数示例</title><style>
+:root { --panel:#181a1b; --surface-soft:#16191a; --text-strong:#f3f8f4; --text-secondary:#99a49f; --border-subtle:#2b3130; --brand:#39ff14; --brand-accent:#00e5ff; }
+* { box-sizing:border-box; } body { margin:0; padding:20px 12px 40px; background:#121212; color:var(--text-strong); font:14px system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { max-width:430px; margin:auto; } .preview-label { margin:0 0 2px 4px; color:var(--text-secondary); font-size:12px; }
+.muscle-volume { margin-top: 18px; padding: 18px; border: 1px solid var(--border-subtle); border-radius: 16px; background: var(--panel); }
+      .muscle-volume h3 { margin: 0 0 6px; font-size: 18px; }
+      .muscle-volume > p { margin: 0 0 16px; color: var(--text-secondary); font-size: 12px; line-height: 1.5; }
+      .muscle-volume-grid { display: grid; gap: 16px; min-width: 0; }
+      .muscle-volume-overview { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .muscle-volume-stat { display: grid; align-content: start; gap: 5px; padding: 12px; border: 1px solid var(--border-subtle); border-radius: 10px; background: var(--surface-soft); }
+      .muscle-volume-stat:first-child { border-left: 2px solid var(--brand); }
+      .muscle-volume-stat:last-child { border-left: 2px solid var(--brand-accent); }
+      .muscle-volume-stat span { color: var(--text-secondary); font-size: 12px; }
+      .muscle-volume-stat strong { color: var(--brand); font-size: 24px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+      .muscle-volume-stat:last-child strong { color: var(--brand-accent); }
+      .muscle-volume-stat small { margin-left: 4px; color: var(--text-secondary); font-size: 12px; font-weight: 500; }
+      .muscle-volume-trend { padding: 14px 12px 10px; border: 1px solid var(--border-subtle); border-radius: 10px; background: var(--surface-soft); }
+      .muscle-volume-trend-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+      .muscle-volume-trend-head strong { font-size: 13px; }
+      .muscle-volume-trend-legend { display: flex; gap: 8px; color: var(--text-secondary); font-size: 10px; white-space: nowrap; }
+      .muscle-volume-trend-legend span { display: inline-flex; align-items: center; gap: 3px; }
+      .muscle-volume-trend-legend i { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+      .muscle-volume-trend-legend span:last-child i { background: var(--brand-accent); }
+      .muscle-volume-trend-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: end; }
+      .muscle-volume-trend-week { display: grid; justify-items: center; gap: 6px; min-width: 0; color: var(--text-secondary); font-size: 11px; text-align: center; }
+      .muscle-volume-trend-week strong { color: var(--text-strong); font-size: 13px; font-variant-numeric: tabular-nums; }
+      .muscle-volume-trend-track { display: flex; align-items: end; width: min(100%, 48px); height: 70px; border-radius: 6px 6px 3px 3px; background: var(--border-subtle); overflow: hidden; }
+      .muscle-volume-trend-fill { display: block; width: 100%; height: var(--bar-height); border-radius: 6px 6px 0 0; background: var(--brand); }
+      .muscle-volume-trend-week:not(:first-child) .muscle-volume-trend-fill { background: var(--brand-accent); }
+      .muscle-volume-week { padding-top: 14px; border-top: 1px solid var(--border-subtle); }
+      .muscle-volume-week-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+      .muscle-volume-week-head strong { font-size: 13px; font-variant-numeric: tabular-nums; }
+      .muscle-volume-week-head span { color: var(--text-secondary); font-size: 12px; white-space: nowrap; }
+      .muscle-volume-week-grid { display: grid; gap: 10px; }
+      .muscle-volume-item { display: grid; gap: 6px; min-width: 0; }
+      .muscle-volume-item-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+      .muscle-volume-item-head span { color: var(--text-secondary); font-size: 12px; }
+      .muscle-volume-item-head strong { color: var(--brand); font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .muscle-volume-item.is-accent .muscle-volume-item-head strong { color: var(--brand-accent); }
+      .muscle-volume-item-track { display: block; height: 5px; border-radius: 999px; background: var(--border-subtle); overflow: hidden; }
+      .muscle-volume-item-fill { display: block; width: var(--bar-width); height: 100%; border-radius: inherit; background: var(--brand); }
+      .muscle-volume-item.is-accent .muscle-volume-item-fill { background: var(--brand-accent); }
+      .muscle-volume-empty { color: var(--text-secondary); font-size: 12px; }
+
+</style></head><body><main><p class="preview-label">FitMine · 示例数据，仅供视觉检查</p><section class="muscle-volume" aria-labelledby="muscleVolumeTitle"><h3 id="muscleVolumeTitle">每周肌群有效组数</h3><p>近 4 周 · 仅统计已记录重量和次数的正式训练组；同一组可计入多个主要肌群。</p><div class="muscle-volume-grid">
+          <div class="muscle-volume-overview">
+            <div class="muscle-volume-stat"><span>本周已记录</span><strong>8<small>组</small></strong></div>
+            <div class="muscle-volume-stat"><span>本周涉及肌群</span><strong>2<small>个</small></strong></div>
+          </div>
+          <div class="muscle-volume-trend">
+            <div class="muscle-volume-trend-head"><strong>每周已记录组数</strong><div class="muscle-volume-trend-legend"><span><i aria-hidden="true"></i>本周</span><span><i aria-hidden="true"></i>往期</span></div></div>
+            <div class="muscle-volume-trend-grid">
+              <div class="muscle-volume-trend-week">
+                <strong>8</strong>
+                <span class="muscle-volume-trend-track" aria-hidden="true"><span class="muscle-volume-trend-fill" style="--bar-height: 67%"></span></span>
+                <span>10-26</span>
+              </div>
+              <div class="muscle-volume-trend-week">
+                <strong>12</strong>
+                <span class="muscle-volume-trend-track" aria-hidden="true"><span class="muscle-volume-trend-fill" style="--bar-height: 100%"></span></span>
+                <span>10-19</span>
+              </div>
+              <div class="muscle-volume-trend-week">
+                <strong>6</strong>
+                <span class="muscle-volume-trend-track" aria-hidden="true"><span class="muscle-volume-trend-fill" style="--bar-height: 50%"></span></span>
+                <span>10-12</span>
+              </div>
+              <div class="muscle-volume-trend-week">
+                <strong>0</strong>
+                <span class="muscle-volume-trend-track" aria-hidden="true"><span class="muscle-volume-trend-fill" style="--bar-height: 0%"></span></span>
+                <span>10-05</span>
+              </div></div>
+          </div>
+
+            <div class="muscle-volume-week">
+              <div class="muscle-volume-week-head"><strong>10-26 – 11-01</strong><span>8 组</span></div>
+              <div class="muscle-volume-week-grid">
+                  <div class="muscle-volume-item is-accent">
+                    <div class="muscle-volume-item-head"><span>胸部</span><strong>4 组</strong></div>
+                    <span class="muscle-volume-item-track" aria-hidden="true"><span class="muscle-volume-item-fill" style="--bar-width: 100%"></span></span>
+                  </div>
+                  <div class="muscle-volume-item">
+                    <div class="muscle-volume-item-head"><span>背部</span><strong>4 组</strong></div>
+                    <span class="muscle-volume-item-track" aria-hidden="true"><span class="muscle-volume-item-fill" style="--bar-width: 100%"></span></span>
+                  </div></div>
+            </div>
+            <div class="muscle-volume-week">
+              <div class="muscle-volume-week-head"><strong>10-19 – 10-25</strong><span>12 组</span></div>
+              <div class="muscle-volume-week-grid">
+                  <div class="muscle-volume-item is-accent">
+                    <div class="muscle-volume-item-head"><span>胸部</span><strong>4 组</strong></div>
+                    <span class="muscle-volume-item-track" aria-hidden="true"><span class="muscle-volume-item-fill" style="--bar-width: 100%"></span></span>
+                  </div>
+                  <div class="muscle-volume-item">
+                    <div class="muscle-volume-item-head"><span>背部</span><strong>4 组</strong></div>
+                    <span class="muscle-volume-item-track" aria-hidden="true"><span class="muscle-volume-item-fill" style="--bar-width: 100%"></span></span>
+                  </div>
+                  <div class="muscle-volume-item">
+                    <div class="muscle-volume-item-head"><span>股四头肌</span><strong>4 组</strong></div>
+                    <span class="muscle-volume-item-track" aria-hidden="true"><span class="muscle-volume-item-fill" style="--bar-width: 100%"></span></span>
+                  </div></div>
+            </div>
+            <div class="muscle-volume-week">
+              <div class="muscle-volume-week-head"><strong>10-12 – 10-18</strong><span>6 组</span></div>
+              <div class="muscle-volume-week-grid">
+                  <div class="muscle-volume-item is-accent">
+                    <div class="muscle-volume-item-head"><span>胸部</span><strong>3 组</strong></div>
+                    <span class="muscle-volume-item-track" aria-hidden="true"><span class="muscle-volume-item-fill" style="--bar-width: 75%"></span></span>
+                  </div>
+                  <div class="muscle-volume-item">
+                    <div class="muscle-volume-item-head"><span>背部</span><strong>3 组</strong></div>
+                    <span class="muscle-volume-item-track" aria-hidden="true"><span class="muscle-volume-item-fill" style="--bar-width: 75%"></span></span>
+                  </div></div>
+            </div>
+            <div class="muscle-volume-week">
+              <div class="muscle-volume-week-head"><strong>10-05 – 10-11</strong><span>0 组</span></div>
+              <div class="muscle-volume-week-grid"><span class="muscle-volume-empty">暂无有效组记录</span></div>
+            </div></div></section></main></body></html>

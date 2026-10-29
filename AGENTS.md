@@ -45,6 +45,7 @@
 - Never commit database passwords, Supabase service role keys, SMTP passwords, Apple private keys, signing credentials, or other secrets.
 - `config/fitlog-runtime.js` and built PWA config may contain only public client configuration such as Supabase URL and anon/publishable key.
 - Health/risk features are training references, not medical diagnosis or treatment claims.
+- Plan-generation changes must be checked against verifiable NSCA guidance for training status, frequency, recovery, exercise selection, and progression. If user inputs conflict with supported guidance, explain the conflict in the UI and block new plan creation until corrected; never silently change the requested goal or training days. Preserve historical plan rendering and completed-record IDs. Do not cite a textbook table number unless verified for the specific edition.
 
 ## Verification
 - Run only tests related to the current change.

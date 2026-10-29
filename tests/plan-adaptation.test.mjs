@@ -457,6 +457,7 @@ test("using a historical plan starts a new cycle with its saved plan settings", 
     getProfile: () => ({ goal: fields.get("#goal").value, experience: fields.get("#experience").value,
       days: Number(fields.get("#trainingDays").value), focusArea: fields.get("#focusArea").value,
       focusPurpose: fields.get("#focusPurpose").value }),
+    getPlanSelectionConflict: () => "",
     getRiskAnswers: () => ({}), renderPlanHistory() {}, renderResistanceTemplates() {},
     renderPlan() {}, setPlanPane() {}, today: "2026-10-28", activePlanWeekIndex: 2,
     TRAINING_DAY_PREFERENCES_KEY: "preferences", PLAN_ADJUSTMENTS_KEY: "adjustments",
@@ -468,7 +469,7 @@ test("using a historical plan starts a new cycle with its saved plan settings", 
   assert.equal(archived, 1);
   assert.equal(stored.get("fitlog-plan-start-date"), "2026-10-28");
   assert.equal(stored.get("fitlog-plan-template"), "hypertrophy-3");
-  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), entry.profile);
+  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), { ...entry.profile, planRuleVersion: 2 });
   assert.equal(context.activePlanWeekIndex, 0);
 });
 
@@ -490,6 +491,7 @@ test("saving an unchanged edited plan keeps its cycle and only changed options c
       removeItem: (key) => values.delete(key)
     },
     getProfile: () => current, getRiskAnswers: () => ({}), hasGeneratedPlan: () => true,
+    getPlanSelectionConflict: () => "",
     buildPlan: () => ({}), isPlanCycleExpired: () => expired,
     archiveCurrentPlan: () => { archives++; }, renderPlanHistory() {}, renderResistanceTemplates() {},
     isEditingPlan: true, today: "2026-10-28",
@@ -686,7 +688,7 @@ test("first official template use guides profile selection before confirmation a
     getProfile: () => ({ experience: fields.get("#experience").value || "beginner", days: Number(fields.get("#trainingDays").value) }),
     officialTemplateMismatch: (template, profile) => profile.experience === "intermediate" && profile.days >= template.days ? "" : "请调整选项",
     experienceLabels: { beginner: "初学者", intermediate: "中级" },
-    hasGeneratedPlan: () => false, saveCurrentPlan: () => { saves++; },
+    hasGeneratedPlan: () => false, saveCurrentPlan: () => { saves++; return true; },
     renderPlan() {}, renderHome() {}, setPlanPane() {}
   };
   vm.createContext(context);
@@ -774,6 +776,9 @@ test("unchanged plan submit opens a dialog and OK returns to the plan page", () 
     ["#goal", { value: "hypertrophy", focus() {} }],
     ["#experience", { value: "intermediate", focus() {} }],
     ["#planNoticeTitle", { textContent: "" }],
+    ["#planNoticeBody", { hidden: true, textContent: "" }],
+    ["#planNoticeSource", { hidden: true }],
+    ["#planNoticeSecondary", { hidden: true, textContent: "", addEventListener() {} }],
     ["#planNoticeConfirm", { textContent: "", addEventListener: (name, callback) => listeners.set(name, callback) }]
   ]);
   const dialog = { dataset: {}, open: false, showModal() { this.open = true; }, close() { this.open = false; } };
@@ -784,6 +789,8 @@ test("unchanged plan submit opens a dialog and OK returns to the plan page", () 
     window: { location: { hash: "plan-edit" } },
     document: { querySelector: (selector) => fields.get(selector) },
     form: { addEventListener: (name, callback) => listeners.set(name, callback) },
+    getProfile: () => ({ experience: fields.get("#experience").value, days: 3 }),
+    getPlanSelectionConflict: () => "",
     saveCurrentPlan: () => { saved++; return false; },
     renderPlan() {}, setPlanPane() {}
   };
@@ -864,9 +871,13 @@ test("weekly muscle volume counts logged completed sets and ignores plan placeho
         { completed: false, reps: 8, weightKg: 20 }
       ] },
       { date: "2026-10-28", exerciseId: "press", sets: 4, weightKg: null, reps: 8 },
-      { date: "2026-10-27", exerciseId: "press", sets: 2, weightKg: 25, reps: 8 }
+      { date: "2026-10-27", exerciseId: "press", sets: 2, weightKg: 25, reps: 8 },
+      { date: "2026-10-20", exerciseId: "row", sets: 2, weightKg: 25, reps: 8 }
     ],
-    getLoggableExercises: () => [{ id: "press", primaryMuscles: ["胸部"] }],
+    getLoggableExercises: () => [
+      { id: "press", primaryMuscles: ["胸部", "肱三头肌"] },
+      { id: "row", primaryMuscles: ["背部"] }
+    ],
     escapeLogText: (value) => value,
     translateInterfaceText: (value) => value,
     parseLocalDate: (value) => { const [year, month, day] = value.split("-").map(Number); return new Date(year, month - 1, day); },
@@ -878,6 +889,147 @@ test("weekly muscle volume counts logged completed sets and ignores plan placeho
   context.renderMuscleVolume();
   assert.deepEqual(Array.from(grid.innerHTML.matchAll(/<strong>(\d{2}-\d{2}) –/g), (match) => match[1]),
     ["10-26", "10-19", "10-12", "10-05"]);
+  assert.deepEqual(Array.from(grid.innerHTML.matchAll(/<div class="muscle-volume-trend-week">\s*<strong>(\d+)<\/strong>/g), (match) => match[1]),
+    ["4", "2", "0", "0"]);
+  assert.match(grid.innerHTML, /Muscles trained this week<\/span><strong>2<small>muscles/);
   assert.match(grid.innerHTML, /胸部<\/span><strong>4 sets/);
+  assert.match(grid.innerHTML, /肱三头肌<\/span><strong>4 sets/);
   assert.doesNotMatch(grid.innerHTML, /6 sets/);
+});
+
+test("previously saved beginner cycles retain their original day count", () => {
+  const start = source.indexOf("function buildPlan(profile, templateId =");
+  const end = source.indexOf("function parseLocalDate(value)", start);
+  assert.ok(start > 0 && end > start);
+  const context = {
+    resistanceTemplates: [],
+    localStorage: { getItem: () => null },
+    getPlanRisk: () => ({ level: "low" }),
+    getGoalPrescription: () => ({ load: "70% 1RM", rm: "8-12 RM", reps: "8-12 次", setRange: "3-6 组", baseSetCount: 3, rest: "30-90 秒" }),
+    createPeriodization: () => [],
+    focusAreaLabels: {},
+    focusPurposeLabels: {}
+  };
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(start, end)}\nthis.buildPlan = buildPlan; this.makeHypertrophySplit = makeHypertrophySplit;`, context);
+  const selection = { goal: "hypertrophy", experience: "beginner", days: 4, planRuleVersion: 2 };
+  const plan = context.buildPlan(selection);
+  assert.equal(plan.days, 4);
+  assert.equal(plan.split.length, 4);
+  assert.match(plan.split[0][0], /上肢/);
+  assert.match(plan.split[1][0], /下肢/);
+  assert.match(plan.split[2][0], /上肢/);
+  assert.match(plan.split[3][0], /下肢/);
+  assert.equal(context.buildPlan({ ...selection, planRuleVersion: 1 }).days, 3);
+  assert.equal(context.buildPlan({ ...selection, days: 3 }).split.length, 3);
+  const workoutStart = source.indexOf("function getWorkoutExercises(dayIndex, plan, weekIndex = 0)");
+  const workoutEnd = source.indexOf("function getLegacyTargetedPreparation(workout)", workoutStart);
+  assert.ok(workoutStart > 0 && workoutEnd > workoutStart);
+  context.applyFocusEmphasis = (exercises) => exercises;
+  vm.runInContext(`${source.slice(workoutStart, workoutEnd)}\nthis.getWorkoutExercises = getWorkoutExercises;`, context);
+  const readyPlan = { ...plan, periodization: [{ sets: 2, reps: "8-12 次", rest: "60 秒" }] };
+  assert.equal(context.getWorkoutExercises(0, readyPlan)[0].name, "哑铃卧推");
+  assert.equal(context.getWorkoutExercises(1, readyPlan)[0].name, "腿举");
+  assert.equal(context.getWorkoutExercises(2, readyPlan)[0].name, "上斜哑铃卧推");
+  assert.equal(context.getWorkoutExercises(3, readyPlan)[0].name, "杠铃臀推");
+});
+
+test("beginner frequency and power conflicts warn immediately and cannot save a new plan", () => {
+  const conflictStart = source.indexOf("function updateBeginnerTrainingDaysHint() {");
+  const conflictEnd = source.indexOf("function getRiskAnswers()", conflictStart);
+  const noticeStart = source.indexOf("function showPlanNotice(kind) {");
+  const noticeEnd = source.indexOf("function saveCurrentPlan(", noticeStart);
+  const saveStart = noticeEnd;
+  const saveEnd = source.indexOf("function clearPendingOfficialTemplate()", saveStart);
+  const submitStart = source.indexOf('form.addEventListener("submit", (event) => {');
+  const submitEnd = source.indexOf('document.querySelector("#runRisk")', submitStart);
+  const confirmStart = source.indexOf('document.querySelector("#planNoticeConfirm").addEventListener("click", () => {');
+  const confirmEnd = source.indexOf('resistanceTemplateList?.addEventListener', confirmStart);
+  assert.ok([conflictStart, conflictEnd, noticeStart, noticeEnd, saveEnd, submitStart, submitEnd, confirmStart, confirmEnd].every((value) => value > 0));
+  assert.match(source, /\["#experience", "#trainingDays", "#goal"\].*warnOnPlanSelectionChange/s);
+  const fields = new Map([
+    ["#experience", { value: "beginner", focus() {} }],
+    ["#trainingDays", { value: "4", focus() {} }],
+    ["#goal", { value: "hypertrophy", focus() {} }],
+    ["#beginnerDaysHint", { hidden: true }],
+    ["#planNoticeTitle", { textContent: "" }],
+    ["#planNoticeBody", { hidden: true, textContent: "" }],
+    ["#planNoticeSource", { hidden: true, href: "", textContent: "" }]
+  ]);
+  const listeners = new Map();
+  fields.set("#planNoticeConfirm", { textContent: "", addEventListener: (_, callback) => listeners.set("confirm", callback) });
+  fields.set("#planNoticeSecondary", { hidden: true, textContent: "", addEventListener: (_, callback) => listeners.set("secondary", callback) });
+  const dialog = { dataset: {}, open: false, showModal() { this.open = true; }, close() { this.open = false; } };
+  let saved = 0;
+  const context = {
+    appLanguage: "zh", planNoticeDialog: dialog, pendingOfficialTemplateId: null,
+    document: { querySelector: (selector) => fields.get(selector) },
+    form: { addEventListener: (_, callback) => listeners.set("submit", callback) },
+    getProfile: () => ({ experience: fields.get("#experience").value, days: Number(fields.get("#trainingDays").value), goal: fields.get("#goal").value }),
+    localStorage: { setItem() { saved++; }, getItem: () => null },
+    isEditingPlan: false, hasGeneratedPlan: () => false,
+    getRiskAnswers: () => ({}), renderPlanHistory() {}, renderResistanceTemplates() {}, renderPlan() {}, setPlanPane() {},
+    window: { location: { hash: "plan-edit" } }
+  };
+  vm.createContext(context);
+  vm.runInContext(source.slice(conflictStart, conflictEnd) + source.slice(noticeStart, saveEnd)
+    + source.slice(submitStart, submitEnd) + source.slice(confirmStart, confirmEnd), context);
+  context.warnOnPlanSelectionChange();
+  assert.equal(dialog.open, true);
+  assert.equal(dialog.dataset.kind, "beginnerDays");
+  assert.match(fields.get("#planNoticeBody").textContent, /2–3 次非连续/);
+  assert.match(fields.get("#planNoticeSource").href, /nsca\.com/);
+  listeners.get("submit")({ preventDefault() {} });
+  assert.equal(saved, 0);
+  assert.equal(context.saveCurrentPlan(), false);
+  assert.equal(saved, 0);
+  listeners.get("confirm")();
+  assert.equal(fields.get("#trainingDays").value, "3");
+  fields.get("#goal").value = "power";
+  context.warnOnPlanSelectionChange();
+  assert.equal(dialog.dataset.kind, "beginnerPower");
+  assert.match(fields.get("#planNoticeBody").textContent, /动作技术与基础力量/);
+  assert.equal(context.saveCurrentPlan(), false);
+  assert.equal(saved, 0);
+  fields.get("#goal").value = "strength";
+  assert.equal(context.getPlanSelectionConflict(context.getProfile()), "");
+  fields.get("#trainingDays").value = "5";
+  assert.equal(context.getPlanSelectionConflict(context.getProfile()), "beginnerDays");
+  fields.get("#experience").value = "intermediate";
+  assert.equal(context.getPlanSelectionConflict(context.getProfile()), "");
+});
+
+test("beginner schedule keeps a rest day after deferrals and rejects adjacent recurring days", () => {
+  const start = source.indexOf("function parseLocalDate(value)");
+  const end = source.indexOf("const focusAreaDefinitions =", start);
+  const values = new Map([["fitlog-plan-start-date", "2026-10-26"]]);
+  const profile = { goal: "hypertrophy", experience: "beginner", days: 3 };
+  const plan = { days: 3, split: [["A"], ["B"], ["C"]] };
+  const context = {
+    TRAINING_DAY_PREFERENCES_KEY: "fitlog-training-day-preferences",
+    PLAN_ADJUSTMENTS_KEY: "fitlog-plan-adjustments",
+    localStorage: { getItem: (key) => values.get(key) ?? null }
+  };
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(start, end)}\nthis.schedule = getResolvedPlanSchedule; this.key = getPlanScheduleKey; this.hasSpacing = hasBeginnerRecoverySpacing;`, context);
+  assert.equal(context.hasSpacing([1, 3, 5]), true);
+  assert.equal(context.hasSpacing([1, 2, 5]), false);
+  assert.equal(context.hasSpacing([0, 3, 6]), false);
+  const original = context.schedule(profile, plan);
+  const changes = { planKey: context.key(profile, plan), overrides: { [original[0].id]: { deferDays: 1 } }, pauses: [], pausedAt: null };
+  values.set("fitlog-plan-adjustments", JSON.stringify(changes));
+  const shifted = context.schedule(profile, plan);
+  assert.deepEqual(Array.from(shifted.slice(0, 4), (day) => day.date), ["2026-10-27", "2026-10-29", "2026-10-31", "2026-11-02"]);
+  const saveStart = source.indexOf("function saveTrainingDayPreferences() {");
+  const saveEnd = source.indexOf("function renderHome()", saveStart);
+  let preferenceWrites = 0;
+  context.localStorage.setItem = () => { preferenceWrites++; };
+  context.scheduleDraftContext = { profile, plan, startDate: "2026-10-26", weekIndex: 0 };
+  context.scheduleDraftWeekdays = new Set([1, 2, 5]);
+  context.scheduleSelectionHint = { textContent: "" };
+  context.appLanguage = "zh";
+  vm.runInContext(`${source.slice(saveStart, saveEnd)}\nthis.saveDays = saveTrainingDayPreferences;`, context);
+  context.saveDays();
+  assert.equal(preferenceWrites, 0);
+  assert.match(context.scheduleSelectionHint.textContent, /至少间隔一天/);
 });
