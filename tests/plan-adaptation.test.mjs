@@ -102,9 +102,44 @@ test("defer and skip accept only today's unfinished workout, and a skipped worko
   assert.equal(writes, 1);
   context.change("restore", todayWorkout);
   assert.equal(changes.overrides.today, undefined);
+  context.change("defer", todayWorkout);
+  assert.equal(changes.overrides.today.deferredFrom, "2026-10-28");
+  assert.equal(changes.overrides.today.deferTo, "2026-10-29");
+  assert.equal(changes.overrides.today.deferDays, 1);
   context.completedPlanDays.push(todayWorkout.id);
   context.change("defer", todayWorkout);
-  assert.equal(writes, 2);
+  assert.equal(writes, 3);
+});
+
+test("a workout already shifted to today moves to tomorrow and displaces tomorrow's workout", () => {
+  const scheduleStart = source.indexOf("function parseLocalDate(value)");
+  const scheduleEnd = source.indexOf("const focusAreaDefinitions =", scheduleStart);
+  const changeStart = source.indexOf("function changePlanSchedule(action, workout = activeWorkoutDay)");
+  const changeEnd = source.indexOf("function formatPlanDateLabel(value)", changeStart);
+  const stored = new Map([["fitlog-plan-start-date", "2026-10-26"]]);
+  const profile = { goal: "hypertrophy", experience: "intermediate" };
+  const plan = { days: 3, split: [["A"], ["B"], ["C"]] };
+  const context = {
+    today: "2026-10-29", profile, plan, activeWorkoutDay: null, completedPlanDays: [],
+    PLAN_ADJUSTMENTS_KEY: "fitlog-plan-adjustments", TRAINING_DAY_PREFERENCES_KEY: "fitlog-training-day-preferences",
+    initializedModules: new Set(),
+    localStorage: { getItem: (key) => stored.get(key) ?? null, setItem: (key, value) => stored.set(key, value) },
+    getProfile: () => profile, buildPlan: () => plan,
+    window: { FitLogSync: { queueSync() {} } }, renderPlan() {}, renderRecords() {}, renderWorkoutDetail() {}
+  };
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(scheduleStart, scheduleEnd)}\n${source.slice(changeStart, changeEnd)}\nthis.schedule = getResolvedPlanSchedule; this.change = changePlanSchedule; this.key = getPlanScheduleKey;`, context);
+  const initial = context.schedule(profile, plan);
+  stored.set("fitlog-plan-adjustments", JSON.stringify({
+    planKey: context.key(profile, plan), overrides: { [initial[0].id]: { deferDays: 2 } }, pauses: [], pausedAt: null
+  }));
+  const shifted = context.schedule(profile, plan);
+  assert.deepEqual(Array.from(shifted.slice(0, 3), (item) => item.date), ["2026-10-28", "2026-10-29", "2026-10-30"]);
+  context.getWorkoutDay = (weekIndex, dayIndex) => context.schedule(profile, plan).find((item) => item.weekIndex === weekIndex && item.dayIndex === dayIndex);
+  context.change("defer", shifted[1]);
+  const after = context.schedule(profile, plan);
+  assert.equal(after[1].date, "2026-10-30");
+  assert.equal(after[2].date, "2026-10-31");
 });
 
 test("home offers low-emphasis schedule actions only for today's unfinished workout", () => {
@@ -114,11 +149,15 @@ test("home offers low-emphasis schedule actions only for today's unfinished work
   const card = { innerHTML: "" };
   const dateLabel = { textContent: "" };
   const workout = { id: "today", date: "2026-10-28", weekIndex: 0, dayIndex: 0, day: "Upper", text: "Push and pull", period: { sets: 4, reps: "8-12", rest: "60s" } };
+  const adjustments = { pausedAt: null, overrides: {} };
   const context = {
     document: { querySelector: (selector) => selector === "#homeTodayPlan" ? card : dateLabel },
     today: "2026-10-28", appLanguage: "en", completedPlanDays: [], planHistory: [],
     planNames: { hypertrophy: "Hypertrophy" },
     getScheduledPlanDays: () => [workout], getResolvedPlanSchedule: () => [workout],
+    loadPlanAdjustments: () => adjustments,
+    addDays: (value, days) => { const date = new Date(`${value}T12:00:00`); date.setDate(date.getDate() + days); return date.toISOString().slice(0, 10); },
+    getPlanStartDate: () => "2026-10-28", getBasePlanDayDate: () => "2026-10-28",
     isPlanCycleExpired: () => false,
     getPlanCycleEndDate: () => "2026-10-23",
     formatPlanDateLabel: (date) => date, translateInterfaceText: (value) => value,
@@ -138,6 +177,19 @@ test("home offers low-emphasis schedule actions only for today's unfinished work
   workout.date = "2026-10-29";
   context.render({}, { reps: "8-12", rest: "60s" }, true);
   assert.doesNotMatch(card.innerHTML, /data-home-schedule="skip"/);
+  adjustments.overrides.today = { deferDays: 1, deferredFrom: "2026-10-28" };
+  context.render({}, { reps: "8-12", rest: "60s" }, true);
+  assert.match(card.innerHTML, /Moved to tomorrow/);
+  assert.match(card.innerHTML, /Training date: 2026-10-29/);
+  adjustments.overrides.today = { deferDays: 1 };
+  context.render({}, { reps: "8-12", rest: "60s" }, true);
+  assert.match(card.innerHTML, /Moved to tomorrow/);
+  delete adjustments.overrides.today;
+  adjustments.pausedAt = "2026-10-28";
+  context.render({}, { reps: "8-12", rest: "60s" }, true);
+  assert.match(card.innerHTML, /Plan paused/);
+  assert.match(card.innerHTML, /data-home-plan="resume"/);
+  adjustments.pausedAt = null;
   context.isPlanCycleExpired = () => true;
   context.render({ goal: "hypertrophy" }, { days: 3, reps: "8-12", rest: "60s" }, true);
   assert.match(card.innerHTML, /No current plan/);
@@ -479,7 +531,7 @@ test("history templates keep only the latest plan for each distinct set of plan 
   assert.deepEqual(Array.from(context.unique(), ({ item }) => item.id), ["recent", "other-focus", "different-split"]);
   const template = { days: 4, minExperience: "intermediate" };
   assert.match(context.mismatch(template, { experience: "beginner", days: 4 }), /中级/);
-  assert.match(context.mismatch(template, { experience: "intermediate", days: 3 }), /至少 4/);
+  assert.equal(context.mismatch(template, { experience: "intermediate", days: 3 }), "");
   assert.equal(context.mismatch(template, { experience: "intermediate", days: 4 }), "");
 });
 
@@ -614,7 +666,7 @@ test("first official template use guides profile selection before confirmation a
     ["#goal", { value: "strength" }], ["#trainingDays", { value: "3" }],
     ["#experience", { value: "", focus() {} }]
   ]);
-  for (const id of ["planTemplateDialogTitle", "planTemplateDialogConditions", "planTemplateDialogProfile", "planTemplateDialogStatus", "planTemplateDialogContinue", "planTemplateDialogCancel", "planTemplateDialogClose"]) {
+  for (const id of ["planTemplateDialogTitle", "planTemplateDialogConditions", "planTemplateDialogStatus", "planTemplateDialogContinue", "planTemplateDialogCancel", "planTemplateDialogClose"]) {
     fields.set(`#${id}`, { textContent: "", setAttribute() {} });
   }
   const submit = { textContent: "" };
@@ -659,6 +711,51 @@ test("first official template use guides profile selection before confirmation a
   assert.equal(hint.hidden, true);
 });
 
+test("using an official template over an active plan explicitly confirms replacement", () => {
+  const start = source.indexOf("function showOfficialTemplateConfirmation(templateId) {");
+  const end = source.indexOf("function applyResistanceTemplate(templateId) {", start);
+  const fields = new Map();
+  const field = (selector) => {
+    if (!fields.has(selector)) fields.set(selector, { textContent: "", hidden: true, setAttribute() {} });
+    return fields.get(selector);
+  };
+  let expired = false;
+  const context = {
+    appLanguage: "zh", resistanceTemplates: [{ id: "hypertrophy-4", days: 4, conditions: "中级及以上" }],
+    assessRisk: () => ({ level: "low" }),
+    getProfile: () => ({ experience: "intermediate", days: 3 }),
+    officialTemplateMismatch: () => "", experienceLabels: { intermediate: "中级" },
+    localStorage: { getItem: () => JSON.stringify({ goal: "hypertrophy", experience: "intermediate", days: 3 }) },
+    hasGeneratedPlan: () => true, buildPlan: () => ({}), isPlanCycleExpired: () => expired,
+    document: { querySelector: field },
+    planTemplateDialog: { dataset: {}, open: false, showModal() { this.open = true; } }
+  };
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(start, end)}\nthis.request = requestOfficialTemplate;`, context);
+  context.request("hypertrophy-4");
+  assert.equal(field("#planTemplateDialogReplacement").hidden, false);
+  assert.match(field("#planTemplateDialogReplacement").textContent, /当前计划会被替换/);
+  assert.doesNotMatch(source, /id="planTemplateDialogProfile"/);
+  assert.equal(field("#planTemplateDialogStatus").textContent, "");
+  assert.equal(field("#planTemplateDialogStatus").hidden, true);
+  assert.equal(context.planTemplateDialog.open, true);
+  assert.equal(field("#planTemplateDialogContinue").textContent, "确定");
+  expired = true;
+  context.request("hypertrophy-4");
+  assert.equal(field("#planTemplateDialogReplacement").hidden, true);
+});
+
+test("official template accepts existing experience and adjusts training days without reopening the form", () => {
+  const start = source.indexOf("function officialTemplateMismatch(template, profile) {");
+  const end = source.indexOf("function renderOfficialTemplateDetail()", start);
+  const context = { appLanguage: "zh" };
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(start, end)}\nthis.mismatch = officialTemplateMismatch;`, context);
+  const fourDayPlan = { days: 4, minExperience: "intermediate" };
+  assert.equal(context.mismatch(fourDayPlan, { experience: "intermediate", days: 3 }), "");
+  assert.match(context.mismatch(fourDayPlan, { experience: "beginner", days: 4 }), /中级及以上/);
+});
+
 test("unchanged plan submit opens a dialog and OK returns to the plan page", () => {
   const noticeStart = source.indexOf("function showPlanNotice(kind) {");
   const noticeEnd = source.indexOf("function saveCurrentPlan(", noticeStart);
@@ -674,6 +771,7 @@ test("unchanged plan submit opens a dialog and OK returns to the plan page", () 
   assert.match(source, /<form id="profileForm" novalidate>/);
   const listeners = new Map();
   const fields = new Map([
+    ["#goal", { value: "hypertrophy", focus() {} }],
     ["#experience", { value: "intermediate", focus() {} }],
     ["#planNoticeTitle", { textContent: "" }],
     ["#planNoticeConfirm", { textContent: "", addEventListener: (name, callback) => listeners.set(name, callback) }]
@@ -706,6 +804,14 @@ test("unchanged plan submit opens a dialog and OK returns to the plan page", () 
   assert.equal(saved, 1);
   assert.equal(dialog.open, true);
   assert.equal(fields.get("#planNoticeTitle").textContent, "请选择训练经验");
+  dialog.close();
+  fields.get("#goal").value = "";
+  fields.get("#experience").value = "intermediate";
+  listeners.get("submit")({ preventDefault() {} });
+  assert.equal(saved, 1);
+  assert.equal(fields.get("#planNoticeTitle").textContent, "请选择训练目标");
+  listeners.get("click")();
+  assert.equal(dialog.open, false);
 });
 
 test("the final saved exercise collapses its data panel", () => {
