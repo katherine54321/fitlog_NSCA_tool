@@ -193,19 +193,13 @@ test("an ended saved plan shows the empty current pane and appears in history", 
   const empty = { hidden: true };
   const current = { hidden: false };
   const edit = { hidden: false };
-  const historyTab = { hidden: false };
-  const historyPane = { hidden: true };
   const oldEntry = { id: "older" };
   const context = {
     planEmptyState: empty,
     planTemplateLibrary: { hidden: true },
     pendingOfficialTemplateId: null,
     profileEditor: { hidden: false }, savePlanButton: { hidden: false }, editPlanButton: edit,
-    document: {
-      querySelectorAll: () => [current],
-      querySelector: (selector) => selector === '[data-plan-tab="historyPlanPane"]' ? historyTab : historyPane
-    },
-    setPlanPane: () => { historyPane.hidden = true; },
+    document: { querySelectorAll: () => [current] },
     isEditingPlan: false, hasGeneratedPlan: () => true, isPlanCycleExpired: () => true,
     planHistory: [oldEntry],
     localStorage: { getItem: (key) => key === "fitlog-profile" ? JSON.stringify({ goal: "hypertrophy", days: 3 }) : null },
@@ -236,10 +230,9 @@ test("an ended saved plan shows the empty current pane and appears in history", 
   assert.equal(context.historyEntries().length, 1);
   context.hasGeneratedPlan = () => false;
   context.planHistory = [];
-  historyPane.hidden = false;
   context.updateMode({}, {});
-  assert.equal(historyTab.hidden, true);
-  assert.equal(historyPane.hidden, true);
+  assert.equal(empty.hidden, false);
+  assert.equal(context.planTemplateLibrary.hidden, false);
 });
 
 test("the plan page heading stops presenting an expired plan as current", () => {
@@ -514,6 +507,47 @@ test("no-plan template library shows only official plans when history is empty",
   assert.equal(historyList.innerHTML, "");
   assert.equal(library.labelledBy, "officialTemplateHeading");
   assert.match(officialList.innerHTML, /增肌 · 每周 3 天/);
+  assert.match(officialList.innerHTML, /查看计划详情/);
+  assert.doesNotMatch(officialList.innerHTML, /使用该计划/);
+});
+
+test("empty history tab remains available and shows a clear empty state", () => {
+  const start = source.indexOf("function renderPlanHistory() {");
+  const end = source.indexOf("function renderHistoryPlanDetail(", start);
+  const context = {
+    appLanguage: "zh", planHistoryList: { innerHTML: "" },
+    getViewablePlanHistory: () => []
+  };
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(start, end)}\nthis.render = renderPlanHistory;`, context);
+  context.render();
+  assert.match(source, /data-plan-tab="historyPlanPane">历史训练计划/);
+  assert.match(context.planHistoryList.innerHTML, /当前无历史计划记录/);
+});
+
+test("official template detail previews schedule before offering plan use", () => {
+  const start = source.indexOf("function renderOfficialTemplateDetail() {");
+  const end = source.indexOf("function renderPlanTemplateLibrary()", start);
+  const detail = { innerHTML: "" };
+  const context = {
+    appLanguage: "zh", activeOfficialTemplateId: "hypertrophy-3", officialTemplateDetail: detail,
+    resistanceTemplates: [{ id: "hypertrophy-3", goal: "hypertrophy", name: "增肌", days: 3, minExperience: "beginner", conditions: "初学者及以上" }],
+    getGoalPrescription: () => ({ baseSetCount: 3 }),
+    createPeriodization: () => [{ title: "动作适应周", sets: 2, reps: "8-12 次", load: "70% 1RM" }],
+    makeHypertrophySplit: () => [["全身训练", "上下肢复合动作"]],
+    assessRisk: () => ({ level: "low" }), translateInterfaceText: (value) => value,
+    escapeLogText: (value) => value
+  };
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(start, end)}\nthis.render = renderOfficialTemplateDetail;`, context);
+  context.render();
+  assert.match(detail.innerHTML, /适用条件/);
+  assert.match(detail.innerHTML, /初学者及以上/);
+  assert.match(detail.innerHTML, /全身训练/);
+  assert.match(detail.innerHTML, /动作适应周/);
+  assert.match(detail.innerHTML, /data-official-template-use="hypertrophy-3"/);
+  assert.ok(detail.innerHTML.lastIndexOf("使用该计划") > detail.innerHTML.lastIndexOf("动作适应周"));
+  assert.doesNotMatch(source, /id="planTemplateFormCancel"/);
 });
 
 test("first official template use guides profile selection before confirmation and saving", () => {
@@ -538,7 +572,7 @@ test("first official template use guides profile selection before confirmation a
     window: { location: { hash: "" }, requestAnimationFrame(callback) { callback(); } },
     document: { querySelector: (selector) => fields.get(selector) },
     form: { querySelector: () => submit }, planTemplateDialog: dialog,
-    planTemplateFormHint: hint, planTemplateFormCancel: { hidden: true },
+    planTemplateFormHint: hint,
     profileEditor: { scrollIntoView() {} },
     getProfile: () => ({ experience: fields.get("#experience").value || "beginner", days: Number(fields.get("#trainingDays").value) }),
     officialTemplateMismatch: (template, profile) => profile.experience === "intermediate" && profile.days >= template.days ? "" : "请调整选项",

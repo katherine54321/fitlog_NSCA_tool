@@ -2339,7 +2339,6 @@
         display: none;
       }
 
-      #planTemplateFormCancel[hidden] { display: none; }
 
       .fitness-tabs {
         margin: 0 0 10px;
@@ -2739,6 +2738,7 @@
       .plan-template-library h4 { margin: 16px 0 10px; }
       .plan-template-library .resistance-template p { margin: 0; }
       #historyTemplateSection[hidden] { display: none; }
+      .plan-template-detail-action { width: 100%; }
 
       .history-plan {
         display: grid;
@@ -7560,7 +7560,6 @@
                     </label>
                   </div>
                   <p class="plan-form-note" id="planTemplateFormHint" hidden></p>
-                  <button class="ghost-btn" id="planTemplateFormCancel" type="button" hidden>返回计划模板</button>
                   <button class="primary-btn" type="submit">生成 4 周周期课表</button>
                   <p class="plan-form-note">风险评估结果会作为训练安全提示；如有疼痛、疾病或医生限制，请先完成风险评估。</p>
                 </form>
@@ -7612,6 +7611,10 @@
 
           <section class="panel section module-panel" id="plan-history-detail" data-module-panel hidden>
             <div id="planHistoryDetail"></div>
+          </section>
+
+          <section class="panel section module-panel" id="plan-template-detail" data-module-panel hidden>
+            <div class="settings-page" id="officialTemplateDetail"></div>
           </section>
 
           <section class="panel section module-panel" id="training" data-module-panel hidden>
@@ -8909,13 +8912,13 @@
       const startPlanButton = document.querySelector("#startPlan");
       const planHistoryList = document.querySelector("#planHistoryList");
       const planHistoryDetail = document.querySelector("#planHistoryDetail");
+      const officialTemplateDetail = document.querySelector("#officialTemplateDetail");
       const resistanceTemplateList = document.querySelector("#resistanceTemplateList");
       const planTemplateLibrary = document.querySelector("#planTemplateLibrary");
       const historyTemplateList = document.querySelector("#historyTemplateList");
       const officialTemplateList = document.querySelector("#officialTemplateList");
       const planTemplateDialog = document.querySelector("#planTemplateDialog");
       const planTemplateFormHint = document.querySelector("#planTemplateFormHint");
-      const planTemplateFormCancel = document.querySelector("#planTemplateFormCancel");
       const setLogForm = document.querySelector("#setLogForm");
       const setLogExercise = document.querySelector("#setLogExercise");
       const setLogWeight = document.querySelector("#setLogWeight");
@@ -8996,6 +8999,7 @@
       if (!Array.isArray(completedPlanDays)) completedPlanDays = [];
       let planHistory = JSON.parse(localStorage.getItem("fitlog-plan-history") || "[]");
       let activeHistoryPlanIndex = null;
+      let activeOfficialTemplateId = null;
       let pendingOfficialTemplateId = null;
       let lastModuleId = "";
       let isEditingPlan = false;
@@ -9248,7 +9252,10 @@
           (authHash.has("access_token") && authHash.has("refresh_token")) ||
           (authQuery.has("token_hash") && authQuery.get("type") === "email")
         ) return "home";
-        const requested = (window.location.hash || "#home").replace("#", "");
+        const [requested, routeQuery = ""] = (window.location.hash || "#home").slice(1).split("?");
+        if (requested === "plan-template-detail") {
+          activeOfficialTemplateId = new URLSearchParams(routeQuery).get("id");
+        }
         const aliases = {
           evaluation: "me",
           risk: "me",
@@ -9311,10 +9318,11 @@
         if (activeId === "exercise-detail") renderExerciseDetail();
         else if (activeId === "exercise-replace") renderExerciseReplacementPage();
         else cleanupExerciseAnimations();
+        if (activeId === "plan-template-detail") renderOfficialTemplateDetail();
         const activeNavId = ["evaluation", "account-management", "settings", "language-settings", "weight-settings"].includes(activeId)
           ? "me"
           : activeId === "record-day-detail" ? "records"
-          : ["workout-detail", "exercise-replace", "plan-history-detail", "plan-edit"].includes(activeId)
+          : ["workout-detail", "exercise-replace", "plan-history-detail", "plan-template-detail", "plan-edit"].includes(activeId)
             ? "plan"
             : activeId === "exercise-detail"
               ? (exerciseDetailReturnHash === "workout-detail" ? "plan" : "training")
@@ -9325,8 +9333,10 @@
             link.getAttribute("href") === `#${activeNavId}` ? "true" : "false"
           );
         });
-        if (!assessmentDetail && window.location.hash.replace("#", "") !== activeId) {
-          history.replaceState(null, "", `#${activeId}`);
+        const activeHash = activeId === "plan-template-detail" && activeOfficialTemplateId
+          ? `#plan-template-detail?id=${encodeURIComponent(activeOfficialTemplateId)}` : `#${activeId}`;
+        if (!assessmentDetail && window.location.hash !== activeHash) {
+          history.replaceState(null, "", activeHash);
         }
         window.requestAnimationFrame(() => {
           document.querySelector("#appShell")?.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -12233,10 +12243,6 @@
       function updatePlanMode(profile, plan) {
         const generated = hasGeneratedPlan() && !isPlanCycleExpired(profile, plan);
         const showEditor = isEditingPlan;
-        const historyTab = document.querySelector('[data-plan-tab="historyPlanPane"]');
-        const showHistoryTab = generated || getViewablePlanHistory().length > 0;
-        if (historyTab) historyTab.hidden = !showHistoryTab;
-        if (!showHistoryTab && !document.querySelector("#historyPlanPane").hidden) setPlanPane("currentPlanPane");
         if (planEmptyState) planEmptyState.hidden = generated || showEditor;
         if (planTemplateLibrary) planTemplateLibrary.hidden = generated || showEditor;
         document.querySelectorAll("[data-plan-current-content]").forEach((element) => {
@@ -12300,7 +12306,7 @@
       function renderPlanHistory() {
         const entries = getViewablePlanHistory();
         if (!entries.length) {
-          planHistoryList.innerHTML = '<p class="muted">无</p>';
+          planHistoryList.innerHTML = `<p class="muted">${appLanguage === "en" ? "No plan history yet" : "当前无历史计划记录"}</p>`;
           return;
         }
         planHistoryList.innerHTML = entries
@@ -12388,6 +12394,42 @@
         return "";
       }
 
+      function renderOfficialTemplateDetail() {
+        const template = resistanceTemplates.find((item) => item.id === activeOfficialTemplateId && item.goal === "hypertrophy");
+        const backLabel = appLanguage === "en" ? "Back to plans" : "返回计划";
+        if (!template) {
+          officialTemplateDetail.innerHTML = `<button class="settings-back" type="button" data-official-template-back>← ${backLabel}</button>`;
+          return;
+        }
+        const prescription = getGoalPrescription(template.goal, template.minExperience, "low");
+        const weeks = createPeriodization({ goal: template.goal, experience: template.minExperience, ...prescription });
+        const days = makeHypertrophySplit(template.days, template.minExperience);
+        const unavailable = assessRisk().level === "high";
+        officialTemplateDetail.innerHTML = `
+          <button class="settings-back" type="button" data-official-template-back>← ${backLabel}</button>
+          <section class="card">
+            <h2>${appLanguage === "en" ? `Hypertrophy · ${template.days} days/week` : `${escapeLogText(template.name)} · 每周 ${template.days} 天`}</h2>
+            <p class="muted">${appLanguage === "en" ? "4-week training plan" : "4 周周期训练计划"}</p>
+            <h3>${appLanguage === "en" ? "Who this plan is for" : "适用条件"}</h3>
+            <p>${escapeLogText(appLanguage === "en" ? template.conditionsEn : template.conditions)}</p>
+          </section>
+          <section class="card">
+            <h3>${appLanguage === "en" ? "Weekly schedule" : "每周训练安排"}</h3>
+            ${days.map(([name, description], index) => `<div class="history-workout">
+              <strong>${appLanguage === "en" ? `Training day ${index + 1}` : `训练日 ${index + 1}`} · ${escapeLogText(translateInterfaceText(name))}</strong>
+              <small>${escapeLogText(translateInterfaceText(description))}</small>
+            </div>`).join("")}
+          </section>
+          <section class="card">
+            <h3>${appLanguage === "en" ? "4-week progression" : "四周训练安排"}</h3>
+            ${weeks.map((week, index) => `<div class="history-workout">
+              <strong>${appLanguage === "en" ? `Week ${index + 1}` : `第 ${index + 1} 周`} · ${escapeLogText(translateInterfaceText(week.title))}</strong>
+              <small>${week.sets} ${appLanguage === "en" ? "sets" : "组"} × ${escapeLogText(translateInterfaceText(week.reps))} · ${escapeLogText(week.load)}</small>
+            </div>`).join("")}
+          </section>
+          <button class="primary-btn plan-template-detail-action" type="button" data-official-template-use="${template.id}" ${unavailable ? "disabled" : ""}>${unavailable ? (appLanguage === "en" ? "Medical clearance required" : "需先获得医学确认") : (appLanguage === "en" ? "Use this plan" : "使用该计划")}</button>`;
+      }
+
       function renderPlanTemplateLibrary() {
         if (!historyTemplateList || !officialTemplateList) return;
         const entries = getUniqueHistoryPlanTemplates();
@@ -12420,7 +12462,7 @@
             <article class="resistance-template">
               <strong>${appLanguage === "en" ? `Hypertrophy · ${template.days} days/week` : `${escapeLogText(template.name)} · 每周 ${template.days} 天`}</strong>
               <p class="muted">${escapeLogText(appLanguage === "en" ? template.conditionsEn : template.conditions)}</p>
-              <button class="secondary-btn" type="button" data-use-official-template="${template.id}" ${unavailable ? "disabled" : ""}>${unavailable ? unavailableLabel : appLanguage === "en" ? "Use this plan" : "使用该计划"}</button>
+              <button class="secondary-btn" type="button" data-view-official-template="${template.id}">${appLanguage === "en" ? "View plan details" : "查看计划详情"}</button>
             </article>`;
           }).join("");
       }
@@ -12521,7 +12563,6 @@
       function clearPendingOfficialTemplate() {
         pendingOfficialTemplateId = null;
         planTemplateFormHint.hidden = true;
-        planTemplateFormCancel.hidden = true;
         form.querySelector('button[type="submit"]').textContent = appLanguage === "en" ? "Create 4-week plan" : "生成 4 周周期课表";
       }
 
@@ -12539,8 +12580,6 @@
           ? "Select your training experience and review the plan options before confirming this template."
           : "请先选择训练经验并核对计划选项，然后确认适用。";
         planTemplateFormHint.hidden = false;
-        planTemplateFormCancel.hidden = false;
-        planTemplateFormCancel.textContent = appLanguage === "en" ? "Back to plan templates" : "返回计划模板";
         form.querySelector('button[type="submit"]').textContent = appLanguage === "en" ? "Review suitability" : "检查适用条件";
         window.requestAnimationFrame(() => {
           profileEditor.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -13859,8 +13898,16 @@
         applyResistanceTemplate(button.dataset.useTemplate);
       });
       officialTemplateList.addEventListener("click", (event) => {
-        const button = event.target.closest("[data-use-official-template]");
-        if (button) requestOfficialTemplate(button.dataset.useOfficialTemplate);
+        const button = event.target.closest("[data-view-official-template]");
+        if (button) window.location.hash = `plan-template-detail?id=${encodeURIComponent(button.dataset.viewOfficialTemplate)}`;
+      });
+      officialTemplateDetail.addEventListener("click", (event) => {
+        if (event.target.closest("[data-official-template-back]")) {
+          setPlanPane("currentPlanPane");
+          window.location.hash = "plan";
+        }
+        const button = event.target.closest("[data-official-template-use]");
+        if (button && !button.disabled) requestOfficialTemplate(button.dataset.officialTemplateUse);
       });
       document.querySelector("#planTemplateDialogContinue").addEventListener("click", () => {
         const templateId = planTemplateDialog.dataset.templateId;
@@ -13876,10 +13923,6 @@
       document.querySelector("#planTemplateDialogCancel").addEventListener("click", cancelOfficialTemplateDialog);
       document.querySelector("#planTemplateDialogClose").addEventListener("click", cancelOfficialTemplateDialog);
       planTemplateDialog.addEventListener("cancel", () => clearPendingOfficialTemplate());
-      planTemplateFormCancel.addEventListener("click", () => {
-        cancelPlanEditing();
-        window.location.hash = "plan";
-      });
       historyTemplateList.addEventListener("click", (event) => {
         const button = event.target.closest("[data-use-history-template-index]");
         if (button) applyHistoryPlanTemplate(Number(button.dataset.useHistoryTemplateIndex));
