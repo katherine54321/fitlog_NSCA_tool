@@ -1,0 +1,465 @@
+{
+  "version": 1,
+  "note": "主要动作模式；用于动作检索与后续人工审核，不表示临床安全性或自动适合用户。",
+  "exercises": {
+    "barbell-bench-press": [
+      "horizontal_push"
+    ],
+    "incline-dumbbell-press": [
+      "horizontal_push"
+    ],
+    "push-up": [
+      "horizontal_push"
+    ],
+    "lat-pulldown": [
+      "vertical_pull"
+    ],
+    "bent-over-barbell-row": [
+      "horizontal_pull"
+    ],
+    "seated-cable-row": [
+      "horizontal_pull"
+    ],
+    "one-arm-dumbbell-row": [
+      "horizontal_pull"
+    ],
+    "dumbbell-shoulder-press": [
+      "vertical_push"
+    ],
+    "side-lateral-raise": [
+      "shoulder_abduction"
+    ],
+    "barbell-curl": [
+      "elbow_flexion"
+    ],
+    "dumbbell-hammer-curl": [
+      "elbow_flexion"
+    ],
+    "triceps-pushdown": [
+      "elbow_extension"
+    ],
+    "barbell-squat": [
+      "squat"
+    ],
+    "leg-press": [
+      "squat"
+    ],
+    "romanian-deadlift": [
+      "hip_hinge"
+    ],
+    "lying-leg-curls": [
+      "knee_flexion"
+    ],
+    "barbell-hip-thrust": [
+      "hip_thrust_bridge"
+    ],
+    "cable-kickback": [
+      "hip_extension"
+    ],
+    "cable-crunch": [
+      "trunk_flexion"
+    ],
+    "weighted-sit-up": [
+      "trunk_flexion"
+    ],
+    "dumbbell-bench-press": [
+      "horizontal_push"
+    ],
+    "decline-dumbbell-bench-press": [
+      "horizontal_push"
+    ],
+    "cable-crossover": [
+      "shoulder_horizontal_adduction"
+    ],
+    "chest-dips": [
+      "vertical_push"
+    ],
+    "incline-dumbbell-flyes": [
+      "shoulder_horizontal_adduction"
+    ],
+    "cable-chest-press": [
+      "horizontal_push"
+    ],
+    "pullups": [
+      "vertical_pull"
+    ],
+    "wide-grip-lat-pulldown": [
+      "vertical_pull"
+    ],
+    "lying-tbar-row": [
+      "horizontal_pull"
+    ],
+    "rope-straight-arm-pulldown": [
+      "shoulder_extension"
+    ],
+    "back-extension": [
+      "hip_hinge"
+    ],
+    "arnold-dumbbell-press": [
+      "vertical_push"
+    ],
+    "barbell-shoulder-press": [
+      "vertical_push"
+    ],
+    "front-dumbbell-raise": [
+      "shoulder_flexion"
+    ],
+    "cable-rear-delt-fly": [
+      "shoulder_horizontal_abduction"
+    ],
+    "face-pull": [
+      "shoulder_horizontal_abduction"
+    ],
+    "upright-barbell-row": [
+      "shoulder_abduction"
+    ],
+    "preacher-curl": [
+      "elbow_flexion"
+    ],
+    "concentration-curl": [
+      "elbow_flexion"
+    ],
+    "cable-overhead-triceps-extension": [
+      "elbow_extension"
+    ],
+    "lying-triceps-press": [
+      "elbow_extension"
+    ],
+    "bench-dips": [
+      "vertical_push"
+    ],
+    "cable-hammer-curl": [
+      "elbow_flexion"
+    ],
+    "dumbbell-lunges": [
+      "lunge_step"
+    ],
+    "barbell-lunge": [
+      "lunge_step"
+    ],
+    "leg-extensions": [
+      "knee_extension"
+    ],
+    "seated-leg-curl": [
+      "knee_flexion"
+    ],
+    "standing-calf-raises": [
+      "calf_raise"
+    ],
+    "dumbbell-step-ups": [
+      "lunge_step"
+    ],
+    "hack-squat": [
+      "squat"
+    ],
+    "single-leg-glute-bridge": [
+      "hip_thrust_bridge"
+    ],
+    "glute-ham-raise": [
+      "hip_hinge"
+    ],
+    "sumo-deadlift": [
+      "hip_hinge"
+    ],
+    "glute-bridge": [
+      "hip_thrust_bridge"
+    ],
+    "ab-crunch-machine": [
+      "trunk_flexion"
+    ],
+    "ab-roller": [
+      "trunk_anti_extension"
+    ],
+    "barbell-ab-rollout": [
+      "trunk_anti_extension"
+    ],
+    "cable-russian-twist": [
+      "trunk_rotation"
+    ],
+    "cable-reverse-crunch": [
+      "hip_flexion"
+    ],
+    "russian-twist": [
+      "trunk_rotation"
+    ],
+    "barbell-incline-bench-press": [
+      "horizontal_push"
+    ],
+    "decline-barbell-bench-press": [
+      "horizontal_push"
+    ],
+    "dumbbell-flyes": [
+      "shoulder_horizontal_adduction"
+    ],
+    "butterfly-machine": [
+      "shoulder_horizontal_adduction"
+    ],
+    "leverage-chest-press": [
+      "horizontal_push"
+    ],
+    "low-cable-crossover": [
+      "shoulder_horizontal_adduction"
+    ],
+    "incline-cable-chest-press": [
+      "horizontal_push"
+    ],
+    "decline-smith-press": [
+      "horizontal_push"
+    ],
+    "hammer-grip-incline-db-press": [
+      "horizontal_push"
+    ],
+    "bent-over-two-dumbbell-row": [
+      "horizontal_pull"
+    ],
+    "tbar-row-handle": [
+      "horizontal_pull"
+    ],
+    "reverse-grip-bent-over-row": [
+      "horizontal_pull"
+    ],
+    "leverage-high-row": [
+      "angled_pull"
+    ],
+    "smith-machine-bent-over-row": [
+      "horizontal_pull"
+    ],
+    "vbar-pulldown": [
+      "vertical_pull"
+    ],
+    "kneeling-high-pulley-row": [
+      "angled_pull"
+    ],
+    "seated-one-arm-cable-row": [
+      "horizontal_pull"
+    ],
+    "straight-arm-pulldown": [
+      "shoulder_extension"
+    ],
+    "alternating-cable-shoulder-press": [
+      "vertical_push"
+    ],
+    "barbell-rear-delt-row": [
+      "shoulder_horizontal_abduction"
+    ],
+    "bent-over-dumbbell-rear-delt-raise": [
+      "shoulder_horizontal_abduction"
+    ],
+    "cable-seated-lateral-raise": [
+      "shoulder_abduction"
+    ],
+    "cable-shoulder-press": [
+      "vertical_push"
+    ],
+    "dumbbell-scaptation": [
+      "shoulder_flexion"
+    ],
+    "one-arm-dumbbell-shoulder-press": [
+      "vertical_push"
+    ],
+    "front-cable-raise": [
+      "shoulder_flexion"
+    ],
+    "alternate-incline-dumbbell-curl": [
+      "elbow_flexion"
+    ],
+    "cable-preacher-curl": [
+      "elbow_flexion"
+    ],
+    "cross-body-hammer-curl": [
+      "elbow_flexion"
+    ],
+    "dumbbell-alternate-bicep-curl": [
+      "elbow_flexion"
+    ],
+    "ez-bar-curl": [
+      "elbow_flexion"
+    ],
+    "machine-bicep-curl": [
+      "elbow_flexion"
+    ],
+    "high-cable-curls": [
+      "elbow_flexion"
+    ],
+    "close-grip-barbell-bench-press": [
+      "horizontal_push"
+    ],
+    "machine-triceps-extension": [
+      "elbow_extension"
+    ],
+    "barbell-hack-squat": [
+      "squat"
+    ],
+    "barbell-walking-lunge": [
+      "lunge_step"
+    ],
+    "dumbbell-rear-lunge": [
+      "lunge_step"
+    ],
+    "dumbbell-squat": [
+      "squat"
+    ],
+    "front-squat-clean-grip": [
+      "squat"
+    ],
+    "good-morning": [
+      "hip_hinge"
+    ],
+    "barbell-step-ups": [
+      "lunge_step"
+    ],
+    "smith-machine-squat": [
+      "squat"
+    ],
+    "seated-calf-raise": [
+      "calf_raise"
+    ],
+    "calf-press": [
+      "calf_raise"
+    ],
+    "cable-pull-through": [
+      "hip_hinge"
+    ],
+    "kneeling-squat": [
+      "hip_extension"
+    ],
+    "glute-kickback": [
+      "hip_extension"
+    ],
+    "hip-extension-bands": [
+      "hip_extension"
+    ],
+    "hip-lift-band": [
+      "hip_thrust_bridge"
+    ],
+    "physioball-hip-bridge": [
+      "hip_thrust_bridge"
+    ],
+    "barbell-side-bend": [
+      "trunk_lateral_flexion"
+    ],
+    "cable-seated-crunch": [
+      "trunk_flexion"
+    ],
+    "dumbbell-side-bend": [
+      "trunk_lateral_flexion"
+    ],
+    "pallof-press": [
+      "trunk_anti_rotation"
+    ],
+    "kneeling-cable-oblique-crunch": [
+      "trunk_lateral_flexion"
+    ],
+    "landmine-180": [
+      "trunk_rotation"
+    ],
+    "bosu-cable-crunch-side-bend": [
+      "trunk_lateral_flexion"
+    ],
+    "barbell-glute-bridge": [
+      "hip_thrust_bridge"
+    ],
+    "barbell-ab-rollout-knees": [
+      "trunk_anti_extension"
+    ],
+    "wide-grip-barbell-bench-press": [
+      "horizontal_push"
+    ],
+    "machine-bench-press": [
+      "horizontal_push"
+    ],
+    "dumbbell-neutral-grip-bench-press": [
+      "horizontal_push"
+    ],
+    "chin-up": [
+      "vertical_pull"
+    ],
+    "inverted-row": [
+      "horizontal_pull"
+    ],
+    "leverage-iso-row": [
+      "horizontal_pull"
+    ],
+    "underhand-cable-pulldown": [
+      "vertical_pull"
+    ],
+    "machine-shoulder-press": [
+      "vertical_push"
+    ],
+    "reverse-machine-flyes": [
+      "shoulder_horizontal_abduction"
+    ],
+    "front-plate-raise": [
+      "shoulder_flexion"
+    ],
+    "one-arm-side-laterals": [
+      "shoulder_abduction"
+    ],
+    "band-pull-apart": [
+      "shoulder_horizontal_abduction"
+    ],
+    "incline-dumbbell-curl": [
+      "elbow_flexion"
+    ],
+    "ez-bar-skullcrusher": [
+      "elbow_extension"
+    ],
+    "reverse-barbell-curl": [
+      "elbow_flexion"
+    ],
+    "cable-one-arm-tricep-extension": [
+      "elbow_extension"
+    ],
+    "goblet-squat": [
+      "squat"
+    ],
+    "narrow-stance-leg-press": [
+      "squat"
+    ],
+    "donkey-calf-raise": [
+      "calf_raise"
+    ],
+    "elevated-back-lunge": [
+      "lunge_step"
+    ],
+    "lunge-pass-through": [
+      "lunge_step"
+    ],
+    "kettlebell-one-legged-deadlift": [
+      "hip_hinge"
+    ],
+    "step-up-with-knee-raise": [
+      "lunge_step"
+    ],
+    "cable-deadlifts": [
+      "hip_hinge"
+    ],
+    "bodyweight-walking-lunge": [
+      "lunge_step"
+    ],
+    "seated-hip-abduction": [
+      "hip_abduction"
+    ],
+    "smith-machine-pistol-squat": [
+      "squat"
+    ],
+    "smith-machine-stiff-legged-deadlift": [
+      "hip_hinge"
+    ],
+    "hanging-leg-raise": [
+      "hip_flexion"
+    ],
+    "decline-crunch": [
+      "trunk_flexion"
+    ],
+    "knee-hip-raise-parallel-bars": [
+      "hip_flexion"
+    ],
+    "standing-cable-wood-chop": [
+      "trunk_rotation"
+    ],
+    "weighted-sit-ups-bands": [
+      "trunk_flexion"
+    ]
+  }
+}

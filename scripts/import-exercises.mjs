@@ -8,6 +8,7 @@ const sourceUrl = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/ma
 const imageBaseUrl = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/";
 const terms = JSON.parse(await readFile(join(root, "data", "exercise-terms.json"), "utf8"));
 const expansion = JSON.parse(await readFile(join(root, "data", "exercise-expansion-v2.json"), "utf8"));
+const movementPatterns = JSON.parse(await readFile(join(root, "data", "exercise-movement-patterns.json"), "utf8"));
 const outputJson = join(root, "data", "exercises-v1.json");
 const outputScript = join(root, "data", "exercise-library-data.js");
 const imageDir = join(root, "assets", "exercise-images");
@@ -66,6 +67,12 @@ const stats = { success: 0, skipped: 0, failed: 0 };
 
 const exerciseConfigs = { ...terms.exercises, ...expansion.exercises };
 
+// Fail before writing files if a new resistance exercise has not been reviewed.
+const unclassified = Object.entries(exerciseConfigs).filter(([id, config]) =>
+  (config.libraryType || "resistance") === "resistance" && !movementPatterns.exercises[id]
+);
+if (unclassified.length) throw new Error(`Missing reviewed movement patterns: ${unclassified.map(([id]) => id).join(", ")}`);
+
 for (const [id, config] of Object.entries(exerciseConfigs)) {
   try {
     const exercise = findSourceExercise(source, config);
@@ -84,6 +91,7 @@ for (const [id, config] of Object.entries(exerciseConfigs)) {
       nameEn: exercise.name,
       category: config.category,
       libraryType: config.libraryType || "resistance",
+      ...((config.libraryType || "resistance") === "resistance" ? { movementPatterns: movementPatterns.exercises[id] } : {}),
       level: translate(exercise.level),
       equipment: config.equipment || translateEquipment(exercise.equipment),
       force: translate(exercise.force),

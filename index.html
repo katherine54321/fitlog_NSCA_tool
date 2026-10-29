@@ -585,7 +585,6 @@
       }
 
       #planNoticeDialog:not([data-conflict="true"]) .schedule-dialog-actions { display: block; }
-      #planNoticeSource { color: var(--brand); }
 
       .mobile-nav {
         position: fixed;
@@ -5107,12 +5106,15 @@
 
       .overload-monitor { margin-top: 14px; padding: 14px; }
       .overload-monitor-head select { width: min(200px, 45%); min-height: 38px; padding-block: 6px; font-size: 12px; color: #00e5ff; }
-      .overload-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+      .overload-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
       .overload-stat { padding: 9px; background: #191b1e; border: 1px solid #363c42; border-radius: 9px; }
       .overload-stat span { display: block; color: #aeb7af; font-size: 10px; }
       .overload-stat b { display: block; margin-top: 4px; color: #fff; font-size: 17px; }
       .overload-stat:nth-child(1) b { color: #39ff14; }
       .overload-stat:nth-child(2) b { color: #00e5ff; }
+      .overload-stat b.is-positive { color: #2cf5b4; }
+      .overload-stat b.is-negative { color: #ff9999; }
+      .overload-stat:nth-child(4) b { color: #ffd65b; }
       .overload-chart-card { margin-top: 10px; padding: 11px; background: #191b1e; }
       .chart-legend { display: flex; gap: 12px; color: #aeb7af; font-size: 11px; }
       .chart-legend span { display: inline-flex; gap: 5px; align-items: center; }
@@ -7052,6 +7054,41 @@
       }
 
       .completed-training-supplement-form button { min-height: 44px; }
+
+      /* Records: a compact dark training dashboard with clear data accents. */
+      #records .record-tabs { gap: 4px; }
+      #records .record-pane { margin-top: 16px; }
+      #records .record-calendar-shell,
+      #records .muscle-volume,
+      #records .set-log-form {
+        background: #18181b;
+        border: 1px solid #303035;
+        border-radius: 14px;
+      }
+      #records .set-log-form { padding: 18px; }
+      #records .set-log-form input,
+      #records .set-log-form select { min-height: 44px; background: #09090b; border-color: #3f3f46; }
+      #records .set-log-form { gap: 12px; }
+      #records .set-log-form label { color: #d4d4d8; font-size: 13px; }
+      #records #setLogWeight, #records #setLogReps { font: 700 18px/1.2 ui-monospace, monospace; }
+      #records #setLogWeight { color: #39ff14; }
+      #records #setLogReps { color: #00e5ff; }
+      #records .weight-quick-actions button, #records .rep-quick-actions button { min-height: 40px; color: #d4d4d8; background: #222225; border-color: #3f3f46; font: 600 12px ui-monospace, monospace; }
+      #records .weight-quick-actions button:active { color: #39ff14; border-color: #39ff14; }
+      #records .rep-quick-actions button:active { color: #00e5ff; border-color: #00e5ff; }
+      #records .set-log-preview { padding: 14px; background: #09090b; border-color: #303035; }
+      #records .set-log-preview strong { font-family: ui-monospace, monospace; }
+      #records .set-log-submit { min-height: 48px; color: #39ff14; background: transparent; border: 1px solid #39ff14; }
+      #records .set-log-form :is(input, select):focus-visible { outline: 2px solid #00e5ff; outline-offset: 2px; }
+      @media (max-width: 420px) {
+        #records .set-log-form { padding: 14px; }
+      }
+      #actionRecordPane .overload-chart-card { background: #141719; border-color: #39434a; padding: 14px 10px; }
+      #actionRecordPane .chart-legend { flex-wrap: wrap; gap: 8px 16px; color: #c1ccc5; }
+      #actionRecordPane .legend-weight { height: 0; background: none; border-top: 2px dashed #00e5ff; }
+      #actionRecordPane .overload-chart { margin-top: 12px; }
+      #actionRecordPane .overload-chart svg { height: auto; aspect-ratio: 320 / 190; overflow: hidden; }
+      #actionRecordPane .overload-chart text { fill: #aeb8b2; font-size: 9px; font-variant-numeric: tabular-nums; }
     </style>
   </head>
   <body class="is-booting">
@@ -7167,7 +7204,6 @@
       <dialog class="schedule-dialog" id="planNoticeDialog" aria-labelledby="planNoticeTitle">
         <h2 id="planNoticeTitle"></h2>
         <p class="schedule-dialog-summary" id="planNoticeBody" hidden></p>
-        <a class="schedule-dialog-summary" id="planNoticeSource" href="https://www.nsca.com/education/articles/kinetic-select/determination-of-resistance-training-frequency/" target="_blank" rel="noopener noreferrer" hidden>NSCA · Determination of Resistance Training Frequency ↗</a>
         <div class="schedule-dialog-actions">
           <button class="ghost-btn" id="planNoticeSecondary" type="button" hidden></button>
           <button class="primary-btn" id="planNoticeConfirm" type="button">确定</button>
@@ -7792,7 +7828,7 @@
             <div class="record-pane" id="actionRecordPane" data-record-pane hidden>
               <section class="overload-monitor" id="overloadMonitor" aria-labelledby="overloadMonitorTitle">
                 <div class="overload-monitor-head">
-                  <div><span class="module-kicker">渐进负荷</span><h3 id="overloadMonitorTitle">力量进展</h3></div>
+                  <h3 id="overloadMonitorTitle">渐进超负荷趋势监测</h3>
                   <select id="overloadExerciseSelect" aria-label="选择要查看的动作"></select>
                 </div>
                 <div class="overload-stats" id="overloadStats"></div>
@@ -8010,6 +8046,7 @@
         ["共几组（可选）", "Total sets (optional)"],
         ["保存训练数据", "Save training data"],
         ["渐进负荷", "Progressive overload"],
+        ["渐进超负荷趋势监测", "Progressive overload trends"],
         ["力量进展", "Strength progress"],
         ["基本信息", "Overview"],
         ["难度", "Difficulty"],
@@ -8158,6 +8195,23 @@
         ["建立稳定动作模式与基础训练容量。", "Build stable movement patterns and foundational training capacity."],
         ["如果最后一组仍能稳定完成目标次数，下周总量增加 5%-10%。", "If the final set remains controlled at the target reps, increase next week's volume by 5%-10%."],
         ["动作适应周", "Movement adaptation"],
+        ["全身训练 · 水平推拉", "Full-body · horizontal push/pull"],
+        ["全身训练 · 垂直推拉", "Full-body · vertical push/pull"],
+        ["上肢推拉训练", "Upper-body push/pull"],
+        ["下肢膝髋训练", "Lower-body knee and hip training"],
+        ["上肢推训练", "Upper-body push"],
+        ["上肢拉训练", "Upper-body pull"],
+        ["膝主导、髋主导、水平推拉与躯干稳定", "Knee-dominant and hip-hinge movements, horizontal push/pull and trunk stability"],
+        ["膝主导、髋主导、垂直推拉与躯干稳定", "Knee-dominant and hip-hinge movements, vertical push/pull and trunk stability"],
+        ["水平推拉、垂直推拉与肩部辅助", "Horizontal and vertical push/pull with shoulder accessories"],
+        ["膝主导、髋主导、腿后侧与小腿", "Knee-dominant and hip-hinge movements, hamstrings and calves"],
+        ["胸部与肩部推举、胸部及手臂辅助", "Chest and shoulder pressing with chest and arm accessories"],
+        ["垂直拉、水平拉、肩后侧与手臂辅助", "Vertical and horizontal pulling with rear shoulder and arm accessories"],
+        ["根据试做组确定", "Set using trial sets"],
+        ["动作学习阶段", "Movement-learning phase"],
+        ["第 4 周适当调整训练量与负荷，为下一周期恢复。", "Adjust training volume and load in week 4 to support recovery."],
+        ["第 4 周适当调整训练量与负荷，维持动作练习并为下一周期恢复。", "Adjust week 4 volume and load, maintain movement practice, and recover for the next cycle."],
+        ["请根据实际训练时间和身体恢复情况安排训练日。", "Schedule training days according to your actual training times and recovery."],
         ["容量递进周", "Volume progression"],
         ["目标强化周", "Goal intensification"],
         ["减载巩固周", "Deload and consolidate"],
@@ -9551,9 +9605,10 @@
       function getProfile() {
         const value = (selector, fallback = "") => document.querySelector(selector)?.value || fallback;
         let savedRuleVersion = 2;
+        let savedExerciseSnapshot = null;
         try {
           const saved = JSON.parse(localStorage.getItem("fitlog-profile") || "null");
-          if (saved) savedRuleVersion = Number(saved.planRuleVersion) || 1;
+          if (saved) { savedRuleVersion = Number(saved.planRuleVersion) || 1; savedExerciseSnapshot = saved.exerciseSnapshot || null; }
         } catch {}
         return {
           age: Number(value("#age", 0)),
@@ -9562,6 +9617,7 @@
           goal: value("#goal"),
           days: Number(value("#trainingDays", 3)),
           planRuleVersion: savedRuleVersion,
+          exerciseSnapshot: savedExerciseSnapshot,
           focusArea: value("#focusArea"),
           focusPurpose: value("#focusPurpose"),
           sleep: value("#sleep", "normal"),
@@ -10075,7 +10131,12 @@
       function buildPlan(profile, templateId = localStorage.getItem("fitlog-plan-template")) {
         const selectedTemplate = resistanceTemplates.find((item) => item.id === templateId) || null;
         const risk = getPlanRisk(profile);
-        const prescription = getGoalPrescription(profile.goal, profile.experience, risk.level);
+        const ruleVersion = Number(profile.planRuleVersion) || 1;
+        let prescription = getGoalPrescription(profile.goal, profile.experience, risk.level);
+        if (ruleVersion >= 3 && profile.experience === "beginner" && risk.level !== "high") {
+          prescription = { ...prescription, rest: "2-5 分钟", setRange: "1-3 组",
+            ...(profile.goal === "strength" ? { load: "根据试做组确定", rm: "动作学习阶段", reps: "8-12 次" } : {}) };
+        }
         const { load, rm, reps, setRange, baseSetCount, rest } = prescription;
         const requestedDays = Math.max(2, Math.min(6, selectedTemplate?.days || profile.days));
         const days = risk.level === "high"
@@ -10084,7 +10145,8 @@
             ? Math.min(Number(profile.planRuleVersion) >= 2 ? 4 : 3, requestedDays)
             : requestedDays;
         let split = makeSplit(days, profile.goal, profile.experience);
-        if (selectedTemplate?.split?.length === days && risk.level !== "high") split = selectedTemplate.split;
+        if (ruleVersion < 3 && selectedTemplate?.split?.length === days && risk.level !== "high") split = selectedTemplate.split;
+        if (ruleVersion >= 3) split = makeMovementSplit(days, profile.experience);
         if (risk.level === "high") {
           split = [
             ["医学确认前", "暂停高强度、最大力量、冲刺间歇和屏气用力训练，先处理红旗症状或疾病限制"],
@@ -10093,7 +10155,7 @@
         } else if (risk.level === "moderate") {
           split = split.map(([day, text]) => [day, `${text}；首 2-4 周降低总组数并保留 3 次以上余力`]);
         }
-        const periodization = createPeriodization({
+        let periodization = createPeriodization({
           goal: profile.goal,
           experience: profile.experience,
           baseSetCount,
@@ -10102,6 +10164,13 @@
           rest,
           load
         });
+        if (ruleVersion >= 3 && profile.experience === "beginner") {
+          periodization = periodization.map((period) => ({
+            ...period, rest: "2-5 分钟",
+            ...(profile.goal === "strength" ? { load: "根据试做组确定", reps: "8-12 次", rm: "动作学习阶段" } : {})
+          }));
+        }
+        if (ruleVersion >= 3 && periodization[3]) periodization[3].focus = "第 4 周适当调整训练量与负荷，维持动作练习并为下一周期恢复。";
         const focusArea = focusAreaLabels[profile.focusArea] ? profile.focusArea : "";
         const defaultFocusPurpose = profile.goal === "strength"
           ? "strength"
@@ -10122,6 +10191,8 @@
           days,
           goal: profile.goal,
           experience: profile.experience,
+          ruleVersion,
+          exerciseSnapshot: ruleVersion >= 3 ? profile.exerciseSnapshot || null : null,
           focusArea,
           focusPurpose,
           split,
@@ -10186,6 +10257,21 @@
         if (days === 3) return experience === "advanced" ? ppl.slice(0, 3) : fullBody;
         if (days === 4) return upperLower;
         return ppl.slice(0, days);
+      }
+
+      function makeMovementSplit(days, experience) {
+        const full = [
+          ["全身训练 · 水平推拉", "膝主导、髋主导、水平推拉与躯干稳定"],
+          ["全身训练 · 垂直推拉", "膝主导、髋主导、垂直推拉与躯干稳定"],
+          ["全身训练 · 水平推拉", "膝主导、髋主导、水平推拉与躯干稳定"]
+        ];
+        const upper = ["上肢推拉训练", "水平推拉、垂直推拉与肩部辅助"];
+        const lower = ["下肢膝髋训练", "膝主导、髋主导、腿后侧与小腿"];
+        const push = ["上肢推训练", "胸部与肩部推举、胸部及手臂辅助"];
+        const pull = ["上肢拉训练", "垂直拉、水平拉、肩后侧与手臂辅助"];
+        if (days >= 5 || (days === 3 && experience === "advanced")) return [push, pull, lower, push, pull, lower].slice(0, days);
+        if (days === 4) return [upper, lower, upper, lower];
+        return full.slice(0, days);
       }
 
       function parseLocalDate(value) {
@@ -10463,6 +10549,7 @@
       }
 
       function focusBonusPrescription(plan, bonusSets) {
+        if (plan.ruleVersion >= 3 && plan.experience === "beginner") return { prescription: `${bonusSets} 组 × 8-12 次`, rest: "2-5 分钟" };
         if (plan.focusPurpose === "strength") return { prescription: `${bonusSets} 组 × 3-6 次`, rest: "2-3 分钟" };
         if (plan.focusPurpose === "stability") return { prescription: `${bonusSets} 组 × 每侧 8-12 次`, rest: "45-75 秒" };
         return { prescription: `${bonusSets} 组 × 8-12 次`, rest: "60-90 秒" };
@@ -10475,7 +10562,7 @@
         const usedNames = new Set(exercises.map((exercise) => exercise.name));
         const candidate = candidateIds
           .map((id) => resistanceExercises.find((exercise) => exercise.id === id))
-          .find((exercise) => exercise && !usedIds.has(exercise.id) && !usedNames.has(exercise.nameZh));
+          .find((exercise) => exercise && (!(plan.ruleVersion >= 3) || movementCandidateAllowed(exercise, plan)) && !usedIds.has(exercise.id) && !usedNames.has(exercise.nameZh));
         if (!candidate) return null;
         const bonusSets = getFocusBonusSetCount(plan, period);
         return {
@@ -10506,6 +10593,10 @@
       }
 
       function getWorkoutExercises(dayIndex, plan, weekIndex = 0) {
+        if (plan.ruleVersion >= 3) {
+          const saved = plan.exerciseSnapshot?.[weekIndex]?.[dayIndex];
+          return saved ? saved.map((exercise) => ({ ...exercise })) : generateMovementWorkout(dayIndex, plan, weekIndex);
+        }
         const period = plan.periodization?.[weekIndex] || plan.periodization?.[0] || {
           sets: plan.baseSetCount || 3,
           reps: plan.reps,
@@ -10708,6 +10799,70 @@
           ? [fallback]
           : plan.goal === "hypertrophy" ? hypertrophyProgram : generalProgram;
         return applyFocusEmphasis(exercises, dayIndex, activeProgram, plan, period);
+      }
+
+      // Slots express training patterns, not a prescribed list of exercise IDs.
+      function movementDaySlots(plan, dayIndex) {
+        const ppl = plan.days >= 5 || (plan.days === 3 && plan.experience === "advanced");
+        const upperLower = plan.days === 4;
+        const slot = (pattern, category) => ({ pattern, category });
+        if (ppl) {
+          const group = dayIndex % 3;
+          if (group === 0) return [slot("horizontal_push", "胸部"), slot("vertical_push", "肩部"), slot("shoulder_horizontal_adduction", "胸部"), slot("elbow_extension", "手臂")];
+          if (group === 1) return [slot("vertical_pull", "背部"), slot("horizontal_pull", "背部"), slot("shoulder_horizontal_abduction", "肩部"), slot("elbow_flexion", "手臂")];
+          return [slot("squat"), slot("hip_hinge"), slot("knee_flexion"), slot("calf_raise")];
+        }
+        if (upperLower) {
+          return dayIndex % 2 === 0
+            ? [slot("horizontal_push", "胸部"), slot("horizontal_pull", "背部"), slot("vertical_push", "肩部"), slot("vertical_pull", "背部"), slot("shoulder_abduction", "肩部")]
+            : [slot("squat"), slot("hip_hinge"), slot("knee_flexion"), slot("calf_raise")];
+        }
+        return [slot("squat"), slot("hip_hinge"), slot(dayIndex % 2 ? "vertical_push" : "horizontal_push", dayIndex % 2 ? "肩部" : "胸部"), slot(dayIndex % 2 ? "vertical_pull" : "horizontal_pull", "背部"), slot("trunk_anti_rotation", "核心")];
+      }
+
+      function movementCandidateAllowed(exercise, plan) {
+        const levels = { "初级": 0, "中级": 1, "高级": 2 };
+        const limit = { beginner: 0, intermediate: 1, advanced: 2 }[plan.experience];
+        if (limit === undefined || !(exercise.level in levels) || levels[exercise.level] > limit) return false;
+        // Existing level labels are only coarse indicators, not proof of mastery.
+        if (plan.experience === "beginner" && ["pullups", "chin-up", "bench-dips", "inverted-row", "barbell-bench-press", "barbell-incline-bench-press", "decline-barbell-bench-press", "close-grip-barbell-bench-press", "smith-machine-stiff-legged-deadlift"].includes(exercise.id)) return false;
+        return true;
+      }
+
+      function selectMovementDay(plan, dayIndex) {
+        const used = new Set();
+        return movementDaySlots(plan, dayIndex).map(({ pattern, category }, slotIndex) => {
+          const candidates = resistanceExercises.filter((exercise) => exercise.movementPatterns?.includes(pattern)
+            && (!category || exercise.category === category) && movementCandidateAllowed(exercise, plan) && !used.has(exercise.id));
+          const preference = (exercise) => {
+            const supported = plan.experience === "beginner" && ["固定器械", "绳索器械"].includes(exercise.equipment) ? 4 : 0;
+            const compound = exercise.mechanic === "复合动作" ? 1 : 0;
+            return supported + compound;
+          };
+          candidates.sort((a, b) => preference(b) - preference(a) || a.id.localeCompare(b.id));
+          if (!candidates.length) return null;
+          // Vary among equally ranked candidates across days, without random changes on rerender.
+          const best = candidates.filter((exercise) => preference(exercise) === preference(candidates[0]));
+          const candidate = best[(dayIndex + slotIndex) % best.length];
+          used.add(candidate.id);
+          return candidate;
+        });
+      }
+
+      function generateMovementWorkout(dayIndex, plan, weekIndex = 0) {
+        const period = plan.periodization?.[weekIndex] || plan.periodization?.[0] || { sets: plan.baseSetCount || 3, reps: plan.reps, rest: plan.rest };
+        const selected = selectMovementDay(plan, dayIndex);
+        if (selected.some((exercise) => !exercise)) return [];
+        const program = plan.split.map((_, index) => selectMovementDay(plan, index).filter(Boolean).map((exercise) => [exercise.nameZh, `${exercise.category} ${exercise.primaryMuscles?.join(" ") || ""}`]));
+        const exercises = selected.map((exercise) => {
+          const auxiliary = exercise.mechanic !== "复合动作";
+          const sets = auxiliary ? Math.max(1, period.sets - 1) : period.sets;
+          const rest = plan.experience === "beginner" ? period.rest : auxiliary && plan.goal === "hypertrophy" ? "60-90 秒" : period.rest;
+          return { name: exercise.nameZh, focus: `${exercise.category} · ${exercise.primaryMuscles?.[0] || exercise.category}`,
+            cue: exercise.instructionsZh?.[0] || "保持动作稳定。", exerciseId: exercise.id,
+            prescription: `${sets} 组 × ${period.reps}`, rest };
+        });
+        return applyFocusEmphasis(exercises, dayIndex, program, plan, period);
       }
 
       function getLegacyTargetedPreparation(workout) {
@@ -12310,10 +12465,10 @@
           displayLoadAdvice(appLanguage === "en"
             ? "Increase upper-body loads by 1-2.5 kg or 2.5%-5%; increase lower-body loads by 2.5-5 kg or 5%-10%."
             : "上肢每次增加 1-2.5 kg 或 2.5%-5%；下肢增加 2.5-5 kg 或 5%-10%。"),
-          "第 4 周减少约 40%-50% 训练组数，为下一周期恢复。"
+          plan.ruleVersion >= 3 ? "第 4 周适当调整训练量与负荷，为下一周期恢复。" : "第 4 周减少约 40%-50% 训练组数，为下一周期恢复。"
         ];
         if (plan.experience === "beginner") rules.unshift("初级阶段优先固定动作模式和线性递进，不自动编排每周 4 天以上的抗阻训练。");
-        if (plan.days >= 4) rules.unshift("分化安排为同一肌群保留至少 48 小时恢复时间。");
+        if (plan.days >= 4) rules.unshift(plan.ruleVersion >= 3 ? "请根据实际训练时间和身体恢复情况安排训练日。" : "分化安排为同一肌群保留至少 48 小时恢复时间。");
         if (plan.risk.level === "high") {
           rules.unshift("高风险结果：正式训练或强度升级前，先取得医生或合格医疗专业人员许可。");
         }
@@ -12470,7 +12625,7 @@
             return `<div class="history-workout">
               <strong>${appLanguage === "en" ? `Training day ${day.dayIndex + 1}` : `训练日${day.dayIndex + 1}`} · ${escapeLogText(translateInterfaceText(name || ""))}</strong>
               <small>${escapeLogText(day.date)} · ${status} · ${escapeLogText(translateInterfaceText(description || ""))}</small>
-              <ul>${exercises.map((exercise) => `<li>${escapeLogText(translateInterfaceText(exercise.name || ""))}${exercise.prescription ? ` · ${escapeLogText(translateInterfaceText(exercise.prescription))}` : ""}</li>`).join("")}</ul>
+              <ul>${exercises.map((exercise) => `<li>${escapeLogText(appLanguage === "en" ? (resistanceExercises.find((item) => item.id === exercise.exerciseId)?.nameEn || translateInterfaceText(exercise.name || "")) : exercise.name || "")}${exercise.prescription ? ` · ${escapeLogText(translateInterfaceText(exercise.prescription))}` : ""}</li>`).join("")}</ul>
             </div>`;
           }).join("");
           return `<section class="card history-week">
@@ -12519,17 +12674,18 @@
           officialTemplateDetail.innerHTML = `<button class="settings-back" type="button" data-official-template-back>← ${backLabel}</button>`;
           return;
         }
-        const prescription = getGoalPrescription(template.goal, template.minExperience, "low");
+        const rawPrescription = getGoalPrescription(template.goal, template.minExperience, "low");
+        const prescription = template.minExperience === "beginner" ? { ...rawPrescription, rest: "2-5 分钟", setRange: "1-3 组" } : rawPrescription;
         const weeks = createPeriodization({ goal: template.goal, experience: template.minExperience, ...prescription });
-        const days = makeHypertrophySplit(template.days, template.minExperience);
+        if (weeks[3]) weeks[3].focus = "第 4 周适当调整训练量与负荷，维持动作练习并为下一周期恢复。";
+        const days = makeMovementSplit(template.days, template.minExperience);
         activeOfficialTemplateWeekIndex = Math.max(0, Math.min(activeOfficialTemplateWeekIndex, weeks.length - 1));
         const period = weeks[activeOfficialTemplateWeekIndex];
         const previewPlan = {
           ...prescription, goal: template.goal, experience: template.minExperience,
-          days: template.days, split: days, periodization: weeks, template,
+          days: template.days, split: days, periodization: weeks, template, ruleVersion: 3,
           focusArea: "", risk: { level: "low" }
         };
-        const unavailable = assessRisk().level === "high";
         officialTemplateDetail.innerHTML = `
           <button class="settings-back" type="button" data-official-template-back>← ${backLabel}</button>
           <div class="section-head"><div>
@@ -12562,7 +12718,7 @@
                   <strong>${appLanguage === "en" ? `Training day ${index + 1}` : `训练日${index + 1}`} · ${escapeLogText(translateInterfaceText(name))}</strong>
                   <span>${escapeLogText(translateInterfaceText(description))}<br><small class="muted">${appLanguage === "en" ? `Main lifts ${period.sets} sets × ${escapeLogText(translateInterfaceText(period.reps))} · Rest ${escapeLogText(translateInterfaceText(period.rest))}` : `主项 ${period.sets} 组 × ${escapeLogText(period.reps)} · 间歇 ${escapeLogText(period.rest)}`}</small></span>
                 </button>
-                ${index === activeOfficialTemplateDayIndex ? `<div class="card plan-template-exercises">${getWorkoutExercises(index, previewPlan, activeOfficialTemplateWeekIndex).map((exercise) => `<div class="history-workout"><strong>${escapeLogText(translateInterfaceText(exercise.name))}</strong><small>${escapeLogText(translateInterfaceText(exercise.prescription || ""))}${exercise.rest ? ` · ${appLanguage === "en" ? "Rest" : "间歇"} ${escapeLogText(translateInterfaceText(exercise.rest))}` : ""}</small></div>`).join("")}</div>` : ""}
+                ${index === activeOfficialTemplateDayIndex ? `<div class="card plan-template-exercises">${getWorkoutExercises(index, previewPlan, activeOfficialTemplateWeekIndex).map((exercise) => `<div class="history-workout"><strong>${escapeLogText(appLanguage === "en" ? (resistanceExercises.find((item) => item.id === exercise.exerciseId)?.nameEn || translateInterfaceText(exercise.name)) : exercise.name)}</strong><small>${escapeLogText(translateInterfaceText(exercise.prescription || ""))}${exercise.rest ? ` · ${appLanguage === "en" ? "Rest" : "间歇"} ${escapeLogText(translateInterfaceText(exercise.rest))}` : ""}</small></div>`).join("")}</div>` : ""}
               `).join("")}</div>
             </section>
             <div class="card"><h3>${appLanguage === "en" ? "Load rules" : "负荷规则"}</h3>
@@ -12571,13 +12727,13 @@
                 <li>${escapeLogText(translateInterfaceText("动作顺序：爆发力动作（如适用）→ 核心多关节动作 → 辅助动作 → 躯干稳定与整理。"))}</li>
                 <li>${escapeLogText(translateInterfaceText("2-for-2：最后一组连续两次训练均能多完成 2 次以上，再增加负重。"))}</li>
                 <li>${escapeLogText(translateInterfaceText(displayLoadAdvice(appLanguage === "en" ? "Increase upper-body loads by 1-2.5 kg or 2.5%-5%; increase lower-body loads by 2.5-5 kg or 5%-10%." : "上肢每次增加 1-2.5 kg 或 2.5%-5%；下肢增加 2.5-5 kg 或 5%-10%。")))}</li>
-                <li>${escapeLogText(translateInterfaceText("第 4 周减少约 40%-50% 训练组数，为下一周期恢复。"))}</li>
+                <li>${escapeLogText(translateInterfaceText("第 4 周适当调整训练量与负荷，为下一周期恢复。"))}</li>
               </ul>
               <div class="load-bar" aria-hidden="true" style="margin-top: 16px"><span style="--w: ${Math.min(88, period.sets * 21)}%"></span></div>
               <p class="muted">${escapeLogText(translateInterfaceText(period.focus))}</p>
             </div>
           </div>
-          <button class="primary-btn plan-template-detail-action" type="button" data-official-template-use="${template.id}" ${unavailable ? "disabled" : ""}>${unavailable ? (appLanguage === "en" ? "Medical clearance required" : "需先获得医学确认") : (appLanguage === "en" ? "Use this plan" : "使用该计划")}</button>`;
+          <button class="primary-btn plan-template-detail-action" type="button" data-official-template-use="${template.id}">${appLanguage === "en" ? "Use this plan" : "使用该计划"}</button>`;
       }
 
       function renderPlanTemplateLibrary() {
@@ -12587,8 +12743,6 @@
         document.querySelector("#planTemplateTitle").hidden = !hasHistory;
         document.querySelector("#historyTemplateSection").hidden = !hasHistory;
         planTemplateLibrary.setAttribute("aria-labelledby", hasHistory ? "planTemplateTitle" : "officialTemplateHeading");
-        const unavailable = assessRisk().level === "high";
-        const unavailableLabel = appLanguage === "en" ? "Medical clearance required" : "需先获得医学确认";
         historyTemplateList.innerHTML = hasHistory
           ? entries.map(({ item, index }) => {
             const experience = appLanguage === "en"
@@ -12601,7 +12755,7 @@
               <article class="resistance-template">
                 <strong>${escapeLogText(historyPlanDisplayTitle(item))}</strong>
                 <p class="muted">${escapeLogText([experience, focus, `${appLanguage === "en" ? "Ended" : "结束于"} ${item.endedAt || item.savedAt || ""}`].filter(Boolean).join(" · "))}</p>
-                <button class="secondary-btn" type="button" data-use-history-template-index="${index}" ${unavailable ? "disabled" : ""}>${unavailable ? unavailableLabel : appLanguage === "en" ? "Use this plan" : "使用该计划"}</button>
+                <button class="secondary-btn" type="button" data-use-history-template-index="${index}">${appLanguage === "en" ? "Use this plan" : "使用该计划"}</button>
               </article>`;
           }).join("")
           : "";
@@ -12622,11 +12776,9 @@
       function renderResistanceTemplates() {
         if (!resistanceTemplateList) return;
         const selectedId = localStorage.getItem("fitlog-plan-template");
-        const risk = getPlanRisk(getProfile());
         resistanceTemplateList.innerHTML = resistanceTemplates
           .map((template) => {
             const active = template.id === selectedId;
-            const unavailable = risk.level === "high";
             return `
               <article class="resistance-template ${active ? "is-active" : ""}">
                 <div class="template-heading">
@@ -12640,8 +12792,8 @@
                   <div class="template-fact"><b>适用条件</b><br>${template.conditions}</div>
                   <div class="template-fact"><b>结构</b><br>${template.structure}</div>
                 </div>
-                <button class="secondary-btn" type="button" data-use-template="${template.id}" ${active || unavailable ? "disabled" : ""}>
-                  ${active ? "当前模板" : unavailable ? "需先获得医学确认" : "使用该模板"}
+                <button class="secondary-btn" type="button" data-use-template="${template.id}" ${active ? "disabled" : ""}>
+                  ${active ? "当前模板" : "使用该模板"}
                 </button>
               </article>
             `;
@@ -12683,7 +12835,15 @@
         const beginnerPower = kind === "beginnerPower";
         const conflict = beginnerDays || beginnerPower;
         planNoticeDialog.dataset.conflict = String(conflict);
-        document.querySelector("#planNoticeTitle").textContent = kind === "same"
+        document.querySelector("#planNoticeTitle").textContent = kind === "highRisk"
+          ? (appLanguage === "en" ? "Consult a doctor before training" : "建议咨询医生运动建议")
+          : kind === "powerUnavailable"
+          ? (appLanguage === "en" ? "Power plans are not yet available" : "暂无法生成爆发力计划")
+          : kind === "movementUnavailable"
+          ? (appLanguage === "en" ? "No suitable exercise found" : "暂无法生成完整计划")
+          : kind === "unresolvedLimit"
+          ? (appLanguage === "en" ? "Review your exercise restrictions" : "请先确认运动限制")
+          : kind === "same"
           ? (appLanguage === "en" ? "An identical plan already exists" : "已有相同计划")
           : kind === "goal"
             ? (appLanguage === "en" ? "Select a training goal" : "请选择训练目标")
@@ -12691,8 +12851,16 @@
               ? (appLanguage === "en" ? "NSCA safety and progression conflict" : "NSCA 安全与进阶冲突警告")
               : (appLanguage === "en" ? "Select your training experience" : "请选择训练经验");
         const body = document.querySelector("#planNoticeBody");
-        body.hidden = !conflict;
-        body.textContent = beginnerDays
+        body.hidden = !conflict && !["highRisk", "powerUnavailable", "movementUnavailable", "unresolvedLimit"].includes(kind);
+        body.textContent = kind === "highRisk"
+          ? (appLanguage === "en" ? "Please consult a doctor for exercise advice. After receiving medical clearance, begin with low-intensity activity as advised. FitMine will not generate a training plan at this time." : "建议咨询医生获取运动建议，获得医学许可后遵照医生建议进行低强度活动。暂不生成训练计划。")
+          : kind === "powerUnavailable"
+          ? (appLanguage === "en" ? "Suitable power exercises and their training conditions are still being reviewed. Please choose another goal for now." : "适合爆发力训练的动作及训练条件尚在审核中，请暂时选择其他目标。")
+          : kind === "movementUnavailable"
+          ? (appLanguage === "en" ? "The exercise library does not currently contain a suitable candidate for every required movement pattern. Please adjust the plan options." : "动作库暂时无法为每个所需动作模式匹配相应动作，请调整计划选项。")
+          : kind === "unresolvedLimit"
+          ? (appLanguage === "en" ? "Your answers mention a recent injury, pain or exercise restriction. FitMine cannot determine which exercises are appropriate; seek advice from a qualified professional before creating a plan." : "你的信息包含近期伤痛或运动限制，FitMine 暂时无法判断哪些动作适合你。请先向合格专业人士咨询后再制定计划。")
+          : beginnerDays
           ? (appLanguage === "en"
             ? "NSCA recommends 2–3 nonconsecutive full-body resistance sessions per week for beginners. Four or more days calls for greater training experience and recovery capacity. Choose 2–3 days, or correct your training experience if selected in error."
             : "NSCA 建议初学者每周进行 2–3 次非连续的全身抗阻训练；每周 4 天及以上需要更高的训练经验与恢复能力。请选择 2–3 天，或更正误选的训练经验。")
@@ -12701,14 +12869,6 @@
               ? "FitMine does not automatically prescribe power-focused plans to beginners. Build movement skill and foundational strength first, then progress toward power training. Choose another goal, or correct your training experience if selected in error."
               : "FitMine 暂不为初学者自动生成以爆发力为主目标的计划。请先建立动作技术与基础力量，再逐步进阶；请选择其他目标，或更正误选的训练经验。")
             : "";
-        const sourceLink = document.querySelector("#planNoticeSource");
-        sourceLink.hidden = !conflict;
-        sourceLink.href = beginnerPower
-          ? "https://www.nsca.com/contentassets/8323553f698a466a98220b21d9eb9a65/foundationsoffitnessprogramming_201508.pdf"
-          : "https://www.nsca.com/education/articles/kinetic-select/determination-of-resistance-training-frequency/";
-        sourceLink.textContent = beginnerPower
-          ? "NSCA · Foundations of Fitness Programming ↗"
-          : "NSCA · Determination of Resistance Training Frequency ↗";
         const secondary = document.querySelector("#planNoticeSecondary");
         secondary.hidden = !conflict;
         secondary.textContent = appLanguage === "en" ? "Correct experience" : "更正训练经验";
@@ -12721,13 +12881,34 @@
       }
 
       function saveCurrentPlan({ templateId = null, preventSamePlan = false } = {}) {
+        if (getPlanRisk(getProfile()).level === "high") {
+          showPlanNotice("highRisk");
+          return false;
+        }
         const conflict = getPlanSelectionConflict(getProfile());
         if (conflict) {
           showPlanNotice(conflict);
           return false;
         }
+        if (getProfile().goal === "power") {
+          showPlanNotice("powerUnavailable");
+          return false;
+        }
+        if (getRiskAnswers().qInjury || getProfile().limits) {
+          showPlanNotice("unresolvedLimit");
+          return false;
+        }
         if (preventSamePlan && isEditingPlan && hasGeneratedPlan() && planSelectionsMatchSaved()
           && !isPlanCycleExpired(getProfile(), buildPlan(getProfile()))) return false;
+        const nextProfile = { ...getProfile(), planRuleVersion: 3, exerciseSnapshot: null };
+        const nextPlan = buildPlan(nextProfile, templateId);
+        const snapshots = nextPlan.periodization.map((_, weekIndex) => nextPlan.split.map((__, dayIndex) =>
+          getWorkoutExercises(dayIndex, nextPlan, weekIndex)));
+        if (snapshots.some((week) => week.some((day) => day.length === 0))) {
+          showPlanNotice("movementUnavailable");
+          return false;
+        }
+        nextProfile.exerciseSnapshot = snapshots;
         const replacingPlan = hasGeneratedPlan() && isEditingPlan;
         if (replacingPlan) archiveCurrentPlan();
         if (replacingPlan) {
@@ -12739,7 +12920,7 @@
         } else {
           localStorage.removeItem("fitlog-plan-template");
         }
-        localStorage.setItem("fitlog-profile", JSON.stringify({ ...getProfile(), planRuleVersion: 2 }));
+        localStorage.setItem("fitlog-profile", JSON.stringify(nextProfile));
         localStorage.setItem("fitlog-risk", JSON.stringify(getRiskAnswers()));
         localStorage.setItem("fitlog-plan-saved", "true");
         if (replacingPlan || !localStorage.getItem("fitlog-plan-start-date")) {
@@ -12780,7 +12961,8 @@
 
       function showOfficialTemplateConfirmation(templateId) {
         const template = resistanceTemplates.find((item) => item.id === templateId);
-        if (!template || assessRisk().level === "high") return;
+        if (!template) return;
+        if (getPlanRisk(getProfile()).level === "high") { showPlanNotice("highRisk"); return; }
         const profile = getProfile();
         const mismatch = officialTemplateMismatch(template, profile);
         const savedProfile = JSON.parse(localStorage.getItem("fitlog-profile") || "null");
@@ -12815,7 +12997,7 @@
 
       function requestOfficialTemplate(templateId) {
         if (!resistanceTemplates.some((item) => item.id === templateId)) return;
-        if (assessRisk().level === "high") return;
+        if (getPlanRisk(getProfile()).level === "high") { showPlanNotice("highRisk"); return; }
         if (!localStorage.getItem("fitlog-profile")) {
           beginOfficialTemplateSelection(templateId);
           return;
@@ -12826,7 +13008,7 @@
       function applyResistanceTemplate(templateId) {
         const template = resistanceTemplates.find((item) => item.id === templateId);
         if (!template) return;
-        if (assessRisk().level === "high") return;
+        if (getPlanRisk(getProfile()).level === "high") { showPlanNotice("highRisk"); return; }
         if (officialTemplateMismatch(template, getProfile())) return;
         if (template.goal) document.querySelector("#goal").value = template.goal;
         document.querySelector("#trainingDays").value = String(template.days);
@@ -12842,7 +13024,8 @@
 
       function applyHistoryPlanTemplate(index) {
         const item = getViewablePlanHistory()[index];
-        if (!item?.profile || assessRisk().level === "high") return;
+        if (!item?.profile) return;
+        if (getPlanRisk(getProfile()).level === "high") { showPlanNotice("highRisk"); return; }
         const fields = { goal: "goal", experience: "experience", days: "trainingDays", focusArea: "focusArea", focusPurpose: "focusPurpose" };
         Object.entries(fields).forEach(([key, id]) => {
           const input = document.querySelector(`#${id}`);
@@ -13804,9 +13987,9 @@
         overloadStats.innerHTML = [
           ["历史峰值", maxOneRm ? weightText(maxOneRm) : "-"],
           ["最近 1RM", latest ? weightText(latest.estimated1RM) : "-"],
-          ["净变化", logs.length > 1 ? `${gain >= 0 ? "+" : ""}${weightText(Math.abs(gain))}` : "-"],
+          ["净变化", logs.length > 1 ? `${gain > 0 ? "+" : gain < 0 ? "-" : ""}${weightText(Math.abs(gain))}` : "-", logs.length > 1 ? (gain > 0 ? "is-positive" : gain < 0 ? "is-negative" : "") : ""],
           ["有效样本", `${logs.length} 组`]
-        ].map(([label, value]) => `<div class="overload-stat"><span>${translateInterfaceText(label)}</span><b>${translateInterfaceText(value)}</b></div>`).join("");
+        ].map(([label, value, state = ""]) => `<div class="overload-stat"><span>${translateInterfaceText(label)}</span><b${state ? ` class="${state}"` : ""}>${translateInterfaceText(value)}</b></div>`).join("");
         renderOverloadChart(logs);
         const activeExercise = exercises.find((exercise) => exercise.id === exerciseId);
         const lowerBody = /腿部|臀部/.test(activeExercise?.category || "");
@@ -13819,12 +14002,12 @@
 
       function renderOverloadChart(logs) {
         if (!logs.length) {
-          overloadChart.innerHTML = '<div class="overload-empty">选择一个动作并完成训练组记录后，显示重量和预估 1RM 的趋势。</div>';
+          overloadChart.innerHTML = `<div class="overload-empty">${appLanguage === "en" ? "Choose an exercise and log working sets to view load and estimated 1RM trends." : "选择一个动作并完成训练组记录后，显示重量和预估 1RM 的趋势。"}</div>`;
           return;
         }
         const width = 320;
-        const height = 154;
-        const pad = { top: 16, right: 10, bottom: 25, left: 35 };
+        const height = 190;
+        const pad = { top: 18, right: 12, bottom: 27, left: 42 };
         const unitLogs = logs.map((log) => ({ ...log, weightKg: Number(displayWeight(log.weightKg)), estimated1RM: Number(displayWeight(log.estimated1RM)) }));
         const values = unitLogs.flatMap((log) => [Number(log.weightKg), Number(log.estimated1RM)]);
         const min = Math.max(0, Math.floor((Math.min(...values) - 5) / 5) * 5);
@@ -13832,8 +14015,18 @@
         const x = (index) => logs.length === 1 ? (width - pad.left - pad.right) / 2 + pad.left : pad.left + index * (width - pad.left - pad.right) / (logs.length - 1);
         const y = (value) => pad.top + (max - value) * (height - pad.top - pad.bottom) / Math.max(1, max - min);
         const line = (key) => unitLogs.map((log, index) => `${x(index).toFixed(1)},${y(Number(log[key])).toFixed(1)}`).join(" ");
-        const dateLabels = logs.map((log, index) => `<text x="${x(index).toFixed(1)}" y="${height - 7}" text-anchor="middle">${log.date.slice(5)}</text>`).join("");
-        overloadChart.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="训练重量与预估一RM趋势"><line x1="${pad.left}" y1="${y(min)}" x2="${width - pad.right}" y2="${y(min)}" stroke="#3b4248"/><line x1="${pad.left}" y1="${y(max)}" x2="${width - pad.right}" y2="${y(max)}" stroke="#3b4248"/><text x="2" y="${y(max) + 3}">${max}</text><text x="2" y="${y(min) + 3}">${min}</text><polyline points="${line("weightKg")}" fill="none" stroke="#00e5ff" stroke-width="2" stroke-dasharray="4 3"/><polyline points="${line("estimated1RM")}" fill="none" stroke="#39ff14" stroke-width="2.5"/>${unitLogs.map((log, index) => `<circle cx="${x(index).toFixed(1)}" cy="${y(Number(log.estimated1RM)).toFixed(1)}" r="3" fill="#39ff14"/>`).join("")}${dateLabels}</svg>`;
+        const labelCount = Math.min(logs.length, 4);
+        const labelIndexes = [...new Set(Array.from({ length: labelCount }, (_, index) => labelCount === 1 ? 0 : Math.round(index * (logs.length - 1) / (labelCount - 1))))];
+        const dateLabels = labelIndexes.map((index) => `<text x="${x(index).toFixed(1)}" y="${height - 7}" text-anchor="middle">${escapeLogText(logs[index].date.slice(5))}</text>`).join("");
+        const grid = Array.from({ length: 5 }, (_, index) => {
+          const value = max - index * (max - min) / 4;
+          const tick = Number(value.toFixed(1));
+          return `<line x1="${pad.left}" y1="${y(value).toFixed(1)}" x2="${width - pad.right}" y2="${y(value).toFixed(1)}" stroke="#394148" stroke-opacity=".7"/><text x="${pad.left - 6}" y="${(y(value) + 3).toFixed(1)}" text-anchor="end">${tick}</text>`;
+        }).join("");
+        const area = logs.length > 1 ? `<polygon points="${x(0).toFixed(1)},${y(min).toFixed(1)} ${line("estimated1RM")} ${x(logs.length - 1).toFixed(1)},${y(min).toFixed(1)}" fill="url(#overloadAreaGradient)"/>` : "";
+        const points = (key, color, radius) => unitLogs.map((log, index) => `<circle cx="${x(index).toFixed(1)}" cy="${y(Number(log[key])).toFixed(1)}" r="${radius}" fill="${color}" stroke="#141719" stroke-width="1.5"/>`).join("");
+        const chartLabel = appLanguage === "en" ? "Training weight and estimated 1RM trends" : "训练重量与预估一RM趋势";
+        overloadChart.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${chartLabel}"><defs><linearGradient id="overloadAreaGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#39ff14" stop-opacity=".25"/><stop offset="100%" stop-color="#39ff14" stop-opacity="0"/></linearGradient></defs>${grid}<text x="${pad.left}" y="10">${weightUnit}</text>${area}<polyline points="${line("weightKg")}" fill="none" stroke="#00e5ff" stroke-width="1.8" stroke-dasharray="4 4" stroke-linejoin="round"/><polyline points="${line("estimated1RM")}" fill="none" stroke="#39ff14" stroke-width="2.5" stroke-linejoin="round"/>${points("weightKg", "#00e5ff", 2.8)}${points("estimated1RM", "#39ff14", 3.5)}${dateLabels}</svg>`;
       }
 
       function repairCompletedWorkoutRecords() {
@@ -14028,6 +14221,10 @@
 
       form.addEventListener("submit", (event) => {
         event.preventDefault();
+        if (getPlanRisk(getProfile()).level === "high") {
+          showPlanNotice("highRisk");
+          return;
+        }
         if (!document.querySelector("#goal").value) {
           showPlanNotice("goal");
           return;
@@ -14160,7 +14357,9 @@
       document.querySelector("#planNoticeConfirm").addEventListener("click", () => {
         const kind = planNoticeDialog.dataset.kind;
         planNoticeDialog.close();
-        if (kind === "same") {
+        if (kind === "highRisk") {
+          return;
+        } else if (kind === "same") {
           isEditingPlan = false;
           renderPlan();
           setPlanPane("currentPlanPane");

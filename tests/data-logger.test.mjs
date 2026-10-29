@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import vm from "node:vm";
 
 const source = await readFile(new URL("../index.html", import.meta.url), "utf8");
 
@@ -87,6 +88,53 @@ test("strength progress follows the action selected in the record form", () => {
   assert.match(source, /setLogExercise\?\.addEventListener\("change"/);
   assert.match(source, /submitButton\.textContent = "已保存"/);
   assert.match(source, /补充数据/);
+});
+
+test("overload chart uses recorded values and readable dates for empty, single and dense histories", () => {
+  const start = source.indexOf("function renderOverloadChart(logs)");
+  const end = source.indexOf("function repairCompletedWorkoutRecords()", start);
+  assert.ok(start > 0 && end > start);
+  const chart = { innerHTML: "" };
+  const context = { overloadChart: chart, appLanguage: "en", weightUnit: "lb", displayWeight: (kg) => kg * 2, escapeLogText: (text) => text };
+  vm.createContext(context);
+  vm.runInContext(source.slice(start, end), context);
+  context.renderOverloadChart([]);
+  assert.match(chart.innerHTML, /Choose an exercise/);
+  const logs = Array.from({ length: 8 }, (_, i) => ({ date: `2026-10-${String(i + 1).padStart(2, "0")}`, weightKg: 20 + i, estimated1RM: 25 + i }));
+  context.renderOverloadChart(logs.slice(0, 1));
+  assert.equal((chart.innerHTML.match(/<circle /g) || []).length, 2);
+  assert.doesNotMatch(chart.innerHTML, /<polygon/);
+  context.renderOverloadChart(logs);
+  assert.equal((chart.innerHTML.match(/<circle /g) || []).length, 16);
+  assert.equal((chart.innerHTML.match(/10-\d{2}/g) || []).length, 4);
+  assert.match(chart.innerHTML, /overloadAreaGradient/);
+  assert.match(chart.innerHTML, />lb<\/text>/);
+  assert.doesNotMatch(chart.innerHTML, /NaN|undefined/);
+});
+
+test("overload metrics show signed change and color states in two columns", () => {
+  assert.match(source, /\.overload-stats \{[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+  const start = source.indexOf("function renderOverloadMonitor(preferredExerciseId");
+  const end = source.indexOf("function renderOverloadChart(logs)", start);
+  const stats = { innerHTML: "" };
+  const context = {
+    overloadExerciseSelect: { value: "squat", innerHTML: "" }, overloadStats: stats,
+    overloadAdvice: { textContent: "" }, getLoggableExercises: () => [{ id: "squat", nameZh: "深蹲", category: "腿部" }],
+    trainingSetLogs: [], appLanguage: "zh", weightText: (value) => `${value} kg`,
+    translateInterfaceText: (value) => value, renderOverloadChart: () => {}
+  };
+  vm.createContext(context);
+  vm.runInContext(source.slice(start, end), context);
+  const log = (date, estimated1RM) => ({ date, exerciseId: "squat", weightKg: 10, estimated1RM });
+  context.trainingSetLogs = [log("2026-01-01", 20), log("2026-01-02", 25)];
+  context.renderOverloadMonitor();
+  assert.match(stats.innerHTML, /class="is-positive">\+5 kg/);
+  context.trainingSetLogs[1].estimated1RM = 15;
+  context.renderOverloadMonitor();
+  assert.match(stats.innerHTML, /class="is-negative">-5 kg/);
+  context.trainingSetLogs = [log("2026-01-01", 20)];
+  context.renderOverloadMonitor();
+  assert.match(stats.innerHTML, /净变化<\/span><b>-<\/b>/);
 });
 
 test("four-week wave contains target-specific load progressions and a deload", () => {

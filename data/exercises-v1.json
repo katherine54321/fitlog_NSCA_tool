@@ -29,7 +29,10 @@
       "When you are done, place the bar back in the rack."
     ],
     "startImage": "assets/exercise-images/barbell-bench-press-0.jpg",
-    "endImage": "assets/exercise-images/barbell-bench-press-1.jpg"
+    "endImage": "assets/exercise-images/barbell-bench-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "incline-dumbbell-press",
@@ -63,7 +66,10 @@
       "When you are done, place the dumbbells back on your thighs and then on the floor. This is the safest manner to release the dumbbells."
     ],
     "startImage": "assets/exercise-images/incline-dumbbell-press-0.jpg",
-    "endImage": "assets/exercise-images/incline-dumbbell-press-1.jpg"
+    "endImage": "assets/exercise-images/incline-dumbbell-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "push-up",
@@ -94,7 +100,10 @@
       "After a brief pause at the top contracted position, you can begin to lower yourself downward again for as many repetitions as needed."
     ],
     "startImage": "assets/exercise-images/push-up-0.jpg",
-    "endImage": "assets/exercise-images/push-up-1.jpg"
+    "endImage": "assets/exercise-images/push-up-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "lat-pulldown",
@@ -128,7 +137,10 @@
       "6. Repeat this motion for the prescribed amount of repetitions."
     ],
     "startImage": "assets/exercise-images/lat-pulldown-0.jpg",
-    "endImage": "assets/exercise-images/lat-pulldown-1.jpg"
+    "endImage": "assets/exercise-images/lat-pulldown-1.jpg",
+    "movementPatterns": [
+      "vertical_pull"
+    ]
   },
   {
     "id": "bent-over-barbell-row",
@@ -160,7 +172,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/bent-over-barbell-row-0.jpg",
-    "endImage": "assets/exercise-images/bent-over-barbell-row-1.jpg"
+    "endImage": "assets/exercise-images/bent-over-barbell-row-1.jpg",
+    "movementPatterns": [
+      "horizontal_pull"
+    ]
   },
   {
     "id": "seated-cable-row",
@@ -193,7 +208,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/seated-cable-row-0.jpg",
-    "endImage": "assets/exercise-images/seated-cable-row-1.jpg"
+    "endImage": "assets/exercise-images/seated-cable-row-1.jpg",
+    "movementPatterns": [
+      "horizontal_pull"
+    ]
   },
   {
     "id": "one-arm-dumbbell-row",
@@ -228,7 +246,10 @@
       "Switch sides and repeat again with the other arm."
     ],
     "startImage": "assets/exercise-images/one-arm-dumbbell-row-0.jpg",
-    "endImage": "assets/exercise-images/one-arm-dumbbell-row-1.jpg"
+    "endImage": "assets/exercise-images/one-arm-dumbbell-row-1.jpg",
+    "movementPatterns": [
+      "horizontal_pull"
+    ]
   },
   {
     "id": "dumbbell-shoulder-press",
@@ -260,7 +281,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/dumbbell-shoulder-press-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-shoulder-press-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-shoulder-press-1.jpg",
+    "movementPatterns": [
+      "vertical_push"
+    ]
   },
   {
     "id": "side-lateral-raise",
@@ -288,7 +312,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/side-lateral-raise-0.jpg",
-    "endImage": "assets/exercise-images/side-lateral-raise-1.jpg"
+    "endImage": "assets/exercise-images/side-lateral-raise-1.jpg",
+    "movementPatterns": [
+      "shoulder_abduction"
+    ]
   },
   {
     "id": "barbell-curl",
@@ -319,7 +346,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/barbell-curl-0.jpg",
-    "endImage": "assets/exercise-images/barbell-curl-1.jpg"
+    "endImage": "assets/exercise-images/barbell-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "dumbbell-hammer-curl",
@@ -348,7 +378,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/dumbbell-hammer-curl-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-hammer-curl-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-hammer-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "triceps-pushdown",
@@ -377,7 +410,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/triceps-pushdown-0.jpg",
-    "endImage": "assets/exercise-images/triceps-pushdown-1.jpg"
+    "endImage": "assets/exercise-images/triceps-pushdown-1.jpg",
+    "movementPatterns": [
+      "elbow_extension"
+    ]
   },
   {
     "id": "barbell-squat",
@@ -412,7 +448,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/barbell-squat-0.jpg",
-    "endImage": "assets/exercise-images/barbell-squat-1.jpg"
+    "endImage": "assets/exercise-images/barbell-squat-1.jpg",
+    "movementPatterns": [
+      "squat"
+    ]
   },
   {
     "id": "leg-press",
@@ -445,7 +484,10 @@
       "Repeat for the recommended amount of repetitions and ensure to lock the safety pins properly once you are done. You do not want that platform falling on you fully loaded."
     ],
     "startImage": "assets/exercise-images/leg-press-0.jpg",
-    "endImage": "assets/exercise-images/leg-press-1.jpg"
+    "endImage": "assets/exercise-images/leg-press-1.jpg",
+    "movementPatterns": [
+      "squat"
+    ]
   },
   {
     "id": "romanian-deadlift",
@@ -478,7 +520,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/romanian-deadlift-0.jpg",
-    "endImage": "assets/exercise-images/romanian-deadlift-1.jpg"
+    "endImage": "assets/exercise-images/romanian-deadlift-1.jpg",
+    "movementPatterns": [
+      "hip_hinge"
+    ]
   },
   {
     "id": "lying-leg-curls",
@@ -506,7 +551,10 @@
       "As you inhale, bring the legs back to the initial position. Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/lying-leg-curls-0.jpg",
-    "endImage": "assets/exercise-images/lying-leg-curls-1.jpg"
+    "endImage": "assets/exercise-images/lying-leg-curls-1.jpg",
+    "movementPatterns": [
+      "knee_flexion"
+    ]
   },
   {
     "id": "barbell-hip-thrust",
@@ -536,7 +584,10 @@
       "Begin the movement by driving through your feet, extending your hips vertically through the bar. Your weight should be supported by your shoulder blades and your feet. Extend as far as possible, then reverse the motion to return to the starting position."
     ],
     "startImage": "assets/exercise-images/barbell-hip-thrust-0.jpg",
-    "endImage": "assets/exercise-images/barbell-hip-thrust-1.jpg"
+    "endImage": "assets/exercise-images/barbell-hip-thrust-1.jpg",
+    "movementPatterns": [
+      "hip_thrust_bridge"
+    ]
   },
   {
     "id": "cable-kickback",
@@ -568,7 +619,10 @@
       "Switch legs and repeat the movement for the other side."
     ],
     "startImage": "assets/exercise-images/cable-kickback-0.jpg",
-    "endImage": "assets/exercise-images/cable-kickback-1.jpg"
+    "endImage": "assets/exercise-images/cable-kickback-1.jpg",
+    "movementPatterns": [
+      "hip_extension"
+    ]
   },
   {
     "id": "cable-crunch",
@@ -598,7 +652,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/cable-crunch-0.jpg",
-    "endImage": "assets/exercise-images/cable-crunch-1.jpg"
+    "endImage": "assets/exercise-images/cable-crunch-1.jpg",
+    "movementPatterns": [
+      "trunk_flexion"
+    ]
   },
   {
     "id": "weighted-sit-up",
@@ -627,7 +684,10 @@
       "Then inhale and slowly lower yourself back down to the starting position."
     ],
     "startImage": "assets/exercise-images/weighted-sit-up-0.jpg",
-    "endImage": "assets/exercise-images/weighted-sit-up-1.jpg"
+    "endImage": "assets/exercise-images/weighted-sit-up-1.jpg",
+    "movementPatterns": [
+      "trunk_flexion"
+    ]
   },
   {
     "id": "dumbbell-bench-press",
@@ -659,7 +719,10 @@
       "Repeat the movement for the prescribed amount of repetitions of your training program."
     ],
     "startImage": "assets/exercise-images/dumbbell-bench-press-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-bench-press-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-bench-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "decline-dumbbell-bench-press",
@@ -692,7 +755,10 @@
       "Repeat the movement for the prescribed amount of repetitions of your training program."
     ],
     "startImage": "assets/exercise-images/decline-dumbbell-bench-press-0.jpg",
-    "endImage": "assets/exercise-images/decline-dumbbell-bench-press-1.jpg"
+    "endImage": "assets/exercise-images/decline-dumbbell-bench-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "cable-crossover",
@@ -723,7 +789,10 @@
       "Hold for a second at the starting position and repeat the movement for the prescribed amount of repetitions."
     ],
     "startImage": "assets/exercise-images/cable-crossover-0.jpg",
-    "endImage": "assets/exercise-images/cable-crossover-1.jpg"
+    "endImage": "assets/exercise-images/cable-crossover-1.jpg",
+    "movementPatterns": [
+      "shoulder_horizontal_adduction"
+    ]
   },
   {
     "id": "chest-dips",
@@ -754,7 +823,10 @@
       "Repeat the movement for the prescribed amount of repetitions."
     ],
     "startImage": "assets/exercise-images/chest-dips-0.jpg",
-    "endImage": "assets/exercise-images/chest-dips-1.jpg"
+    "endImage": "assets/exercise-images/chest-dips-1.jpg",
+    "movementPatterns": [
+      "vertical_push"
+    ]
   },
   {
     "id": "incline-dumbbell-flyes",
@@ -786,7 +858,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/incline-dumbbell-flyes-0.jpg",
-    "endImage": "assets/exercise-images/incline-dumbbell-flyes-1.jpg"
+    "endImage": "assets/exercise-images/incline-dumbbell-flyes-1.jpg",
+    "movementPatterns": [
+      "shoulder_horizontal_adduction"
+    ]
   },
   {
     "id": "cable-chest-press",
@@ -817,7 +892,10 @@
       "You can also execute this movement with your back off the pad, at an incline or decline, or alternate hands."
     ],
     "startImage": "assets/exercise-images/cable-chest-press-0.jpg",
-    "endImage": "assets/exercise-images/cable-chest-press-1.jpg"
+    "endImage": "assets/exercise-images/cable-chest-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "pullups",
@@ -849,7 +927,10 @@
       "Repeat this motion for the prescribed amount of repetitions."
     ],
     "startImage": "assets/exercise-images/pullups-0.jpg",
-    "endImage": "assets/exercise-images/pullups-1.jpg"
+    "endImage": "assets/exercise-images/pullups-1.jpg",
+    "movementPatterns": [
+      "vertical_pull"
+    ]
   },
   {
     "id": "wide-grip-lat-pulldown",
@@ -883,7 +964,10 @@
       "Repeat this motion for the prescribed amount of repetitions."
     ],
     "startImage": "assets/exercise-images/wide-grip-lat-pulldown-0.jpg",
-    "endImage": "assets/exercise-images/wide-grip-lat-pulldown-1.jpg"
+    "endImage": "assets/exercise-images/wide-grip-lat-pulldown-1.jpg",
+    "movementPatterns": [
+      "vertical_pull"
+    ]
   },
   {
     "id": "lying-tbar-row",
@@ -916,7 +1000,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/lying-tbar-row-0.jpg",
-    "endImage": "assets/exercise-images/lying-tbar-row-1.jpg"
+    "endImage": "assets/exercise-images/lying-tbar-row-1.jpg",
+    "movementPatterns": [
+      "horizontal_pull"
+    ]
   },
   {
     "id": "rope-straight-arm-pulldown",
@@ -944,7 +1031,10 @@
       "Return to the starting position without allowing the weight to fully rest on the stack."
     ],
     "startImage": "assets/exercise-images/rope-straight-arm-pulldown-0.jpg",
-    "endImage": "assets/exercise-images/rope-straight-arm-pulldown-1.jpg"
+    "endImage": "assets/exercise-images/rope-straight-arm-pulldown-1.jpg",
+    "movementPatterns": [
+      "shoulder_extension"
+    ]
   },
   {
     "id": "back-extension",
@@ -977,7 +1067,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/back-extension-0.jpg",
-    "endImage": "assets/exercise-images/back-extension-1.jpg"
+    "endImage": "assets/exercise-images/back-extension-1.jpg",
+    "movementPatterns": [
+      "hip_hinge"
+    ]
   },
   {
     "id": "arnold-dumbbell-press",
@@ -1008,7 +1101,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/arnold-dumbbell-press-0.jpg",
-    "endImage": "assets/exercise-images/arnold-dumbbell-press-1.jpg"
+    "endImage": "assets/exercise-images/arnold-dumbbell-press-1.jpg",
+    "movementPatterns": [
+      "vertical_push"
+    ]
   },
   {
     "id": "barbell-shoulder-press",
@@ -1040,7 +1136,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/barbell-shoulder-press-0.jpg",
-    "endImage": "assets/exercise-images/barbell-shoulder-press-1.jpg"
+    "endImage": "assets/exercise-images/barbell-shoulder-press-1.jpg",
+    "movementPatterns": [
+      "vertical_push"
+    ]
   },
   {
     "id": "front-dumbbell-raise",
@@ -1068,7 +1167,10 @@
       "Continue alternating in this fashion until all of the recommended amount of repetitions have been performed for each arm."
     ],
     "startImage": "assets/exercise-images/front-dumbbell-raise-0.jpg",
-    "endImage": "assets/exercise-images/front-dumbbell-raise-1.jpg"
+    "endImage": "assets/exercise-images/front-dumbbell-raise-1.jpg",
+    "movementPatterns": [
+      "shoulder_flexion"
+    ]
   },
   {
     "id": "cable-rear-delt-fly",
@@ -1096,7 +1198,10 @@
       "Pause at the end of the motion before returning the handles to the start position."
     ],
     "startImage": "assets/exercise-images/cable-rear-delt-fly-0.jpg",
-    "endImage": "assets/exercise-images/cable-rear-delt-fly-1.jpg"
+    "endImage": "assets/exercise-images/cable-rear-delt-fly-1.jpg",
+    "movementPatterns": [
+      "shoulder_horizontal_abduction"
+    ]
   },
   {
     "id": "face-pull",
@@ -1123,7 +1228,10 @@
       "Facing a high pulley with a rope or dual handles attached, pull the weight directly towards your face, separating your hands as you do so. Keep your upper arms parallel to the ground."
     ],
     "startImage": "assets/exercise-images/face-pull-0.jpg",
-    "endImage": "assets/exercise-images/face-pull-1.jpg"
+    "endImage": "assets/exercise-images/face-pull-1.jpg",
+    "movementPatterns": [
+      "shoulder_horizontal_abduction"
+    ]
   },
   {
     "id": "upright-barbell-row",
@@ -1153,7 +1261,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/upright-barbell-row-0.jpg",
-    "endImage": "assets/exercise-images/upright-barbell-row-1.jpg"
+    "endImage": "assets/exercise-images/upright-barbell-row-1.jpg",
+    "movementPatterns": [
+      "shoulder_abduction"
+    ]
   },
   {
     "id": "preacher-curl",
@@ -1182,7 +1293,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/preacher-curl-0.jpg",
-    "endImage": "assets/exercise-images/preacher-curl-1.jpg"
+    "endImage": "assets/exercise-images/preacher-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "concentration-curl",
@@ -1213,7 +1327,10 @@
       "Repeat for the recommended amount of repetitions. Then repeat the movement with the left arm."
     ],
     "startImage": "assets/exercise-images/concentration-curl-0.jpg",
-    "endImage": "assets/exercise-images/concentration-curl-1.jpg"
+    "endImage": "assets/exercise-images/concentration-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "cable-overhead-triceps-extension",
@@ -1242,7 +1359,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/cable-overhead-triceps-extension-0.jpg",
-    "endImage": "assets/exercise-images/cable-overhead-triceps-extension-1.jpg"
+    "endImage": "assets/exercise-images/cable-overhead-triceps-extension-1.jpg",
+    "movementPatterns": [
+      "elbow_extension"
+    ]
   },
   {
     "id": "lying-triceps-press",
@@ -1271,7 +1391,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/lying-triceps-press-0.jpg",
-    "endImage": "assets/exercise-images/lying-triceps-press-1.jpg"
+    "endImage": "assets/exercise-images/lying-triceps-press-1.jpg",
+    "movementPatterns": [
+      "elbow_extension"
+    ]
   },
   {
     "id": "bench-dips",
@@ -1302,7 +1425,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/bench-dips-0.jpg",
-    "endImage": "assets/exercise-images/bench-dips-1.jpg"
+    "endImage": "assets/exercise-images/bench-dips-1.jpg",
+    "movementPatterns": [
+      "vertical_push"
+    ]
   },
   {
     "id": "cable-hammer-curl",
@@ -1332,7 +1458,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/cable-hammer-curl-0.jpg",
-    "endImage": "assets/exercise-images/cable-hammer-curl-1.jpg"
+    "endImage": "assets/exercise-images/cable-hammer-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "dumbbell-lunges",
@@ -1364,7 +1493,10 @@
       "Repeat the movement for the recommended amount of repetitions and then perform with the left leg."
     ],
     "startImage": "assets/exercise-images/dumbbell-lunges-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-lunges-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-lunges-1.jpg",
+    "movementPatterns": [
+      "lunge_step"
+    ]
   },
   {
     "id": "barbell-lunge",
@@ -1397,7 +1529,10 @@
       "Repeat the movement for the recommended amount of repetitions and then perform with the left leg."
     ],
     "startImage": "assets/exercise-images/barbell-lunge-0.jpg",
-    "endImage": "assets/exercise-images/barbell-lunge-1.jpg"
+    "endImage": "assets/exercise-images/barbell-lunge-1.jpg",
+    "movementPatterns": [
+      "lunge_step"
+    ]
   },
   {
     "id": "leg-extensions",
@@ -1425,7 +1560,10 @@
       "Repeat for the recommended amount of times."
     ],
     "startImage": "assets/exercise-images/leg-extensions-0.jpg",
-    "endImage": "assets/exercise-images/leg-extensions-1.jpg"
+    "endImage": "assets/exercise-images/leg-extensions-1.jpg",
+    "movementPatterns": [
+      "knee_extension"
+    ]
   },
   {
     "id": "seated-leg-curl",
@@ -1454,7 +1592,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/seated-leg-curl-0.jpg",
-    "endImage": "assets/exercise-images/seated-leg-curl-1.jpg"
+    "endImage": "assets/exercise-images/seated-leg-curl-1.jpg",
+    "movementPatterns": [
+      "knee_flexion"
+    ]
   },
   {
     "id": "standing-calf-raises",
@@ -1483,7 +1624,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/standing-calf-raises-0.jpg",
-    "endImage": "assets/exercise-images/standing-calf-raises-1.jpg"
+    "endImage": "assets/exercise-images/standing-calf-raises-1.jpg",
+    "movementPatterns": [
+      "calf_raise"
+    ]
   },
   {
     "id": "dumbbell-step-ups",
@@ -1515,7 +1659,10 @@
       "Repeat with the right leg for the recommended amount of repetitions and then perform with the left leg."
     ],
     "startImage": "assets/exercise-images/dumbbell-step-ups-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-step-ups-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-step-ups-1.jpg",
+    "movementPatterns": [
+      "lunge_step"
+    ]
   },
   {
     "id": "hack-squat",
@@ -1550,7 +1697,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/hack-squat-0.jpg",
-    "endImage": "assets/exercise-images/hack-squat-1.jpg"
+    "endImage": "assets/exercise-images/hack-squat-1.jpg",
+    "movementPatterns": [
+      "squat"
+    ]
   },
   {
     "id": "single-leg-glute-bridge",
@@ -1580,7 +1730,10 @@
       "Extend as far as possible, pause and then return to the starting position."
     ],
     "startImage": "assets/exercise-images/single-leg-glute-bridge-0.jpg",
-    "endImage": "assets/exercise-images/single-leg-glute-bridge-1.jpg"
+    "endImage": "assets/exercise-images/single-leg-glute-bridge-1.jpg",
+    "movementPatterns": [
+      "hip_thrust_bridge"
+    ]
   },
   {
     "id": "glute-ham-raise",
@@ -1610,7 +1763,10 @@
       "Return to the starting position, keeping your descent under control."
     ],
     "startImage": "assets/exercise-images/glute-ham-raise-0.jpg",
-    "endImage": "assets/exercise-images/glute-ham-raise-1.jpg"
+    "endImage": "assets/exercise-images/glute-ham-raise-1.jpg",
+    "movementPatterns": [
+      "hip_hinge"
+    ]
   },
   {
     "id": "sumo-deadlift",
@@ -1646,7 +1802,10 @@
       "Return the weight to the ground by bending at the hips and controlling the weight on the way down."
     ],
     "startImage": "assets/exercise-images/sumo-deadlift-0.jpg",
-    "endImage": "assets/exercise-images/sumo-deadlift-1.jpg"
+    "endImage": "assets/exercise-images/sumo-deadlift-1.jpg",
+    "movementPatterns": [
+      "hip_hinge"
+    ]
   },
   {
     "id": "glute-bridge",
@@ -1675,7 +1834,10 @@
       "Slowly go back to the starting position as you breathe in."
     ],
     "startImage": "assets/exercise-images/glute-bridge-0.jpg",
-    "endImage": "assets/exercise-images/glute-bridge-1.jpg"
+    "endImage": "assets/exercise-images/glute-bridge-1.jpg",
+    "movementPatterns": [
+      "hip_thrust_bridge"
+    ]
   },
   {
     "id": "ab-crunch-machine",
@@ -1703,7 +1865,10 @@
       "Repeat the movement for the prescribed amount of repetitions."
     ],
     "startImage": "assets/exercise-images/ab-crunch-machine-0.jpg",
-    "endImage": "assets/exercise-images/ab-crunch-machine-1.jpg"
+    "endImage": "assets/exercise-images/ab-crunch-machine-1.jpg",
+    "movementPatterns": [
+      "trunk_flexion"
+    ]
   },
   {
     "id": "ab-roller",
@@ -1733,7 +1898,10 @@
       "After a pause at the stretched position, start pulling yourself back to the starting position as you breathe out. Tip: Go slowly and keep your abs tight at all times."
     ],
     "startImage": "assets/exercise-images/ab-roller-0.jpg",
-    "endImage": "assets/exercise-images/ab-roller-1.jpg"
+    "endImage": "assets/exercise-images/ab-roller-1.jpg",
+    "movementPatterns": [
+      "trunk_anti_extension"
+    ]
   },
   {
     "id": "barbell-ab-rollout",
@@ -1764,7 +1932,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/barbell-ab-rollout-0.jpg",
-    "endImage": "assets/exercise-images/barbell-ab-rollout-1.jpg"
+    "endImage": "assets/exercise-images/barbell-ab-rollout-1.jpg",
+    "movementPatterns": [
+      "trunk_anti_extension"
+    ]
   },
   {
     "id": "cable-russian-twist",
@@ -1795,7 +1966,10 @@
       "Then, reposition and repeat the same series of movements on the opposite side."
     ],
     "startImage": "assets/exercise-images/cable-russian-twist-0.jpg",
-    "endImage": "assets/exercise-images/cable-russian-twist-1.jpg"
+    "endImage": "assets/exercise-images/cable-russian-twist-1.jpg",
+    "movementPatterns": [
+      "trunk_rotation"
+    ]
   },
   {
     "id": "cable-reverse-crunch",
@@ -1825,7 +1999,10 @@
       "Repeat the same movement to failure."
     ],
     "startImage": "assets/exercise-images/cable-reverse-crunch-0.jpg",
-    "endImage": "assets/exercise-images/cable-reverse-crunch-1.jpg"
+    "endImage": "assets/exercise-images/cable-reverse-crunch-1.jpg",
+    "movementPatterns": [
+      "hip_flexion"
+    ]
   },
   {
     "id": "russian-twist",
@@ -1856,7 +2033,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/russian-twist-0.jpg",
-    "endImage": "assets/exercise-images/russian-twist-1.jpg"
+    "endImage": "assets/exercise-images/russian-twist-1.jpg",
+    "movementPatterns": [
+      "trunk_rotation"
+    ]
   },
   {
     "id": "barbell-incline-bench-press",
@@ -1888,7 +2068,10 @@
       "When you are done, place the bar back in the rack."
     ],
     "startImage": "assets/exercise-images/barbell-incline-bench-press-0.jpg",
-    "endImage": "assets/exercise-images/barbell-incline-bench-press-1.jpg"
+    "endImage": "assets/exercise-images/barbell-incline-bench-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "decline-barbell-bench-press",
@@ -1921,7 +2104,10 @@
       "When you are done, place the bar back in the rack."
     ],
     "startImage": "assets/exercise-images/decline-barbell-bench-press-0.jpg",
-    "endImage": "assets/exercise-images/decline-barbell-bench-press-1.jpg"
+    "endImage": "assets/exercise-images/decline-barbell-bench-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "dumbbell-flyes",
@@ -1950,7 +2136,10 @@
       "Hold for a second at the contracted position and repeat the movement for the prescribed amount of repetitions."
     ],
     "startImage": "assets/exercise-images/dumbbell-flyes-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-flyes-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-flyes-1.jpg",
+    "movementPatterns": [
+      "shoulder_horizontal_adduction"
+    ]
   },
   {
     "id": "butterfly-machine",
@@ -1979,7 +2168,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/butterfly-machine-0.jpg",
-    "endImage": "assets/exercise-images/butterfly-machine-1.jpg"
+    "endImage": "assets/exercise-images/butterfly-machine-1.jpg",
+    "movementPatterns": [
+      "shoulder_horizontal_adduction"
+    ]
   },
   {
     "id": "leverage-chest-press",
@@ -2010,7 +2202,10 @@
       "After a brief pause at the top, return the weight just above the start position, keeping tension on the muscles by not returning the weight to the stops until the set is complete."
     ],
     "startImage": "assets/exercise-images/leverage-chest-press-0.jpg",
-    "endImage": "assets/exercise-images/leverage-chest-press-1.jpg"
+    "endImage": "assets/exercise-images/leverage-chest-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "low-cable-crossover",
@@ -2040,7 +2235,10 @@
       "Return your arms back to the starting position after a brief pause."
     ],
     "startImage": "assets/exercise-images/low-cable-crossover-0.jpg",
-    "endImage": "assets/exercise-images/low-cable-crossover-1.jpg"
+    "endImage": "assets/exercise-images/low-cable-crossover-1.jpg",
+    "movementPatterns": [
+      "shoulder_horizontal_adduction"
+    ]
   },
   {
     "id": "incline-cable-chest-press",
@@ -2070,7 +2268,10 @@
       "After pausing at full extension, return to the starting position, keeping tension on the cables."
     ],
     "startImage": "assets/exercise-images/incline-cable-chest-press-0.jpg",
-    "endImage": "assets/exercise-images/incline-cable-chest-press-1.jpg"
+    "endImage": "assets/exercise-images/incline-cable-chest-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "decline-smith-press",
@@ -2102,7 +2303,10 @@
       "When the set is complete, lock the bar back in the rack."
     ],
     "startImage": "assets/exercise-images/decline-smith-press-0.jpg",
-    "endImage": "assets/exercise-images/decline-smith-press-1.jpg"
+    "endImage": "assets/exercise-images/decline-smith-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "hammer-grip-incline-db-press",
@@ -2136,7 +2340,10 @@
       "When you are done, place the dumbbells back in your thighs and then on the floor. This is the safest manner to dispose of the dumbbells."
     ],
     "startImage": "assets/exercise-images/hammer-grip-incline-db-press-0.jpg",
-    "endImage": "assets/exercise-images/hammer-grip-incline-db-press-1.jpg"
+    "endImage": "assets/exercise-images/hammer-grip-incline-db-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "bent-over-two-dumbbell-row",
@@ -2168,7 +2375,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/bent-over-two-dumbbell-row-0.jpg",
-    "endImage": "assets/exercise-images/bent-over-two-dumbbell-row-1.jpg"
+    "endImage": "assets/exercise-images/bent-over-two-dumbbell-row-1.jpg",
+    "movementPatterns": [
+      "horizontal_pull"
+    ]
   },
   {
     "id": "tbar-row-handle",
@@ -2200,7 +2410,10 @@
       "After a brief pause, return to the starting position."
     ],
     "startImage": "assets/exercise-images/tbar-row-handle-0.jpg",
-    "endImage": "assets/exercise-images/tbar-row-handle-1.jpg"
+    "endImage": "assets/exercise-images/tbar-row-handle-1.jpg",
+    "movementPatterns": [
+      "horizontal_pull"
+    ]
   },
   {
     "id": "reverse-grip-bent-over-row",
@@ -2233,7 +2446,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/reverse-grip-bent-over-row-0.jpg",
-    "endImage": "assets/exercise-images/reverse-grip-bent-over-row-1.jpg"
+    "endImage": "assets/exercise-images/reverse-grip-bent-over-row-1.jpg",
+    "movementPatterns": [
+      "horizontal_pull"
+    ]
   },
   {
     "id": "leverage-high-row",
@@ -2263,7 +2479,10 @@
       "For multiple repetitions, avoid completely returning the weight to the stops to keep tension on the muscles being worked."
     ],
     "startImage": "assets/exercise-images/leverage-high-row-0.jpg",
-    "endImage": "assets/exercise-images/leverage-high-row-1.jpg"
+    "endImage": "assets/exercise-images/leverage-high-row-1.jpg",
+    "movementPatterns": [
+      "angled_pull"
+    ]
   },
   {
     "id": "smith-machine-bent-over-row",
@@ -2297,7 +2516,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/smith-machine-bent-over-row-0.jpg",
-    "endImage": "assets/exercise-images/smith-machine-bent-over-row-1.jpg"
+    "endImage": "assets/exercise-images/smith-machine-bent-over-row-1.jpg",
+    "movementPatterns": [
+      "horizontal_pull"
+    ]
   },
   {
     "id": "vbar-pulldown",
@@ -2331,7 +2553,10 @@
       "Repeat for the prescribed number of repetitions."
     ],
     "startImage": "assets/exercise-images/vbar-pulldown-0.jpg",
-    "endImage": "assets/exercise-images/vbar-pulldown-1.jpg"
+    "endImage": "assets/exercise-images/vbar-pulldown-1.jpg",
+    "movementPatterns": [
+      "vertical_pull"
+    ]
   },
   {
     "id": "kneeling-high-pulley-row",
@@ -2361,7 +2586,10 @@
       "After pausing briefly, slowly return to the starting position."
     ],
     "startImage": "assets/exercise-images/kneeling-high-pulley-row-0.jpg",
-    "endImage": "assets/exercise-images/kneeling-high-pulley-row-1.jpg"
+    "endImage": "assets/exercise-images/kneeling-high-pulley-row-1.jpg",
+    "movementPatterns": [
+      "angled_pull"
+    ]
   },
   {
     "id": "seated-one-arm-cable-row",
@@ -2395,7 +2623,10 @@
       "Repeat for the recommended amount of repetitions and then perform the same movement with the right hand."
     ],
     "startImage": "assets/exercise-images/seated-one-arm-cable-row-0.jpg",
-    "endImage": "assets/exercise-images/seated-one-arm-cable-row-1.jpg"
+    "endImage": "assets/exercise-images/seated-one-arm-cable-row-1.jpg",
+    "movementPatterns": [
+      "horizontal_pull"
+    ]
   },
   {
     "id": "straight-arm-pulldown",
@@ -2424,7 +2655,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/straight-arm-pulldown-0.jpg",
-    "endImage": "assets/exercise-images/straight-arm-pulldown-1.jpg"
+    "endImage": "assets/exercise-images/straight-arm-pulldown-1.jpg",
+    "movementPatterns": [
+      "shoulder_extension"
+    ]
   },
   {
     "id": "alternating-cable-shoulder-press",
@@ -2454,7 +2688,10 @@
       "After pausing at the top, return to the starting position and repeat on the opposite side."
     ],
     "startImage": "assets/exercise-images/alternating-cable-shoulder-press-0.jpg",
-    "endImage": "assets/exercise-images/alternating-cable-shoulder-press-1.jpg"
+    "endImage": "assets/exercise-images/alternating-cable-shoulder-press-1.jpg",
+    "movementPatterns": [
+      "vertical_push"
+    ]
   },
   {
     "id": "barbell-rear-delt-row",
@@ -2487,7 +2724,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/barbell-rear-delt-row-0.jpg",
-    "endImage": "assets/exercise-images/barbell-rear-delt-row-1.jpg"
+    "endImage": "assets/exercise-images/barbell-rear-delt-row-1.jpg",
+    "movementPatterns": [
+      "shoulder_horizontal_abduction"
+    ]
   },
   {
     "id": "bent-over-dumbbell-rear-delt-raise",
@@ -2516,7 +2756,10 @@
       "Repeat the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/bent-over-dumbbell-rear-delt-raise-0.jpg",
-    "endImage": "assets/exercise-images/bent-over-dumbbell-rear-delt-raise-1.jpg"
+    "endImage": "assets/exercise-images/bent-over-dumbbell-rear-delt-raise-1.jpg",
+    "movementPatterns": [
+      "shoulder_horizontal_abduction"
+    ]
   },
   {
     "id": "cable-seated-lateral-raise",
@@ -2550,7 +2793,10 @@
       "Repeat for the recommended amount of repetitions. Tip: Maintain upper arms perpendicular to torso and a fixed elbow position (10 degree to 30 degree angle) throughout exercise."
     ],
     "startImage": "assets/exercise-images/cable-seated-lateral-raise-0.jpg",
-    "endImage": "assets/exercise-images/cable-seated-lateral-raise-1.jpg"
+    "endImage": "assets/exercise-images/cable-seated-lateral-raise-1.jpg",
+    "movementPatterns": [
+      "shoulder_abduction"
+    ]
   },
   {
     "id": "cable-shoulder-press",
@@ -2580,7 +2826,10 @@
       "After pausing at the top, return to the starting position and repeat."
     ],
     "startImage": "assets/exercise-images/cable-shoulder-press-0.jpg",
-    "endImage": "assets/exercise-images/cable-shoulder-press-1.jpg"
+    "endImage": "assets/exercise-images/cable-shoulder-press-1.jpg",
+    "movementPatterns": [
+      "vertical_push"
+    ]
   },
   {
     "id": "dumbbell-scaptation",
@@ -2609,7 +2858,10 @@
       "Continue until your arms are parallel to the ground, and then return to the starting position."
     ],
     "startImage": "assets/exercise-images/dumbbell-scaptation-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-scaptation-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-scaptation-1.jpg",
+    "movementPatterns": [
+      "shoulder_flexion"
+    ]
   },
   {
     "id": "one-arm-dumbbell-shoulder-press",
@@ -2641,7 +2893,10 @@
       "Repeat for the recommended amount of repetitions and then switch arms."
     ],
     "startImage": "assets/exercise-images/one-arm-dumbbell-shoulder-press-0.jpg",
-    "endImage": "assets/exercise-images/one-arm-dumbbell-shoulder-press-1.jpg"
+    "endImage": "assets/exercise-images/one-arm-dumbbell-shoulder-press-1.jpg",
+    "movementPatterns": [
+      "vertical_push"
+    ]
   },
   {
     "id": "front-cable-raise",
@@ -2670,7 +2925,10 @@
       "Once all of the recommended amount of repetitions have been performed for this arm, switch arms and perform the exercise with the right one."
     ],
     "startImage": "assets/exercise-images/front-cable-raise-0.jpg",
-    "endImage": "assets/exercise-images/front-cable-raise-1.jpg"
+    "endImage": "assets/exercise-images/front-cable-raise-1.jpg",
+    "movementPatterns": [
+      "shoulder_flexion"
+    ]
   },
   {
     "id": "alternate-incline-dumbbell-curl",
@@ -2701,7 +2959,10 @@
       "Continue alternating in this manner for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/alternate-incline-dumbbell-curl-0.jpg",
-    "endImage": "assets/exercise-images/alternate-incline-dumbbell-curl-1.jpg"
+    "endImage": "assets/exercise-images/alternate-incline-dumbbell-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "cable-preacher-curl",
@@ -2734,7 +2995,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/cable-preacher-curl-0.jpg",
-    "endImage": "assets/exercise-images/cable-preacher-curl-1.jpg"
+    "endImage": "assets/exercise-images/cable-preacher-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "cross-body-hammer-curl",
@@ -2764,7 +3028,10 @@
       "Continue alternating in this fashion until the recommended amount of repetitions is performed for each arm."
     ],
     "startImage": "assets/exercise-images/cross-body-hammer-curl-0.jpg",
-    "endImage": "assets/exercise-images/cross-body-hammer-curl-1.jpg"
+    "endImage": "assets/exercise-images/cross-body-hammer-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "dumbbell-alternate-bicep-curl",
@@ -2795,7 +3062,10 @@
       "Continue alternating in this manner for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/dumbbell-alternate-bicep-curl-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-alternate-bicep-curl-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-alternate-bicep-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "ez-bar-curl",
@@ -2824,7 +3094,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/ez-bar-curl-0.jpg",
-    "endImage": "assets/exercise-images/ez-bar-curl-1.jpg"
+    "endImage": "assets/exercise-images/ez-bar-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "machine-bicep-curl",
@@ -2852,7 +3125,10 @@
       "Avoid returning the weight all the way to the stops until the set is complete to keep tension on the muscles being worked."
     ],
     "startImage": "assets/exercise-images/machine-bicep-curl-0.jpg",
-    "endImage": "assets/exercise-images/machine-bicep-curl-1.jpg"
+    "endImage": "assets/exercise-images/machine-bicep-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "high-cable-curls",
@@ -2880,7 +3156,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/high-cable-curls-0.jpg",
-    "endImage": "assets/exercise-images/high-cable-curls-1.jpg"
+    "endImage": "assets/exercise-images/high-cable-curls-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "close-grip-barbell-bench-press",
@@ -2912,7 +3191,10 @@
       "When you are done, place the bar back in the rack."
     ],
     "startImage": "assets/exercise-images/close-grip-barbell-bench-press-0.jpg",
-    "endImage": "assets/exercise-images/close-grip-barbell-bench-press-1.jpg"
+    "endImage": "assets/exercise-images/close-grip-barbell-bench-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "machine-triceps-extension",
@@ -2940,7 +3222,10 @@
       "Avoid returning the weight all the way to the stops until the set is complete to keep tension on the muscles being worked."
     ],
     "startImage": "assets/exercise-images/machine-triceps-extension-0.jpg",
-    "endImage": "assets/exercise-images/machine-triceps-extension-1.jpg"
+    "endImage": "assets/exercise-images/machine-triceps-extension-1.jpg",
+    "movementPatterns": [
+      "elbow_extension"
+    ]
   },
   {
     "id": "barbell-hack-squat",
@@ -2972,7 +3257,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/barbell-hack-squat-0.jpg",
-    "endImage": "assets/exercise-images/barbell-hack-squat-1.jpg"
+    "endImage": "assets/exercise-images/barbell-hack-squat-1.jpg",
+    "movementPatterns": [
+      "squat"
+    ]
   },
   {
     "id": "barbell-walking-lunge",
@@ -3004,7 +3292,10 @@
       "Step forward with your rear foot, repeating the lunge on the opposite leg."
     ],
     "startImage": "assets/exercise-images/barbell-walking-lunge-0.jpg",
-    "endImage": "assets/exercise-images/barbell-walking-lunge-1.jpg"
+    "endImage": "assets/exercise-images/barbell-walking-lunge-1.jpg",
+    "movementPatterns": [
+      "lunge_step"
+    ]
   },
   {
     "id": "dumbbell-rear-lunge",
@@ -3036,7 +3327,10 @@
       "Now repeat with the opposite leg."
     ],
     "startImage": "assets/exercise-images/dumbbell-rear-lunge-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-rear-lunge-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-rear-lunge-1.jpg",
+    "movementPatterns": [
+      "lunge_step"
+    ]
   },
   {
     "id": "dumbbell-squat",
@@ -3070,7 +3364,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/dumbbell-squat-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-squat-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-squat-1.jpg",
+    "movementPatterns": [
+      "squat"
+    ]
   },
   {
     "id": "front-squat-clean-grip",
@@ -3102,7 +3399,10 @@
       "Begin to raise the bar as you exhale by pushing the floor mainly with the heel or middle of your foot as you straighten the legs again and return to the starting position."
     ],
     "startImage": "assets/exercise-images/front-squat-clean-grip-0.jpg",
-    "endImage": "assets/exercise-images/front-squat-clean-grip-1.jpg"
+    "endImage": "assets/exercise-images/front-squat-clean-grip-1.jpg",
+    "movementPatterns": [
+      "squat"
+    ]
   },
   {
     "id": "good-morning",
@@ -3133,7 +3433,10 @@
       "Reverse the motion by extending through the hips with your glutes and hamstrings. Continue until you have returned to the starting position."
     ],
     "startImage": "assets/exercise-images/good-morning-0.jpg",
-    "endImage": "assets/exercise-images/good-morning-1.jpg"
+    "endImage": "assets/exercise-images/good-morning-1.jpg",
+    "movementPatterns": [
+      "hip_hinge"
+    ]
   },
   {
     "id": "barbell-step-ups",
@@ -3166,7 +3469,10 @@
       "Repeat with the right leg for the recommended amount of repetitions and then perform with the left leg."
     ],
     "startImage": "assets/exercise-images/barbell-step-ups-0.jpg",
-    "endImage": "assets/exercise-images/barbell-step-ups-1.jpg"
+    "endImage": "assets/exercise-images/barbell-step-ups-1.jpg",
+    "movementPatterns": [
+      "lunge_step"
+    ]
   },
   {
     "id": "smith-machine-squat",
@@ -3201,7 +3507,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/smith-machine-squat-0.jpg",
-    "endImage": "assets/exercise-images/smith-machine-squat-1.jpg"
+    "endImage": "assets/exercise-images/smith-machine-squat-1.jpg",
+    "movementPatterns": [
+      "squat"
+    ]
   },
   {
     "id": "seated-calf-raise",
@@ -3231,7 +3540,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/seated-calf-raise-0.jpg",
-    "endImage": "assets/exercise-images/seated-calf-raise-1.jpg"
+    "endImage": "assets/exercise-images/seated-calf-raise-1.jpg",
+    "movementPatterns": [
+      "calf_raise"
+    ]
   },
   {
     "id": "calf-press",
@@ -3260,7 +3572,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/calf-press-0.jpg",
-    "endImage": "assets/exercise-images/calf-press-1.jpg"
+    "endImage": "assets/exercise-images/calf-press-1.jpg",
+    "movementPatterns": [
+      "calf_raise"
+    ]
   },
   {
     "id": "cable-pull-through",
@@ -3289,7 +3604,10 @@
       "Begin the movement by reaching through your legs as far as possible, bending at the hips. Keep your knees slightly bent. Keeping your arms straight, extend through the hip to stand straight up. Avoid pulling upward through the shoulders; all of the motion should originate through the hips."
     ],
     "startImage": "assets/exercise-images/cable-pull-through-0.jpg",
-    "endImage": "assets/exercise-images/cable-pull-through-1.jpg"
+    "endImage": "assets/exercise-images/cable-pull-through-1.jpg",
+    "movementPatterns": [
+      "hip_hinge"
+    ]
   },
   {
     "id": "kneeling-squat",
@@ -3320,7 +3638,10 @@
       "Reverse the motion, returning the torso to an upright position."
     ],
     "startImage": "assets/exercise-images/kneeling-squat-0.jpg",
-    "endImage": "assets/exercise-images/kneeling-squat-1.jpg"
+    "endImage": "assets/exercise-images/kneeling-squat-1.jpg",
+    "movementPatterns": [
+      "hip_extension"
+    ]
   },
   {
     "id": "glute-kickback",
@@ -3350,7 +3671,10 @@
       "Continue to alternate legs until all of the recommended repetitions have been performed."
     ],
     "startImage": "assets/exercise-images/glute-kickback-0.jpg",
-    "endImage": "assets/exercise-images/glute-kickback-1.jpg"
+    "endImage": "assets/exercise-images/glute-kickback-1.jpg",
+    "movementPatterns": [
+      "hip_extension"
+    ]
   },
   {
     "id": "hip-extension-bands",
@@ -3380,7 +3704,10 @@
       "Return the leg to the starting position."
     ],
     "startImage": "assets/exercise-images/hip-extension-bands-0.jpg",
-    "endImage": "assets/exercise-images/hip-extension-bands-1.jpg"
+    "endImage": "assets/exercise-images/hip-extension-bands-1.jpg",
+    "movementPatterns": [
+      "hip_extension"
+    ]
   },
   {
     "id": "hip-lift-band",
@@ -3411,7 +3738,10 @@
       "Pause at the top of the motion, and return to the starting position."
     ],
     "startImage": "assets/exercise-images/hip-lift-band-0.jpg",
-    "endImage": "assets/exercise-images/hip-lift-band-1.jpg"
+    "endImage": "assets/exercise-images/hip-lift-band-1.jpg",
+    "movementPatterns": [
+      "hip_thrust_bridge"
+    ]
   },
   {
     "id": "physioball-hip-bridge",
@@ -3440,7 +3770,10 @@
       "Pause at the top of the motion and return to the starting position."
     ],
     "startImage": "assets/exercise-images/physioball-hip-bridge-0.jpg",
-    "endImage": "assets/exercise-images/physioball-hip-bridge-1.jpg"
+    "endImage": "assets/exercise-images/physioball-hip-bridge-1.jpg",
+    "movementPatterns": [
+      "hip_thrust_bridge"
+    ]
   },
   {
     "id": "barbell-side-bend",
@@ -3470,7 +3803,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/barbell-side-bend-0.jpg",
-    "endImage": "assets/exercise-images/barbell-side-bend-1.jpg"
+    "endImage": "assets/exercise-images/barbell-side-bend-1.jpg",
+    "movementPatterns": [
+      "trunk_lateral_flexion"
+    ]
   },
   {
     "id": "cable-seated-crunch",
@@ -3499,7 +3835,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/cable-seated-crunch-0.jpg",
-    "endImage": "assets/exercise-images/cable-seated-crunch-1.jpg"
+    "endImage": "assets/exercise-images/cable-seated-crunch-1.jpg",
+    "movementPatterns": [
+      "trunk_flexion"
+    ]
   },
   {
     "id": "dumbbell-side-bend",
@@ -3527,7 +3866,10 @@
       "Repeat for the recommended amount of repetitions and then change hands."
     ],
     "startImage": "assets/exercise-images/dumbbell-side-bend-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-side-bend-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-side-bend-1.jpg",
+    "movementPatterns": [
+      "trunk_lateral_flexion"
+    ]
   },
   {
     "id": "pallof-press",
@@ -3561,7 +3903,10 @@
       "At the conclusion of the set, repeat facing the other direction."
     ],
     "startImage": "assets/exercise-images/pallof-press-0.jpg",
-    "endImage": "assets/exercise-images/pallof-press-1.jpg"
+    "endImage": "assets/exercise-images/pallof-press-1.jpg",
+    "movementPatterns": [
+      "trunk_anti_rotation"
+    ]
   },
   {
     "id": "kneeling-cable-oblique-crunch",
@@ -3594,7 +3939,10 @@
       "Continue this series of movements to failure."
     ],
     "startImage": "assets/exercise-images/kneeling-cable-oblique-crunch-0.jpg",
-    "endImage": "assets/exercise-images/kneeling-cable-oblique-crunch-1.jpg"
+    "endImage": "assets/exercise-images/kneeling-cable-oblique-crunch-1.jpg",
+    "movementPatterns": [
+      "trunk_lateral_flexion"
+    ]
   },
   {
     "id": "landmine-180",
@@ -3627,7 +3975,10 @@
       "Continue alternating the movement until the set is complete."
     ],
     "startImage": "assets/exercise-images/landmine-180-0.jpg",
-    "endImage": "assets/exercise-images/landmine-180-1.jpg"
+    "endImage": "assets/exercise-images/landmine-180-1.jpg",
+    "movementPatterns": [
+      "trunk_rotation"
+    ]
   },
   {
     "id": "bosu-cable-crunch-side-bend",
@@ -3661,7 +4012,10 @@
       "Lower your arms down to your side; keep them straight. Start doing alternating side bends; reach for your heels! This finishing movement will focus on your obliques."
     ],
     "startImage": "assets/exercise-images/bosu-cable-crunch-side-bend-0.jpg",
-    "endImage": "assets/exercise-images/bosu-cable-crunch-side-bend-1.jpg"
+    "endImage": "assets/exercise-images/bosu-cable-crunch-side-bend-1.jpg",
+    "movementPatterns": [
+      "trunk_lateral_flexion"
+    ]
   },
   {
     "id": "barbell-glute-bridge",
@@ -3691,7 +4045,10 @@
       "Extend as far as possible, then reverse the motion to return to the starting position."
     ],
     "startImage": "assets/exercise-images/barbell-glute-bridge-0.jpg",
-    "endImage": "assets/exercise-images/barbell-glute-bridge-1.jpg"
+    "endImage": "assets/exercise-images/barbell-glute-bridge-1.jpg",
+    "movementPatterns": [
+      "hip_thrust_bridge"
+    ]
   },
   {
     "id": "barbell-ab-rollout-knees",
@@ -3722,7 +4079,10 @@
       "After a second pause at the stretched position, start pulling yourself back to the starting position as you breathe out. Tip: Go slowly and keep your abs tight at all times."
     ],
     "startImage": "assets/exercise-images/barbell-ab-rollout-knees-0.jpg",
-    "endImage": "assets/exercise-images/barbell-ab-rollout-knees-1.jpg"
+    "endImage": "assets/exercise-images/barbell-ab-rollout-knees-1.jpg",
+    "movementPatterns": [
+      "trunk_anti_extension"
+    ]
   },
   {
     "id": "arm-circles",
@@ -3978,7 +4338,10 @@
       "Repeat the movement for the prescribed amount of repetitions."
     ],
     "startImage": "assets/exercise-images/wide-grip-barbell-bench-press-0.jpg",
-    "endImage": "assets/exercise-images/wide-grip-barbell-bench-press-1.jpg"
+    "endImage": "assets/exercise-images/wide-grip-barbell-bench-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "machine-bench-press",
@@ -4012,7 +4375,10 @@
       "When finished step on the lever again and slowly get the handles back to their original place."
     ],
     "startImage": "assets/exercise-images/machine-bench-press-0.jpg",
-    "endImage": "assets/exercise-images/machine-bench-press-1.jpg"
+    "endImage": "assets/exercise-images/machine-bench-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "dumbbell-neutral-grip-bench-press",
@@ -4043,7 +4409,10 @@
       "Pause, then extend the elbow and return to the starting position."
     ],
     "startImage": "assets/exercise-images/dumbbell-neutral-grip-bench-press-0.jpg",
-    "endImage": "assets/exercise-images/dumbbell-neutral-grip-bench-press-1.jpg"
+    "endImage": "assets/exercise-images/dumbbell-neutral-grip-bench-press-1.jpg",
+    "movementPatterns": [
+      "horizontal_push"
+    ]
   },
   {
     "id": "chin-up",
@@ -4076,7 +4445,10 @@
       "Repeat this motion for the prescribed amount of repetitions."
     ],
     "startImage": "assets/exercise-images/chin-up-0.jpg",
-    "endImage": "assets/exercise-images/chin-up-1.jpg"
+    "endImage": "assets/exercise-images/chin-up-1.jpg",
+    "movementPatterns": [
+      "vertical_pull"
+    ]
   },
   {
     "id": "inverted-row",
@@ -4107,7 +4479,10 @@
       "Repeat for the desired number of repetitions."
     ],
     "startImage": "assets/exercise-images/inverted-row-0.jpg",
-    "endImage": "assets/exercise-images/inverted-row-1.jpg"
+    "endImage": "assets/exercise-images/inverted-row-1.jpg",
+    "movementPatterns": [
+      "horizontal_pull"
+    ]
   },
   {
     "id": "leverage-iso-row",
@@ -4137,7 +4512,10 @@
       "Pause at the bottom of the motion, and then slowly return the handles to the starting position. For multiple repetitions, avoid completely returning the weight to the stops to keep tension on the muscles being worked."
     ],
     "startImage": "assets/exercise-images/leverage-iso-row-0.jpg",
-    "endImage": "assets/exercise-images/leverage-iso-row-1.jpg"
+    "endImage": "assets/exercise-images/leverage-iso-row-1.jpg",
+    "movementPatterns": [
+      "horizontal_pull"
+    ]
   },
   {
     "id": "underhand-cable-pulldown",
@@ -4171,7 +4549,10 @@
       "Repeat this motion for the prescribed amount of repetitions."
     ],
     "startImage": "assets/exercise-images/underhand-cable-pulldown-0.jpg",
-    "endImage": "assets/exercise-images/underhand-cable-pulldown-1.jpg"
+    "endImage": "assets/exercise-images/underhand-cable-pulldown-1.jpg",
+    "movementPatterns": [
+      "vertical_pull"
+    ]
   },
   {
     "id": "machine-shoulder-press",
@@ -4202,7 +4583,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/machine-shoulder-press-0.jpg",
-    "endImage": "assets/exercise-images/machine-shoulder-press-1.jpg"
+    "endImage": "assets/exercise-images/machine-shoulder-press-1.jpg",
+    "movementPatterns": [
+      "vertical_push"
+    ]
   },
   {
     "id": "reverse-machine-flyes",
@@ -4230,7 +4614,10 @@
       "Pause at the rear of the movement, and slowly return the weight to the starting position."
     ],
     "startImage": "assets/exercise-images/reverse-machine-flyes-0.jpg",
-    "endImage": "assets/exercise-images/reverse-machine-flyes-1.jpg"
+    "endImage": "assets/exercise-images/reverse-machine-flyes-1.jpg",
+    "movementPatterns": [
+      "shoulder_horizontal_abduction"
+    ]
   },
   {
     "id": "front-plate-raise",
@@ -4258,7 +4645,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/front-plate-raise-0.jpg",
-    "endImage": "assets/exercise-images/front-plate-raise-1.jpg"
+    "endImage": "assets/exercise-images/front-plate-raise-1.jpg",
+    "movementPatterns": [
+      "shoulder_flexion"
+    ]
   },
   {
     "id": "one-arm-side-laterals",
@@ -4288,7 +4678,10 @@
       "Switch arms and repeat the exercise."
     ],
     "startImage": "assets/exercise-images/one-arm-side-laterals-0.jpg",
-    "endImage": "assets/exercise-images/one-arm-side-laterals-1.jpg"
+    "endImage": "assets/exercise-images/one-arm-side-laterals-1.jpg",
+    "movementPatterns": [
+      "shoulder_abduction"
+    ]
   },
   {
     "id": "band-pull-apart",
@@ -4319,7 +4712,10 @@
       "Pause as you complete the movement, returning to the starting position under control."
     ],
     "startImage": "assets/exercise-images/band-pull-apart-0.jpg",
-    "endImage": "assets/exercise-images/band-pull-apart-1.jpg"
+    "endImage": "assets/exercise-images/band-pull-apart-1.jpg",
+    "movementPatterns": [
+      "shoulder_horizontal_abduction"
+    ]
   },
   {
     "id": "incline-dumbbell-curl",
@@ -4347,7 +4743,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/incline-dumbbell-curl-0.jpg",
-    "endImage": "assets/exercise-images/incline-dumbbell-curl-1.jpg"
+    "endImage": "assets/exercise-images/incline-dumbbell-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "ez-bar-skullcrusher",
@@ -4377,7 +4776,10 @@
       "Repeat."
     ],
     "startImage": "assets/exercise-images/ez-bar-skullcrusher-0.jpg",
-    "endImage": "assets/exercise-images/ez-bar-skullcrusher-1.jpg"
+    "endImage": "assets/exercise-images/ez-bar-skullcrusher-1.jpg",
+    "movementPatterns": [
+      "elbow_extension"
+    ]
   },
   {
     "id": "reverse-barbell-curl",
@@ -4407,7 +4809,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/reverse-barbell-curl-0.jpg",
-    "endImage": "assets/exercise-images/reverse-barbell-curl-1.jpg"
+    "endImage": "assets/exercise-images/reverse-barbell-curl-1.jpg",
+    "movementPatterns": [
+      "elbow_flexion"
+    ]
   },
   {
     "id": "cable-one-arm-tricep-extension",
@@ -4437,7 +4842,10 @@
       "Repeat for the recommended amount of repetitions and then perform the same movement with the other arm."
     ],
     "startImage": "assets/exercise-images/cable-one-arm-tricep-extension-0.jpg",
-    "endImage": "assets/exercise-images/cable-one-arm-tricep-extension-1.jpg"
+    "endImage": "assets/exercise-images/cable-one-arm-tricep-extension-1.jpg",
+    "movementPatterns": [
+      "elbow_extension"
+    ]
   },
   {
     "id": "goblet-squat",
@@ -4469,7 +4877,10 @@
       "At the bottom position, pause and use your elbows to push your knees out. Return to the starting position, and repeat for 10-20 repetitions."
     ],
     "startImage": "assets/exercise-images/goblet-squat-0.jpg",
-    "endImage": "assets/exercise-images/goblet-squat-1.jpg"
+    "endImage": "assets/exercise-images/goblet-squat-1.jpg",
+    "movementPatterns": [
+      "squat"
+    ]
   },
   {
     "id": "narrow-stance-leg-press",
@@ -4502,7 +4913,10 @@
       "Repeat for the recommended amount of repetitions and ensure to lock the safety pins properly once you are done. You do not want that platform falling on you fully loaded."
     ],
     "startImage": "assets/exercise-images/narrow-stance-leg-press-0.jpg",
-    "endImage": "assets/exercise-images/narrow-stance-leg-press-1.jpg"
+    "endImage": "assets/exercise-images/narrow-stance-leg-press-1.jpg",
+    "movementPatterns": [
+      "squat"
+    ]
   },
   {
     "id": "donkey-calf-raise",
@@ -4531,7 +4945,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/donkey-calf-raise-0.jpg",
-    "endImage": "assets/exercise-images/donkey-calf-raise-1.jpg"
+    "endImage": "assets/exercise-images/donkey-calf-raise-1.jpg",
+    "movementPatterns": [
+      "calf_raise"
+    ]
   },
   {
     "id": "elevated-back-lunge",
@@ -4562,7 +4979,10 @@
       "Pause, and extend through the hips and knees to rise up, returning all the way to the starting position before alternating."
     ],
     "startImage": "assets/exercise-images/elevated-back-lunge-0.jpg",
-    "endImage": "assets/exercise-images/elevated-back-lunge-1.jpg"
+    "endImage": "assets/exercise-images/elevated-back-lunge-1.jpg",
+    "movementPatterns": [
+      "lunge_step"
+    ]
   },
   {
     "id": "lunge-pass-through",
@@ -4595,7 +5015,10 @@
       "Repeat the movement for the recommended amount of repetitions, alternating legs."
     ],
     "startImage": "assets/exercise-images/lunge-pass-through-0.jpg",
-    "endImage": "assets/exercise-images/lunge-pass-through-1.jpg"
+    "endImage": "assets/exercise-images/lunge-pass-through-1.jpg",
+    "movementPatterns": [
+      "lunge_step"
+    ]
   },
   {
     "id": "kettlebell-one-legged-deadlift",
@@ -4625,7 +5048,10 @@
       "Continue lowering the kettlebell until you are parallel to the ground, and then return to the upright position."
     ],
     "startImage": "assets/exercise-images/kettlebell-one-legged-deadlift-0.jpg",
-    "endImage": "assets/exercise-images/kettlebell-one-legged-deadlift-1.jpg"
+    "endImage": "assets/exercise-images/kettlebell-one-legged-deadlift-1.jpg",
+    "movementPatterns": [
+      "hip_hinge"
+    ]
   },
   {
     "id": "step-up-with-knee-raise",
@@ -4655,7 +5081,10 @@
       "Reverse this motion to step down off the box, and then repeat the sequence on the opposite leg."
     ],
     "startImage": "assets/exercise-images/step-up-with-knee-raise-0.jpg",
-    "endImage": "assets/exercise-images/step-up-with-knee-raise-1.jpg"
+    "endImage": "assets/exercise-images/step-up-with-knee-raise-1.jpg",
+    "movementPatterns": [
+      "lunge_step"
+    ]
   },
   {
     "id": "cable-deadlifts",
@@ -4688,7 +5117,10 @@
       "After reaching a full standing position, Return to the starting position and repeat."
     ],
     "startImage": "assets/exercise-images/cable-deadlifts-0.jpg",
-    "endImage": "assets/exercise-images/cable-deadlifts-1.jpg"
+    "endImage": "assets/exercise-images/cable-deadlifts-1.jpg",
+    "movementPatterns": [
+      "hip_hinge"
+    ]
   },
   {
     "id": "bodyweight-walking-lunge",
@@ -4720,7 +5152,10 @@
       "Step forward with your rear foot, repeating the lunge on the opposite leg."
     ],
     "startImage": "assets/exercise-images/bodyweight-walking-lunge-0.jpg",
-    "endImage": "assets/exercise-images/bodyweight-walking-lunge-1.jpg"
+    "endImage": "assets/exercise-images/bodyweight-walking-lunge-1.jpg",
+    "movementPatterns": [
+      "lunge_step"
+    ]
   },
   {
     "id": "seated-hip-abduction",
@@ -4750,7 +5185,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/seated-hip-abduction-0.jpg",
-    "endImage": "assets/exercise-images/seated-hip-abduction-1.jpg"
+    "endImage": "assets/exercise-images/seated-hip-abduction-1.jpg",
+    "movementPatterns": [
+      "hip_abduction"
+    ]
   },
   {
     "id": "smith-machine-pistol-squat",
@@ -4783,7 +5221,10 @@
       "Pause briefly at the bottom and then return to the starting position by driving through the heel of your foot, extending the knee and hip."
     ],
     "startImage": "assets/exercise-images/smith-machine-pistol-squat-0.jpg",
-    "endImage": "assets/exercise-images/smith-machine-pistol-squat-1.jpg"
+    "endImage": "assets/exercise-images/smith-machine-pistol-squat-1.jpg",
+    "movementPatterns": [
+      "squat"
+    ]
   },
   {
     "id": "smith-machine-stiff-legged-deadlift",
@@ -4815,7 +5256,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/smith-machine-stiff-legged-deadlift-0.jpg",
-    "endImage": "assets/exercise-images/smith-machine-stiff-legged-deadlift-1.jpg"
+    "endImage": "assets/exercise-images/smith-machine-stiff-legged-deadlift-1.jpg",
+    "movementPatterns": [
+      "hip_hinge"
+    ]
   },
   {
     "id": "hanging-leg-raise",
@@ -4843,7 +5287,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/hanging-leg-raise-0.jpg",
-    "endImage": "assets/exercise-images/hanging-leg-raise-1.jpg"
+    "endImage": "assets/exercise-images/hanging-leg-raise-1.jpg",
+    "movementPatterns": [
+      "hip_flexion"
+    ]
   },
   {
     "id": "decline-crunch",
@@ -4873,7 +5320,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/decline-crunch-0.jpg",
-    "endImage": "assets/exercise-images/decline-crunch-1.jpg"
+    "endImage": "assets/exercise-images/decline-crunch-1.jpg",
+    "movementPatterns": [
+      "trunk_flexion"
+    ]
   },
   {
     "id": "knee-hip-raise-parallel-bars",
@@ -4902,7 +5352,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/knee-hip-raise-parallel-bars-0.jpg",
-    "endImage": "assets/exercise-images/knee-hip-raise-parallel-bars-1.jpg"
+    "endImage": "assets/exercise-images/knee-hip-raise-parallel-bars-1.jpg",
+    "movementPatterns": [
+      "hip_flexion"
+    ]
   },
   {
     "id": "standing-cable-wood-chop",
@@ -4936,7 +5389,10 @@
       "Then, reposition and repeat the same series of movements on the opposite side."
     ],
     "startImage": "assets/exercise-images/standing-cable-wood-chop-0.jpg",
-    "endImage": "assets/exercise-images/standing-cable-wood-chop-1.jpg"
+    "endImage": "assets/exercise-images/standing-cable-wood-chop-1.jpg",
+    "movementPatterns": [
+      "trunk_rotation"
+    ]
   },
   {
     "id": "weighted-sit-ups-bands",
@@ -4964,7 +5420,10 @@
       "Repeat for the recommended amount of repetitions."
     ],
     "startImage": "assets/exercise-images/weighted-sit-ups-bands-0.jpg",
-    "endImage": "assets/exercise-images/weighted-sit-ups-bands-1.jpg"
+    "endImage": "assets/exercise-images/weighted-sit-ups-bands-1.jpg",
+    "movementPatterns": [
+      "trunk_flexion"
+    ]
   },
   {
     "id": "dynamic-back-stretch",

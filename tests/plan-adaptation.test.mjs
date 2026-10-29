@@ -369,7 +369,7 @@ test("history cards open read-only plan details and older entries still open", (
   const list = { innerHTML: "", hidden: false };
   const detail = { innerHTML: "", hidden: true };
   const context = {
-    appLanguage: "en", planHistoryList: list, planHistoryDetail: detail, records: [], completedPlanDays: ["one"],
+    appLanguage: "en", planHistoryList: list, planHistoryDetail: detail, records: [], completedPlanDays: ["one"], resistanceExercises: [],
     getViewablePlanHistory: () => entries, historyPlanDisplayTitle: (item) => item.title,
     escapeLogText: (value) => String(value), translateInterfaceText: (value) => value,
     buildPlan: () => oldPlan, getProfile: () => ({}), getResolvedPlanSchedule: () => schedule,
@@ -452,12 +452,14 @@ test("using a historical plan starts a new cycle with its saved plan settings", 
       removeItem: (key) => stored.delete(key)
     },
     document: { querySelector: (key) => fields.get(key) },
-    getViewablePlanHistory: () => [entry], assessRisk: () => ({ level: "low" }),
+    getViewablePlanHistory: () => [entry], assessRisk: () => ({ level: "low" }), getPlanRisk: () => ({ level: "low" }),
     hasGeneratedPlan: () => true, archiveCurrentPlan: () => { archived++; },
     getProfile: () => ({ goal: fields.get("#goal").value, experience: fields.get("#experience").value,
       days: Number(fields.get("#trainingDays").value), focusArea: fields.get("#focusArea").value,
       focusPurpose: fields.get("#focusPurpose").value }),
     getPlanSelectionConflict: () => "",
+    buildPlan: () => ({ periodization: [{}], split: [["Day", ""]] }),
+    getWorkoutExercises: () => [{ name: "exercise" }],
     getRiskAnswers: () => ({}), renderPlanHistory() {}, renderResistanceTemplates() {},
     renderPlan() {}, setPlanPane() {}, today: "2026-10-28", activePlanWeekIndex: 2,
     TRAINING_DAY_PREFERENCES_KEY: "preferences", PLAN_ADJUSTMENTS_KEY: "adjustments",
@@ -469,7 +471,7 @@ test("using a historical plan starts a new cycle with its saved plan settings", 
   assert.equal(archived, 1);
   assert.equal(stored.get("fitlog-plan-start-date"), "2026-10-28");
   assert.equal(stored.get("fitlog-plan-template"), "hypertrophy-3");
-  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), { ...entry.profile, planRuleVersion: 2 });
+  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), { ...entry.profile, planRuleVersion: 3, exerciseSnapshot: [[[{ name: "exercise" }]]] });
   assert.equal(context.activePlanWeekIndex, 0);
 });
 
@@ -490,9 +492,10 @@ test("saving an unchanged edited plan keeps its cycle and only changed options c
       setItem: (key, value) => values.set(key, value),
       removeItem: (key) => values.delete(key)
     },
-    getProfile: () => current, getRiskAnswers: () => ({}), hasGeneratedPlan: () => true,
+    getProfile: () => current, getPlanRisk: () => ({ level: "low" }), getRiskAnswers: () => ({}), hasGeneratedPlan: () => true,
     getPlanSelectionConflict: () => "",
-    buildPlan: () => ({}), isPlanCycleExpired: () => expired,
+    buildPlan: () => ({ periodization: [{}], split: [["Day", ""]] }),
+    getWorkoutExercises: () => [{ name: "exercise" }], isPlanCycleExpired: () => expired,
     archiveCurrentPlan: () => { archives++; }, renderPlanHistory() {}, renderResistanceTemplates() {},
     isEditingPlan: true, today: "2026-10-28",
     TRAINING_DAY_PREFERENCES_KEY: "preferences", PLAN_ADJUSTMENTS_KEY: "adjustments"
@@ -591,14 +594,14 @@ test("official template detail previews schedule before offering plan use", () =
   const detail = { innerHTML: "" };
   const context = {
     appLanguage: "zh", activeOfficialTemplateId: "hypertrophy-3", activeOfficialTemplateWeekIndex: 0,
-    activeOfficialTemplateDayIndex: null, officialTemplateDetail: detail,
+    activeOfficialTemplateDayIndex: null, officialTemplateDetail: detail, resistanceExercises: [],
     resistanceTemplates: [{ id: "hypertrophy-3", goal: "hypertrophy", name: "增肌", days: 3, minExperience: "beginner", conditions: "初学者及以上", conditionsEn: "Beginner or above" }],
     getGoalPrescription: () => ({ baseSetCount: 3, load: "67-85% 1RM", rm: "6-12 RM", reps: "6-12 次", setRange: "3-6 组", rest: "30-90 秒" }),
     createPeriodization: () => [
       { label: "第 1 周", title: "动作适应周", focus: "熟悉动作", sets: 2, reps: "8-12 次", rm: "8-12 RM", load: "70% 1RM", rest: "30-90 秒" },
       { label: "第 2 周", title: "容量递进周", focus: "逐渐加量", sets: 3, reps: "8-10 次", rm: "8-10 RM", load: "75% 1RM", rest: "30-90 秒" }
     ],
-    makeHypertrophySplit: () => [["全身训练", "上下肢复合动作"]],
+    makeMovementSplit: () => [["全身训练", "上下肢复合动作"]],
     getWorkoutExercises: () => [{ name: "杠铃深蹲", prescription: "3 组 × 8 次", rest: "60 秒" }],
     assessRisk: () => ({ level: "low" }), translateInterfaceText: (value) => value,
     escapeLogText: (value) => value, formatPeriodIntensity: (value) => `强度 ${value}`,
@@ -676,7 +679,7 @@ test("first official template use guides profile selection before confirmation a
   const hint = { hidden: true, textContent: "" };
   let saves = 0;
   const context = {
-    appLanguage: "zh", pendingOfficialTemplateId: null, activePlanWeekIndex: 2, isEditingPlan: false,
+    appLanguage: "zh", pendingOfficialTemplateId: null, activePlanWeekIndex: 2, isEditingPlan: false, getPlanRisk: () => ({ level: "low" }),
     resistanceTemplates: [{ id: "hypertrophy-4", goal: "hypertrophy", days: 4, minExperience: "intermediate", conditions: "中级及以上" }],
     assessRisk: () => ({ level: "low" }),
     localStorage: { getItem: () => null },
@@ -723,7 +726,7 @@ test("using an official template over an active plan explicitly confirms replace
   };
   let expired = false;
   const context = {
-    appLanguage: "zh", resistanceTemplates: [{ id: "hypertrophy-4", days: 4, conditions: "中级及以上" }],
+    appLanguage: "zh", resistanceTemplates: [{ id: "hypertrophy-4", days: 4, conditions: "中级及以上" }], getPlanRisk: () => ({ level: "low" }),
     assessRisk: () => ({ level: "low" }),
     getProfile: () => ({ experience: "intermediate", days: 3 }),
     officialTemplateMismatch: () => "", experienceLabels: { intermediate: "中级" },
@@ -777,14 +780,13 @@ test("unchanged plan submit opens a dialog and OK returns to the plan page", () 
     ["#experience", { value: "intermediate", focus() {} }],
     ["#planNoticeTitle", { textContent: "" }],
     ["#planNoticeBody", { hidden: true, textContent: "" }],
-    ["#planNoticeSource", { hidden: true }],
     ["#planNoticeSecondary", { hidden: true, textContent: "", addEventListener() {} }],
     ["#planNoticeConfirm", { textContent: "", addEventListener: (name, callback) => listeners.set(name, callback) }]
   ]);
   const dialog = { dataset: {}, open: false, showModal() { this.open = true; }, close() { this.open = false; } };
   let saved = 0;
   const context = {
-    appLanguage: "zh", pendingOfficialTemplateId: null, isEditingPlan: true,
+    appLanguage: "zh", pendingOfficialTemplateId: null, isEditingPlan: true, getPlanRisk: () => ({ level: "low" }),
     planNoticeDialog: dialog,
     window: { location: { hash: "plan-edit" } },
     document: { querySelector: (selector) => fields.get(selector) },
@@ -953,8 +955,7 @@ test("beginner frequency and power conflicts warn immediately and cannot save a 
     ["#goal", { value: "hypertrophy", focus() {} }],
     ["#beginnerDaysHint", { hidden: true }],
     ["#planNoticeTitle", { textContent: "" }],
-    ["#planNoticeBody", { hidden: true, textContent: "" }],
-    ["#planNoticeSource", { hidden: true, href: "", textContent: "" }]
+    ["#planNoticeBody", { hidden: true, textContent: "" }]
   ]);
   const listeners = new Map();
   fields.set("#planNoticeConfirm", { textContent: "", addEventListener: (_, callback) => listeners.set("confirm", callback) });
@@ -962,7 +963,7 @@ test("beginner frequency and power conflicts warn immediately and cannot save a 
   const dialog = { dataset: {}, open: false, showModal() { this.open = true; }, close() { this.open = false; } };
   let saved = 0;
   const context = {
-    appLanguage: "zh", planNoticeDialog: dialog, pendingOfficialTemplateId: null,
+    appLanguage: "zh", planNoticeDialog: dialog, pendingOfficialTemplateId: null, getPlanRisk: () => ({ level: "low" }),
     document: { querySelector: (selector) => fields.get(selector) },
     form: { addEventListener: (_, callback) => listeners.set("submit", callback) },
     getProfile: () => ({ experience: fields.get("#experience").value, days: Number(fields.get("#trainingDays").value), goal: fields.get("#goal").value }),
@@ -978,7 +979,7 @@ test("beginner frequency and power conflicts warn immediately and cannot save a 
   assert.equal(dialog.open, true);
   assert.equal(dialog.dataset.kind, "beginnerDays");
   assert.match(fields.get("#planNoticeBody").textContent, /2–3 次非连续/);
-  assert.match(fields.get("#planNoticeSource").href, /nsca\.com/);
+  assert.doesNotMatch(source.slice(source.indexOf('<dialog class="schedule-dialog" id="planNoticeDialog"'), source.indexOf('</dialog>', source.indexOf('<dialog class="schedule-dialog" id="planNoticeDialog"'))), /<a\b/);
   listeners.get("submit")({ preventDefault() {} });
   assert.equal(saved, 0);
   assert.equal(context.saveCurrentPlan(), false);
@@ -1032,4 +1033,36 @@ test("beginner schedule keeps a rest day after deferrals and rejects adjacent re
   context.saveDays();
   assert.equal(preferenceWrites, 0);
   assert.match(context.scheduleSelectionHint.textContent, /至少间隔一天/);
+});
+
+test("saved high-risk assessment blocks all plan creation and closes the notice without changing state", () => {
+  const noticeStart = source.indexOf("function showPlanNotice(kind)");
+  const saveEnd = source.indexOf("function clearPendingOfficialTemplate()", noticeStart);
+  const templateStart = source.indexOf("function requestOfficialTemplate(templateId)");
+  const templateEnd = source.indexOf("function renderEvaluationOverview()", templateStart);
+  const submitStart = source.indexOf('form.addEventListener("submit", (event) => {');
+  const submitEnd = source.indexOf('document.querySelector("#runRisk")', submitStart);
+  const confirmStart = source.indexOf('document.querySelector("#planNoticeConfirm").addEventListener("click", () => {');
+  const confirmEnd = source.indexOf('resistanceTemplateList?.addEventListener', confirmStart);
+  const listeners = new Map();
+  const fields = new Map(["#planNoticeTitle", "#planNoticeBody", "#planNoticeSecondary", "#planNoticeConfirm"].map((key) => [key, { textContent: "", hidden: false, addEventListener: (_, fn) => listeners.set(key, fn) }]));
+  const dialog = { dataset: {}, open: false, showModal() { this.open = true; }, close() { this.open = false; } };
+  let writes = 0;
+  const context = {
+    appLanguage: "zh", planNoticeDialog: dialog, getPlanRisk: () => ({ level: "high" }), getProfile: () => ({}),
+    resistanceTemplates: [{ id: "hypertrophy-3" }], getViewablePlanHistory: () => [{ profile: {} }],
+    document: { querySelector: (key) => fields.get(key) }, form: { addEventListener: (_, fn) => listeners.set("submit", fn) },
+    localStorage: { setItem() { writes++; }, removeItem() { writes++; } }
+  };
+  vm.createContext(context);
+  vm.runInContext(source.slice(noticeStart, saveEnd) + source.slice(templateStart, templateEnd) + source.slice(submitStart, submitEnd) + source.slice(confirmStart, confirmEnd), context);
+  for (const attempt of [() => listeners.get("submit")({ preventDefault() {} }), () => context.saveCurrentPlan(), () => context.requestOfficialTemplate("hypertrophy-3"), () => context.applyResistanceTemplate("hypertrophy-3"), () => context.applyHistoryPlanTemplate(0)]) {
+    attempt();
+    assert.equal(dialog.dataset.kind, "highRisk");
+    assert.match(fields.get("#planNoticeBody").textContent, /医生.*医学许可.*低强度/);
+    assert.equal(fields.get("#planNoticeSecondary").hidden, true);
+    listeners.get("#planNoticeConfirm")();
+    assert.equal(dialog.open, false);
+  }
+  assert.equal(writes, 0);
 });

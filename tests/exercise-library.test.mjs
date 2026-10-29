@@ -2,14 +2,39 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const [librarySource, importScript, expansionSource, appSource] = await Promise.all([
+const [librarySource, importScript, expansionSource, appSource, patternsSource, browserSource] = await Promise.all([
   readFile(new URL("../data/exercises-v1.json", import.meta.url), "utf8"),
   readFile(new URL("../scripts/import-exercises.mjs", import.meta.url), "utf8"),
   readFile(new URL("../data/exercise-expansion-v2.json", import.meta.url), "utf8"),
-  readFile(new URL("../index.html", import.meta.url), "utf8")
+  readFile(new URL("../index.html", import.meta.url), "utf8"),
+  readFile(new URL("../data/exercise-movement-patterns.json", import.meta.url), "utf8"),
+  readFile(new URL("../data/exercise-library-data.js", import.meta.url), "utf8")
 ]);
 const exercises = JSON.parse(librarySource);
 const expansion = JSON.parse(expansionSource);
+const patterns = JSON.parse(patternsSource);
+
+test("movement patterns cover resistance exercises and match browser data", () => {
+  const resistance = exercises.filter((item) => item.libraryType === "resistance");
+  assert.equal(Object.keys(patterns.exercises).length, resistance.length);
+  for (const exercise of resistance) {
+    assert.deepEqual(exercise.movementPatterns, patterns.exercises[exercise.id], exercise.id);
+    assert.equal(exercise.movementPatterns.length, 1, exercise.id);
+    assert.match(exercise.movementPatterns[0], /^[a-z_]+$/, exercise.id);
+  }
+  for (const exercise of exercises.filter((item) => item.libraryType !== "resistance")) {
+    assert.equal(exercise.movementPatterns, undefined, exercise.id);
+  }
+  const browserData = JSON.parse(browserSource.replace(/^window\.EXERCISE_LIBRARY_DATA = /, "").trim().replace(/;$/, ""));
+  assert.deepEqual(browserData, exercises);
+  for (const [id, expected] of Object.entries({
+    "romanian-deadlift": "hip_hinge", "barbell-squat": "squat",
+    "leg-press": "squat", "pallof-press": "trunk_anti_rotation",
+    "cable-crossover": "shoulder_horizontal_adduction", "lat-pulldown": "vertical_pull"
+  })) assert.deepEqual(patterns.exercises[id], [expected], id);
+  assert.match(importScript, /exercise-movement-patterns\.json/);
+  assert.match(importScript, /Missing reviewed movement patterns/);
+});
 
 const countBy = (items, property) =>
   items.reduce((counts, item) => {
