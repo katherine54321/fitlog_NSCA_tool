@@ -1324,6 +1324,14 @@
         content: "View exercises";
       }
 
+      #plan-template-detail .plan-training-day::after {
+        content: "查看主项动作";
+      }
+
+      html[lang="en"] #plan-template-detail .plan-training-day::after {
+        content: "View main exercises";
+      }
+
       .week-schedule {
         padding: 2px 0;
       }
@@ -4710,6 +4718,18 @@
       .workout-overview h2,
       .workout-overview p {
         color: #ffffff;
+      }
+
+      :is(#plan, #plan-template-detail) .plan-grid .mini-list {
+        color: var(--text-strong);
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 1.6;
+      }
+
+      :is(#plan, #plan-template-detail) .plan-grid .mini-list li {
+        color: inherit;
+        margin-bottom: 7px;
       }
 
       .exercise-detail-fact b {
