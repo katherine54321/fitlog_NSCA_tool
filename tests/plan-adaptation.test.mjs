@@ -193,13 +193,19 @@ test("an ended saved plan shows the empty current pane and appears in history", 
   const empty = { hidden: true };
   const current = { hidden: false };
   const edit = { hidden: false };
+  const historyTab = { hidden: false };
+  const historyPane = { hidden: true };
   const oldEntry = { id: "older" };
   const context = {
     planEmptyState: empty,
     planTemplateLibrary: { hidden: true },
     pendingOfficialTemplateId: null,
     profileEditor: { hidden: false }, savePlanButton: { hidden: false }, editPlanButton: edit,
-    document: { querySelectorAll: () => [current] },
+    document: {
+      querySelectorAll: () => [current],
+      querySelector: (selector) => selector === '[data-plan-tab="historyPlanPane"]' ? historyTab : historyPane
+    },
+    setPlanPane: () => { historyPane.hidden = true; },
     isEditingPlan: false, hasGeneratedPlan: () => true, isPlanCycleExpired: () => true,
     planHistory: [oldEntry],
     localStorage: { getItem: (key) => key === "fitlog-profile" ? JSON.stringify({ goal: "hypertrophy", days: 3 }) : null },
@@ -228,6 +234,12 @@ test("an ended saved plan shows the empty current pane and appears in history", 
   assert.equal(current.hidden, false);
   assert.equal(edit.hidden, false);
   assert.equal(context.historyEntries().length, 1);
+  context.hasGeneratedPlan = () => false;
+  context.planHistory = [];
+  historyPane.hidden = false;
+  context.updateMode({}, {});
+  assert.equal(historyTab.hidden, true);
+  assert.equal(historyPane.hidden, true);
 });
 
 test("the plan page heading stops presenting an expired plan as current", () => {
@@ -476,6 +488,32 @@ test("history templates keep only the latest plan for each distinct set of plan 
   assert.match(context.mismatch(template, { experience: "beginner", days: 4 }), /中级/);
   assert.match(context.mismatch(template, { experience: "intermediate", days: 3 }), /至少 4/);
   assert.equal(context.mismatch(template, { experience: "intermediate", days: 4 }), "");
+});
+
+test("no-plan template library shows only official plans when history is empty", () => {
+  const start = source.indexOf("function renderPlanTemplateLibrary() {");
+  const end = source.indexOf("function renderResistanceTemplates()", start);
+  const title = { hidden: false };
+  const historySection = { hidden: false };
+  const historyList = { innerHTML: "" };
+  const officialList = { innerHTML: "" };
+  const library = { labelledBy: "", setAttribute(name, value) { this.labelledBy = value; } };
+  const context = {
+    appLanguage: "zh", historyTemplateList: historyList, officialTemplateList: officialList,
+    planTemplateLibrary: library,
+    document: { querySelector: (selector) => selector === "#planTemplateTitle" ? title : historySection },
+    getUniqueHistoryPlanTemplates: () => [], assessRisk: () => ({ level: "low" }),
+    resistanceTemplates: [{ id: "hypertrophy-3", goal: "hypertrophy", name: "增肌", days: 3, conditions: "初学者及以上" }],
+    escapeLogText: (value) => value
+  };
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(start, end)}\nthis.render = renderPlanTemplateLibrary;`, context);
+  context.render();
+  assert.equal(title.hidden, true);
+  assert.equal(historySection.hidden, true);
+  assert.equal(historyList.innerHTML, "");
+  assert.equal(library.labelledBy, "officialTemplateHeading");
+  assert.match(officialList.innerHTML, /增肌 · 每周 3 天/);
 });
 
 test("first official template use guides profile selection before confirmation and saving", () => {

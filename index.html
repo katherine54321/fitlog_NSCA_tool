@@ -2738,6 +2738,7 @@
       .plan-template-library h3 { margin: 0 0 12px; }
       .plan-template-library h4 { margin: 16px 0 10px; }
       .plan-template-library .resistance-template p { margin: 0; }
+      #historyTemplateSection[hidden] { display: none; }
 
       .history-plan {
         display: grid;
@@ -7484,9 +7485,11 @@
               </div>
               <section class="plan-template-library" id="planTemplateLibrary" hidden aria-labelledby="planTemplateTitle">
                 <h3 id="planTemplateTitle">计划模板</h3>
-                <h4>历史训练计划</h4>
-                <div class="template-list" id="historyTemplateList"></div>
-                <h4>官方训练计划模板</h4>
+                <section id="historyTemplateSection" aria-labelledby="historyTemplateHeading">
+                  <h4 id="historyTemplateHeading">历史训练计划</h4>
+                  <div class="template-list" id="historyTemplateList"></div>
+                </section>
+                <h4 id="officialTemplateHeading">官方训练计划模板</h4>
                 <div class="template-list" id="officialTemplateList"></div>
               </section>
               <div class="card plan-generator" id="profileEditor" aria-labelledby="profileTitle">
@@ -12230,6 +12233,10 @@
       function updatePlanMode(profile, plan) {
         const generated = hasGeneratedPlan() && !isPlanCycleExpired(profile, plan);
         const showEditor = isEditingPlan;
+        const historyTab = document.querySelector('[data-plan-tab="historyPlanPane"]');
+        const showHistoryTab = generated || getViewablePlanHistory().length > 0;
+        if (historyTab) historyTab.hidden = !showHistoryTab;
+        if (!showHistoryTab && !document.querySelector("#historyPlanPane").hidden) setPlanPane("currentPlanPane");
         if (planEmptyState) planEmptyState.hidden = generated || showEditor;
         if (planTemplateLibrary) planTemplateLibrary.hidden = generated || showEditor;
         document.querySelectorAll("[data-plan-current-content]").forEach((element) => {
@@ -12384,9 +12391,13 @@
       function renderPlanTemplateLibrary() {
         if (!historyTemplateList || !officialTemplateList) return;
         const entries = getUniqueHistoryPlanTemplates();
+        const hasHistory = entries.length > 0;
+        document.querySelector("#planTemplateTitle").hidden = !hasHistory;
+        document.querySelector("#historyTemplateSection").hidden = !hasHistory;
+        planTemplateLibrary.setAttribute("aria-labelledby", hasHistory ? "planTemplateTitle" : "officialTemplateHeading");
         const unavailable = assessRisk().level === "high";
         const unavailableLabel = appLanguage === "en" ? "Medical clearance required" : "需先获得医学确认";
-        historyTemplateList.innerHTML = entries.length
+        historyTemplateList.innerHTML = hasHistory
           ? entries.map(({ item, index }) => {
             const experience = appLanguage === "en"
               ? ({ beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced" }[item.profile?.experience] || "")
@@ -12401,7 +12412,7 @@
                 <button class="secondary-btn" type="button" data-use-history-template-index="${index}" ${unavailable ? "disabled" : ""}>${unavailable ? unavailableLabel : appLanguage === "en" ? "Use this plan" : "使用该计划"}</button>
               </article>`;
           }).join("")
-          : `<p class="muted">${appLanguage === "en" ? "No previous plans" : "暂无历史计划"}</p>`;
+          : "";
         officialTemplateList.innerHTML = resistanceTemplates
           .filter((template) => template.goal === "hypertrophy")
           .map((template) => {
