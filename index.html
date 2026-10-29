@@ -7500,6 +7500,7 @@
             <div class="tabs plan-tabs" role="tablist" aria-label="计划内容切换" id="planTabs">
               <button class="tab" type="button" aria-selected="true" data-plan-tab="currentPlanPane">当前计划</button>
               <button class="tab" type="button" aria-selected="false" data-plan-tab="historyPlanPane">历史训练计划</button>
+              <button class="tab" type="button" aria-selected="false" data-plan-tab="planTemplatePane">计划模板</button>
             </div>
             <div class="plan-pane" id="currentPlanPane" data-plan-pane>
               <div class="plan-empty-state" id="planEmptyState">
@@ -7624,6 +7625,12 @@
             </div>
             <div class="plan-pane" id="historyPlanPane" data-plan-pane hidden>
               <div class="history-list" id="planHistoryList"></div>
+            </div>
+            <div class="plan-pane" id="planTemplatePane" data-plan-pane hidden>
+              <section class="plan-template-library" aria-labelledby="officialTemplateTabHeading">
+                <h4 id="officialTemplateTabHeading">官方训练计划模板</h4>
+                <div class="template-list" id="officialTemplateTabList"></div>
+              </section>
             </div>
           </section>
 
@@ -8940,6 +8947,7 @@
       const planTemplateLibrary = document.querySelector("#planTemplateLibrary");
       const historyTemplateList = document.querySelector("#historyTemplateList");
       const officialTemplateList = document.querySelector("#officialTemplateList");
+      const officialTemplateTabList = document.querySelector("#officialTemplateTabList");
       const planTemplateDialog = document.querySelector("#planTemplateDialog");
       const planTemplateFormHint = document.querySelector("#planTemplateFormHint");
       const setLogForm = document.querySelector("#setLogForm");
@@ -9025,6 +9033,7 @@
       let activeOfficialTemplateId = null;
       let activeOfficialTemplateWeekIndex = 0;
       let activeOfficialTemplateDayIndex = null;
+      let activeOfficialTemplateSourcePane = "planTemplatePane";
       let pendingOfficialTemplateId = null;
       let lastModuleId = "";
       let isEditingPlan = false;
@@ -12241,7 +12250,7 @@
         document.querySelector("#loadBar").style.setProperty("--w", `${Math.min(88, activePeriod.sets * 21)}%`);
         document.querySelector("#volumeHint").textContent = translateInterfaceText(`${activePeriod.focus} ${plan.risk.level === "unassessed" ? "建议在正式训练前完成风险评估。" : ""}`);
         updatePlanMode(profile, plan);
-        if (!planVisible) renderPlanTemplateLibrary();
+        renderPlanTemplateLibrary();
         renderHome();
       }
 
@@ -12493,7 +12502,7 @@
       }
 
       function renderPlanTemplateLibrary() {
-        if (!historyTemplateList || !officialTemplateList) return;
+        if (!historyTemplateList || !officialTemplateList || !officialTemplateTabList) return;
         const entries = getUniqueHistoryPlanTemplates();
         const hasHistory = entries.length > 0;
         document.querySelector("#planTemplateTitle").hidden = !hasHistory;
@@ -12517,7 +12526,7 @@
               </article>`;
           }).join("")
           : "";
-        officialTemplateList.innerHTML = resistanceTemplates
+        const officialTemplateCards = resistanceTemplates
           .filter((template) => template.goal === "hypertrophy")
           .map((template) => {
             return `
@@ -12527,6 +12536,8 @@
               <button class="secondary-btn" type="button" data-view-official-template="${template.id}">${appLanguage === "en" ? "View plan details" : "查看计划详情"}</button>
             </article>`;
           }).join("");
+        officialTemplateList.innerHTML = officialTemplateCards;
+        officialTemplateTabList.innerHTML = officialTemplateCards;
       }
 
       function renderResistanceTemplates() {
@@ -13959,13 +13970,17 @@
         if (!button || button.disabled) return;
         applyResistanceTemplate(button.dataset.useTemplate);
       });
-      officialTemplateList.addEventListener("click", (event) => {
-        const button = event.target.closest("[data-view-official-template]");
-        if (button) window.location.hash = `plan-template-detail?id=${encodeURIComponent(button.dataset.viewOfficialTemplate)}`;
+      [officialTemplateList, officialTemplateTabList].forEach((list) => {
+        list.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-view-official-template]");
+          if (!button) return;
+          activeOfficialTemplateSourcePane = list === officialTemplateTabList ? "planTemplatePane" : "currentPlanPane";
+          window.location.hash = `plan-template-detail?id=${encodeURIComponent(button.dataset.viewOfficialTemplate)}`;
+        });
       });
       officialTemplateDetail.addEventListener("click", (event) => {
         if (event.target.closest("[data-official-template-back]")) {
-          setPlanPane("currentPlanPane");
+          setPlanPane(activeOfficialTemplateSourcePane);
           window.location.hash = "plan";
           return;
         }

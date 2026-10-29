@@ -483,16 +483,18 @@ test("history templates keep only the latest plan for each distinct set of plan 
   assert.equal(context.mismatch(template, { experience: "intermediate", days: 4 }), "");
 });
 
-test("no-plan template library shows only official plans when history is empty", () => {
+test("official plans appear in both the empty state and the persistent template tab", () => {
   const start = source.indexOf("function renderPlanTemplateLibrary() {");
   const end = source.indexOf("function renderResistanceTemplates()", start);
   const title = { hidden: false };
   const historySection = { hidden: false };
   const historyList = { innerHTML: "" };
   const officialList = { innerHTML: "" };
+  const officialTabList = { innerHTML: "" };
   const library = { labelledBy: "", setAttribute(name, value) { this.labelledBy = value; } };
   const context = {
     appLanguage: "zh", historyTemplateList: historyList, officialTemplateList: officialList,
+    officialTemplateTabList: officialTabList,
     planTemplateLibrary: library,
     document: { querySelector: (selector) => selector === "#planTemplateTitle" ? title : historySection },
     getUniqueHistoryPlanTemplates: () => [], assessRisk: () => ({ level: "low" }),
@@ -509,6 +511,10 @@ test("no-plan template library shows only official plans when history is empty",
   assert.match(officialList.innerHTML, /增肌 · 每周 3 天/);
   assert.match(officialList.innerHTML, /查看计划详情/);
   assert.doesNotMatch(officialList.innerHTML, /使用该计划/);
+  assert.equal(officialTabList.innerHTML, officialList.innerHTML);
+  assert.match(source, /data-plan-tab="planTemplatePane">计划模板/);
+  assert.match(source, /id="planTemplatePane" data-plan-pane hidden>[\s\S]*?id="officialTemplateTabList"/);
+  assert.match(source, /renderPlanTemplateLibrary\(\);\s*renderHome\(\);/);
 });
 
 test("empty history tab remains available and shows a clear empty state", () => {
@@ -571,6 +577,34 @@ test("official template detail previews schedule before offering plan use", () =
   assert.match(detail.innerHTML, /Beginner or above/);
   assert.match(detail.innerHTML, /Use this plan/);
   assert.doesNotMatch(source, /id="planTemplateFormCancel"/);
+});
+
+test("official template detail returns to the tab that opened it", () => {
+  const start = source.indexOf("[officialTemplateList, officialTemplateTabList].forEach((list) => {");
+  const end = source.indexOf('document.querySelector("#planTemplateDialogContinue")', start);
+  const makeList = () => ({ onClick: null, addEventListener(_type, handler) { this.onClick = handler; } });
+  const currentList = makeList();
+  const templateList = makeList();
+  const detail = makeList();
+  const visited = [];
+  const context = {
+    officialTemplateList: currentList, officialTemplateTabList: templateList,
+    officialTemplateDetail: detail, activeOfficialTemplateSourcePane: "planTemplatePane",
+    window: { location: { hash: "" } },
+    setPlanPane: (pane) => visited.push(pane),
+    renderOfficialTemplateDetail() {}, requestOfficialTemplate() {}
+  };
+  vm.createContext(context);
+  vm.runInContext(source.slice(start, end), context);
+  const open = { dataset: { viewOfficialTemplate: "hypertrophy-4" } };
+  const back = {};
+  templateList.onClick({ target: { closest: (selector) => selector === "[data-view-official-template]" ? open : null } });
+  assert.equal(context.window.location.hash, "plan-template-detail?id=hypertrophy-4");
+  detail.onClick({ target: { closest: (selector) => selector === "[data-official-template-back]" ? back : null } });
+  assert.equal(visited.at(-1), "planTemplatePane");
+  currentList.onClick({ target: { closest: (selector) => selector === "[data-view-official-template]" ? open : null } });
+  detail.onClick({ target: { closest: (selector) => selector === "[data-official-template-back]" ? back : null } });
+  assert.equal(visited.at(-1), "currentPlanPane");
 });
 
 test("first official template use guides profile selection before confirmation and saving", () => {
