@@ -10605,9 +10605,11 @@
         const candidateIds = definition?.bonuses?.[plan.focusPurpose] || [];
         const usedIds = new Set(exercises.map((exercise) => exercise.exerciseId).filter(Boolean));
         const usedNames = new Set(exercises.map((exercise) => exercise.name));
-        const candidate = candidateIds
+        const candidates = candidateIds
           .map((id) => resistanceExercises.find((exercise) => exercise.id === id))
-          .find((exercise) => exercise && (!(plan.ruleVersion >= 3) || movementCandidateAllowed(exercise, plan)) && !usedIds.has(exercise.id) && !usedNames.has(exercise.nameZh));
+          .filter((exercise) => exercise && (!(plan.ruleVersion >= 3) || movementCandidateAllowed(exercise, plan)) && !usedIds.has(exercise.id) && !usedNames.has(exercise.nameZh));
+        const favorites = new Set(plan.selectionFavoriteIds || []);
+        const candidate = candidates.find((exercise) => favorites.has(exercise.id)) || candidates[0];
         if (!candidate) return null;
         const bonusSets = getFocusBonusSetCount(plan, period);
         return {
@@ -10870,33 +10872,94 @@
         const limit = { beginner: 0, intermediate: 1, advanced: 2 }[plan.experience];
         if (limit === undefined || !(exercise.level in levels) || levels[exercise.level] > limit) return false;
         // Existing level labels are only coarse indicators, not proof of mastery.
-        if (plan.experience === "beginner" && ["pullups", "chin-up", "bench-dips", "inverted-row", "barbell-bench-press", "barbell-incline-bench-press", "decline-barbell-bench-press", "close-grip-barbell-bench-press", "smith-machine-stiff-legged-deadlift"].includes(exercise.id)) return false;
         return true;
       }
 
-      function selectMovementDay(plan, dayIndex) {
+      function isMainMovementExercise(exercise) {
+        return exercise?.roles?.length
+          ? exercise.roles.includes("main")
+          : exercise?.mechanic === "复合动作";
+      }
+
+      function isAccessoryMovementExercise(exercise) {
+        return exercise?.roles?.length
+          ? exercise.roles.includes("accessory")
+          : exercise?.mechanic !== "复合动作";
+      }
+
+      function orderMovementWorkout(exercises) {
+        const groups = [[], []];
+        exercises.forEach((item) => {
+          const exercise = resistanceExercises.find((entry) => entry.id === item.exerciseId);
+          const group = isMainMovementExercise(exercise) ? 0 : 1;
+          const family = exercise?.movementFamily || "";
+          const direction = family.endsWith("_push") ? "push" : family.endsWith("_pull") ? "pull" : "";
+          groups[group].push({ item, direction });
+        });
+        return groups.flatMap((group) => {
+          const remaining = [...group];
+          const ordered = [];
+          let nextDirection = "";
+          while (remaining.length) {
+            const alternateIndex = nextDirection ? remaining.findIndex((entry) => entry.direction === nextDirection) : -1;
+            const [next] = remaining.splice(alternateIndex >= 0 ? alternateIndex : 0, 1);
+            ordered.push(next.item);
+            if (next.direction) nextDirection = next.direction === "push" ? "pull" : "push";
+          }
+          return ordered;
+        });
+      }
+
+      function selectMovementDay(plan, dayIndex, previousExercises = []) {
         const used = new Set();
+        const favorites = new Set(plan.selectionFavoriteIds || []);
+        const reservedBonusIds = new Set(previousExercises.filter((item) => item.isFocusBonus).map((item) => item.exerciseId));
+        const protectedIds = new Set(previousExercises.filter((item) => !item.isFocusBonus)
+          .map((item) => resistanceExercises.find((exercise) => exercise.id === item.exerciseId))
+          .filter(isMainMovementExercise).slice(0, 2).map((exercise) => exercise.id));
+        let rotations = 0;
         return movementDaySlots(plan, dayIndex).map(({ pattern, category }, slotIndex) => {
           const candidates = resistanceExercises.filter((exercise) => exercise.movementPatterns?.includes(pattern)
-            && (!category || exercise.category === category) && movementCandidateAllowed(exercise, plan) && !used.has(exercise.id));
+            && (!category || exercise.category === category) && movementCandidateAllowed(exercise, plan)
+            && !used.has(exercise.id) && !reservedBonusIds.has(exercise.id));
+          const previous = previousExercises
+            .filter((item) => !item.isFocusBonus)
+            .map((item) => resistanceExercises.find((exercise) => exercise.id === item.exerciseId))
+            .find((exercise) => exercise?.movementPatterns?.includes(pattern) && (!category || exercise.category === category));
           const preference = (exercise) => {
             const supported = plan.experience === "beginner" && ["固定器械", "绳索器械"].includes(exercise.equipment) ? 4 : 0;
             const compound = exercise.mechanic === "复合动作" ? 1 : 0;
             return supported + compound;
           };
-          candidates.sort((a, b) => preference(b) - preference(a) || a.id.localeCompare(b.id));
           if (!candidates.length) return null;
-          // Vary among equally ranked candidates across days, without random changes on rerender.
-          const best = candidates.filter((exercise) => preference(exercise) === preference(candidates[0]));
+          let pool = candidates;
+          let variationUnavailable = false;
+          const previousCandidate = previous && candidates.find((exercise) => exercise.id === previous.id);
+          if (previousCandidate) {
+            const rotatable = isAccessoryMovementExercise(previous) && !protectedIds.has(previous.id);
+            const alternatives = candidates.filter((exercise) => exercise.id !== previous.id && isAccessoryMovementExercise(exercise) && !protectedIds.has(exercise.id));
+            if (rotatable && rotations < 2 && alternatives.length) {
+              pool = alternatives;
+              rotations++;
+            } else {
+              pool = [previousCandidate];
+              variationUnavailable = rotatable && rotations < 2 && !alternatives.length;
+            }
+          }
+          pool.sort((a, b) => Number(favorites.has(b.id)) - Number(favorites.has(a.id))
+            || preference(b) - preference(a) || a.id.localeCompare(b.id));
+          const favoriteRank = favorites.has(pool[0].id);
+          const best = pool.filter((exercise) => favorites.has(exercise.id) === favoriteRank && preference(exercise) === preference(pool[0]));
           const candidate = best[(dayIndex + slotIndex) % best.length];
           used.add(candidate.id);
-          return candidate;
+          return variationUnavailable ? { ...candidate, variationUnavailable: true } : candidate;
         });
       }
 
       function generateMovementWorkout(dayIndex, plan, weekIndex = 0) {
         const period = plan.periodization?.[weekIndex] || plan.periodization?.[0] || { sets: plan.baseSetCount || 3, reps: plan.reps, rest: plan.rest };
-        const selected = selectMovementDay(plan, dayIndex);
+        const previousExercises = weekIndex > 0 ? plan.exerciseSnapshot?.[weekIndex - 1]?.[dayIndex] || [] : [];
+        const selected = selectMovementDay(plan, dayIndex, previousExercises);
         if (selected.some((exercise) => !exercise)) return [];
         const program = plan.split.map((_, index) => selectMovementDay(plan, index).filter(Boolean).map((exercise) => [exercise.nameZh, `${exercise.category} ${exercise.primaryMuscles?.join(" ") || ""}`]));
         const exercises = selected.map((exercise) => {
@@ -10905,9 +10968,10 @@
           const rest = plan.experience === "beginner" ? period.rest : auxiliary && plan.goal === "hypertrophy" ? "60-90 秒" : period.rest;
           return { name: exercise.nameZh, focus: `${exercise.category} · ${exercise.primaryMuscles?.[0] || exercise.category}`,
             cue: exercise.instructionsZh?.[0] || "保持动作稳定。", exerciseId: exercise.id,
-            prescription: `${sets} 组 × ${period.reps}`, rest };
+            prescription: `${sets} 组 × ${period.reps}`, rest,
+            ...(exercise.variationUnavailable ? { variationUnavailable: true } : {}) };
         });
-        return applyFocusEmphasis(exercises, dayIndex, program, plan, period);
+        return orderMovementWorkout(applyFocusEmphasis(exercises, dayIndex, program, plan, period));
       }
 
       function getLegacyTargetedPreparation(workout) {
@@ -11204,6 +11268,7 @@
           if (!replacement) return item;
           return {
             ...item,
+            variationUnavailable: false,
             name: replacement.nameZh,
             focus: `${replacement.category} · ${replacement.primaryMuscles[0] || replacement.category}`,
             cue: replacement.instructionsZh?.[0] || item.cue,
@@ -11243,6 +11308,7 @@
             if (!replacement) return unique;
             item = {
               ...item,
+              variationUnavailable: false,
               name: replacement.nameZh,
               focus: `${replacement.category} · ${replacement.primaryMuscles[0] || replacement.category}`,
               cue: replacement.instructionsZh?.[0] || item.cue,
@@ -11855,6 +11921,7 @@
                 <b>${displayName}</b>
                 ${secondaryName ? `<small>${secondaryName}</small>` : ""}
                 <span>${prescription}</span>
+                ${type === "训练" && item.variationUnavailable ? `<small>${appLanguage === "en" ? "No other suitable exercise for this movement pattern" : "该动作模式暂无其他合适动作"}</small>` : ""}
               </span>
             </button>
             ${actionControls}
@@ -12989,8 +13056,12 @@
         }
         const nextProfile = { ...getProfile(), planRuleVersion: 3, exerciseSnapshot: null };
         const nextPlan = buildPlan(nextProfile, templateId);
-        const snapshots = nextPlan.periodization.map((_, weekIndex) => nextPlan.split.map((__, dayIndex) =>
-          getWorkoutExercises(dayIndex, nextPlan, weekIndex)));
+        nextPlan.selectionFavoriteIds = typeof favoriteExerciseIds === "undefined" ? [] : [...favoriteExerciseIds];
+        const snapshots = [];
+        nextPlan.exerciseSnapshot = snapshots;
+        nextPlan.periodization.forEach((_, weekIndex) => {
+          snapshots.push(nextPlan.split.map((__, dayIndex) => getWorkoutExercises(dayIndex, nextPlan, weekIndex)));
+        });
         if (snapshots.some((week) => week.some((day) => day.length === 0))) {
           showPlanNotice("movementUnavailable");
           return false;

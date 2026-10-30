@@ -11,7 +11,7 @@ test("plan generator supports core inputs plus one optional focus area and goal"
   assert.match(source, /<option value="hypertrophy">增肌 · 增加肌肉量<\/option>/);
   assert.match(source, /<option value="endurance">肌耐力 · 提升肌肉抗疲劳能力<\/option>/);
   assert.match(source, /<option value="strength">力量 · 提高最大力量<\/option>/);
-  assert.match(source, /<option value="power">爆发力 · 提高快速发力能力<\/option>/);
+  assert.match(source, /<option value="power" disabled>爆发力 · 暂不可用/);
   assert.doesNotMatch(source, /<option value="health">/);
   assert.doesNotMatch(source, /<option value="fatloss">/);
   assert.match(source, /<select id="experience" required>/);
@@ -47,7 +47,7 @@ test("focus plan rules preserve movement patterns, prioritize compounds, and add
   assert.match(source, /const adjusted = exercises\.map\(\(exercise\) => \(\{ \.\.\.exercise \}\)\)/);
   assert.match(source, /adjusted\.unshift\(adjusted\.splice\(primaryIndex, 1\)\[0\]\)/);
   assert.match(source, /plan\.experience === "advanced" \? 4 : 3/);
-  assert.match(source, /return 2;/);
+  assert.match(source, /period\?\.title === "减载巩固周" \? 2/);
   assert.match(source, /isFocusBonus: true/);
   assert.match(source, /每周增加 2-4 个有效组/);
 });

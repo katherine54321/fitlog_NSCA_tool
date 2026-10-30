@@ -22,15 +22,43 @@ test('every supported goal, experience and frequency covers its movement slots w
       const slots=ctx.movementDaySlots(plan,day), items=ctx.getWorkoutExercises(day,plan,week);
       assert.equal(items.length,slots.length,`${goal}/${experience}/${days}/${day}`);
       assert.equal(new Set(items.map(x=>x.exerciseId)).size,items.length);
-      items.forEach((item,i)=>{
+      items.forEach((item)=>{
         const exercise=ctx.resistanceExercises.find(e=>e.id===item.exerciseId);
-        assert.ok(exercise?.movementPatterns.includes(slots[i].pattern),item.name);
+        assert.ok(slots.some(slot=>exercise?.movementPatterns.includes(slot.pattern) && (!slot.category || exercise.category===slot.category)),item.name);
         if(experience==='beginner') assert.equal(exercise.level,'初级',item.name);
       });
+      for(const slot of slots) assert.ok(items.some(item=>{const exercise=ctx.resistanceExercises.find(e=>e.id===item.exerciseId);return exercise?.movementPatterns.includes(slot.pattern)&&(!slot.category||exercise.category===slot.category)}),slot.pattern);
     }
     count++;
   }
   assert.equal(count,36);
+});
+
+test('beginner selection uses level and equipment preference without a fixed exclusion list',()=>{
+  const novice={experience:'beginner'};
+  for(const id of ['pullups','chin-up','bench-dips','inverted-row','barbell-bench-press','barbell-incline-bench-press','decline-barbell-bench-press','close-grip-barbell-bench-press','smith-machine-stiff-legged-deadlift']) {
+    const exercise=ctx.resistanceExercises.find(item=>item.id===id);
+    assert.ok(exercise,id);assert.equal(ctx.movementCandidateAllowed(exercise,novice),exercise.level==='初级',id);
+  }
+  assert.equal(ctx.movementCandidateAllowed({level:'中级'},novice),false);
+});
+
+test('new workout ordering keeps compound exercises first and alternates available push and pull within each group',()=>{
+  const original=ctx.resistanceExercises;
+  ctx.resistanceExercises=[
+    {id:'push-a',mechanic:'复合动作',movementFamily:'upper_push'},
+    {id:'push-b',mechanic:'复合动作',movementFamily:'lower_push'},
+    {id:'pull-a',mechanic:'复合动作',movementFamily:'upper_pull'},
+    {id:'aux-push',mechanic:'孤立动作',movementFamily:'upper_push'},
+    {id:'aux-pull',mechanic:'孤立动作',movementFamily:'upper_pull'},
+    {id:'core',mechanic:'孤立动作',movementFamily:'core'},
+    {id:'face-pull',mechanic:'复合动作',movementFamily:'upper_pull',roles:['accessory']}
+  ];
+  try {
+    const input=['push-a','aux-push','push-b','pull-a','core','aux-pull','face-pull'].map(exerciseId=>({exerciseId}));
+    assert.deepEqual(Array.from(ctx.orderMovementWorkout(input),x=>x.exerciseId),['push-a','pull-a','push-b','aux-push','aux-pull','core','face-pull']);
+    assert.deepEqual(input.map(x=>x.exerciseId),['push-a','aux-push','push-b','pull-a','core','aux-pull','face-pull']);
+  } finally {ctx.resistanceExercises=original;}
 });
 
 test('focus does not remove required movements and respects beginner eligibility',()=>{
@@ -63,6 +91,72 @@ test('saved movement snapshots are stable even when the library changes',()=>{
   const backup=ctx.resistanceExercises; ctx.resistanceExercises=[];
   try { assert.deepEqual(JSON.parse(JSON.stringify(ctx.getWorkoutExercises(0,plan,0))),JSON.parse(JSON.stringify(original))); }
   finally {ctx.resistanceExercises=backup;}
+});
+
+test('four-week snapshots retain two main exercises and rotate one or two eligible accessories',()=>{
+  for(const experience of ['beginner','intermediate','advanced']) {
+    const days=experience==='advanced'?4:3;
+    const plan=ctx.buildPlan({goal:'hypertrophy',experience,days,planRuleVersion:3,focusArea:'',focusPurpose:''},null);
+    plan.selectionFavoriteIds=[];plan.exerciseSnapshot=[];
+    for(let week=0;week<4;week++) plan.exerciseSnapshot.push(plan.split.map((_,day)=>ctx.getWorkoutExercises(day,plan,week)));
+    for(let week=1;week<4;week++) for(let day=0;day<days;day++) {
+      const previous=plan.exerciseSnapshot[week-1][day], current=plan.exerciseSnapshot[week][day];
+      const prevIds=new Set(previous.map(item=>item.exerciseId));
+      const nowIds=new Set(current.map(item=>item.exerciseId));
+      const removed=previous.filter(item=>!nowIds.has(item.exerciseId));
+      const added=current.filter(item=>!prevIds.has(item.exerciseId));
+      assert.equal(removed.length,added.length,`${experience} week ${week} day ${day}`);
+      assert.ok(removed.length<=2,`${experience} week ${week} day ${day}`);
+      const main=previous.filter(item=>ctx.isMainMovementExercise(ctx.resistanceExercises.find(e=>e.id===item.exerciseId))).slice(0,2);
+      for(const item of main) assert.ok(nowIds.has(item.exerciseId),item.name);
+      for(const item of removed) assert.ok(ctx.isAccessoryMovementExercise(ctx.resistanceExercises.find(e=>e.id===item.exerciseId)),item.name);
+      for(const item of added) assert.ok(ctx.isAccessoryMovementExercise(ctx.resistanceExercises.find(e=>e.id===item.exerciseId)),item.name);
+      assert.equal(nowIds.size,current.length);
+    }
+    for(let day=0;day<days;day++) assert.notDeepEqual(Array.from(plan.exerciseSnapshot[0][day],x=>x.exerciseId),Array.from(plan.exerciseSnapshot[1][day],x=>x.exerciseId));
+  }
+});
+
+test('favorites are preferred only after pattern and beginner level checks; snapshots do not change',()=>{
+  const profile={goal:'hypertrophy',experience:'beginner',days:3,planRuleVersion:3,focusArea:'',focusPurpose:''};
+  const plan=ctx.buildPlan(profile,null);
+  plan.selectionFavoriteIds=['barbell-bench-press','power-clean'];plan.exerciseSnapshot=[];
+  plan.exerciseSnapshot.push(plan.split.map((_,day)=>ctx.getWorkoutExercises(day,plan,0)));
+  const first=plan.exerciseSnapshot[0][0];
+  assert.ok(first.some(item=>item.exerciseId==='barbell-bench-press'));
+  assert.ok(first.every(item=>item.exerciseId!=='power-clean'));
+  const saved=JSON.stringify(first);
+  plan.selectionFavoriteIds=[];
+  assert.equal(JSON.stringify(ctx.getWorkoutExercises(0,plan,0)),saved);
+});
+
+test('focus bonus remains stable while weekly rotations preserve required patterns',()=>{
+  for(const focusArea of Object.keys(ctx.focusAreaLabels)) for(const focusPurpose of Object.keys(ctx.focusPurposeLabels)) {
+    const plan=ctx.buildPlan({goal:'hypertrophy',experience:'beginner',days:3,planRuleVersion:3,focusArea,focusPurpose},null);
+    plan.exerciseSnapshot=[];
+    for(let week=0;week<4;week++) plan.exerciseSnapshot.push(plan.split.map((_,day)=>ctx.getWorkoutExercises(day,plan,week)));
+    for(let week=1;week<4;week++) for(let day=0;day<3;day++) {
+      const previous=plan.exerciseSnapshot[week-1][day], current=plan.exerciseSnapshot[week][day];
+      const ids=new Set(current.map(item=>item.exerciseId));
+      assert.equal(ids.size,current.length,`${focusArea}/${focusPurpose}/${week}/${day}`);
+      assert.ok(previous.filter(item=>!ids.has(item.exerciseId)).length<=2,`${focusArea}/${focusPurpose}/${week}/${day}`);
+      for(const bonus of previous.filter(item=>item.isFocusBonus)) assert.ok(ids.has(bonus.exerciseId),`${focusArea}/${focusPurpose}/${week}/${day}`);
+      for(const slot of ctx.movementDaySlots(plan,day)) assert.ok(current.some(item=>{const e=ctx.resistanceExercises.find(x=>x.id===item.exerciseId);return e?.movementPatterns.includes(slot.pattern)&&(!slot.category||e.category===slot.category)}));
+    }
+  }
+});
+
+test('rotation preserves an exercise and records when its movement pattern has no alternative',()=>{
+  const plan=ctx.buildPlan({goal:'hypertrophy',experience:'advanced',days:3,planRuleVersion:3,focusArea:'',focusPurpose:''},null);
+  plan.exerciseSnapshot=[];plan.exerciseSnapshot.push(plan.split.map((_,day)=>ctx.getWorkoutExercises(day,plan,0)));
+  const initial=plan.exerciseSnapshot[0][0];
+  const target=initial.find(item=>ctx.resistanceExercises.find(e=>e.id===item.exerciseId)?.movementPatterns.includes('shoulder_horizontal_adduction'));
+  const saved=ctx.resistanceExercises;
+  ctx.resistanceExercises=saved.filter(item=>!item.movementPatterns.includes('shoulder_horizontal_adduction') || item.id===target.exerciseId);
+  try {
+    const next=ctx.getWorkoutExercises(0,plan,1);
+    assert.equal(next.find(item=>item.exerciseId===target.exerciseId)?.variationUnavailable,true);
+  } finally {ctx.resistanceExercises=saved;}
 });
 
 test('new plans fail closed for unavailable power work or unresolved injury restrictions',()=>{
