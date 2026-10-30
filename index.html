@@ -11634,8 +11634,16 @@
         observeLibraryImages();
       }
 
+      function canReplaceWorkoutExercise() {
+        if (!activeWorkoutDay) return false;
+        if (!completedPlanDays.includes(activeWorkoutDay.id)) return true;
+        window.alert(appLanguage === "en" ? "This workout is complete. Exercises cannot be replaced." : "该训练已完成，不支持替换动作。");
+        return false;
+      }
+
       function openWorkoutExerciseReplacement(exerciseIndex) {
         if (!activeWorkoutDay || !Number.isInteger(exerciseIndex) || !activeWorkoutDay.exercises[exerciseIndex]) return;
+        if (!canReplaceWorkoutExercise()) return;
         const currentExercise = libraryExerciseForWorkout(activeWorkoutDay.exercises[exerciseIndex], "训练");
         exerciseReplacementContext = {
           planDayId: activeWorkoutDay.id,
@@ -11651,6 +11659,7 @@
 
       function chooseWorkoutReplacement(exerciseId) {
         if (!exerciseReplacementContext || !activeWorkoutDay) return;
+        if (!canReplaceWorkoutExercise()) return;
         const replacement = resistanceExercises.find((exercise) => exercise.id === exerciseId);
         if (!replacement || replacement.category !== exerciseReplacementContext.category) return;
         pendingReplacementExerciseId = exerciseId;
@@ -11667,6 +11676,7 @@
 
       function replaceWorkoutExercise(exerciseId, scope = "once") {
         if (!exerciseReplacementContext || !activeWorkoutDay) return;
+        if (!canReplaceWorkoutExercise()) return;
         const replacement = resistanceExercises.find((exercise) => exercise.id === exerciseId);
         if (!replacement || replacement.category !== exerciseReplacementContext.category) return;
         const { planDayId, exerciseIndex, weekIndex, dayIndex, currentExerciseId } = exerciseReplacementContext;

@@ -21,6 +21,7 @@ test("replacement scopes change future unrecorded workouts while preserving comp
       activeWorkoutDay: workouts[0], resistanceExercises: [{ id: 'new', category: '胸部' }],
       libraryExerciseForWorkout: item => ({ id: item.exerciseId }), planExerciseReplacements: {},
       completedPlanDays: ['day2'], trainingSetLogs: [], hasRecordedPlanExerciseData: () => false,
+      canReplaceWorkoutExercise: () => true,
       getWorkoutDay: (week, day) => workouts[week * 2 + day],
       localStorage: { setItem: (k, v) => { saved[k] = v; } },
       savePlanExerciseReplacements: () => {}, renderWorkoutDetail: () => {},
@@ -34,6 +35,24 @@ test("replacement scopes change future unrecorded workouts while preserving comp
     assert.equal(Boolean(sandbox.planExerciseReplacements.day3), scope === 'future');
     assert.deepEqual(saved, {});
   }
+});
+
+test('completed workouts show a message before opening the replacement screen', () => {
+  const start = source.indexOf('function canReplaceWorkoutExercise()');
+  const end = source.indexOf('function replaceWorkoutExercise(exerciseId, scope', start);
+  assert.ok(start >= 0 && end > start);
+  let alertMessage = '';
+  const sandbox = {
+    activeWorkoutDay: { id: 'day1', exercises: [{ exerciseId: 'old' }] },
+    completedPlanDays: ['day1'], exerciseReplacementContext: null, appLanguage: 'zh',
+    window: { alert: message => { alertMessage = message; }, location: {} },
+    libraryExerciseForWorkout: () => { throw new Error('completed workout must not open replacement'); }
+  };
+  vm.createContext(sandbox);
+  vm.runInContext(`${source.slice(start, end)}; openWorkoutExerciseReplacement(0);`, sandbox);
+  assert.equal(alertMessage, '该训练已完成，不支持替换动作。');
+  assert.equal(sandbox.exerciseReplacementContext, null);
+  assert.equal(sandbox.window.location.hash, undefined);
 });
 
 const planLogHelperStart = source.indexOf("function hasRecordedPlanExerciseData(planLog)");
