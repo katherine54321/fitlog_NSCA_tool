@@ -13,6 +13,42 @@ vm.createContext(ctx);
 vm.runInContext([fragment('function getGoalPrescription(', 'function parseLocalDate('),
   fragment('const focusAreaDefinitions = {','function getLegacyTargetedPreparation(')].join('\n'),ctx);
 
+test('v9 plans use risk-adjusted floors and cap weekly major-muscle sets',()=>{
+  for(const goal of ['hypertrophy','strength','endurance']) for(const experience of ['beginner','intermediate','advanced']) for(let days=2;days<=6;days++) {
+    if(experience==='beginner' && days>3) continue;
+    for(const risk of ['low','moderate']) for(const focusArea of ['', 'glutes']) {
+      const plan=ctx.buildPlan({goal,experience,days,planRuleVersion:9,focusArea,focusPurpose:focusArea?'hypertrophy':''},null);
+      plan.risk={level:risk}; plan.exerciseSnapshot=[];
+      const targets=plan.periodization.map((_,week)=>ctx.getWeeklyMuscleTarget(plan,week));
+      assert.ok(targets[0] <= targets[1] && targets[1] <= targets[2] && targets[3] < targets[2]);
+      for(let week=0;week<4;week++) {
+        const generated=plan.split.map((_,day)=>ctx.getWorkoutExercises(day,plan,week));
+        assert.ok(generated.every(day=>day.length));
+        const allocated=ctx.allocateWeeklyMuscleVolume(plan,week,generated);
+        const audit=ctx.auditWeeklyMuscleVolume(plan,week,allocated);
+        assert.equal(audit.minimum,risk==='moderate'?4:6);
+        assert.deepEqual(Array.from(audit.belowMinimum),[],`${goal}/${experience}/${days}/${risk}/${focusArea}/${week}: ${JSON.stringify(audit)}`);
+        assert.ok(Object.values(audit.counts).every(count=>count<=20),JSON.stringify(audit));
+        plan.exerciseSnapshot.push(allocated);
+      }
+    }
+  }
+});
+
+test('v9 weekly cap also reduces initial exercises that count for multiple groups',()=>{
+  const original=ctx.resistanceExercises;
+  const items=Array.from({length:8},(_,i)=>({id:`fixture-${i}`,nameZh:`fixture ${i}`,libraryType:'resistance',category:'臀部',primaryMuscles:['臀肌','股四头肌'],movementPatterns:['hip_hinge'],level:'初级',mechanic:'复合动作',roles:['main']}));
+  ctx.resistanceExercises=items;
+  try {
+    const plan={ruleVersion:9,days:4,experience:'intermediate',goal:'hypertrophy',risk:{level:'low'},periodization:[{reps:'8-12 次',rest:'90 秒'}],focusArea:'',selectionFavoriteIds:[]};
+    const days=Array.from({length:4},(_,day)=>items.slice(day*2,day*2+2).map(x=>({exerciseId:x.id,name:x.nameZh,prescription:'3 组 × 8-12 次'})));
+    const result=ctx.allocateWeeklyMuscleVolume(plan,0,days);
+    const counts=ctx.auditWeeklyMuscleVolume(plan,0,result).counts;
+    assert.equal(counts['臀部'],20);assert.equal(counts['腿部'],20);
+    assert.ok(result.flat().every(x=>x.sets>=1));
+  } finally {ctx.resistanceExercises=original;}
+});
+
 test('two-day and beginner plans cover large muscle groups with bounded full-body sessions',()=>{
   for(const goal of ['hypertrophy','strength','endurance']) for(const experience of ['beginner','intermediate','advanced']) for(const days of [2,3]) {
     if(days===3 && experience!=='beginner') continue;

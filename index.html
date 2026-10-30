@@ -11010,6 +11010,13 @@
       // Product volume targets; these are planning estimates, not measured effective sets.
       function getWeeklyMuscleTarget(plan, weekIndex) {
         if (Array.isArray(plan.weeklyVolumeTargets) && Number.isFinite(plan.weeklyVolumeTargets[weekIndex])) return plan.weeklyVolumeTargets[weekIndex];
+        if (plan.ruleVersion >= 9) {
+          const experienceAdjustment = plan.experience === "beginner" ? -2 : plan.experience === "advanced" ? 2 : 0;
+          const goalAdjustment = plan.goal === "hypertrophy" ? 1 : plan.goal === "endurance" ? -1 : 0;
+          const phaseAdjustment = [-1, 0, 1, -2][weekIndex] ?? 0;
+          const riskAdjustment = plan.risk.level === "moderate" ? -2 : 0;
+          return Math.min(20, Math.max(getWeeklyLargeMuscleFloor(plan), 10 + experienceAdjustment + goalAdjustment + phaseAdjustment + riskAdjustment));
+        }
         if (plan.ruleVersion >= 8 && (plan.days === 2 || plan.experience === "beginner")) return plan.risk.level === "moderate" ? 4 : 6;
         // User-selected planning baseline, not a validated physiological minimum.
         if (plan.ruleVersion === 7 && plan.goal === "hypertrophy" && plan.days === 3) {
@@ -11047,6 +11054,7 @@
       }
 
       function getWeeklyLargeMuscleFloor(plan) {
+        if (plan.ruleVersion >= 9) return plan.risk.level === "moderate" ? 4 : 6;
         const fullBody = plan.days === 2 || plan.experience === "beginner";
         return fullBody ? (plan.risk.level === "moderate" ? 4 : 6) : (plan.risk.level === "moderate" ? 2 : 4);
       }
@@ -11063,7 +11071,7 @@
           : plan.risk.level === "moderate" ? [14, 16, 18, 12]
           : plan.experience === "beginner" ? [16, 17, 18, 14]
           : plan.experience === "advanced" ? [20, 22, 24, 16] : [18, 21, 24, 16];
-        const dayLimit = dayCaps[weekIndex];
+        const dayLimit = plan.ruleVersion >= 9 ? Infinity : dayCaps[weekIndex];
         const exerciseLimit = plan.experience === "beginner" ? 3 : plan.goal === "endurance" ? 3 : 6;
         const period = plan.periodization[weekIndex];
         const catalog = new Map(resistanceExercises.map((exercise) => [exercise.id, exercise]));
@@ -11109,6 +11117,17 @@
           (useLargeGroups ? groupedDailyCounts() : dailyCounts()).forEach((day) => day.forEach((n, m) => counts.set(m, (counts.get(m) || 0) + n)));
           return counts;
         };
+        // Limit initial allocations before adding sets, including actions that count for two groups.
+        if (plan.ruleVersion >= 9) {
+          for (let guard = 0; guard < 400; guard++) {
+            const weekly = weeklyCounts();
+            const over = [...weekly].find(([, count]) => count > 20)?.[0];
+            if (!over) break;
+            const item = working.flat().reverse().find((entry) => entry.sets > 1 && targetMuscles(entry).includes(over));
+            if (!item) break;
+            item.sets--;
+          }
+        }
         const focusMuscles = new Set(useLargeGroups ? getLargeMuscleGroups(getFocusTargetMuscles(plan.focusArea)) : getFocusTargetMuscles(plan.focusArea));
         const desired = new Set(useLargeGroups ? ["胸部", "背部", "臀部", "腿部"] : [...getPlanTargetMuscles(), ...working.flat().flatMap(muscles)]);
         const dayCanUse = (dayIndex, exercise) => {
@@ -11139,6 +11158,7 @@
               if (total >= dayLimit || (targetDaily[dayIndex].get(muscle) || 0) >= muscleLimit) return;
               items.forEach((item) => {
                 if (item.sets >= exerciseLimit || !targetMuscles(item).includes(muscle)) return;
+                if (plan.ruleVersion >= 9 && targetMuscles(item).some((m) => (weekly.get(m) || 0) + 1 > 20)) return;
                 if (muscles(item).some((m) => (daily[dayIndex].get(m) || 0) >= muscleLimit)) return;
                 if (useLargeGroups ? targetMuscles(item).some((m) => (targetDaily[dayIndex].get(m) || 0) >= muscleLimit)
                   : muscles(item).some((m) => (weekly.get(m) || 0) >= target)) return;
@@ -11149,6 +11169,7 @@
                 const candidates = resistanceExercises.filter((exercise) => !used.has(exercise.id) && (useLargeGroups ? getLargeMuscleGroups(exercise.primaryMuscles).includes(muscle) : exercise.primaryMuscles?.includes(muscle))
                   && movementCandidateAllowed(exercise, plan) && isAccessoryMovementExercise(exercise) && dayCanUse(dayIndex, exercise)
                   && exercise.primaryMuscles.every((m) => (daily[dayIndex].get(m) || 0) + initialSets <= muscleLimit && (useLargeGroups || (weekly.get(m) || 0) + initialSets <= target))
+                  && (plan.ruleVersion < 9 || getLargeMuscleGroups(exercise.primaryMuscles).every((m) => (weekly.get(m) || 0) + initialSets <= 20))
                   && (!useLargeGroups || getLargeMuscleGroups(exercise.primaryMuscles).every((m) => (targetDaily[dayIndex].get(m) || 0) + initialSets <= muscleLimit)));
                 candidates.sort((a, b) => Number(favorites.has(b.id)) - Number(favorites.has(a.id)) || a.id.localeCompare(b.id));
                 if (total + initialSets <= dayLimit && candidates[0]) options.push({ dayIndex, exercise: candidates[0], total });
@@ -13255,8 +13276,6 @@
           ? (appLanguage === "en" ? "Power plans are not yet available" : "暂无法生成爆发力计划")
           : kind === "movementUnavailable"
           ? (appLanguage === "en" ? "No suitable exercise found" : "暂无法生成完整计划")
-          : kind === "volumeUnavailable"
-          ? (appLanguage === "en" ? "Unable to complete the plan" : "暂无法满足训练安排")
           : kind === "unresolvedLimit"
           ? (appLanguage === "en" ? "Review your exercise restrictions" : "请先确认运动限制")
           : kind === "same"
@@ -13267,7 +13286,7 @@
               ? (appLanguage === "en" ? "NSCA safety and progression conflict" : "NSCA 安全与进阶冲突警告")
               : (appLanguage === "en" ? "Select your training experience" : "请选择训练经验");
         const body = document.querySelector("#planNoticeBody");
-        body.hidden = !conflict && !["highRisk", "powerUnavailable", "movementUnavailable", "volumeUnavailable", "unresolvedLimit", "riskConfirmation"].includes(kind);
+        body.hidden = !conflict && !["highRisk", "powerUnavailable", "movementUnavailable", "unresolvedLimit", "riskConfirmation"].includes(kind);
         body.textContent = kind === "highRisk"
           ? (appLanguage === "en" ? "Please consult a doctor for exercise advice. After receiving medical clearance, begin with low-intensity activity as advised. FitMine will not generate a training plan at this time." : "建议咨询医生获取运动建议，获得医学许可后遵照医生建议进行低强度活动。暂不生成训练计划。")
           : riskConfirmation
@@ -13276,8 +13295,6 @@
           ? (appLanguage === "en" ? "Suitable power exercises and their training conditions are still being reviewed. Please choose another goal for now." : "适合爆发力训练的动作及训练条件尚在审核中，请暂时选择其他目标。")
           : kind === "movementUnavailable"
           ? (appLanguage === "en" ? "The exercise library does not currently contain a suitable candidate for every required movement pattern. Please adjust the plan options." : "动作库暂时无法为每个所需动作模式匹配相应动作，请调整计划选项。")
-          : kind === "volumeUnavailable"
-          ? (appLanguage === "en" ? "The available exercises and session limits cannot provide the planned minimum for all major muscle groups. Please adjust the plan options." : "在当前动作候选和单次训练上限内，无法为所有主要肌群安排最低计划组数，请调整计划选项。")
           : kind === "unresolvedLimit"
           ? (appLanguage === "en" ? "Your answers mention a recent injury, pain or exercise restriction. FitMine cannot determine which exercises are appropriate; seek advice from a qualified professional before creating a plan." : "你的信息包含近期伤痛或运动限制，FitMine 暂时无法判断哪些动作适合你。请先向合格专业人士咨询后再制定计划。")
           : beginnerDays
@@ -13325,7 +13342,7 @@
           showPlanNotice("riskConfirmation");
           return false;
         }
-        const nextProfile = { ...getProfile(), planRuleVersion: 8, exerciseSnapshot: null, weeklyVolumeTargets: null };
+        const nextProfile = { ...getProfile(), planRuleVersion: 9, exerciseSnapshot: null, weeklyVolumeTargets: null };
         const nextPlan = buildPlan(nextProfile, templateId);
         nextProfile.weeklyVolumeTargets = nextPlan.periodization.map((_, weekIndex) => getWeeklyMuscleTarget(nextPlan, weekIndex));
         nextPlan.selectionFavoriteIds = typeof favoriteExerciseIds === "undefined" ? [] : [...favoriteExerciseIds];
@@ -13337,10 +13354,6 @@
         });
         if (snapshots.some((week) => week.some((day) => day.length === 0))) {
           showPlanNotice("movementUnavailable");
-          return false;
-        }
-        if (snapshots.some((week, index) => auditWeeklyMuscleVolume(nextPlan, index, week).belowMinimum.length)) {
-          showPlanNotice("volumeUnavailable");
           return false;
         }
         nextProfile.exerciseSnapshot = snapshots;
@@ -14819,7 +14832,7 @@
           renderHome();
           setPlanPane("currentPlanPane");
           window.location.hash = "plan";
-        } else if (kind === "highRisk" || kind === "powerUnavailable" || kind === "movementUnavailable" || kind === "volumeUnavailable" || kind === "unresolvedLimit") {
+        } else if (kind === "highRisk" || kind === "powerUnavailable" || kind === "movementUnavailable" || kind === "unresolvedLimit") {
           return;
         } else if (kind === "same") {
           isEditingPlan = false;

@@ -462,7 +462,7 @@ test("using a historical plan starts a new cycle with its saved plan settings", 
     getWorkoutExercises: () => [{ name: "exercise" }],
     allocateWeeklyMuscleVolume: (_plan, _week, items) => items,
     getWeeklyMuscleTarget: () => 10,
-    auditWeeklyMuscleVolume: () => ({ minimum: 4, counts: { 胸部: 4 }, belowMinimum: [] }),
+    auditWeeklyMuscleVolume: () => ({ minimum: 6, counts: { 胸部: 4 }, belowMinimum: ['胸部'] }),
     getRiskAnswers: () => ({}), renderPlanHistory() {}, renderResistanceTemplates() {},
     renderPlan() {}, setPlanPane() {}, today: "2026-10-28", activePlanWeekIndex: 2,
     TRAINING_DAY_PREFERENCES_KEY: "preferences", PLAN_ADJUSTMENTS_KEY: "adjustments",
@@ -474,7 +474,7 @@ test("using a historical plan starts a new cycle with its saved plan settings", 
   assert.equal(archived, 1);
   assert.equal(stored.get("fitlog-plan-start-date"), "2026-10-28");
   assert.equal(stored.get("fitlog-plan-template"), "hypertrophy-3");
-  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), { ...entry.profile, planRuleVersion: 8, exerciseSnapshot: [[[{ name: "exercise" }]]], weeklyVolumeTargets: [10], weeklyVolumeAudit: [{ minimum: 4, counts: { 胸部: 4 }, belowMinimum: [] }] });
+  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), { ...entry.profile, planRuleVersion: 9, exerciseSnapshot: [[[{ name: "exercise" }]]], weeklyVolumeTargets: [10], weeklyVolumeAudit: [{ minimum: 6, counts: { 胸部: 4 }, belowMinimum: ['胸部'] }] });
   assert.equal(context.activePlanWeekIndex, 0);
 });
 
