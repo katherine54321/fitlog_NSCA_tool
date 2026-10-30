@@ -458,10 +458,11 @@ test("using a historical plan starts a new cycle with its saved plan settings", 
       days: Number(fields.get("#trainingDays").value), focusArea: fields.get("#focusArea").value,
       focusPurpose: fields.get("#focusPurpose").value }),
     getPlanSelectionConflict: () => "",
-    buildPlan: () => ({ periodization: [{}], split: [["Day", ""]] }),
+    buildPlan: () => ({ goal: "hypertrophy", days: 3, ruleVersion: 8, periodization: [{}], split: [["Day", ""]] }),
     getWorkoutExercises: () => [{ name: "exercise" }],
     allocateWeeklyMuscleVolume: (_plan, _week, items) => items,
     getWeeklyMuscleTarget: () => 10,
+    auditWeeklyMuscleVolume: () => ({ minimum: 4, counts: { 胸部: 4 }, belowMinimum: [] }),
     getRiskAnswers: () => ({}), renderPlanHistory() {}, renderResistanceTemplates() {},
     renderPlan() {}, setPlanPane() {}, today: "2026-10-28", activePlanWeekIndex: 2,
     TRAINING_DAY_PREFERENCES_KEY: "preferences", PLAN_ADJUSTMENTS_KEY: "adjustments",
@@ -473,7 +474,7 @@ test("using a historical plan starts a new cycle with its saved plan settings", 
   assert.equal(archived, 1);
   assert.equal(stored.get("fitlog-plan-start-date"), "2026-10-28");
   assert.equal(stored.get("fitlog-plan-template"), "hypertrophy-3");
-  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), { ...entry.profile, planRuleVersion: 6, exerciseSnapshot: [[[{ name: "exercise" }]]], weeklyVolumeTargets: [10] });
+  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), { ...entry.profile, planRuleVersion: 8, exerciseSnapshot: [[[{ name: "exercise" }]]], weeklyVolumeTargets: [10], weeklyVolumeAudit: [{ minimum: 4, counts: { 胸部: 4 }, belowMinimum: [] }] });
   assert.equal(context.activePlanWeekIndex, 0);
 });
 
@@ -496,10 +497,11 @@ test("saving an unchanged edited plan keeps its cycle and only changed options c
     },
     getProfile: () => current, getPlanRisk: () => ({ level: "low" }), getRiskAnswers: () => ({}), hasGeneratedPlan: () => true,
     getPlanSelectionConflict: () => "",
-    buildPlan: () => ({ periodization: [{}], split: [["Day", ""]] }),
+    buildPlan: () => ({ ruleVersion: 8, periodization: [{}], split: [["Day", ""]] }),
     getWorkoutExercises: () => [{ name: "exercise" }], isPlanCycleExpired: () => expired,
     allocateWeeklyMuscleVolume: (_plan, _week, items) => items,
     getWeeklyMuscleTarget: () => 10,
+    auditWeeklyMuscleVolume: () => ({ minimum: 4, counts: { 胸部: 4 }, belowMinimum: [] }),
     archiveCurrentPlan: () => { archives++; }, renderPlanHistory() {}, renderResistanceTemplates() {},
     isEditingPlan: true, today: "2026-10-28",
     TRAINING_DAY_PREFERENCES_KEY: "preferences", PLAN_ADJUSTMENTS_KEY: "adjustments"
@@ -1035,6 +1037,20 @@ test("beginner schedule keeps a rest day after deferrals and rejects adjacent re
   context.scheduleSelectionHint = { textContent: "" };
   context.appLanguage = "zh";
   vm.runInContext(`${source.slice(saveStart, saveEnd)}\nthis.saveDays = saveTrainingDayPreferences;`, context);
+  context.saveDays();
+  assert.equal(preferenceWrites, 0);
+  assert.match(context.scheduleSelectionHint.textContent, /至少间隔一天/);
+  const twoDayProfile = { goal: 'strength', experience: 'intermediate', days: 2 };
+  const twoDayPlan = { days: 2, ruleVersion: 8, split: [['A'], ['B']] };
+  values.delete('fitlog-plan-adjustments');
+  const base = context.schedule(twoDayProfile, twoDayPlan);
+  values.set('fitlog-plan-adjustments', JSON.stringify({ planKey: context.key(twoDayProfile, twoDayPlan), overrides: { [base[0].id]: { deferTo: base[1].date } }, pauses: [] }));
+  const deferred = context.schedule(twoDayProfile, twoDayPlan);
+  assert.equal(deferred[0].date, base[1].date);
+  assert.equal(deferred[1].date, context.addDays(deferred[0].date, 2));
+  context.scheduleDraftContext = { profile: twoDayProfile, plan: twoDayPlan, startDate: '2026-10-26', weekIndex: 0 };
+  context.scheduleDraftWeekdays = new Set([1, 2]);
+  context.scheduleSelectionHint.textContent = '';
   context.saveDays();
   assert.equal(preferenceWrites, 0);
   assert.match(context.scheduleSelectionHint.textContent, /至少间隔一天/);

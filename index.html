@@ -10432,7 +10432,7 @@
           const shiftedDate = addDays(baseDate, shift + (override.deferDays || 0));
           const requestedDate = override.deferTo && override.deferTo > shiftedDate ? override.deferTo : shiftedDate;
           const muscleRecovery = plan.ruleVersion >= 3 && profile.experience === "beginner";
-          const recoveryDays = !muscleRecovery && profile.experience === "beginner" && plan.days <= 3 ? 2 : 1;
+          const recoveryDays = ((!muscleRecovery && profile.experience === "beginner" && plan.days <= 3) || (plan.ruleVersion >= 8 && plan.days === 2)) ? 2 : 1;
           const earliestDate = lastScheduledDate ? addDays(lastScheduledDate, recoveryDays) : "";
           let date = earliestDate && requestedDate < earliestDate ? earliestDate : requestedDate;
           const skipped = changes.overrides[id]?.status === "skipped";
@@ -10653,7 +10653,8 @@
         const primaryIndex = adjusted.findIndex((exercise) => focusExerciseMatches(exercise, plan.focusArea, true));
         if (primaryIndex > 0) adjusted.unshift(adjusted.splice(primaryIndex, 1)[0]);
         if (dayIndex !== getFocusEmphasisDayIndex(program, plan.focusArea)) return adjusted;
-        const bonusExercise = makeFocusBonusExercise(plan, adjusted, period);
+        const bonusExercise = plan.ruleVersion >= 8 && (plan.days === 2 || plan.experience === "beginner") && adjusted.length >= 6
+          ? null : makeFocusBonusExercise(plan, adjusted, period);
         if (bonusExercise) {
           const insertAt = primaryIndex < 0 && focusExerciseMatches(bonusExercise, plan.focusArea, true)
             ? 0
@@ -10893,7 +10894,9 @@
           const accessory = [slot("shoulder_abduction", "肩部"), slot("elbow_flexion", "手臂"), slot("elbow_extension", "手臂")][dayIndex % 3];
           return [slot("squat"), slot("hip_hinge"), slot("horizontal_push", "胸部"), slot("horizontal_pull", "背部"), accessory, slot("trunk_anti_rotation", "核心")];
         }
-        return [slot("squat"), slot("hip_hinge"), slot(dayIndex % 2 ? "vertical_push" : "horizontal_push", dayIndex % 2 ? "肩部" : "胸部"), slot(dayIndex % 2 ? "vertical_pull" : "horizontal_pull", "背部"), slot("trunk_anti_rotation", "核心")];
+        const fullBody = [slot("squat"), slot("hip_hinge"), slot(dayIndex % 2 ? "vertical_push" : "horizontal_push", dayIndex % 2 ? "肩部" : "胸部"), slot(dayIndex % 2 ? "vertical_pull" : "horizontal_pull", "背部"), slot("trunk_anti_rotation", "核心")];
+        if (plan.ruleVersion >= 8 && (plan.days === 2 || plan.experience === "beginner") && dayIndex % 2) fullBody.splice(4, 0, slot("horizontal_push", "胸部"));
+        return fullBody;
       }
 
       function movementCandidateAllowed(exercise, plan) {
@@ -10950,6 +10953,7 @@
         return movementDaySlots(plan, dayIndex).map(({ pattern, category }, slotIndex) => {
           const candidates = resistanceExercises.filter((exercise) => exercise.movementPatterns?.includes(pattern)
             && (!category || exercise.category === category) && movementCandidateAllowed(exercise, plan)
+            && (!(plan.ruleVersion >= 8 && pattern === "hip_hinge") || exercise.primaryMuscles?.includes("臀肌"))
             && !used.has(exercise.id) && !reservedBonusIds.has(exercise.id));
           const previous = previousExercises
             .filter((item) => !item.isFocusBonus)
@@ -11006,7 +11010,12 @@
       // Product volume targets; these are planning estimates, not measured effective sets.
       function getWeeklyMuscleTarget(plan, weekIndex) {
         if (Array.isArray(plan.weeklyVolumeTargets) && Number.isFinite(plan.weeklyVolumeTargets[weekIndex])) return plan.weeklyVolumeTargets[weekIndex];
-        if (plan.goal === "hypertrophy" && plan.days === 3) {
+        if (plan.ruleVersion >= 8 && (plan.days === 2 || plan.experience === "beginner")) return plan.risk.level === "moderate" ? 4 : 6;
+        // User-selected planning baseline, not a validated physiological minimum.
+        if (plan.ruleVersion === 7 && plan.goal === "hypertrophy" && plan.days === 3) {
+          return plan.risk.level === "moderate" ? Math.max(1, Math.floor(8 * 0.7)) : 8;
+        }
+        if (plan.ruleVersion < 7 && plan.goal === "hypertrophy" && plan.days === 3) {
           const target = [6, 7, 9, 6][weekIndex] || 6;
           return plan.risk.level === "moderate" ? Math.max(1, Math.floor(target * 0.7)) : target;
         }
@@ -11029,13 +11038,28 @@
           glutes: ["臀肌"], quadriceps: ["股四头肌"], hamstrings: ["腘绳肌"], calves: ["小腿"], core: ["腹部肌群"] })[focusArea] || [];
       }
 
+      function getLargeMuscleGroups(primaryMuscles) {
+        const muscles = new Set(primaryMuscles || []);
+        return [
+          ["胸部", ["胸部"]], ["背部", ["背阔肌", "中背部"]],
+          ["臀部", ["臀肌"]], ["腿部", ["股四头肌", "腘绳肌"]]
+        ].filter(([, members]) => members.some((muscle) => muscles.has(muscle))).map(([group]) => group);
+      }
+
+      function getWeeklyLargeMuscleFloor(plan) {
+        const fullBody = plan.days === 2 || plan.experience === "beginner";
+        return fullBody ? (plan.risk.level === "moderate" ? 4 : 6) : (plan.risk.level === "moderate" ? 2 : 4);
+      }
+
       function allocateWeeklyMuscleVolume(plan, weekIndex, days) {
         const target = getWeeklyMuscleTarget(plan, weekIndex);
+        const balancedFullBody = plan.ruleVersion >= 8 && (plan.days === 2 || plan.experience === "beginner");
+        const useLargeGroups = plan.ruleVersion >= 8 || (plan.ruleVersion >= 7 && plan.goal === "hypertrophy" && plan.days === 3);
         const muscleLimit = plan.risk.level === "moderate" ? 7 : 10;
         // Reserve room for a gradual progression and recovery instead of filling every
         // session to the absolute 24-set ceiling, especially for beginners.
-        const threeDayHypertrophy = plan.days === 3 && plan.goal === "hypertrophy";
-        const dayCaps = threeDayHypertrophy ? (plan.risk.level === "moderate" ? [10, 11, 12, 9] : [11, 12, 14, 11])
+        const threeDayHypertrophy = plan.ruleVersion < 7 && plan.days === 3 && plan.goal === "hypertrophy";
+        const dayCaps = balancedFullBody && plan.risk.level !== "moderate" ? [18, 18, 18, 18] : threeDayHypertrophy ? (plan.risk.level === "moderate" ? [10, 11, 12, 9] : [11, 12, 14, 11])
           : plan.risk.level === "moderate" ? [14, 16, 18, 12]
           : plan.experience === "beginner" ? [16, 17, 18, 14]
           : plan.experience === "advanced" ? [20, 22, 24, 16] : [18, 21, 24, 16];
@@ -11043,17 +11067,18 @@
         const exerciseLimit = plan.experience === "beginner" ? 3 : plan.goal === "endurance" ? 3 : 6;
         const period = plan.periodization[weekIndex];
         const catalog = new Map(resistanceExercises.map((exercise) => [exercise.id, exercise]));
-        const initialSets = plan.risk.level === "moderate" ? 1 : threeDayHypertrophy ? 2 : weekIndex === 3 ? 1 : plan.goal === "hypertrophy" ? 3 : 2;
+        const initialSets = plan.risk.level === "moderate" ? 1 : balancedFullBody ? 2 : threeDayHypertrophy ? 2 : weekIndex === 3 ? 1 : plan.goal === "hypertrophy" ? 3 : 2;
         const working = days.map((day, dayIndex) => {
           const result = day.map((item) => ({ ...item, sets: initialSets }));
           const used = new Set(result.map((item) => item.exerciseId));
           const previous = weekIndex > 0 ? plan.exerciseSnapshot?.[weekIndex - 1]?.[dayIndex] || [] : [];
           previous.filter((item) => item.isVolumeSupplement && !used.has(item.exerciseId)
             && catalog.has(item.exerciseId) && movementCandidateAllowed(catalog.get(item.exerciseId), plan))
-            .forEach((item) => { result.push({ ...item, sets: initialSets }); used.add(item.exerciseId); });
+            .forEach((item) => { if (!balancedFullBody || result.length < 6) { result.push({ ...item, sets: initialSets }); used.add(item.exerciseId); } });
           return result;
         });
         const muscles = (item) => [...new Set(catalog.get(item.exerciseId)?.primaryMuscles || [])];
+        const targetMuscles = (item) => useLargeGroups ? getLargeMuscleGroups(muscles(item)) : muscles(item);
         const dailyCounts = () => working.map((items) => {
           const counts = new Map();
           items.forEach((item) => muscles(item).forEach((m) => counts.set(m, (counts.get(m) || 0) + item.sets)));
@@ -11065,19 +11090,27 @@
             const counts = new Map();
             items.forEach((item) => muscles(item).forEach((m) => counts.set(m, (counts.get(m) || 0) + item.sets)));
             const over = [...counts].find(([, count]) => count > muscleLimit)?.[0];
-            if (!over && items.reduce((sum, item) => sum + item.sets, 0) <= dayLimit) break;
-            const item = [...items].reverse().find((entry) => entry.sets > 1 && (!over || muscles(entry).includes(over)));
+            const groupedCounts = new Map();
+            if (useLargeGroups) items.forEach((item) => targetMuscles(item).forEach((m) => groupedCounts.set(m, (groupedCounts.get(m) || 0) + item.sets)));
+            const overGroup = [...groupedCounts].find(([, count]) => count > muscleLimit)?.[0];
+            if (!over && !overGroup && items.reduce((sum, item) => sum + item.sets, 0) <= dayLimit) break;
+            const item = [...items].reverse().find((entry) => entry.sets > 1 && (over ? muscles(entry).includes(over) : overGroup ? targetMuscles(entry).includes(overGroup) : true));
             if (!item) break;
             item.sets--;
           }
         });
+        const groupedDailyCounts = () => working.map((items) => {
+          const counts = new Map();
+          items.forEach((item) => targetMuscles(item).forEach((m) => counts.set(m, (counts.get(m) || 0) + item.sets)));
+          return counts;
+        });
         const weeklyCounts = () => {
           const counts = new Map();
-          dailyCounts().forEach((day) => day.forEach((n, m) => counts.set(m, (counts.get(m) || 0) + n)));
+          (useLargeGroups ? groupedDailyCounts() : dailyCounts()).forEach((day) => day.forEach((n, m) => counts.set(m, (counts.get(m) || 0) + n)));
           return counts;
         };
-        const focusMuscles = new Set(getFocusTargetMuscles(plan.focusArea));
-        const desired = new Set([...getPlanTargetMuscles(), ...working.flat().flatMap(muscles)]);
+        const focusMuscles = new Set(useLargeGroups ? getLargeMuscleGroups(getFocusTargetMuscles(plan.focusArea)) : getFocusTargetMuscles(plan.focusArea));
+        const desired = new Set(useLargeGroups ? ["胸部", "背部", "臀部", "腿部"] : [...getPlanTargetMuscles(), ...working.flat().flatMap(muscles)]);
         const dayCanUse = (dayIndex, exercise) => {
           const slots = movementDaySlots(plan, dayIndex);
           const patterns = new Set(slots.map((slot) => slot.pattern));
@@ -11093,32 +11126,36 @@
         const sortedDesired = [...desired].sort((a, b) => Number(focusMuscles.has(b)) - Number(focusMuscles.has(a)) || a.localeCompare(b));
         // One set at a time balances muscle and session totals; no hidden overage.
         for (let iteration = 0; iteration < 400; iteration++) {
-          const weekly = weeklyCounts(), daily = dailyCounts();
+          const weekly = weeklyCounts(), daily = dailyCounts(), targetDaily = useLargeGroups ? groupedDailyCounts() : daily;
           const pending = sortedDesired.filter((m) => (weekly.get(m) || 0) < target)
-            .sort((a, b) => Number(focusMuscles.has(b)) - Number(focusMuscles.has(a))
+            .sort((a, b) => (plan.ruleVersion >= 8 ? Number((weekly.get(b) || 0) < getWeeklyLargeMuscleFloor(plan)) - Number((weekly.get(a) || 0) < getWeeklyLargeMuscleFloor(plan)) : 0)
+              || Number(focusMuscles.has(b)) - Number(focusMuscles.has(a))
               || (weekly.get(a) || 0) - (weekly.get(b) || 0));
           let changed = false;
           for (const muscle of pending) {
             const options = [];
             working.forEach((items, dayIndex) => {
               const total = items.reduce((sum, item) => sum + item.sets, 0);
-              if (total >= dayLimit || (daily[dayIndex].get(muscle) || 0) >= muscleLimit) return;
+              if (total >= dayLimit || (targetDaily[dayIndex].get(muscle) || 0) >= muscleLimit) return;
               items.forEach((item) => {
-                if (item.sets >= exerciseLimit || !muscles(item).includes(muscle)) return;
-                if (muscles(item).some((m) => (daily[dayIndex].get(m) || 0) >= muscleLimit || (weekly.get(m) || 0) >= target)) return;
+                if (item.sets >= exerciseLimit || !targetMuscles(item).includes(muscle)) return;
+                if (muscles(item).some((m) => (daily[dayIndex].get(m) || 0) >= muscleLimit)) return;
+                if (useLargeGroups ? targetMuscles(item).some((m) => (targetDaily[dayIndex].get(m) || 0) >= muscleLimit)
+                  : muscles(item).some((m) => (weekly.get(m) || 0) >= target)) return;
                 options.push({ dayIndex, item, total });
               });
-              if (!options.some((option) => option.dayIndex === dayIndex) && (!threeDayHypertrophy || items.length < 6)) {
+              if (!options.some((option) => option.dayIndex === dayIndex) && (!(threeDayHypertrophy || balancedFullBody) || items.length < 6)) {
                 const used = new Set(items.map((item) => item.exerciseId));
-                const candidates = resistanceExercises.filter((exercise) => !used.has(exercise.id) && exercise.primaryMuscles?.includes(muscle)
+                const candidates = resistanceExercises.filter((exercise) => !used.has(exercise.id) && (useLargeGroups ? getLargeMuscleGroups(exercise.primaryMuscles).includes(muscle) : exercise.primaryMuscles?.includes(muscle))
                   && movementCandidateAllowed(exercise, plan) && isAccessoryMovementExercise(exercise) && dayCanUse(dayIndex, exercise)
-                  && exercise.primaryMuscles.every((m) => (daily[dayIndex].get(m) || 0) + initialSets <= muscleLimit && (weekly.get(m) || 0) + initialSets <= target));
+                  && exercise.primaryMuscles.every((m) => (daily[dayIndex].get(m) || 0) + initialSets <= muscleLimit && (useLargeGroups || (weekly.get(m) || 0) + initialSets <= target))
+                  && (!useLargeGroups || getLargeMuscleGroups(exercise.primaryMuscles).every((m) => (targetDaily[dayIndex].get(m) || 0) + initialSets <= muscleLimit)));
                 candidates.sort((a, b) => Number(favorites.has(b.id)) - Number(favorites.has(a.id)) || a.id.localeCompare(b.id));
                 if (total + initialSets <= dayLimit && candidates[0]) options.push({ dayIndex, exercise: candidates[0], total });
               }
             });
             options.sort((a, b) => Number(Boolean(b.item)) - Number(Boolean(a.item))
-              || (daily[a.dayIndex].get(muscle) || 0) - (daily[b.dayIndex].get(muscle) || 0) || a.total - b.total || a.dayIndex - b.dayIndex);
+              || (targetDaily[a.dayIndex].get(muscle) || 0) - (targetDaily[b.dayIndex].get(muscle) || 0) || a.total - b.total || a.dayIndex - b.dayIndex);
             const chosen = options[0];
             if (!chosen) continue;
             if (chosen.item) chosen.item.sets++;
@@ -11136,6 +11173,21 @@
         }
         return working.map((items) => orderMovementWorkout(items.map((item) => ({ ...item,
           prescription: `${item.sets} 组 × ${String(item.prescription || period.reps).replace(/^\s*\d+\s*组\s*×\s*/, "")}` }))));
+      }
+
+      function auditWeeklyMuscleVolume(plan, weekIndex, days) {
+        const minimum = plan.ruleVersion >= 8
+          ? getWeeklyLargeMuscleFloor(plan)
+          : getWeeklyMuscleTarget(plan, weekIndex);
+        const counts = Object.fromEntries(["胸部", "背部", "臀部", "腿部"].map((muscle) => [muscle, 0]));
+        const catalog = new Map(resistanceExercises.map((exercise) => [exercise.id, exercise]));
+        days.flat().forEach((item) => {
+          const exercise = catalog.get(item.exerciseId);
+          getLargeMuscleGroups(exercise?.primaryMuscles).forEach((muscle) => {
+            if (Object.hasOwn(counts, muscle)) counts[muscle] += Number(item.sets) || 0;
+          });
+        });
+        return { minimum, counts, belowMinimum: Object.keys(counts).filter((muscle) => counts[muscle] < minimum) };
       }
 
       function getLegacyTargetedPreparation(workout) {
@@ -13203,6 +13255,8 @@
           ? (appLanguage === "en" ? "Power plans are not yet available" : "暂无法生成爆发力计划")
           : kind === "movementUnavailable"
           ? (appLanguage === "en" ? "No suitable exercise found" : "暂无法生成完整计划")
+          : kind === "volumeUnavailable"
+          ? (appLanguage === "en" ? "Unable to complete the plan" : "暂无法满足训练安排")
           : kind === "unresolvedLimit"
           ? (appLanguage === "en" ? "Review your exercise restrictions" : "请先确认运动限制")
           : kind === "same"
@@ -13213,7 +13267,7 @@
               ? (appLanguage === "en" ? "NSCA safety and progression conflict" : "NSCA 安全与进阶冲突警告")
               : (appLanguage === "en" ? "Select your training experience" : "请选择训练经验");
         const body = document.querySelector("#planNoticeBody");
-        body.hidden = !conflict && !["highRisk", "powerUnavailable", "movementUnavailable", "unresolvedLimit", "riskConfirmation"].includes(kind);
+        body.hidden = !conflict && !["highRisk", "powerUnavailable", "movementUnavailable", "volumeUnavailable", "unresolvedLimit", "riskConfirmation"].includes(kind);
         body.textContent = kind === "highRisk"
           ? (appLanguage === "en" ? "Please consult a doctor for exercise advice. After receiving medical clearance, begin with low-intensity activity as advised. FitMine will not generate a training plan at this time." : "建议咨询医生获取运动建议，获得医学许可后遵照医生建议进行低强度活动。暂不生成训练计划。")
           : riskConfirmation
@@ -13222,6 +13276,8 @@
           ? (appLanguage === "en" ? "Suitable power exercises and their training conditions are still being reviewed. Please choose another goal for now." : "适合爆发力训练的动作及训练条件尚在审核中，请暂时选择其他目标。")
           : kind === "movementUnavailable"
           ? (appLanguage === "en" ? "The exercise library does not currently contain a suitable candidate for every required movement pattern. Please adjust the plan options." : "动作库暂时无法为每个所需动作模式匹配相应动作，请调整计划选项。")
+          : kind === "volumeUnavailable"
+          ? (appLanguage === "en" ? "The available exercises and session limits cannot provide the planned minimum for all major muscle groups. Please adjust the plan options." : "在当前动作候选和单次训练上限内，无法为所有主要肌群安排最低计划组数，请调整计划选项。")
           : kind === "unresolvedLimit"
           ? (appLanguage === "en" ? "Your answers mention a recent injury, pain or exercise restriction. FitMine cannot determine which exercises are appropriate; seek advice from a qualified professional before creating a plan." : "你的信息包含近期伤痛或运动限制，FitMine 暂时无法判断哪些动作适合你。请先向合格专业人士咨询后再制定计划。")
           : beginnerDays
@@ -13269,7 +13325,7 @@
           showPlanNotice("riskConfirmation");
           return false;
         }
-        const nextProfile = { ...getProfile(), planRuleVersion: 6, exerciseSnapshot: null, weeklyVolumeTargets: null };
+        const nextProfile = { ...getProfile(), planRuleVersion: 8, exerciseSnapshot: null, weeklyVolumeTargets: null };
         const nextPlan = buildPlan(nextProfile, templateId);
         nextProfile.weeklyVolumeTargets = nextPlan.periodization.map((_, weekIndex) => getWeeklyMuscleTarget(nextPlan, weekIndex));
         nextPlan.selectionFavoriteIds = typeof favoriteExerciseIds === "undefined" ? [] : [...favoriteExerciseIds];
@@ -13283,7 +13339,14 @@
           showPlanNotice("movementUnavailable");
           return false;
         }
+        if (snapshots.some((week, index) => auditWeeklyMuscleVolume(nextPlan, index, week).belowMinimum.length)) {
+          showPlanNotice("volumeUnavailable");
+          return false;
+        }
         nextProfile.exerciseSnapshot = snapshots;
+        if (nextPlan.ruleVersion >= 8 || (nextPlan.goal === "hypertrophy" && nextPlan.days === 3)) {
+          nextProfile.weeklyVolumeAudit = snapshots.map((week, index) => auditWeeklyMuscleVolume(nextPlan, index, week));
+        }
         const replacingPlan = hasGeneratedPlan() && isEditingPlan;
         if (replacingPlan) archiveCurrentPlan();
         if (replacingPlan) {
@@ -13672,10 +13735,10 @@
           scheduleSelectionHint.textContent = appLanguage === "en" ? `Select ${plan.days} days before saving.` : `需要选择 ${plan.days} 天后才能保存。`;
           return;
         }
-        if (profile.experience === "beginner" && plan.days <= 3 && !hasBeginnerRecoverySpacing(scheduleDraftWeekdays)) {
+        if (((profile.experience === "beginner" && plan.days <= 3) || (plan.ruleVersion >= 8 && plan.days === 2)) && !hasBeginnerRecoverySpacing(scheduleDraftWeekdays)) {
           scheduleSelectionHint.textContent = appLanguage === "en"
-            ? "Beginners need at least one rest day between full-body sessions, including across weeks."
-            : "初学者全身训练之间需至少间隔一天，跨周也需遵守。";
+            ? "Allow at least one rest day between full-body sessions, including across weeks."
+            : "全身训练之间需至少间隔一天，跨周也需遵守。";
           return;
         }
         const planKey = getPlanScheduleKey(profile, plan, startDate);
@@ -14756,7 +14819,7 @@
           renderHome();
           setPlanPane("currentPlanPane");
           window.location.hash = "plan";
-        } else if (kind === "highRisk" || kind === "powerUnavailable" || kind === "movementUnavailable" || kind === "unresolvedLimit") {
+        } else if (kind === "highRisk" || kind === "powerUnavailable" || kind === "movementUnavailable" || kind === "volumeUnavailable" || kind === "unresolvedLimit") {
           return;
         } else if (kind === "same") {
           isEditingPlan = false;
