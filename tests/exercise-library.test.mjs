@@ -95,6 +95,11 @@ test("full-body navigation shows power exercises after core without retaining mu
   assert.ok(exercises.filter((item) => item.movementFamily === "power").every((item) => item.category === "全身"));
 });
 
+test("load more respects the hidden state when all results are shown", () => {
+  assert.match(appSource, /\.library-load-more\[hidden\]\s*\{\s*display:\s*none\s*;/);
+  assert.match(appSource, /exerciseLoadMore\.hidden = displayed\.length >= filtered\.length/);
+});
+
 test("movement patterns cover resistance exercises and match browser data", () => {
   const resistance = exercises.filter((item) => item.libraryType === "resistance");
   assert.equal(Object.keys(patterns.exercises).length, resistance.length);
