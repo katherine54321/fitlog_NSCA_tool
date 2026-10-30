@@ -475,6 +475,14 @@
         backdrop-filter: blur(3px);
       }
 
+      .replacement-scope-actions {
+        display: grid;
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .replacement-scope-actions button { width: 100%; }
+
       .schedule-dialog-head {
         display: flex;
         align-items: flex-start;
@@ -7232,6 +7240,17 @@
         </div>
       </dialog>
 
+      <dialog class="schedule-dialog" id="replacementScopeDialog" aria-labelledby="replacementScopeTitle">
+        <h2 id="replacementScopeTitle"></h2>
+        <p class="schedule-dialog-summary" id="replacementScopeSummary"></p>
+        <div class="replacement-scope-actions">
+          <button class="ghost-btn" type="button" data-replacement-scope="once"></button>
+          <button class="ghost-btn" type="button" data-replacement-scope="week"></button>
+          <button class="ghost-btn" type="button" data-replacement-scope="future"></button>
+          <button class="ghost-btn" type="button" data-replacement-scope-cancel></button>
+        </div>
+      </dialog>
+
       <dialog class="adaptive-calibration-dialog" id="adaptiveCalibrationDialog" aria-labelledby="adaptiveCalibrationTitle">
         <div class="adaptive-calibration-head">
           <div>
@@ -7668,7 +7687,7 @@
                     <label>
                       <span>加强目的</span>
                       <select id="focusPurpose">
-                        <option value="">跟随总体训练目标</option>
+                        <option value="">增加肌肉（默认）</option>
                         <option value="strength">提升力量</option>
                         <option value="hypertrophy">增加肌肉</option>
                         <option value="stability">提高稳定性</option>
@@ -8346,7 +8365,7 @@
         ["加强目的", "Focus goal"],
         ["重点加强", "Training focus"],
         ["无特殊加强", "No specific focus"],
-        ["跟随总体训练目标", "Follow overall training goal"],
+        ["增加肌肉（默认）", "Build muscle (default)"],
         ["胸", "Chest"], ["背", "Back"], ["肩", "Shoulders"], ["手臂", "Arms"], ["臀", "Glutes"],
         ["股四头肌", "Quadriceps"], ["腘绳肌", "Hamstrings"], ["小腿", "Calves"], ["核心", "Core"],
         ["提升力量", "Build strength"], ["增加肌肉", "Build muscle"], ["提高稳定性", "Improve stability"],
@@ -9142,6 +9161,7 @@
         adaptiveProgressionSetup.calibrations = {};
       }
       let exerciseReplacementContext = null;
+      let pendingReplacementExerciseId = null;
       let libraryVisibleCount = 20;
       let exerciseSearchTimer = null;
       let libraryImageObserver = null;
@@ -9632,9 +9652,10 @@
         const value = (selector, fallback = "") => document.querySelector(selector)?.value || fallback;
         let savedRuleVersion = 2;
         let savedExerciseSnapshot = null;
+        let savedWeeklyVolumeTargets = null;
         try {
           const saved = JSON.parse(localStorage.getItem("fitlog-profile") || "null");
-          if (saved) { savedRuleVersion = Number(saved.planRuleVersion) || 1; savedExerciseSnapshot = saved.exerciseSnapshot || null; }
+          if (saved) { savedRuleVersion = Number(saved.planRuleVersion) || 1; savedExerciseSnapshot = saved.exerciseSnapshot || null; savedWeeklyVolumeTargets = saved.weeklyVolumeTargets || null; }
         } catch {}
         return {
           age: Number(value("#age", 0)),
@@ -9644,6 +9665,7 @@
           days: Number(value("#trainingDays", 3)),
           planRuleVersion: savedRuleVersion,
           exerciseSnapshot: savedExerciseSnapshot,
+          weeklyVolumeTargets: savedWeeklyVolumeTargets,
           focusArea: value("#focusArea"),
           focusPurpose: value("#focusPurpose"),
           sleep: value("#sleep", "normal"),
@@ -10172,7 +10194,8 @@
             : requestedDays;
         let split = makeSplit(days, profile.goal, profile.experience);
         if (ruleVersion < 3 && selectedTemplate?.split?.length === days && risk.level !== "high") split = selectedTemplate.split;
-        if (ruleVersion >= 3) split = makeMovementSplit(days, profile.experience);
+        if (ruleVersion >= 3) split = makeMovementSplit(days, profile.experience, ruleVersion);
+        if (ruleVersion >= 4 && ruleVersion < 6 && days === 3 && profile.goal === "hypertrophy" && !(ruleVersion >= 5 && profile.experience === "advanced")) split = split.map(() => ["全身训练 · 水平推拉", "膝主导、髋主导、水平推拉及肩臂辅助"]);
         if (risk.level === "high") {
           split = [
             ["医学确认前", "暂停高强度、最大力量、冲刺间歇和屏气用力训练，先处理红旗症状或疾病限制"],
@@ -10203,7 +10226,7 @@
         }
         if (ruleVersion >= 3 && periodization[3]) periodization[3].focus = "第 4 周适当调整训练量与负荷，维持动作练习并为下一周期恢复。";
         const focusArea = focusAreaLabels[profile.focusArea] ? profile.focusArea : "";
-        const defaultFocusPurpose = profile.goal === "strength"
+        const defaultFocusPurpose = ruleVersion >= 6 ? "hypertrophy" : profile.goal === "strength"
           ? "strength"
           : profile.goal === "hypertrophy"
             ? "hypertrophy"
@@ -10224,6 +10247,7 @@
           experience: profile.experience,
           ruleVersion,
           exerciseSnapshot: ruleVersion >= 3 ? profile.exerciseSnapshot || null : null,
+          weeklyVolumeTargets: ruleVersion >= 4 ? profile.weeklyVolumeTargets || null : null,
           focusArea,
           focusPurpose,
           split,
@@ -10290,7 +10314,7 @@
         return ppl.slice(0, days);
       }
 
-      function makeMovementSplit(days, experience) {
+      function makeMovementSplit(days, experience, ruleVersion = 3) {
         const full = [
           ["全身训练 · 水平推拉", "膝主导、髋主导、水平推拉与躯干稳定"],
           ["全身训练 · 垂直推拉", "膝主导、髋主导、垂直推拉与躯干稳定"],
@@ -10300,7 +10324,7 @@
         const lower = ["下肢膝髋训练", "膝主导、髋主导、腿后侧与小腿"];
         const push = ["上肢推训练", "胸部与肩部推举、胸部及手臂辅助"];
         const pull = ["上肢拉训练", "垂直拉、水平拉、肩后侧与手臂辅助"];
-        if (days >= 5 || (days === 3 && experience === "advanced")) return [push, pull, lower, push, pull, lower].slice(0, days);
+        if (days >= 5 || (days === 3 && experience === "advanced" && (ruleVersion < 4 || ruleVersion >= 5))) return [push, pull, lower, push, pull, lower].slice(0, days);
         if (days === 4) return [upper, lower, upper, lower];
         return full.slice(0, days);
       }
@@ -10850,7 +10874,7 @@
 
       // Slots express training patterns, not a prescribed list of exercise IDs.
       function movementDaySlots(plan, dayIndex) {
-        const ppl = plan.days >= 5 || (plan.days === 3 && plan.experience === "advanced");
+        const ppl = plan.days >= 5 || (plan.days === 3 && plan.experience === "advanced" && (plan.ruleVersion < 4 || plan.ruleVersion >= 5));
         const upperLower = plan.days === 4;
         const slot = (pattern, category) => ({ pattern, category });
         if (ppl) {
@@ -10863,6 +10887,11 @@
           return dayIndex % 2 === 0
             ? [slot("horizontal_push", "胸部"), slot("horizontal_pull", "背部"), slot("vertical_push", "肩部"), slot("vertical_pull", "背部"), slot("shoulder_abduction", "肩部")]
             : [slot("squat"), slot("hip_hinge"), slot("knee_flexion"), slot("calf_raise")];
+        }
+        const fullBodyThreeDayHypertrophy = plan.ruleVersion >= 4 && plan.ruleVersion < 6 && plan.days === 3 && plan.goal === "hypertrophy";
+        if (fullBodyThreeDayHypertrophy) {
+          const accessory = [slot("shoulder_abduction", "肩部"), slot("elbow_flexion", "手臂"), slot("elbow_extension", "手臂")][dayIndex % 3];
+          return [slot("squat"), slot("hip_hinge"), slot("horizontal_push", "胸部"), slot("horizontal_pull", "背部"), accessory, slot("trunk_anti_rotation", "核心")];
         }
         return [slot("squat"), slot("hip_hinge"), slot(dayIndex % 2 ? "vertical_push" : "horizontal_push", dayIndex % 2 ? "肩部" : "胸部"), slot(dayIndex % 2 ? "vertical_pull" : "horizontal_pull", "背部"), slot("trunk_anti_rotation", "核心")];
       }
@@ -10972,6 +11001,141 @@
             ...(exercise.variationUnavailable ? { variationUnavailable: true } : {}) };
         });
         return orderMovementWorkout(applyFocusEmphasis(exercises, dayIndex, program, plan, period));
+      }
+
+      // Product volume targets; these are planning estimates, not measured effective sets.
+      function getWeeklyMuscleTarget(plan, weekIndex) {
+        if (Array.isArray(plan.weeklyVolumeTargets) && Number.isFinite(plan.weeklyVolumeTargets[weekIndex])) return plan.weeklyVolumeTargets[weekIndex];
+        if (plan.goal === "hypertrophy" && plan.days === 3) {
+          const target = [6, 7, 9, 6][weekIndex] || 6;
+          return plan.risk.level === "moderate" ? Math.max(1, Math.floor(target * 0.7)) : target;
+        }
+        const novice = plan.experience === "beginner";
+        const targets = {
+          hypertrophy: novice ? [9, 10, 12, 6] : [11, 15, 19, 7],
+          strength: novice ? [7, 8, 10, 4] : [13, 15, 18, 8],
+          endurance: novice ? [7, 8, 10, 4] : [11, 13, 16, 6]
+        };
+        const target = (targets[plan.goal] || targets.hypertrophy)[weekIndex] || 6;
+        return plan.risk.level === "moderate" ? Math.max(1, Math.floor(target * 0.7)) : target;
+      }
+
+      function getPlanTargetMuscles() {
+        return ["胸部", "背阔肌", "中背部", "肩部", "肱二头肌", "肱三头肌", "臀肌", "股四头肌", "腘绳肌", "髋外展肌群", "小腿", "腹部肌群"];
+      }
+
+      function getFocusTargetMuscles(focusArea) {
+        return ({ chest: ["胸部"], back: ["背阔肌", "中背部"], shoulders: ["肩部"], arms: ["肱二头肌", "肱三头肌"],
+          glutes: ["臀肌"], quadriceps: ["股四头肌"], hamstrings: ["腘绳肌"], calves: ["小腿"], core: ["腹部肌群"] })[focusArea] || [];
+      }
+
+      function allocateWeeklyMuscleVolume(plan, weekIndex, days) {
+        const target = getWeeklyMuscleTarget(plan, weekIndex);
+        const muscleLimit = plan.risk.level === "moderate" ? 7 : 10;
+        // Reserve room for a gradual progression and recovery instead of filling every
+        // session to the absolute 24-set ceiling, especially for beginners.
+        const threeDayHypertrophy = plan.days === 3 && plan.goal === "hypertrophy";
+        const dayCaps = threeDayHypertrophy ? (plan.risk.level === "moderate" ? [10, 11, 12, 9] : [11, 12, 14, 11])
+          : plan.risk.level === "moderate" ? [14, 16, 18, 12]
+          : plan.experience === "beginner" ? [16, 17, 18, 14]
+          : plan.experience === "advanced" ? [20, 22, 24, 16] : [18, 21, 24, 16];
+        const dayLimit = dayCaps[weekIndex];
+        const exerciseLimit = plan.experience === "beginner" ? 3 : plan.goal === "endurance" ? 3 : 6;
+        const period = plan.periodization[weekIndex];
+        const catalog = new Map(resistanceExercises.map((exercise) => [exercise.id, exercise]));
+        const initialSets = plan.risk.level === "moderate" ? 1 : threeDayHypertrophy ? 2 : weekIndex === 3 ? 1 : plan.goal === "hypertrophy" ? 3 : 2;
+        const working = days.map((day, dayIndex) => {
+          const result = day.map((item) => ({ ...item, sets: initialSets }));
+          const used = new Set(result.map((item) => item.exerciseId));
+          const previous = weekIndex > 0 ? plan.exerciseSnapshot?.[weekIndex - 1]?.[dayIndex] || [] : [];
+          previous.filter((item) => item.isVolumeSupplement && !used.has(item.exerciseId)
+            && catalog.has(item.exerciseId) && movementCandidateAllowed(catalog.get(item.exerciseId), plan))
+            .forEach((item) => { result.push({ ...item, sets: initialSets }); used.add(item.exerciseId); });
+          return result;
+        });
+        const muscles = (item) => [...new Set(catalog.get(item.exerciseId)?.primaryMuscles || [])];
+        const dailyCounts = () => working.map((items) => {
+          const counts = new Map();
+          items.forEach((item) => muscles(item).forEach((m) => counts.set(m, (counts.get(m) || 0) + item.sets)));
+          return counts;
+        });
+        // Preserve required movements even when their starting prescriptions exceed a limit.
+        working.forEach((items) => {
+          for (let guard = 0; guard < 100; guard++) {
+            const counts = new Map();
+            items.forEach((item) => muscles(item).forEach((m) => counts.set(m, (counts.get(m) || 0) + item.sets)));
+            const over = [...counts].find(([, count]) => count > muscleLimit)?.[0];
+            if (!over && items.reduce((sum, item) => sum + item.sets, 0) <= dayLimit) break;
+            const item = [...items].reverse().find((entry) => entry.sets > 1 && (!over || muscles(entry).includes(over)));
+            if (!item) break;
+            item.sets--;
+          }
+        });
+        const weeklyCounts = () => {
+          const counts = new Map();
+          dailyCounts().forEach((day) => day.forEach((n, m) => counts.set(m, (counts.get(m) || 0) + n)));
+          return counts;
+        };
+        const focusMuscles = new Set(getFocusTargetMuscles(plan.focusArea));
+        const desired = new Set([...getPlanTargetMuscles(), ...working.flat().flatMap(muscles)]);
+        const dayCanUse = (dayIndex, exercise) => {
+          const slots = movementDaySlots(plan, dayIndex);
+          const patterns = new Set(slots.map((slot) => slot.pattern));
+          const allowed = new Set(patterns);
+          if (patterns.has("squat")) allowed.add("knee_extension");
+          if (patterns.has("hip_hinge")) { allowed.add("hip_thrust_bridge"); allowed.add("hip_extension"); allowed.add("hip_abduction"); }
+          if (patterns.has("horizontal_push") || patterns.has("vertical_push")) allowed.add("elbow_extension");
+          if (patterns.has("horizontal_pull") || patterns.has("vertical_pull")) allowed.add("elbow_flexion");
+          allowed.add("trunk_anti_rotation");
+          return exercise.movementPatterns?.some((pattern) => allowed.has(pattern));
+        };
+        const favorites = new Set(plan.selectionFavoriteIds || []);
+        const sortedDesired = [...desired].sort((a, b) => Number(focusMuscles.has(b)) - Number(focusMuscles.has(a)) || a.localeCompare(b));
+        // One set at a time balances muscle and session totals; no hidden overage.
+        for (let iteration = 0; iteration < 400; iteration++) {
+          const weekly = weeklyCounts(), daily = dailyCounts();
+          const pending = sortedDesired.filter((m) => (weekly.get(m) || 0) < target)
+            .sort((a, b) => Number(focusMuscles.has(b)) - Number(focusMuscles.has(a))
+              || (weekly.get(a) || 0) - (weekly.get(b) || 0));
+          let changed = false;
+          for (const muscle of pending) {
+            const options = [];
+            working.forEach((items, dayIndex) => {
+              const total = items.reduce((sum, item) => sum + item.sets, 0);
+              if (total >= dayLimit || (daily[dayIndex].get(muscle) || 0) >= muscleLimit) return;
+              items.forEach((item) => {
+                if (item.sets >= exerciseLimit || !muscles(item).includes(muscle)) return;
+                if (muscles(item).some((m) => (daily[dayIndex].get(m) || 0) >= muscleLimit || (weekly.get(m) || 0) >= target)) return;
+                options.push({ dayIndex, item, total });
+              });
+              if (!options.some((option) => option.dayIndex === dayIndex) && (!threeDayHypertrophy || items.length < 6)) {
+                const used = new Set(items.map((item) => item.exerciseId));
+                const candidates = resistanceExercises.filter((exercise) => !used.has(exercise.id) && exercise.primaryMuscles?.includes(muscle)
+                  && movementCandidateAllowed(exercise, plan) && isAccessoryMovementExercise(exercise) && dayCanUse(dayIndex, exercise)
+                  && exercise.primaryMuscles.every((m) => (daily[dayIndex].get(m) || 0) + initialSets <= muscleLimit && (weekly.get(m) || 0) + initialSets <= target));
+                candidates.sort((a, b) => Number(favorites.has(b.id)) - Number(favorites.has(a.id)) || a.id.localeCompare(b.id));
+                if (total + initialSets <= dayLimit && candidates[0]) options.push({ dayIndex, exercise: candidates[0], total });
+              }
+            });
+            options.sort((a, b) => Number(Boolean(b.item)) - Number(Boolean(a.item))
+              || (daily[a.dayIndex].get(muscle) || 0) - (daily[b.dayIndex].get(muscle) || 0) || a.total - b.total || a.dayIndex - b.dayIndex);
+            const chosen = options[0];
+            if (!chosen) continue;
+            if (chosen.item) chosen.item.sets++;
+            else {
+              const e = chosen.exercise;
+              working[chosen.dayIndex].push({ name: e.nameZh, focus: `${e.category} · ${e.primaryMuscles[0] || e.category}`,
+                cue: e.instructionsZh?.[0] || "保持动作稳定。", exerciseId: e.id, sets: initialSets,
+                rest: plan.experience !== "beginner" && plan.goal === "hypertrophy" && e.mechanic !== "复合动作" ? "60-90 秒" : period.rest,
+                prescription: `${initialSets} 组 × ${period.reps}`, isVolumeSupplement: true });
+            }
+            changed = true;
+            break;
+          }
+          if (!changed) break;
+        }
+        return working.map((items) => orderMovementWorkout(items.map((item) => ({ ...item,
+          prescription: `${item.sets} 组 × ${String(item.prescription || period.reps).replace(/^\s*\d+\s*组\s*×\s*/, "")}` }))));
       }
 
       function getLegacyTargetedPreparation(workout) {
@@ -11485,15 +11649,51 @@
         window.location.hash = "exercise-replace";
       }
 
-      function replaceWorkoutExercise(exerciseId) {
+      function chooseWorkoutReplacement(exerciseId) {
         if (!exerciseReplacementContext || !activeWorkoutDay) return;
         const replacement = resistanceExercises.find((exercise) => exercise.id === exerciseId);
         if (!replacement || replacement.category !== exerciseReplacementContext.category) return;
-        const { planDayId, exerciseIndex, weekIndex, dayIndex } = exerciseReplacementContext;
+        pendingReplacementExerciseId = exerciseId;
+        const dialog = document.querySelector("#replacementScopeDialog");
+        dialog.querySelector("#replacementScopeTitle").textContent = appLanguage === "en" ? "Apply replacement" : "选择替换范围";
+        dialog.querySelector("#replacementScopeSummary").textContent = appLanguage === "en" ? "Future replacements apply to the rest of this plan. Completed or recorded workouts stay unchanged." : "后续替换仅适用于当前计划；已完成或已记录数据的训练不变。";
+        const labels = appLanguage === "en"
+          ? { once: "This workout only", week: "For this week", future: "Do not use this exercise again" }
+          : { once: "仅本次", week: "本周不再出现", future: "以后不再出现" };
+        dialog.querySelectorAll("[data-replacement-scope]").forEach((button) => { button.textContent = labels[button.dataset.replacementScope]; });
+        dialog.querySelector("[data-replacement-scope-cancel]").textContent = appLanguage === "en" ? "Cancel" : "取消";
+        dialog.showModal();
+      }
+
+      function replaceWorkoutExercise(exerciseId, scope = "once") {
+        if (!exerciseReplacementContext || !activeWorkoutDay) return;
+        const replacement = resistanceExercises.find((exercise) => exercise.id === exerciseId);
+        if (!replacement || replacement.category !== exerciseReplacementContext.category) return;
+        const { planDayId, exerciseIndex, weekIndex, dayIndex, currentExerciseId } = exerciseReplacementContext;
         const duplicatesAnotherExercise = activeWorkoutDay.exercises.some((item, index) =>
           index !== exerciseIndex && libraryExerciseForWorkout(item, "训练")?.id === replacement.id
         );
         if (duplicatesAnotherExercise) return;
+        const hasSavedData = (id) => completedPlanDays.includes(id) || trainingSetLogs.some((log) => log.planDayId === id && hasRecordedPlanExerciseData(log));
+        if (hasSavedData(planDayId)) {
+          window.alert(appLanguage === "en" ? "This workout already has recorded data. Its exercises cannot be replaced." : "本次训练已有记录，无法更换动作。请选择未记录的训练日。");
+          return;
+        }
+        let skipped = 0;
+        if (scope !== "once") {
+          const sourceDate = activeWorkoutDay.date;
+          for (let week = weekIndex; week < activeWorkoutDay.plan.periodization.length; week++) {
+            if (scope === "week" && week !== weekIndex) break;
+            for (let day = 0; day < activeWorkoutDay.plan.days; day++) {
+              const workout = getWorkoutDay(week, day);
+              if (workout.id === planDayId || workout.date < sourceDate || hasSavedData(workout.id)) continue;
+              const index = workout.exercises.findIndex((item) => item.exerciseId === currentExerciseId);
+              if (index < 0) continue;
+              if (workout.exercises.some((item, i) => i !== index && item.exerciseId === replacement.id)) { skipped++; continue; }
+              planExerciseReplacements[workout.id] = { ...(planExerciseReplacements[workout.id] || {}), [String(index)]: replacement.id };
+            }
+          }
+        }
         planExerciseReplacements[planDayId] = {
           ...(planExerciseReplacements[planDayId] || {}),
           [String(exerciseIndex)]: replacement.id
@@ -11503,6 +11703,7 @@
         exerciseReplacementContext = null;
         renderWorkoutDetail();
         window.location.hash = "workout-detail";
+        if (skipped) window.alert(appLanguage === "en" ? `${skipped} future workout(s) already contain the selected exercise and were not changed.` : `有 ${skipped} 个后续训练日已包含所选动作，未自动替换。`);
       }
 
       function saveAdaptiveProgressionSetup() {
@@ -13054,13 +13255,15 @@
           showPlanNotice("riskConfirmation");
           return false;
         }
-        const nextProfile = { ...getProfile(), planRuleVersion: 3, exerciseSnapshot: null };
+        const nextProfile = { ...getProfile(), planRuleVersion: 6, exerciseSnapshot: null, weeklyVolumeTargets: null };
         const nextPlan = buildPlan(nextProfile, templateId);
+        nextProfile.weeklyVolumeTargets = nextPlan.periodization.map((_, weekIndex) => getWeeklyMuscleTarget(nextPlan, weekIndex));
         nextPlan.selectionFavoriteIds = typeof favoriteExerciseIds === "undefined" ? [] : [...favoriteExerciseIds];
         const snapshots = [];
         nextPlan.exerciseSnapshot = snapshots;
         nextPlan.periodization.forEach((_, weekIndex) => {
-          snapshots.push(nextPlan.split.map((__, dayIndex) => getWorkoutExercises(dayIndex, nextPlan, weekIndex)));
+          const week = nextPlan.split.map((__, dayIndex) => getWorkoutExercises(dayIndex, nextPlan, weekIndex));
+          snapshots.push(week.some((day) => day.length === 0) ? week : allocateWeeklyMuscleVolume(nextPlan, weekIndex, week));
         });
         if (snapshots.some((week) => week.some((day) => day.length === 0))) {
           showPlanNotice("movementUnavailable");
@@ -14849,7 +15052,17 @@
           return;
         }
         const replacement = event.target.closest("[data-select-replacement]");
-        if (replacement) replaceWorkoutExercise(replacement.dataset.selectReplacement);
+        if (replacement) chooseWorkoutReplacement(replacement.dataset.selectReplacement);
+      });
+
+      document.querySelector("#replacementScopeDialog").addEventListener("click", (event) => {
+        const dialog = event.currentTarget;
+        if (event.target.closest("[data-replacement-scope-cancel]")) { dialog.close(); return; }
+        const choice = event.target.closest("[data-replacement-scope]");
+        if (!choice || !pendingReplacementExerciseId) return;
+        dialog.close();
+        replaceWorkoutExercise(pendingReplacementExerciseId, choice.dataset.replacementScope);
+        pendingReplacementExerciseId = null;
       });
 
       setLogForm?.addEventListener("submit", (event) => {

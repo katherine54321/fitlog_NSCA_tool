@@ -460,6 +460,8 @@ test("using a historical plan starts a new cycle with its saved plan settings", 
     getPlanSelectionConflict: () => "",
     buildPlan: () => ({ periodization: [{}], split: [["Day", ""]] }),
     getWorkoutExercises: () => [{ name: "exercise" }],
+    allocateWeeklyMuscleVolume: (_plan, _week, items) => items,
+    getWeeklyMuscleTarget: () => 10,
     getRiskAnswers: () => ({}), renderPlanHistory() {}, renderResistanceTemplates() {},
     renderPlan() {}, setPlanPane() {}, today: "2026-10-28", activePlanWeekIndex: 2,
     TRAINING_DAY_PREFERENCES_KEY: "preferences", PLAN_ADJUSTMENTS_KEY: "adjustments",
@@ -471,7 +473,7 @@ test("using a historical plan starts a new cycle with its saved plan settings", 
   assert.equal(archived, 1);
   assert.equal(stored.get("fitlog-plan-start-date"), "2026-10-28");
   assert.equal(stored.get("fitlog-plan-template"), "hypertrophy-3");
-  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), { ...entry.profile, planRuleVersion: 3, exerciseSnapshot: [[[{ name: "exercise" }]]] });
+  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), { ...entry.profile, planRuleVersion: 6, exerciseSnapshot: [[[{ name: "exercise" }]]], weeklyVolumeTargets: [10] });
   assert.equal(context.activePlanWeekIndex, 0);
 });
 
@@ -496,6 +498,8 @@ test("saving an unchanged edited plan keeps its cycle and only changed options c
     getPlanSelectionConflict: () => "",
     buildPlan: () => ({ periodization: [{}], split: [["Day", ""]] }),
     getWorkoutExercises: () => [{ name: "exercise" }], isPlanCycleExpired: () => expired,
+    allocateWeeklyMuscleVolume: (_plan, _week, items) => items,
+    getWeeklyMuscleTarget: () => 10,
     archiveCurrentPlan: () => { archives++; }, renderPlanHistory() {}, renderResistanceTemplates() {},
     isEditingPlan: true, today: "2026-10-28",
     TRAINING_DAY_PREFERENCES_KEY: "preferences", PLAN_ADJUSTMENTS_KEY: "adjustments"

@@ -1,8 +1,40 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import vm from "node:vm";
 
 const source = await readFile(new URL("../index.html", import.meta.url), "utf8");
+
+test("replacement scopes change future unrecorded workouts while preserving completed and logged sessions", () => {
+  const start = source.indexOf("function replaceWorkoutExercise(exerciseId, scope");
+  const end = source.indexOf("function saveAdaptiveProgressionSetup", start);
+  assert.ok(start >= 0 && end > start);
+  for (const scope of ["once", "week", "future"]) {
+    const workouts = Array.from({ length: 4 }, (_, i) => ({
+      id: `day${i}`, weekIndex: Math.floor(i / 2), dayIndex: i % 2,
+      date: `2026-10-${String(10 + i).padStart(2, '0')}`,
+      exercises: [{ exerciseId: 'old' }], plan: { days: 2, periodization: [{}, {}] }
+    }));
+    const saved = {};
+    const sandbox = {
+      exerciseReplacementContext: { planDayId: 'day0', exerciseIndex: 0, weekIndex: 0, dayIndex: 0, currentExerciseId: 'old', category: '胸部' },
+      activeWorkoutDay: workouts[0], resistanceExercises: [{ id: 'new', category: '胸部' }],
+      libraryExerciseForWorkout: item => ({ id: item.exerciseId }), planExerciseReplacements: {},
+      completedPlanDays: ['day2'], trainingSetLogs: [], hasRecordedPlanExerciseData: () => false,
+      getWorkoutDay: (week, day) => workouts[week * 2 + day],
+      localStorage: { setItem: (k, v) => { saved[k] = v; } },
+      savePlanExerciseReplacements: () => {}, renderWorkoutDetail: () => {},
+      window: { alert: () => {}, location: {} }, appLanguage: 'zh'
+    };
+    vm.createContext(sandbox);
+    vm.runInContext(`${source.slice(start, end)}; replaceWorkoutExercise('new', '${scope}');`, sandbox);
+    assert.equal(sandbox.planExerciseReplacements.day0['0'], 'new');
+    assert.equal(Boolean(sandbox.planExerciseReplacements.day1), scope !== 'once');
+    assert.equal(Boolean(sandbox.planExerciseReplacements.day2), false);
+    assert.equal(Boolean(sandbox.planExerciseReplacements.day3), scope === 'future');
+    assert.deepEqual(saved, {});
+  }
+});
 
 const planLogHelperStart = source.indexOf("function hasRecordedPlanExerciseData(planLog)");
 const planLogHelperEnd = source.indexOf("function getWorkoutSetEntries", planLogHelperStart);
