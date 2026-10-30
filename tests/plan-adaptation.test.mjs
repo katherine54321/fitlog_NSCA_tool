@@ -313,14 +313,14 @@ test("the plan page heading stops presenting an expired plan as current", () => 
     periodizationWeeks: field("periodizationWeeks"), activeWeekKicker: field("activeWeekKicker"),
     activeWeekTitle: field("activeWeekTitle"), activeWeekFocus: field("activeWeekFocus"),
     activeWeekPrescription: field("activeWeekPrescription"), weekPlan: field("weekPlan"),
-    loadRules: field("loadRules"), updatePlanMode() {}, renderPlanTemplateLibrary() {}, renderHome() {}
+    loadRules: field("loadRules"), updatePlanMode() {}, renderPlanTemplateLibrary() {}, renderHome() {}, renderPlanMuscleCoverage() {}
   };
   vm.createContext(context);
   vm.runInContext(`${source.slice(start, end)}\nthis.render = renderPlan;`, context);
   context.render();
   assert.equal(field("#planTitle").textContent, "训练计划");
   assert.equal(field("#planSummary").textContent, "");
-  assert.equal(field("#planPauseToggle").disabled, true);
+  assert.doesNotMatch(source, /id="planPauseToggle"/);
   expired = false;
   context.render();
   assert.equal(field("#planTitle").textContent, "增肌 · 每周 3 天");
@@ -502,6 +502,7 @@ test("saving an unchanged edited plan keeps its cycle and only changed options c
   };
   vm.createContext(context);
   vm.runInContext(`${source.slice(start, end)}\nthis.save = saveCurrentPlan;`, context);
+  context.showPlanNotice = () => {};
   assert.equal(context.save({ preventSamePlan: true }), false);
   assert.equal(archives, 0);
   assert.equal(values.get("fitlog-plan-start-date"), "2026-09-26");
@@ -793,7 +794,7 @@ test("unchanged plan submit opens a dialog and OK returns to the plan page", () 
     form: { addEventListener: (name, callback) => listeners.set(name, callback) },
     getProfile: () => ({ experience: fields.get("#experience").value, days: 3 }),
     getPlanSelectionConflict: () => "",
-    saveCurrentPlan: () => { saved++; return false; },
+    saveCurrentPlan: () => { saved++; context.showPlanNotice("same"); return false; },
     renderPlan() {}, setPlanPane() {}
   };
   vm.createContext(context);

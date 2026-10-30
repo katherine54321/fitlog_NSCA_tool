@@ -14,6 +14,15 @@ const exercises = JSON.parse(librarySource);
 const expansion = JSON.parse(expansionSource);
 const patterns = JSON.parse(patternsSource);
 
+test("reviewed exercise mechanics persist through the import pipeline", async () => {
+  const overrides = JSON.parse(await readFile(new URL("../data/exercise-mechanic-overrides.json", import.meta.url), "utf8"));
+  assert.equal(Object.keys(overrides).length, 5);
+  for (const [id, mechanic] of Object.entries(overrides)) {
+    assert.equal(exercises.find((exercise) => exercise.id === id)?.mechanic, mechanic, id);
+  }
+  assert.match(importScript, /mechanicOverrides\[id\]/);
+});
+
 test("movement patterns cover resistance exercises and match browser data", () => {
   const resistance = exercises.filter((item) => item.libraryType === "resistance");
   assert.equal(Object.keys(patterns.exercises).length, resistance.length);

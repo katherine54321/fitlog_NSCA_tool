@@ -837,7 +837,7 @@
     "level": "初级",
     "equipment": "哑铃",
     "force": "推",
-    "mechanic": "复合动作",
+    "mechanic": "孤立动作",
     "primaryMuscles": [
       "胸部"
     ],
@@ -3139,7 +3139,7 @@
     "level": "中级",
     "equipment": "绳索器械",
     "force": "拉",
-    "mechanic": "复合动作",
+    "mechanic": "孤立动作",
     "primaryMuscles": [
       "肱二头肌"
     ],
@@ -3618,7 +3618,7 @@
     "level": "中级",
     "equipment": "杠铃",
     "force": "推",
-    "mechanic": "复合动作",
+    "mechanic": "孤立动作",
     "primaryMuscles": [
       "臀肌"
     ],
@@ -3652,7 +3652,7 @@
     "level": "初级",
     "equipment": "徒手",
     "force": "推",
-    "mechanic": "复合动作",
+    "mechanic": "孤立动作",
     "primaryMuscles": [
       "臀肌"
     ],
@@ -3685,7 +3685,7 @@
     "level": "初级",
     "equipment": "弹力带",
     "force": "推",
-    "mechanic": "复合动作",
+    "mechanic": "孤立动作",
     "primaryMuscles": [
       "臀肌"
     ],

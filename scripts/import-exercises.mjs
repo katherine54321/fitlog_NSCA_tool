@@ -9,6 +9,7 @@ const imageBaseUrl = "https://raw.githubusercontent.com/yuhonas/free-exercise-db
 const terms = JSON.parse(await readFile(join(root, "data", "exercise-terms.json"), "utf8"));
 const expansion = JSON.parse(await readFile(join(root, "data", "exercise-expansion-v2.json"), "utf8"));
 const movementPatterns = JSON.parse(await readFile(join(root, "data", "exercise-movement-patterns.json"), "utf8"));
+const mechanicOverrides = JSON.parse(await readFile(join(root, "data", "exercise-mechanic-overrides.json"), "utf8"));
 const outputJson = join(root, "data", "exercises-v1.json");
 const outputScript = join(root, "data", "exercise-library-data.js");
 const imageDir = join(root, "assets", "exercise-images");
@@ -95,7 +96,7 @@ for (const [id, config] of Object.entries(exerciseConfigs)) {
       level: translate(exercise.level),
       equipment: config.equipment || translateEquipment(exercise.equipment),
       force: translate(exercise.force),
-      mechanic: translate(exercise.mechanic),
+      mechanic: mechanicOverrides[id] || translate(exercise.mechanic),
       primaryMuscles: (exercise.primaryMuscles || []).map(translate),
       secondaryMuscles: (exercise.secondaryMuscles || []).map(translate),
       instructionsZh: config.instructionsZh,

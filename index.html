@@ -5992,6 +5992,20 @@
       .muscle-volume-item-track { display: block; height: 5px; border-radius: 999px; background: var(--border-subtle); overflow: hidden; }
       .muscle-volume-item-fill { display: block; width: var(--bar-width); height: 100%; border-radius: inherit; background: var(--brand); }
       .muscle-volume-item.is-accent .muscle-volume-item-fill { background: var(--brand-accent); }
+      .plan-muscle-coverage { padding: 22px; }
+      .plan-muscle-coverage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+      .plan-muscle-coverage-head h3 { margin: 0; }
+      .plan-muscle-coverage-head span { color: var(--brand-accent); font-size: 12px; white-space: nowrap; }
+      .plan-muscle-coverage-note { color: var(--text-secondary); font-size: 12px; line-height: 1.5; margin: 8px 0 18px; }
+      .plan-muscle-groups { display: grid; gap: 15px; }
+      .plan-muscle-group { border-top: 1px solid var(--border-subtle); padding-top: 13px; }
+      .plan-muscle-group h4 { margin: 0 0 10px; font-size: 13px; color: var(--text-secondary); }
+      .plan-muscle-items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .plan-muscle-item { display: flex; justify-content: space-between; align-items: center; gap: 6px; min-width: 0; padding: 9px 11px; border-radius: 8px; background: rgba(0, 0, 0, .16); font-size: 13px; }
+      .plan-muscle-item span { color: var(--text-secondary); overflow-wrap: anywhere; }
+      .plan-muscle-item strong { color: var(--brand); white-space: nowrap; font-variant-numeric: tabular-nums; }
+      .plan-muscle-group:nth-child(2) .plan-muscle-item strong { color: var(--brand-accent); }
+      .plan-muscle-item.is-empty strong { color: var(--text-secondary); }
       .muscle-volume-empty { color: var(--text-secondary); font-size: 12px; }
       .workout-schedule-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
       .workout-schedule-actions button { border: 1px solid var(--border); border-radius: 9px; background: transparent; color: var(--text); padding: 8px 11px; font: inherit; font-size: 12px; cursor: pointer; }
@@ -7601,7 +7615,7 @@
                         <option value="hypertrophy">增肌 · 增加肌肉量</option>
                         <option value="endurance">肌耐力 · 提升肌肉抗疲劳能力</option>
                         <option value="strength">力量 · 提高最大力量</option>
-                        <option value="power">爆发力 · 提高快速发力能力</option>
+                        <option value="power" disabled>🔒 爆发力 · 暂不可用</option>
                       </select>
                       <small>选择最想优先提升的一项。</small>
                     </label>
@@ -7678,10 +7692,10 @@
                   </div>
                   <span class="chip" id="activeWeekPrescription">3 组 × 8-12 次</span>
                 </div>
-                <div class="workout-schedule-actions"><button id="planPauseToggle" type="button">暂停计划</button></div>
                 <p class="workout-schedule-note" id="planPauseNote" role="status"></p>
                 <div class="week" id="weekPlan"></div>
               </section>
+              <section class="card plan-muscle-coverage" id="planMuscleCoverage" aria-live="polite"></section>
               <div class="card">
                 <h3>负荷规则</h3>
                 <ul class="mini-list" id="loadRules"></ul>
@@ -8009,6 +8023,7 @@
         ["肌耐力 · 提升肌肉抗疲劳能力", "Muscular endurance · Resist muscle fatigue"],
         ["力量 · 提高最大力量", "Strength · Lift heavier loads"],
         ["爆发力 · 提高快速发力能力", "Power · Produce force quickly"],
+        ["🔒 爆发力 · 暂不可用", "🔒 Power · Coming soon"],
         ["选择最想优先提升的一项。", "Choose the ability you most want to improve."],
         ["训练历史", "Training experience"],
         ["请选择训练经验", "Select training experience"],
@@ -9134,6 +9149,7 @@
       let activeOfficialTemplateDayIndex = null;
       let activeOfficialTemplateSourcePane = "planTemplatePane";
       let pendingOfficialTemplateId = null;
+      let pendingPlanSave = null;
       let lastModuleId = "";
       let isEditingPlan = false;
       let activePlanWeekIndex = 0;
@@ -10170,6 +10186,11 @@
             ...(profile.goal === "strength" ? { load: "根据试做组确定", reps: "8-12 次", rm: "动作学习阶段" } : {})
           }));
         }
+        // Conservative product policy: one fewer set per exercise for moderate risk,
+        // with at least one set; textbooks do not specify a universal reduction.
+        if (ruleVersion >= 3 && risk.level === "moderate") {
+          periodization = periodization.map((period) => ({ ...period, sets: Math.max(1, period.sets - 1) }));
+        }
         if (ruleVersion >= 3 && periodization[3]) periodization[3].focus = "第 4 周适当调整训练量与负荷，维持动作练习并为下一周期恢复。";
         const focusArea = focusAreaLabels[profile.focusArea] ? profile.focusArea : "";
         const defaultFocusPurpose = profile.goal === "strength"
@@ -10368,6 +10389,7 @@
       function getResolvedPlanSchedule(profile, plan, startDate = getPlanStartDate()) {
         const changes = loadPlanAdjustments(profile, plan, startDate);
         let lastScheduledDate = "";
+        const lastPrimaryMuscleDate = new Map();
         return Array.from({ length: 4 }, (_, weekIndex) => plan.split.map((_, dayIndex) => {
           const id = planDayId(profile, plan, weekIndex, dayIndex, startDate);
           const baseDate = getBasePlanDayDate(startDate, weekIndex, dayIndex, profile, plan);
@@ -10375,11 +10397,25 @@
           const override = changes.overrides[id] || {};
           const shiftedDate = addDays(baseDate, shift + (override.deferDays || 0));
           const requestedDate = override.deferTo && override.deferTo > shiftedDate ? override.deferTo : shiftedDate;
-          const recoveryDays = profile.experience === "beginner" && plan.days <= 3 ? 2 : 1;
+          const muscleRecovery = plan.ruleVersion >= 3 && profile.experience === "beginner";
+          const recoveryDays = !muscleRecovery && profile.experience === "beginner" && plan.days <= 3 ? 2 : 1;
           const earliestDate = lastScheduledDate ? addDays(lastScheduledDate, recoveryDays) : "";
-          const date = earliestDate && requestedDate < earliestDate ? earliestDate : requestedDate;
+          let date = earliestDate && requestedDate < earliestDate ? earliestDate : requestedDate;
           const skipped = changes.overrides[id]?.status === "skipped";
           const paused = Boolean(changes.pausedAt && baseDate >= changes.pausedAt);
+          if (muscleRecovery && !skipped && !paused) {
+            const generated = getWorkoutExercises(dayIndex, plan, weekIndex);
+            const exercises = ensureUniqueWorkoutExercises(applyPlanExerciseReplacements(id, generated));
+            const muscles = new Set(exercises.flatMap((item) => getWorkoutLibraryExercise(item)?.primaryMuscles || []));
+            // If a selected exercise has no library identity or primary muscle data, use a conservative rest day.
+            const unknown = exercises.some((item) => !getWorkoutLibraryExercise(item)?.primaryMuscles?.length);
+            if (unknown && lastScheduledDate) date = [date, addDays(lastScheduledDate, 2)].sort().at(-1);
+            for (const muscle of muscles) {
+              const last = lastPrimaryMuscleDate.get(muscle);
+              if (last) date = [date, addDays(last, 2)].sort().at(-1);
+            }
+            for (const muscle of muscles) lastPrimaryMuscleDate.set(muscle, date);
+          }
           if (!skipped && !paused) lastScheduledDate = date;
           return { id, date, skipped, paused, weekIndex, dayIndex };
         })).flat();
@@ -10543,9 +10579,8 @@
       }
 
       function getFocusBonusSetCount(plan, period) {
-        if (period?.title === "减载巩固周") return 2;
-        if (plan.focusPurpose === "hypertrophy") return plan.experience === "advanced" ? 4 : 3;
-        return 2;
+        const base = period?.title === "减载巩固周" ? 2 : plan.focusPurpose === "hypertrophy" ? (plan.experience === "advanced" ? 4 : 3) : 2;
+        return plan.ruleVersion >= 3 && plan.risk.level === "moderate" ? Math.max(1, base - 1) : base;
       }
 
       function focusBonusPrescription(plan, bonusSets) {
@@ -12388,6 +12423,43 @@
         return match ? `强度 ${match[0]}` : "强度调整";
       }
 
+      function getPlanMuscleCoverage(plan, weekIndex, schedule) {
+        const counts = new Map();
+        let unknown = 0;
+        plan.split.forEach((_, dayIndex) => {
+          const day = schedule.find((item) => item.weekIndex === weekIndex && item.dayIndex === dayIndex);
+          if (!day || day.skipped) return;
+          const exercises = ensureUniqueWorkoutExercises(applyPlanExerciseReplacements(day.id, getWorkoutExercises(dayIndex, plan, weekIndex)));
+          exercises.forEach((item) => {
+            const muscles = getWorkoutLibraryExercise(item)?.primaryMuscles || [];
+            const sets = getExerciseSetCount(item);
+            if (!muscles.length || !sets) { unknown++; return; }
+            [...new Set(muscles)].forEach((muscle) => counts.set(muscle, (counts.get(muscle) || 0) + sets));
+          });
+        });
+        return { counts, unknown };
+      }
+
+      function renderPlanMuscleCoverage(plan, weekIndex, schedule) {
+        const element = document.querySelector("#planMuscleCoverage");
+        if (!element) return;
+        const { counts, unknown } = getPlanMuscleCoverage(plan, weekIndex, schedule);
+        const groups = [
+          [appLanguage === "en" ? "Upper body" : "上肢", ["胸部", "背阔肌", "中背部", "肩部", "肱二头肌", "肱三头肌"]],
+          [appLanguage === "en" ? "Lower body" : "下肢", ["臀肌", "股四头肌", "腘绳肌", "髋外展肌群", "小腿"]],
+          [appLanguage === "en" ? "Core" : "核心", ["腹部肌群", "下背部"]]
+        ];
+        const known = new Set(groups.flatMap(([, muscles]) => muscles));
+        const other = [...counts.keys()].filter((muscle) => !known.has(muscle));
+        if (other.length) groups.push([appLanguage === "en" ? "Other" : "其他", other]);
+        element.innerHTML = `<div class="plan-muscle-coverage-head"><h3>${appLanguage === "en" ? "Weekly muscle coverage" : "每周肌群覆盖"}</h3><span>${appLanguage === "en" ? `WEEK ${weekIndex + 1}` : `第 ${weekIndex + 1} 周`}</span></div>
+          <p class="plan-muscle-coverage-note">${appLanguage === "en" ? "Planned sets by primary muscle. Unilateral sets count once; one set may cover multiple muscles." : "按动作主要肌群统计计划组数；单侧动作每侧一组计为一组，同一组可计入多个肌群。"}${unknown ? (appLanguage === "en" ? " Some exercises could not be classified." : " 部分动作缺少统计信息。") : ""}</p>
+          <div class="plan-muscle-groups">${groups.map(([title, muscles]) => `<div class="plan-muscle-group"><h4>${title}</h4><div class="plan-muscle-items">${muscles.map((muscle) => {
+            const sets = counts.get(muscle) || 0;
+            return `<div class="plan-muscle-item${sets ? "" : " is-empty"}"><span>${escapeLogText(translateInterfaceText(muscle))}</span><strong>${sets} ${appLanguage === "en" ? "sets" : "组"}</strong></div>`;
+          }).join("")}</div></div>`).join("")}</div>`;
+      }
+
       function renderPlan() {
         const profile = getProfile();
         const plan = buildPlan(profile);
@@ -12431,14 +12503,6 @@
         const planStartDate = getPlanStartDate();
         const adjustments = loadPlanAdjustments(profile, plan, planStartDate);
         const resolvedSchedule = getResolvedPlanSchedule(profile, plan, planStartDate);
-        const pauseToggle = document.querySelector("#planPauseToggle");
-        pauseToggle.hidden = !activeSavedPlan || isEditingPlan;
-        pauseToggle.disabled = pauseToggle.hidden;
-        pauseToggle.textContent = cycleExpired
-          ? (appLanguage === "en" ? "Cycle ended" : "周期已结束")
-          : adjustments.pausedAt
-            ? (appLanguage === "en" ? "Resume plan" : "恢复计划")
-            : (appLanguage === "en" ? "Pause plan" : "暂停计划");
         document.querySelector("#planPauseNote").textContent = cycleExpired
           ? (appLanguage === "en" ? "This four-week schedule has ended. Edit the plan to start a new cycle." : "本次四周排程已结束。修改训练计划可开始新周期。")
           : adjustments.pausedAt
@@ -12456,6 +12520,7 @@
             `;
           })
           .join("");
+        renderPlanMuscleCoverage(plan, activePlanWeekIndex, resolvedSchedule);
         const rules = [
           appLanguage === "en"
             ? `Main lifts this week: ${activePeriod.sets} sets × ${translateInterfaceText(activePeriod.reps)}, suggested load ${activePeriod.load} (${activePeriod.rm}).`
@@ -12833,10 +12898,13 @@
         planNoticeDialog.dataset.kind = kind;
         const beginnerDays = kind === "beginnerDays";
         const beginnerPower = kind === "beginnerPower";
+        const riskConfirmation = kind === "riskConfirmation";
         const conflict = beginnerDays || beginnerPower;
-        planNoticeDialog.dataset.conflict = String(conflict);
+        planNoticeDialog.dataset.conflict = String(conflict || riskConfirmation);
         document.querySelector("#planNoticeTitle").textContent = kind === "highRisk"
           ? (appLanguage === "en" ? "Consult a doctor before training" : "建议咨询医生运动建议")
+          : riskConfirmation
+          ? (appLanguage === "en" ? "Confirm your health status" : "请确认健康状况")
           : kind === "powerUnavailable"
           ? (appLanguage === "en" ? "Power plans are not yet available" : "暂无法生成爆发力计划")
           : kind === "movementUnavailable"
@@ -12851,9 +12919,11 @@
               ? (appLanguage === "en" ? "NSCA safety and progression conflict" : "NSCA 安全与进阶冲突警告")
               : (appLanguage === "en" ? "Select your training experience" : "请选择训练经验");
         const body = document.querySelector("#planNoticeBody");
-        body.hidden = !conflict && !["highRisk", "powerUnavailable", "movementUnavailable", "unresolvedLimit"].includes(kind);
+        body.hidden = !conflict && !["highRisk", "powerUnavailable", "movementUnavailable", "unresolvedLimit", "riskConfirmation"].includes(kind);
         body.textContent = kind === "highRisk"
           ? (appLanguage === "en" ? "Please consult a doctor for exercise advice. After receiving medical clearance, begin with low-intensity activity as advised. FitMine will not generate a training plan at this time." : "建议咨询医生获取运动建议，获得医学许可后遵照医生建议进行低强度活动。暂不生成训练计划。")
+          : riskConfirmation
+          ? (appLanguage === "en" ? "Please confirm that you have no serious illness, injury history or other condition that limits exercise. If you do, complete the risk assessment first." : "请确认无严重疾病、伤病史或其他运动限制。如有相关情况，建议先完成风险评估。")
           : kind === "powerUnavailable"
           ? (appLanguage === "en" ? "Suitable power exercises and their training conditions are still being reviewed. Please choose another goal for now." : "适合爆发力训练的动作及训练条件尚在审核中，请暂时选择其他目标。")
           : kind === "movementUnavailable"
@@ -12870,17 +12940,17 @@
               : "FitMine 暂不为初学者自动生成以爆发力为主目标的计划。请先建立动作技术与基础力量，再逐步进阶；请选择其他目标，或更正误选的训练经验。")
             : "";
         const secondary = document.querySelector("#planNoticeSecondary");
-        secondary.hidden = !conflict;
-        secondary.textContent = appLanguage === "en" ? "Correct experience" : "更正训练经验";
+        secondary.hidden = !conflict && !riskConfirmation;
+        secondary.textContent = riskConfirmation ? (appLanguage === "en" ? "Risk assessment" : "去风险评估") : (appLanguage === "en" ? "Correct experience" : "更正训练经验");
         document.querySelector("#planNoticeConfirm").textContent = beginnerDays
           ? (appLanguage === "en" ? "Choose 3 days" : "改为每周 3 天")
           : beginnerPower
             ? (appLanguage === "en" ? "Choose another goal" : "选择其他目标")
-            : (appLanguage === "en" ? "OK" : "确定");
+            : riskConfirmation ? (appLanguage === "en" ? "Confirm" : "确认") : (appLanguage === "en" ? "OK" : "确定");
         if (!planNoticeDialog.open) planNoticeDialog.showModal();
       }
 
-      function saveCurrentPlan({ templateId = null, preventSamePlan = false } = {}) {
+      function saveCurrentPlan({ templateId = null, preventSamePlan = false, riskConfirmed = false } = {}) {
         if (getPlanRisk(getProfile()).level === "high") {
           showPlanNotice("highRisk");
           return false;
@@ -12899,7 +12969,12 @@
           return false;
         }
         if (preventSamePlan && isEditingPlan && hasGeneratedPlan() && planSelectionsMatchSaved()
-          && !isPlanCycleExpired(getProfile(), buildPlan(getProfile()))) return false;
+          && !isPlanCycleExpired(getProfile(), buildPlan(getProfile()))) { showPlanNotice("same"); return false; }
+        if (getPlanRisk(getProfile()).level === "unassessed" && !riskConfirmed) {
+          pendingPlanSave = { templateId, preventSamePlan };
+          showPlanNotice("riskConfirmation");
+          return false;
+        }
         const nextProfile = { ...getProfile(), planRuleVersion: 3, exerciseSnapshot: null };
         const nextPlan = buildPlan(nextProfile, templateId);
         const snapshots = nextPlan.periodization.map((_, weekIndex) => nextPlan.split.map((__, dayIndex) =>
@@ -14242,10 +14317,7 @@
           showOfficialTemplateConfirmation(pendingOfficialTemplateId);
           return;
         }
-        if (!saveCurrentPlan({ preventSamePlan: true })) {
-          showPlanNotice("same");
-          return;
-        }
+        if (!saveCurrentPlan({ preventSamePlan: true })) return;
         activePlanWeekIndex = 0;
         renderPlan();
         setPlanPane("currentPlanPane");
@@ -14353,11 +14425,21 @@
         window.location.hash = "plan-edit";
       });
 
-      document.querySelector("#planEditBack").addEventListener("click", () => { window.location.hash = "plan"; });
+      document.querySelector("#planEditBack").addEventListener("click", () => { cancelPlanEditing(); window.location.hash = "plan"; });
       document.querySelector("#planNoticeConfirm").addEventListener("click", () => {
         const kind = planNoticeDialog.dataset.kind;
         planNoticeDialog.close();
-        if (kind === "highRisk") {
+        if (kind === "riskConfirmation") {
+          const pending = pendingPlanSave;
+          pendingPlanSave = null;
+          if (!pending || !saveCurrentPlan({ ...pending, riskConfirmed: true })) return;
+          activePlanWeekIndex = 0;
+          clearPendingOfficialTemplate();
+          renderPlan();
+          renderHome();
+          setPlanPane("currentPlanPane");
+          window.location.hash = "plan";
+        } else if (kind === "highRisk" || kind === "powerUnavailable" || kind === "movementUnavailable" || kind === "unresolvedLimit") {
           return;
         } else if (kind === "same") {
           isEditingPlan = false;
@@ -14375,7 +14457,13 @@
         }
       });
       document.querySelector("#planNoticeSecondary").addEventListener("click", () => {
+        const kind = planNoticeDialog.dataset.kind;
         planNoticeDialog.close();
+        if (kind === "riskConfirmation") {
+          pendingPlanSave = null;
+          window.location.hash = "risk-assessment";
+          return;
+        }
         document.querySelector("#experience").focus();
       });
 
@@ -14471,11 +14559,6 @@
       });
 
       adjustTrainingDays.addEventListener("click", openScheduleDialog);
-      document.querySelector("#planPauseToggle").addEventListener("click", () => {
-        const profile = getProfile();
-        const plan = buildPlan(profile);
-        changePlanSchedule(loadPlanAdjustments(profile, plan).pausedAt ? "resume" : "pause", null);
-      });
       document.querySelector("#scheduleDialogClose").addEventListener("click", () => scheduleDialog.close());
       document.querySelector("#scheduleCancel").addEventListener("click", () => scheduleDialog.close());
       document.querySelector("#scheduleSave").addEventListener("click", saveTrainingDayPreferences);
