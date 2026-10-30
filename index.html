@@ -11,6 +11,9 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./app-icon.svg" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
+    <link rel="preload" href="data/exercise-library-data.js" as="script" />
+    <link rel="preload" href="./config/fitlog-runtime.js" as="script" />
+    <link rel="preload" href="./sync/fitlog-sync.js" as="script" />
     <meta
       name="description"
       content="FitMine 科学力量训练，基于 NSCA-CPT 训练知识，提供动作学习、体能评估、训练计划与个人训练数据记录。"
@@ -1133,6 +1136,7 @@
         gap: 12px;
         margin-bottom: 14px;
       }
+      #goal option[value="power"] { color: #8e9993; }
 
       .plan-generator-head h3,
       .periodization-head h3,
@@ -7615,7 +7619,7 @@
                         <option value="hypertrophy">增肌 · 增加肌肉量</option>
                         <option value="endurance">肌耐力 · 提升肌肉抗疲劳能力</option>
                         <option value="strength">力量 · 提高最大力量</option>
-                        <option value="power" disabled>🔒 爆发力 · 暂不可用</option>
+                        <option value="power" disabled>爆发力 · 暂不可用　🔒︎</option>
                       </select>
                       <small>选择最想优先提升的一项。</small>
                     </label>
@@ -8023,7 +8027,7 @@
         ["肌耐力 · 提升肌肉抗疲劳能力", "Muscular endurance · Resist muscle fatigue"],
         ["力量 · 提高最大力量", "Strength · Lift heavier loads"],
         ["爆发力 · 提高快速发力能力", "Power · Produce force quickly"],
-        ["🔒 爆发力 · 暂不可用", "🔒 Power · Coming soon"],
+        ["爆发力 · 暂不可用　🔒︎", "Power · Coming soon　🔒︎"],
         ["选择最想优先提升的一项。", "Choose the ability you most want to improve."],
         ["训练历史", "Training experience"],
         ["请选择训练经验", "Select training experience"],
@@ -12452,12 +12456,14 @@
         const known = new Set(groups.flatMap(([, muscles]) => muscles));
         const other = [...counts.keys()].filter((muscle) => !known.has(muscle));
         if (other.length) groups.push([appLanguage === "en" ? "Other" : "其他", other]);
+        const coveredGroups = groups.map(([title, muscles]) => [title, muscles.filter((muscle) => (counts.get(muscle) || 0) > 0)])
+          .filter(([, muscles]) => muscles.length);
         element.innerHTML = `<div class="plan-muscle-coverage-head"><h3>${appLanguage === "en" ? "Weekly muscle coverage" : "每周肌群覆盖"}</h3><span>${appLanguage === "en" ? `WEEK ${weekIndex + 1}` : `第 ${weekIndex + 1} 周`}</span></div>
           <p class="plan-muscle-coverage-note">${appLanguage === "en" ? "Planned sets by primary muscle. Unilateral sets count once; one set may cover multiple muscles." : "按动作主要肌群统计计划组数；单侧动作每侧一组计为一组，同一组可计入多个肌群。"}${unknown ? (appLanguage === "en" ? " Some exercises could not be classified." : " 部分动作缺少统计信息。") : ""}</p>
-          <div class="plan-muscle-groups">${groups.map(([title, muscles]) => `<div class="plan-muscle-group"><h4>${title}</h4><div class="plan-muscle-items">${muscles.map((muscle) => {
+          <div class="plan-muscle-groups">${coveredGroups.map(([title, muscles]) => `<div class="plan-muscle-group"><h4>${title}</h4><div class="plan-muscle-items">${muscles.map((muscle) => {
             const sets = counts.get(muscle) || 0;
             return `<div class="plan-muscle-item${sets ? "" : " is-empty"}"><span>${escapeLogText(translateInterfaceText(muscle))}</span><strong>${sets} ${appLanguage === "en" ? "sets" : "组"}</strong></div>`;
-          }).join("")}</div></div>`).join("")}</div>`;
+          }).join("")}</div></div>`).join("") || `<p class="plan-muscle-coverage-note">${appLanguage === "en" ? "No planned muscle coverage for this week." : "本周暂无计划肌群数据。"}</p>`}</div>`;
       }
 
       function renderPlan() {

@@ -11,7 +11,6 @@ const APP_ASSETS = [
   "app-icon.svg",
   "icon-192.png",
   "icon-512.png",
-  "data/exercises-v1.json",
   "data/exercise-library-data.js",
   "assets/exercise-placeholder.svg"
 ].map(appUrl);

@@ -132,5 +132,18 @@ test('weekly planned muscle coverage counts sets once per side and applies repla
   assert.equal(result.counts.get('股四头肌'),3);assert.equal(result.counts.get('臀肌'),3);
   assert.equal(result.counts.get('中背部'),2);assert.equal(result.counts.get('肱二头肌'),4);
   schedule[1].skipped=true;assert.equal(sandbox.coverage({split:[[],[]]},0,schedule).counts.has('肱二头肌'),false);
-  assert.match(source, /<option value="power" disabled>🔒/);
+  assert.match(source, /<option value="power" disabled>爆发力[^<]*🔒/);
+});
+
+test('weekly muscle coverage omits zero-set muscles and empty regions',()=>{
+  const text=fragment('function renderPlanMuscleCoverage(', 'function renderPlan()');
+  const element={innerHTML:''};
+  const sandbox={document:{querySelector:()=>element},getPlanMuscleCoverage:()=>({counts:new Map([['胸部',3]]),unknown:0}),
+    appLanguage:'zh',escapeLogText:s=>s,translateInterfaceText:s=>s};
+  vm.createContext(sandbox);vm.runInContext(`${text}\nthis.render=renderPlanMuscleCoverage;`,sandbox);
+  sandbox.render({},0,[]);
+  assert.match(element.innerHTML,/胸部/);assert.match(element.innerHTML,/3 组/);
+  assert.doesNotMatch(element.innerHTML,/0 组|髋外展肌群|<h4>下肢<\/h4>/);
+  sandbox.getPlanMuscleCoverage=()=>({counts:new Map(),unknown:0});sandbox.render({},0,[]);
+  assert.match(element.innerHTML,/本周暂无计划肌群数据/);
 });
