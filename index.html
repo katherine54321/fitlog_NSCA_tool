@@ -8045,6 +8045,8 @@
         ["每动作容量", "Sets per exercise"],
         ["负荷规则", "Loading rules"],
         ["全部动作", "All exercises"],
+        ["全身", "Full body"],
+        ["全身动作", "Full-body exercises"],
         ["清除", "Clear"],
         ["加载更多", "Load more"],
         ["训练前热身", "Pre-workout warm-up"],
@@ -13485,8 +13487,10 @@
       }
 
       function renderExercises() {
+        const categories = [...new Set(resistanceExercises.map((item) => item.category))];
+        if (resistanceExercises.some((item) => item.movementFamily === "power") && !categories.includes("全身")) categories.push("全身");
         const options = [
-          [exerciseCategoryFilter, [...new Set(resistanceExercises.map((item) => item.category))]],
+          [exerciseCategoryFilter, categories],
           [exerciseEquipmentFilter, [...new Set(resistanceExercises.map((item) => item.equipment))]]
         ];
         options.forEach(([select, values]) => {
@@ -13503,7 +13507,7 @@
       }
 
       function renderLibraryBrowseControls() {
-        const categoryOrder = ["胸部", "背部", "肩部", "手臂", "腿部", "臀部", "核心"];
+        const categoryOrder = ["胸部", "背部", "肩部", "手臂", "腿部", "臀部", "核心", "全身"];
         const equipmentOrder = ["徒手", "哑铃", "杠铃", "固定器械", "绳索器械", "药球"];
         const sortByPreferredOrder = (values, order) =>
           [...new Set(values)]
@@ -13516,7 +13520,10 @@
               if (bIndex === -1) return -1;
               return aIndex - bIndex;
             });
-        const categories = sortByPreferredOrder(resistanceExercises.map((item) => item.category), categoryOrder);
+        const categories = sortByPreferredOrder([
+          ...resistanceExercises.map((item) => item.category),
+          ...(resistanceExercises.some((item) => item.movementFamily === "power") ? ["全身"] : [])
+        ], categoryOrder);
         const equipment = sortByPreferredOrder(resistanceExercises.map((item) => item.equipment), equipmentOrder);
         exerciseCategoryNav.innerHTML = ["", ...categories]
           .map((value) => {
@@ -13548,7 +13555,7 @@
             .toLowerCase();
           return (
             (!search || searchable.includes(search)) &&
-            (!exerciseCategoryFilter.value || exercise.category === exerciseCategoryFilter.value) &&
+            (!exerciseCategoryFilter.value || (exerciseCategoryFilter.value === "全身" ? exercise.movementFamily === "power" || exercise.category === "全身" : exercise.category === exerciseCategoryFilter.value)) &&
             (!exerciseEquipmentFilter.value || exercise.equipment === exerciseEquipmentFilter.value)
           );
         });

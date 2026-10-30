@@ -688,7 +688,7 @@
         "power clean"
       ],
       "nameZh": "杠铃高翻",
-      "category": "腿部",
+      "category": "全身",
       "instructionsZh": [
         "双脚站稳、双手握杠，保持脊柱中立并让杠铃靠近胫骨。",
         "先平稳离地，杠过膝后快速伸展髋、膝和踝，保持杠铃靠近身体。",
@@ -700,7 +700,7 @@
         "hang clean"
       ],
       "nameZh": "悬垂高翻",
-      "category": "腿部",
+      "category": "全身",
       "instructionsZh": [
         "双手握杠站稳，向后送髋，让杠铃停于大腿附近，躯干保持稳定。",
         "快速伸展髋、膝和踝，杠铃沿身体附近向上移动。",
@@ -712,7 +712,7 @@
         "push press"
       ],
       "nameZh": "杠铃借力推举",
-      "category": "肩部",
+      "category": "全身",
       "instructionsZh": [
         "双脚与髋同宽站稳，将杠铃置于肩前，肘部略朝前。",
         "躯干保持直立，屈膝小幅下沉后迅速伸髋伸膝，以腿部发力带动杠铃。",
@@ -729,7 +729,7 @@
         "front box jump"
       ],
       "nameZh": "正向箱跳",
-      "category": "腿部",
+      "category": "全身",
       "instructionsZh": [
         "选择稳固、适合自身能力的低箱，双脚与肩同宽站在箱前。",
         "屈髋屈膝小幅预蹲并摆臂，快速蹬地跳至箱面。",
@@ -741,7 +741,7 @@
         "freehand jump squat"
       ],
       "nameZh": "徒手深蹲跳",
-      "category": "腿部",
+      "category": "全身",
       "instructionsZh": [
         "双脚与肩同宽站稳，收紧躯干并自然屈髋屈膝。",
         "快速伸髋伸膝向上跳起，保持动作可控。",
@@ -753,7 +753,7 @@
         "medicine ball chest pass"
       ],
       "nameZh": "药球胸前爆发传球",
-      "category": "胸部",
+      "category": "全身",
       "instructionsZh": [
         "面对可承受药球冲击的墙面或训练伙伴，双手持球于胸前，站稳。",
         "向前快速伸展双臂，将药球由胸前传出。",

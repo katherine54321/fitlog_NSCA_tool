@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
+import vm from "node:vm";
 
 const [librarySource, importScript, expansionSource, appSource, patternsSource, browserSource] = await Promise.all([
   readFile(new URL("../data/exercises-v1.json", import.meta.url), "utf8"),
@@ -64,6 +65,36 @@ test("power exercises include local frames, instructions and power-only classifi
   assert.match(importScript, /config\.instructionsEn \|\| exercise\.instructions/);
 });
 
+test("full-body navigation shows power exercises after core without retaining muscle categories", () => {
+  const start = appSource.indexOf("function renderExercises() {");
+  const end = appSource.indexOf("function localImageFallback(", start);
+  assert.ok(start >= 0 && end > start);
+  const categoryFilter = { value: "", innerHTML: "" };
+  const equipmentFilter = { value: "", innerHTML: "" };
+  const categoryNav = { innerHTML: "" };
+  const context = {
+    resistanceExercises: exercises.filter((item) => item.libraryType === "resistance"),
+    exerciseCategoryFilter: categoryFilter, exerciseEquipmentFilter: equipmentFilter,
+    exerciseCategoryNav: categoryNav, exerciseEquipmentTabs: { innerHTML: "" },
+    exerciseSearch: { value: "" }, renderExerciseLibrary() {}
+  };
+  vm.createContext(context);
+  vm.runInContext(`${appSource.slice(start, end)}\nthis.renderExercises = renderExercises; this.getFilteredExercises = getFilteredExercises;`, context);
+  context.renderExercises();
+  assert.match(categoryFilter.innerHTML, /<option value="全身">/);
+  assert.match(categoryNav.innerHTML, /data-library-category="全身">全身<\/button>/);
+  assert.ok(categoryNav.innerHTML.indexOf('data-library-category="核心"') < categoryNav.innerHTML.indexOf('data-library-category="全身"'));
+  categoryFilter.value = "全身";
+  assert.deepEqual(Array.from(context.getFilteredExercises(), (item) => item.id).sort(), [
+    "barbell-push-press", "freehand-jump-squat", "front-box-jump", "hang-clean", "medicine-ball-chest-pass", "power-clean"
+  ]);
+  equipmentFilter.value = "杠铃";
+  assert.deepEqual(Array.from(context.getFilteredExercises(), (item) => item.id).sort(), ["barbell-push-press", "hang-clean", "power-clean"]);
+  categoryFilter.value = "胸部"; equipmentFilter.value = "";
+  assert.equal(context.getFilteredExercises().some((item) => item.id === "medicine-ball-chest-pass"), false);
+  assert.ok(exercises.filter((item) => item.movementFamily === "power").every((item) => item.category === "全身"));
+});
+
 test("movement patterns cover resistance exercises and match browser data", () => {
   const resistance = exercises.filter((item) => item.libraryType === "resistance");
   assert.equal(Object.keys(patterns.exercises).length, resistance.length);
@@ -102,15 +133,16 @@ test("exercise library contains 189 complete local exercises with balanced cover
 
   const categories = countBy(exercises, "category");
   assert.deepEqual(categories, {
-    "胸部": 22,
+    "胸部": 21,
     "背部": 22,
-    "肩部": 22,
+    "肩部": 21,
     "手臂": 22,
-    "腿部": 28,
+    "腿部": 24,
     "臀部": 22,
     "核心": 21,
     "热身": 15,
-    "拉伸": 15
+    "拉伸": 15,
+    "全身": 6
   });
 });
 

@@ -6744,7 +6744,7 @@
     "id": "power-clean",
     "nameZh": "杠铃高翻",
     "nameEn": "Power Clean",
-    "category": "腿部",
+    "category": "全身",
     "libraryType": "resistance",
     "movementPatterns": [
       "power"
@@ -6810,7 +6810,7 @@
     "id": "hang-clean",
     "nameZh": "悬垂高翻",
     "nameEn": "Hang Clean",
-    "category": "腿部",
+    "category": "全身",
     "libraryType": "resistance",
     "movementPatterns": [
       "power"
@@ -6853,7 +6853,7 @@
     "id": "barbell-push-press",
     "nameZh": "杠铃借力推举",
     "nameEn": "Push Press",
-    "category": "肩部",
+    "category": "全身",
     "libraryType": "resistance",
     "movementPatterns": [
       "power"
@@ -6891,7 +6891,7 @@
     "id": "front-box-jump",
     "nameZh": "正向箱跳",
     "nameEn": "Front Box Jump",
-    "category": "腿部",
+    "category": "全身",
     "libraryType": "resistance",
     "movementPatterns": [
       "power"
@@ -6933,7 +6933,7 @@
     "id": "freehand-jump-squat",
     "nameZh": "徒手深蹲跳",
     "nameEn": "Freehand Jump Squat",
-    "category": "腿部",
+    "category": "全身",
     "libraryType": "resistance",
     "movementPatterns": [
       "power"
@@ -6975,7 +6975,7 @@
     "id": "medicine-ball-chest-pass",
     "nameZh": "药球胸前爆发传球",
     "nameEn": "Medicine Ball Chest Pass",
-    "category": "胸部",
+    "category": "全身",
     "libraryType": "resistance",
     "movementPatterns": [
       "power"
