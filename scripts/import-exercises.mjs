@@ -10,6 +10,7 @@ const terms = JSON.parse(await readFile(join(root, "data", "exercise-terms.json"
 const expansion = JSON.parse(await readFile(join(root, "data", "exercise-expansion-v2.json"), "utf8"));
 const movementPatterns = JSON.parse(await readFile(join(root, "data", "exercise-movement-patterns.json"), "utf8"));
 const mechanicOverrides = JSON.parse(await readFile(join(root, "data", "exercise-mechanic-overrides.json"), "utf8"));
+const trainingClassification = JSON.parse(await readFile(join(root, "data", "exercise-training-classification.json"), "utf8"));
 const outputJson = join(root, "data", "exercises-v1.json");
 const outputScript = join(root, "data", "exercise-library-data.js");
 const imageDir = join(root, "assets", "exercise-images");
@@ -73,11 +74,18 @@ const unclassified = Object.entries(exerciseConfigs).filter(([id, config]) =>
   (config.libraryType || "resistance") === "resistance" && !movementPatterns.exercises[id]
 );
 if (unclassified.length) throw new Error(`Missing reviewed movement patterns: ${unclassified.map(([id]) => id).join(", ")}`);
+const validFamilies = new Set(["power", "lower_push", "lower_pull", "upper_push", "upper_pull", "core"]);
+const unreviewed = Object.entries(exerciseConfigs).filter(([id, config]) => {
+  if ((config.libraryType || "resistance") !== "resistance") return false;
+  const item = trainingClassification.exercises[id];
+  return !item || !validFamilies.has(item.movementFamily) || !Array.isArray(item.roles) || !item.roles.length || item.roles.some((role) => !["main", "accessory"].includes(role));
+});
+if (unreviewed.length) throw new Error(`Missing reviewed training classifications: ${unreviewed.map(([id]) => id).join(", ")}`);
 
 for (const [id, config] of Object.entries(exerciseConfigs)) {
   try {
     const exercise = findSourceExercise(source, config);
-    if (!exercise || seen.has(exercise.id) || !exercise.images?.length || !exercise.instructions?.length) {
+    if (!exercise || seen.has(exercise.id) || !exercise.images?.length || !(config.instructionsEn?.length || exercise.instructions?.length)) {
       stats.skipped += 1;
       if (verbose) console.log(`跳过：${config.nameZh}（未找到完整源数据或重复）`);
       continue;
@@ -93,6 +101,7 @@ for (const [id, config] of Object.entries(exerciseConfigs)) {
       category: config.category,
       libraryType: config.libraryType || "resistance",
       ...((config.libraryType || "resistance") === "resistance" ? { movementPatterns: movementPatterns.exercises[id] } : {}),
+      ...((config.libraryType || "resistance") === "resistance" ? trainingClassification.exercises[id] : {}),
       level: translate(exercise.level),
       equipment: config.equipment || translateEquipment(exercise.equipment),
       force: translate(exercise.force),
@@ -100,7 +109,7 @@ for (const [id, config] of Object.entries(exerciseConfigs)) {
       primaryMuscles: (exercise.primaryMuscles || []).map(translate),
       secondaryMuscles: (exercise.secondaryMuscles || []).map(translate),
       instructionsZh: config.instructionsZh,
-      instructionsEn: exercise.instructions,
+      instructionsEn: config.instructionsEn || exercise.instructions,
       startImage: imagePaths[0] || null,
       endImage: imagePaths[1] || imagePaths[0] || null
     });

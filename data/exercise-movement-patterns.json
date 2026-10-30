@@ -460,6 +460,24 @@
     ],
     "weighted-sit-ups-bands": [
       "trunk_flexion"
+    ],
+    "power-clean": [
+      "power"
+    ],
+    "hang-clean": [
+      "power"
+    ],
+    "barbell-push-press": [
+      "power"
+    ],
+    "front-box-jump": [
+      "power"
+    ],
+    "freehand-jump-squat": [
+      "power"
+    ],
+    "medicine-ball-chest-pass": [
+      "power"
     ]
   }
 }

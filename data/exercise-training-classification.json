@@ -1,0 +1,1042 @@
+{
+  "version": 1,
+  "note": "动作模式为应用内训练分类，适用角色是候选用途；实际主项或辅助项由训练计划决定。",
+  "exercises": {
+    "barbell-bench-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "incline-dumbbell-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "push-up": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "lat-pulldown": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "bent-over-barbell-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "seated-cable-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "one-arm-dumbbell-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "dumbbell-shoulder-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "side-lateral-raise": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "barbell-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "dumbbell-hammer-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "triceps-pushdown": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "barbell-squat": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "leg-press": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "romanian-deadlift": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "lying-leg-curls": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "barbell-hip-thrust": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "cable-kickback": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-crunch": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "weighted-sit-up": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "dumbbell-bench-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "decline-dumbbell-bench-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "cable-crossover": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "chest-dips": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "incline-dumbbell-flyes": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-chest-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "pullups": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "wide-grip-lat-pulldown": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "lying-tbar-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "rope-straight-arm-pulldown": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "back-extension": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "arnold-dumbbell-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "barbell-shoulder-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "front-dumbbell-raise": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-rear-delt-fly": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "face-pull": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "upright-barbell-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "preacher-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "concentration-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-overhead-triceps-extension": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "lying-triceps-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "bench-dips": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "cable-hammer-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "dumbbell-lunges": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "barbell-lunge": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "leg-extensions": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "seated-leg-curl": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "standing-calf-raises": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "dumbbell-step-ups": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "hack-squat": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "single-leg-glute-bridge": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "glute-ham-raise": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "sumo-deadlift": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "glute-bridge": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "ab-crunch-machine": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "ab-roller": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "barbell-ab-rollout": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-russian-twist": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-reverse-crunch": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "russian-twist": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "barbell-incline-bench-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "decline-barbell-bench-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "dumbbell-flyes": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "butterfly-machine": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "leverage-chest-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "low-cable-crossover": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "incline-cable-chest-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "decline-smith-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "hammer-grip-incline-db-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "bent-over-two-dumbbell-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "tbar-row-handle": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "reverse-grip-bent-over-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "leverage-high-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "smith-machine-bent-over-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "vbar-pulldown": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "kneeling-high-pulley-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "seated-one-arm-cable-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "straight-arm-pulldown": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "alternating-cable-shoulder-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "barbell-rear-delt-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "bent-over-dumbbell-rear-delt-raise": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-seated-lateral-raise": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-shoulder-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "dumbbell-scaptation": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "one-arm-dumbbell-shoulder-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "front-cable-raise": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "alternate-incline-dumbbell-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-preacher-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cross-body-hammer-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "dumbbell-alternate-bicep-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "ez-bar-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "machine-bicep-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "high-cable-curls": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "close-grip-barbell-bench-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "machine-triceps-extension": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "barbell-hack-squat": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "barbell-walking-lunge": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "dumbbell-rear-lunge": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "dumbbell-squat": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "front-squat-clean-grip": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "good-morning": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "barbell-step-ups": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "smith-machine-squat": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "seated-calf-raise": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "calf-press": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-pull-through": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "kneeling-squat": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "glute-kickback": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "hip-extension-bands": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "hip-lift-band": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "physioball-hip-bridge": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "barbell-side-bend": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-seated-crunch": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "dumbbell-side-bend": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "pallof-press": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "kneeling-cable-oblique-crunch": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "landmine-180": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "bosu-cable-crunch-side-bend": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "barbell-glute-bridge": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "barbell-ab-rollout-knees": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "wide-grip-barbell-bench-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "machine-bench-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "dumbbell-neutral-grip-bench-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "chin-up": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "inverted-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "leverage-iso-row": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "underhand-cable-pulldown": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "machine-shoulder-press": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "reverse-machine-flyes": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "front-plate-raise": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "one-arm-side-laterals": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "band-pull-apart": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "incline-dumbbell-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "ez-bar-skullcrusher": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "reverse-barbell-curl": {
+      "movementFamily": "upper_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "cable-one-arm-tricep-extension": {
+      "movementFamily": "upper_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "goblet-squat": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "narrow-stance-leg-press": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "donkey-calf-raise": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "elevated-back-lunge": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "lunge-pass-through": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "kettlebell-one-legged-deadlift": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "step-up-with-knee-raise": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "cable-deadlifts": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "bodyweight-walking-lunge": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "seated-hip-abduction": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "smith-machine-pistol-squat": {
+      "movementFamily": "lower_push",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "smith-machine-stiff-legged-deadlift": {
+      "movementFamily": "lower_pull",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "hanging-leg-raise": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "decline-crunch": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "knee-hip-raise-parallel-bars": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "standing-cable-wood-chop": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "weighted-sit-ups-bands": {
+      "movementFamily": "core",
+      "roles": [
+        "accessory"
+      ]
+    },
+    "power-clean": {
+      "movementFamily": "power",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "hang-clean": {
+      "movementFamily": "power",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "barbell-push-press": {
+      "movementFamily": "power",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "front-box-jump": {
+      "movementFamily": "power",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "freehand-jump-squat": {
+      "movementFamily": "power",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    },
+    "medicine-ball-chest-pass": {
+      "movementFamily": "power",
+      "roles": [
+        "main",
+        "accessory"
+      ]
+    }
+  }
+}

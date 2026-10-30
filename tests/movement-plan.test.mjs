@@ -142,6 +142,7 @@ test('weekly muscle coverage omits zero-set muscles and empty regions',()=>{
     appLanguage:'zh',escapeLogText:s=>s,translateInterfaceText:s=>s};
   vm.createContext(sandbox);vm.runInContext(`${text}\nthis.render=renderPlanMuscleCoverage;`,sandbox);
   sandbox.render({},0,[]);
+  assert.match(element.innerHTML,/当周肌群覆盖/);
   assert.match(element.innerHTML,/胸部/);assert.match(element.innerHTML,/3 组/);
   assert.doesNotMatch(element.innerHTML,/0 组|髋外展肌群|<h4>下肢<\/h4>/);
   sandbox.getPlanMuscleCoverage=()=>({counts:new Map(),unknown:0});sandbox.render({},0,[]);

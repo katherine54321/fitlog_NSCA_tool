@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 const [librarySource, importScript, expansionSource, appSource, patternsSource, browserSource] = await Promise.all([
@@ -21,6 +21,47 @@ test("reviewed exercise mechanics persist through the import pipeline", async ()
     assert.equal(exercises.find((exercise) => exercise.id === id)?.mechanic, mechanic, id);
   }
   assert.match(importScript, /mechanicOverrides\[id\]/);
+});
+
+test("resistance exercises carry stable movement families and internal candidate roles", async () => {
+  const classifications = JSON.parse(await readFile(new URL("../data/exercise-training-classification.json", import.meta.url), "utf8"));
+  const resistance = exercises.filter((item) => item.libraryType === "resistance");
+  const families = new Set(["power", "lower_push", "lower_pull", "upper_push", "upper_pull", "core"]);
+  assert.equal(Object.keys(classifications.exercises).length, resistance.length);
+  for (const item of resistance) {
+    assert.deepEqual({ movementFamily: item.movementFamily, roles: item.roles }, classifications.exercises[item.id], item.id);
+    assert.ok(families.has(item.movementFamily), item.id);
+    assert.ok(item.roles.length > 0 && item.roles.every((role) => ["main", "accessory"].includes(role)), item.id);
+  }
+  for (const item of exercises.filter((exercise) => exercise.libraryType !== "resistance")) {
+    assert.equal(item.movementFamily, undefined, item.id);
+    assert.equal(item.roles, undefined, item.id);
+  }
+  const byId = Object.fromEntries(resistance.map((item) => [item.id, item]));
+  assert.equal(byId["barbell-squat"].movementFamily, "lower_push");
+  assert.equal(byId["romanian-deadlift"].movementFamily, "lower_pull");
+  assert.equal(byId["barbell-bench-press"].movementFamily, "upper_push");
+  assert.equal(byId["upright-barbell-row"].movementFamily, "upper_pull");
+  assert.equal(byId["pallof-press"].movementFamily, "core");
+  assert.deepEqual(byId["barbell-bench-press"].roles, ["main", "accessory"]);
+  assert.deepEqual(byId["side-lateral-raise"].roles, ["accessory"]);
+  assert.match(importScript, /Missing reviewed training classifications/);
+  assert.match(appSource, /exerciseMovementFamilyLabel\(exercise\)/);
+  assert.doesNotMatch(appSource, /<span>发力方式<\/span><b>\$\{translateInterfaceText\(exercise\.force\)\}/);
+});
+
+test("power exercises include local frames, instructions and power-only classification", async () => {
+  const ids = ["power-clean", "hang-clean", "barbell-push-press", "front-box-jump", "freehand-jump-squat", "medicine-ball-chest-pass"];
+  for (const id of ids) {
+    const item = exercises.find((exercise) => exercise.id === id);
+    assert.ok(item, id);
+    assert.equal(item.movementFamily, "power", id);
+    assert.deepEqual(item.movementPatterns, ["power"], id);
+    assert.ok(item.roles.includes("main"), id);
+    assert.ok(item.instructionsZh.length && item.instructionsEn.length, id);
+    for (const image of [item.startImage, item.endImage]) await access(new URL(`../${image}`, import.meta.url));
+  }
+  assert.match(importScript, /config\.instructionsEn \|\| exercise\.instructions/);
 });
 
 test("movement patterns cover resistance exercises and match browser data", () => {
@@ -51,21 +92,21 @@ const countBy = (items, property) =>
     return counts;
   }, {});
 
-test("exercise library contains 183 complete local exercises with balanced coverage", () => {
-  assert.equal(exercises.length, 183);
-  assert.equal(new Set(exercises.map((exercise) => exercise.id)).size, 183);
+test("exercise library contains 189 complete local exercises with balanced coverage", () => {
+  assert.equal(exercises.length, 189);
+  assert.equal(new Set(exercises.map((exercise) => exercise.id)).size, 189);
   assert.equal(exercises.filter((exercise) => !exercise.startImage || !exercise.endImage || !exercise.instructionsZh?.length).length, 0);
 
   const types = countBy(exercises, "libraryType");
-  assert.deepEqual(types, { resistance: 153, warmup: 15, stretch: 15 });
+  assert.deepEqual(types, { resistance: 159, warmup: 15, stretch: 15 });
 
   const categories = countBy(exercises, "category");
   assert.deepEqual(categories, {
-    "胸部": 21,
+    "胸部": 22,
     "背部": 22,
-    "肩部": 21,
+    "肩部": 22,
     "手臂": 22,
-    "腿部": 24,
+    "腿部": 28,
     "臀部": 22,
     "核心": 21,
     "热身": 15,
@@ -105,7 +146,7 @@ test("glute machine filter includes common abduction, unilateral squat, and hing
 test("exercise importer merges the expansion catalog and list stays paginated", () => {
   assert.match(importScript, /exercise-expansion-v2\.json/);
   assert.match(importScript, /const exerciseConfigs = \{ \.\.\.terms\.exercises, \.\.\.expansion\.exercises \}/);
-  assert.equal(Object.keys(expansion.exercises).length, 55);
+  assert.equal(Object.keys(expansion.exercises).length, 61);
   assert.match(appSource, /let libraryVisibleCount = 20/);
   assert.match(appSource, /libraryVisibleCount \+= 20/);
   assert.match(appSource, /renderExerciseCardGrid\("#warmupGrid", warmupExercises\)/);

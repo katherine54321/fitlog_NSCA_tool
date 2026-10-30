@@ -32,6 +32,11 @@
     "endImage": "assets/exercise-images/barbell-bench-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -69,6 +74,11 @@
     "endImage": "assets/exercise-images/incline-dumbbell-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -103,6 +113,11 @@
     "endImage": "assets/exercise-images/push-up-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -140,6 +155,11 @@
     "endImage": "assets/exercise-images/lat-pulldown-1.jpg",
     "movementPatterns": [
       "vertical_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -175,6 +195,11 @@
     "endImage": "assets/exercise-images/bent-over-barbell-row-1.jpg",
     "movementPatterns": [
       "horizontal_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -211,6 +236,11 @@
     "endImage": "assets/exercise-images/seated-cable-row-1.jpg",
     "movementPatterns": [
       "horizontal_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -249,6 +279,11 @@
     "endImage": "assets/exercise-images/one-arm-dumbbell-row-1.jpg",
     "movementPatterns": [
       "horizontal_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -284,6 +319,11 @@
     "endImage": "assets/exercise-images/dumbbell-shoulder-press-1.jpg",
     "movementPatterns": [
       "vertical_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -315,6 +355,10 @@
     "endImage": "assets/exercise-images/side-lateral-raise-1.jpg",
     "movementPatterns": [
       "shoulder_abduction"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -349,6 +393,10 @@
     "endImage": "assets/exercise-images/barbell-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -381,6 +429,10 @@
     "endImage": "assets/exercise-images/dumbbell-hammer-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -413,6 +465,10 @@
     "endImage": "assets/exercise-images/triceps-pushdown-1.jpg",
     "movementPatterns": [
       "elbow_extension"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -451,6 +507,11 @@
     "endImage": "assets/exercise-images/barbell-squat-1.jpg",
     "movementPatterns": [
       "squat"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -487,6 +548,11 @@
     "endImage": "assets/exercise-images/leg-press-1.jpg",
     "movementPatterns": [
       "squat"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -523,6 +589,11 @@
     "endImage": "assets/exercise-images/romanian-deadlift-1.jpg",
     "movementPatterns": [
       "hip_hinge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -554,6 +625,10 @@
     "endImage": "assets/exercise-images/lying-leg-curls-1.jpg",
     "movementPatterns": [
       "knee_flexion"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -587,6 +662,11 @@
     "endImage": "assets/exercise-images/barbell-hip-thrust-1.jpg",
     "movementPatterns": [
       "hip_thrust_bridge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -622,6 +702,10 @@
     "endImage": "assets/exercise-images/cable-kickback-1.jpg",
     "movementPatterns": [
       "hip_extension"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -655,6 +739,10 @@
     "endImage": "assets/exercise-images/cable-crunch-1.jpg",
     "movementPatterns": [
       "trunk_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -687,6 +775,10 @@
     "endImage": "assets/exercise-images/weighted-sit-up-1.jpg",
     "movementPatterns": [
       "trunk_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -722,6 +814,11 @@
     "endImage": "assets/exercise-images/dumbbell-bench-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -758,6 +855,11 @@
     "endImage": "assets/exercise-images/decline-dumbbell-bench-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -792,6 +894,10 @@
     "endImage": "assets/exercise-images/cable-crossover-1.jpg",
     "movementPatterns": [
       "shoulder_horizontal_adduction"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -826,6 +932,11 @@
     "endImage": "assets/exercise-images/chest-dips-1.jpg",
     "movementPatterns": [
       "vertical_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -861,6 +972,10 @@
     "endImage": "assets/exercise-images/incline-dumbbell-flyes-1.jpg",
     "movementPatterns": [
       "shoulder_horizontal_adduction"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -895,6 +1010,11 @@
     "endImage": "assets/exercise-images/cable-chest-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -930,6 +1050,11 @@
     "endImage": "assets/exercise-images/pullups-1.jpg",
     "movementPatterns": [
       "vertical_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -967,6 +1092,11 @@
     "endImage": "assets/exercise-images/wide-grip-lat-pulldown-1.jpg",
     "movementPatterns": [
       "vertical_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -1003,6 +1133,11 @@
     "endImage": "assets/exercise-images/lying-tbar-row-1.jpg",
     "movementPatterns": [
       "horizontal_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -1034,6 +1169,10 @@
     "endImage": "assets/exercise-images/rope-straight-arm-pulldown-1.jpg",
     "movementPatterns": [
       "shoulder_extension"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1070,6 +1209,10 @@
     "endImage": "assets/exercise-images/back-extension-1.jpg",
     "movementPatterns": [
       "hip_hinge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1104,6 +1247,11 @@
     "endImage": "assets/exercise-images/arnold-dumbbell-press-1.jpg",
     "movementPatterns": [
       "vertical_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -1139,6 +1287,11 @@
     "endImage": "assets/exercise-images/barbell-shoulder-press-1.jpg",
     "movementPatterns": [
       "vertical_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -1170,6 +1323,10 @@
     "endImage": "assets/exercise-images/front-dumbbell-raise-1.jpg",
     "movementPatterns": [
       "shoulder_flexion"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1201,6 +1358,10 @@
     "endImage": "assets/exercise-images/cable-rear-delt-fly-1.jpg",
     "movementPatterns": [
       "shoulder_horizontal_abduction"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1231,6 +1392,10 @@
     "endImage": "assets/exercise-images/face-pull-1.jpg",
     "movementPatterns": [
       "shoulder_horizontal_abduction"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1264,6 +1429,10 @@
     "endImage": "assets/exercise-images/upright-barbell-row-1.jpg",
     "movementPatterns": [
       "shoulder_abduction"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1296,6 +1465,10 @@
     "endImage": "assets/exercise-images/preacher-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1330,6 +1503,10 @@
     "endImage": "assets/exercise-images/concentration-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1362,6 +1539,10 @@
     "endImage": "assets/exercise-images/cable-overhead-triceps-extension-1.jpg",
     "movementPatterns": [
       "elbow_extension"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1394,6 +1575,10 @@
     "endImage": "assets/exercise-images/lying-triceps-press-1.jpg",
     "movementPatterns": [
       "elbow_extension"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1428,6 +1613,11 @@
     "endImage": "assets/exercise-images/bench-dips-1.jpg",
     "movementPatterns": [
       "vertical_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -1461,6 +1651,10 @@
     "endImage": "assets/exercise-images/cable-hammer-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1496,6 +1690,11 @@
     "endImage": "assets/exercise-images/dumbbell-lunges-1.jpg",
     "movementPatterns": [
       "lunge_step"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -1532,6 +1731,11 @@
     "endImage": "assets/exercise-images/barbell-lunge-1.jpg",
     "movementPatterns": [
       "lunge_step"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -1563,6 +1767,10 @@
     "endImage": "assets/exercise-images/leg-extensions-1.jpg",
     "movementPatterns": [
       "knee_extension"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1595,6 +1803,10 @@
     "endImage": "assets/exercise-images/seated-leg-curl-1.jpg",
     "movementPatterns": [
       "knee_flexion"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1627,6 +1839,10 @@
     "endImage": "assets/exercise-images/standing-calf-raises-1.jpg",
     "movementPatterns": [
       "calf_raise"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1662,6 +1878,11 @@
     "endImage": "assets/exercise-images/dumbbell-step-ups-1.jpg",
     "movementPatterns": [
       "lunge_step"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -1700,6 +1921,11 @@
     "endImage": "assets/exercise-images/hack-squat-1.jpg",
     "movementPatterns": [
       "squat"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -1733,6 +1959,10 @@
     "endImage": "assets/exercise-images/single-leg-glute-bridge-1.jpg",
     "movementPatterns": [
       "hip_thrust_bridge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1766,6 +1996,11 @@
     "endImage": "assets/exercise-images/glute-ham-raise-1.jpg",
     "movementPatterns": [
       "hip_hinge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -1805,6 +2040,11 @@
     "endImage": "assets/exercise-images/sumo-deadlift-1.jpg",
     "movementPatterns": [
       "hip_hinge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -1837,6 +2077,10 @@
     "endImage": "assets/exercise-images/glute-bridge-1.jpg",
     "movementPatterns": [
       "hip_thrust_bridge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1868,6 +2112,10 @@
     "endImage": "assets/exercise-images/ab-crunch-machine-1.jpg",
     "movementPatterns": [
       "trunk_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1901,6 +2149,10 @@
     "endImage": "assets/exercise-images/ab-roller-1.jpg",
     "movementPatterns": [
       "trunk_anti_extension"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1935,6 +2187,10 @@
     "endImage": "assets/exercise-images/barbell-ab-rollout-1.jpg",
     "movementPatterns": [
       "trunk_anti_extension"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -1969,6 +2225,10 @@
     "endImage": "assets/exercise-images/cable-russian-twist-1.jpg",
     "movementPatterns": [
       "trunk_rotation"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2002,6 +2262,10 @@
     "endImage": "assets/exercise-images/cable-reverse-crunch-1.jpg",
     "movementPatterns": [
       "hip_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2036,6 +2300,10 @@
     "endImage": "assets/exercise-images/russian-twist-1.jpg",
     "movementPatterns": [
       "trunk_rotation"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2071,6 +2339,11 @@
     "endImage": "assets/exercise-images/barbell-incline-bench-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2107,6 +2380,11 @@
     "endImage": "assets/exercise-images/decline-barbell-bench-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2139,6 +2417,10 @@
     "endImage": "assets/exercise-images/dumbbell-flyes-1.jpg",
     "movementPatterns": [
       "shoulder_horizontal_adduction"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2171,6 +2453,10 @@
     "endImage": "assets/exercise-images/butterfly-machine-1.jpg",
     "movementPatterns": [
       "shoulder_horizontal_adduction"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2205,6 +2491,11 @@
     "endImage": "assets/exercise-images/leverage-chest-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2238,6 +2529,10 @@
     "endImage": "assets/exercise-images/low-cable-crossover-1.jpg",
     "movementPatterns": [
       "shoulder_horizontal_adduction"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2271,6 +2566,11 @@
     "endImage": "assets/exercise-images/incline-cable-chest-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2306,6 +2606,11 @@
     "endImage": "assets/exercise-images/decline-smith-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2343,6 +2648,11 @@
     "endImage": "assets/exercise-images/hammer-grip-incline-db-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2378,6 +2688,11 @@
     "endImage": "assets/exercise-images/bent-over-two-dumbbell-row-1.jpg",
     "movementPatterns": [
       "horizontal_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2413,6 +2728,11 @@
     "endImage": "assets/exercise-images/tbar-row-handle-1.jpg",
     "movementPatterns": [
       "horizontal_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2449,6 +2769,11 @@
     "endImage": "assets/exercise-images/reverse-grip-bent-over-row-1.jpg",
     "movementPatterns": [
       "horizontal_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2482,6 +2807,11 @@
     "endImage": "assets/exercise-images/leverage-high-row-1.jpg",
     "movementPatterns": [
       "angled_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2519,6 +2849,11 @@
     "endImage": "assets/exercise-images/smith-machine-bent-over-row-1.jpg",
     "movementPatterns": [
       "horizontal_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2556,6 +2891,11 @@
     "endImage": "assets/exercise-images/vbar-pulldown-1.jpg",
     "movementPatterns": [
       "vertical_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2589,6 +2929,11 @@
     "endImage": "assets/exercise-images/kneeling-high-pulley-row-1.jpg",
     "movementPatterns": [
       "angled_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2626,6 +2971,11 @@
     "endImage": "assets/exercise-images/seated-one-arm-cable-row-1.jpg",
     "movementPatterns": [
       "horizontal_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2658,6 +3008,10 @@
     "endImage": "assets/exercise-images/straight-arm-pulldown-1.jpg",
     "movementPatterns": [
       "shoulder_extension"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2691,6 +3045,11 @@
     "endImage": "assets/exercise-images/alternating-cable-shoulder-press-1.jpg",
     "movementPatterns": [
       "vertical_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2727,6 +3086,10 @@
     "endImage": "assets/exercise-images/barbell-rear-delt-row-1.jpg",
     "movementPatterns": [
       "shoulder_horizontal_abduction"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2759,6 +3122,10 @@
     "endImage": "assets/exercise-images/bent-over-dumbbell-rear-delt-raise-1.jpg",
     "movementPatterns": [
       "shoulder_horizontal_abduction"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2796,6 +3163,10 @@
     "endImage": "assets/exercise-images/cable-seated-lateral-raise-1.jpg",
     "movementPatterns": [
       "shoulder_abduction"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2829,6 +3200,11 @@
     "endImage": "assets/exercise-images/cable-shoulder-press-1.jpg",
     "movementPatterns": [
       "vertical_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2861,6 +3237,10 @@
     "endImage": "assets/exercise-images/dumbbell-scaptation-1.jpg",
     "movementPatterns": [
       "shoulder_flexion"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2896,6 +3276,11 @@
     "endImage": "assets/exercise-images/one-arm-dumbbell-shoulder-press-1.jpg",
     "movementPatterns": [
       "vertical_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -2928,6 +3313,10 @@
     "endImage": "assets/exercise-images/front-cable-raise-1.jpg",
     "movementPatterns": [
       "shoulder_flexion"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2962,6 +3351,10 @@
     "endImage": "assets/exercise-images/alternate-incline-dumbbell-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -2998,6 +3391,10 @@
     "endImage": "assets/exercise-images/cable-preacher-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3031,6 +3428,10 @@
     "endImage": "assets/exercise-images/cross-body-hammer-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3065,6 +3466,10 @@
     "endImage": "assets/exercise-images/dumbbell-alternate-bicep-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3097,6 +3502,10 @@
     "endImage": "assets/exercise-images/ez-bar-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3128,6 +3537,10 @@
     "endImage": "assets/exercise-images/machine-bicep-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3159,6 +3572,10 @@
     "endImage": "assets/exercise-images/high-cable-curls-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3194,6 +3611,11 @@
     "endImage": "assets/exercise-images/close-grip-barbell-bench-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3225,6 +3647,10 @@
     "endImage": "assets/exercise-images/machine-triceps-extension-1.jpg",
     "movementPatterns": [
       "elbow_extension"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3260,6 +3686,11 @@
     "endImage": "assets/exercise-images/barbell-hack-squat-1.jpg",
     "movementPatterns": [
       "squat"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3295,6 +3726,11 @@
     "endImage": "assets/exercise-images/barbell-walking-lunge-1.jpg",
     "movementPatterns": [
       "lunge_step"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3330,6 +3766,11 @@
     "endImage": "assets/exercise-images/dumbbell-rear-lunge-1.jpg",
     "movementPatterns": [
       "lunge_step"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3367,6 +3808,11 @@
     "endImage": "assets/exercise-images/dumbbell-squat-1.jpg",
     "movementPatterns": [
       "squat"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3402,6 +3848,11 @@
     "endImage": "assets/exercise-images/front-squat-clean-grip-1.jpg",
     "movementPatterns": [
       "squat"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3436,6 +3887,11 @@
     "endImage": "assets/exercise-images/good-morning-1.jpg",
     "movementPatterns": [
       "hip_hinge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3472,6 +3928,11 @@
     "endImage": "assets/exercise-images/barbell-step-ups-1.jpg",
     "movementPatterns": [
       "lunge_step"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3510,6 +3971,11 @@
     "endImage": "assets/exercise-images/smith-machine-squat-1.jpg",
     "movementPatterns": [
       "squat"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3543,6 +4009,10 @@
     "endImage": "assets/exercise-images/seated-calf-raise-1.jpg",
     "movementPatterns": [
       "calf_raise"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3575,6 +4045,10 @@
     "endImage": "assets/exercise-images/calf-press-1.jpg",
     "movementPatterns": [
       "calf_raise"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3607,6 +4081,11 @@
     "endImage": "assets/exercise-images/cable-pull-through-1.jpg",
     "movementPatterns": [
       "hip_hinge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3641,6 +4120,10 @@
     "endImage": "assets/exercise-images/kneeling-squat-1.jpg",
     "movementPatterns": [
       "hip_extension"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3674,6 +4157,10 @@
     "endImage": "assets/exercise-images/glute-kickback-1.jpg",
     "movementPatterns": [
       "hip_extension"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3707,6 +4194,10 @@
     "endImage": "assets/exercise-images/hip-extension-bands-1.jpg",
     "movementPatterns": [
       "hip_extension"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3741,6 +4232,11 @@
     "endImage": "assets/exercise-images/hip-lift-band-1.jpg",
     "movementPatterns": [
       "hip_thrust_bridge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3773,6 +4269,11 @@
     "endImage": "assets/exercise-images/physioball-hip-bridge-1.jpg",
     "movementPatterns": [
       "hip_thrust_bridge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -3806,6 +4307,10 @@
     "endImage": "assets/exercise-images/barbell-side-bend-1.jpg",
     "movementPatterns": [
       "trunk_lateral_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3838,6 +4343,10 @@
     "endImage": "assets/exercise-images/cable-seated-crunch-1.jpg",
     "movementPatterns": [
       "trunk_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3869,6 +4378,10 @@
     "endImage": "assets/exercise-images/dumbbell-side-bend-1.jpg",
     "movementPatterns": [
       "trunk_lateral_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3906,6 +4419,10 @@
     "endImage": "assets/exercise-images/pallof-press-1.jpg",
     "movementPatterns": [
       "trunk_anti_rotation"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3942,6 +4459,10 @@
     "endImage": "assets/exercise-images/kneeling-cable-oblique-crunch-1.jpg",
     "movementPatterns": [
       "trunk_lateral_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -3978,6 +4499,10 @@
     "endImage": "assets/exercise-images/landmine-180-1.jpg",
     "movementPatterns": [
       "trunk_rotation"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4015,6 +4540,10 @@
     "endImage": "assets/exercise-images/bosu-cable-crunch-side-bend-1.jpg",
     "movementPatterns": [
       "trunk_lateral_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4048,6 +4577,11 @@
     "endImage": "assets/exercise-images/barbell-glute-bridge-1.jpg",
     "movementPatterns": [
       "hip_thrust_bridge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -4082,6 +4616,10 @@
     "endImage": "assets/exercise-images/barbell-ab-rollout-knees-1.jpg",
     "movementPatterns": [
       "trunk_anti_extension"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4341,6 +4879,11 @@
     "endImage": "assets/exercise-images/wide-grip-barbell-bench-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -4378,6 +4921,11 @@
     "endImage": "assets/exercise-images/machine-bench-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -4412,6 +4960,11 @@
     "endImage": "assets/exercise-images/dumbbell-neutral-grip-bench-press-1.jpg",
     "movementPatterns": [
       "horizontal_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -4448,6 +5001,11 @@
     "endImage": "assets/exercise-images/chin-up-1.jpg",
     "movementPatterns": [
       "vertical_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -4482,6 +5040,11 @@
     "endImage": "assets/exercise-images/inverted-row-1.jpg",
     "movementPatterns": [
       "horizontal_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -4515,6 +5078,11 @@
     "endImage": "assets/exercise-images/leverage-iso-row-1.jpg",
     "movementPatterns": [
       "horizontal_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -4552,6 +5120,11 @@
     "endImage": "assets/exercise-images/underhand-cable-pulldown-1.jpg",
     "movementPatterns": [
       "vertical_pull"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -4586,6 +5159,11 @@
     "endImage": "assets/exercise-images/machine-shoulder-press-1.jpg",
     "movementPatterns": [
       "vertical_push"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -4617,6 +5195,10 @@
     "endImage": "assets/exercise-images/reverse-machine-flyes-1.jpg",
     "movementPatterns": [
       "shoulder_horizontal_abduction"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4648,6 +5230,10 @@
     "endImage": "assets/exercise-images/front-plate-raise-1.jpg",
     "movementPatterns": [
       "shoulder_flexion"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4681,6 +5267,10 @@
     "endImage": "assets/exercise-images/one-arm-side-laterals-1.jpg",
     "movementPatterns": [
       "shoulder_abduction"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4715,6 +5305,10 @@
     "endImage": "assets/exercise-images/band-pull-apart-1.jpg",
     "movementPatterns": [
       "shoulder_horizontal_abduction"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4746,6 +5340,10 @@
     "endImage": "assets/exercise-images/incline-dumbbell-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4779,6 +5377,10 @@
     "endImage": "assets/exercise-images/ez-bar-skullcrusher-1.jpg",
     "movementPatterns": [
       "elbow_extension"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4812,6 +5414,10 @@
     "endImage": "assets/exercise-images/reverse-barbell-curl-1.jpg",
     "movementPatterns": [
       "elbow_flexion"
+    ],
+    "movementFamily": "upper_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4845,6 +5451,10 @@
     "endImage": "assets/exercise-images/cable-one-arm-tricep-extension-1.jpg",
     "movementPatterns": [
       "elbow_extension"
+    ],
+    "movementFamily": "upper_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4880,6 +5490,11 @@
     "endImage": "assets/exercise-images/goblet-squat-1.jpg",
     "movementPatterns": [
       "squat"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -4916,6 +5531,11 @@
     "endImage": "assets/exercise-images/narrow-stance-leg-press-1.jpg",
     "movementPatterns": [
       "squat"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -4948,6 +5568,10 @@
     "endImage": "assets/exercise-images/donkey-calf-raise-1.jpg",
     "movementPatterns": [
       "calf_raise"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -4982,6 +5606,11 @@
     "endImage": "assets/exercise-images/elevated-back-lunge-1.jpg",
     "movementPatterns": [
       "lunge_step"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -5018,6 +5647,11 @@
     "endImage": "assets/exercise-images/lunge-pass-through-1.jpg",
     "movementPatterns": [
       "lunge_step"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -5051,6 +5685,11 @@
     "endImage": "assets/exercise-images/kettlebell-one-legged-deadlift-1.jpg",
     "movementPatterns": [
       "hip_hinge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -5084,6 +5723,11 @@
     "endImage": "assets/exercise-images/step-up-with-knee-raise-1.jpg",
     "movementPatterns": [
       "lunge_step"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -5120,6 +5764,11 @@
     "endImage": "assets/exercise-images/cable-deadlifts-1.jpg",
     "movementPatterns": [
       "hip_hinge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -5155,6 +5804,11 @@
     "endImage": "assets/exercise-images/bodyweight-walking-lunge-1.jpg",
     "movementPatterns": [
       "lunge_step"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -5188,6 +5842,10 @@
     "endImage": "assets/exercise-images/seated-hip-abduction-1.jpg",
     "movementPatterns": [
       "hip_abduction"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -5224,6 +5882,11 @@
     "endImage": "assets/exercise-images/smith-machine-pistol-squat-1.jpg",
     "movementPatterns": [
       "squat"
+    ],
+    "movementFamily": "lower_push",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -5259,6 +5922,11 @@
     "endImage": "assets/exercise-images/smith-machine-stiff-legged-deadlift-1.jpg",
     "movementPatterns": [
       "hip_hinge"
+    ],
+    "movementFamily": "lower_pull",
+    "roles": [
+      "main",
+      "accessory"
     ]
   },
   {
@@ -5290,6 +5958,10 @@
     "endImage": "assets/exercise-images/hanging-leg-raise-1.jpg",
     "movementPatterns": [
       "hip_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -5323,6 +5995,10 @@
     "endImage": "assets/exercise-images/decline-crunch-1.jpg",
     "movementPatterns": [
       "trunk_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -5355,6 +6031,10 @@
     "endImage": "assets/exercise-images/knee-hip-raise-parallel-bars-1.jpg",
     "movementPatterns": [
       "hip_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -5392,6 +6072,10 @@
     "endImage": "assets/exercise-images/standing-cable-wood-chop-1.jpg",
     "movementPatterns": [
       "trunk_rotation"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -5423,6 +6107,10 @@
     "endImage": "assets/exercise-images/weighted-sit-ups-bands-1.jpg",
     "movementPatterns": [
       "trunk_flexion"
+    ],
+    "movementFamily": "core",
+    "roles": [
+      "accessory"
     ]
   },
   {
@@ -6051,5 +6739,276 @@
     ],
     "startImage": "assets/exercise-images/tricep-side-stretch-0.jpg",
     "endImage": "assets/exercise-images/tricep-side-stretch-1.jpg"
+  },
+  {
+    "id": "power-clean",
+    "nameZh": "杠铃高翻",
+    "nameEn": "Power Clean",
+    "category": "腿部",
+    "libraryType": "resistance",
+    "movementPatterns": [
+      "power"
+    ],
+    "movementFamily": "power",
+    "roles": [
+      "main",
+      "accessory"
+    ],
+    "level": "中级",
+    "equipment": "杠铃",
+    "force": "拉",
+    "mechanic": "复合动作",
+    "primaryMuscles": [
+      "腘绳肌"
+    ],
+    "secondaryMuscles": [
+      "小腿",
+      "前臂",
+      "臀肌",
+      "下背部",
+      "中背部",
+      "股四头肌",
+      "肩部",
+      "斜方肌",
+      "肱三头肌"
+    ],
+    "instructionsZh": [
+      "双脚站稳、双手握杠，保持脊柱中立并让杠铃靠近胫骨。",
+      "先平稳离地，杠过膝后快速伸展髋、膝和踝，保持杠铃靠近身体。",
+      "迅速下潜，以屈髋屈膝的高位接杠姿势将杠接于肩前，再稳定站直。"
+    ],
+    "instructionsEn": [
+      "Stand with your feet slightly wider than shoulder width apart and toes pointing out slightly.",
+      "Squat down and grasp bar with a closed, pronated grip. Your hands should be slightly wider than shoulder width apart outside knees with elbows fully extended.",
+      "Place the bar about 1 inch in front of your shins and over the balls of your feet.",
+      "Your back should be flat or slightly arched, your chest held up and out and your shoulder blades should be retracted.",
+      "Keep your head in a neutral position (in line with vertebral column and not tilted or rotated) with your eyes focused straight ahead. Inhale during this phase.",
+      "Lift the bar from the floor by forcefully extending the hips and the knees as you exhale. Tip: The upper torso should maintain the same angle. Do not bend at the waist yet and do not let the hips rise before the shoulders (this would have the effect of pushing the glutes in the air and stretching the hamstrings.",
+      "Keep elbows fully extended with the head in a neutral position and the shoulders over the bar.",
+      "As the bar raises keep it as close to the shins as possible.",
+      "As the bar passes the knees, thrust your hips forward and slightly bend the knees to avoid locking them. Tip: At this point your thighs should be against the bar.",
+      "Keep the back flat or slightly arched, elbows fully extended and your head neutral. Tip: You will hold your breath until the next phase.",
+      "Inhale and then forcefully and quickly extend your hips and knees and stand on your toes.",
+      "Keep the bar as close to your body as possible. Tip: Your back should be flat with the elbows pointed out to the sides and your head in a neutral position. Also, keep your shoulders over the bar and arms straight as long as possible.",
+      "When your lower body joints are fully extended, shrug the shoulders upward rapidly without letting the elbows flex yet. Exhale during this portion of the movement.",
+      "As the shoulders reach their highest elevation flex your elbows to begin pulling your body under the bar.",
+      "Continue to pull the arms as high and as long as possible. Tip: Due to the explosive nature of this phase, your torso will be erect or with an arched back, your head will be tilted back slightly and your feet may lose contact with the floor.",
+      "After the lower body has fully extended and the bar reaches near maximal height, pull your body under the bar and rotate the arms around and under the bar.",
+      "Simultaneously, flex the hips and knees into a quarter squat position.",
+      "Once the arms are under the bar, inhale and then lift your elbows to position the upper arms parallel to the floor. Rack the bar across the front of your collar bones and front shoulder muscles.",
+      "Catch the bar with an erect and tight torso, a neutral head position and flat feet. Exhale during this movement.",
+      "Stand up by extending the hips and knees to a fully erect position.",
+      "Lower the bar by gradually reducing the muscular tension of the arms to allow a controlled descent of the bar to the thighs. Inhale during this movement.",
+      "Simultaneously flex the hips and knees to cushion the impact of the bar on the thighs.",
+      "Squat down with the elbows fully extended until the bar touches the floor.",
+      "Start over at Phase 1 and repeat for the recommended amount of repetitions."
+    ],
+    "startImage": "assets/exercise-images/power-clean-0.jpg",
+    "endImage": "assets/exercise-images/power-clean-1.jpg"
+  },
+  {
+    "id": "hang-clean",
+    "nameZh": "悬垂高翻",
+    "nameEn": "Hang Clean",
+    "category": "腿部",
+    "libraryType": "resistance",
+    "movementPatterns": [
+      "power"
+    ],
+    "movementFamily": "power",
+    "roles": [
+      "main",
+      "accessory"
+    ],
+    "level": "中级",
+    "equipment": "杠铃",
+    "force": "拉",
+    "mechanic": "复合动作",
+    "primaryMuscles": [
+      "股四头肌"
+    ],
+    "secondaryMuscles": [
+      "小腿",
+      "前臂",
+      "臀肌",
+      "腘绳肌",
+      "下背部",
+      "肩部",
+      "斜方肌"
+    ],
+    "instructionsZh": [
+      "双手握杠站稳，向后送髋，让杠铃停于大腿附近，躯干保持稳定。",
+      "快速伸展髋、膝和踝，杠铃沿身体附近向上移动。",
+      "迅速屈髋屈膝并将双肘转到杠下，在肩前稳固接杠后站直。"
+    ],
+    "instructionsEn": [
+      "Begin with a shoulder width, double overhand or hook grip, with the bar hanging at the mid thigh position. Your back should be straight and inclined slightly forward.",
+      "Begin by aggressively extending through the hips, knees and ankles, driving the weight upward. As you do so, shrug your shoulders towards your ears.",
+      "Immediately recover by driving through the heels, keeping the torso upright and elbows up. Continue until you have risen to a standing position."
+    ],
+    "startImage": "assets/exercise-images/hang-clean-0.jpg",
+    "endImage": "assets/exercise-images/hang-clean-1.jpg"
+  },
+  {
+    "id": "barbell-push-press",
+    "nameZh": "杠铃借力推举",
+    "nameEn": "Push Press",
+    "category": "肩部",
+    "libraryType": "resistance",
+    "movementPatterns": [
+      "power"
+    ],
+    "movementFamily": "power",
+    "roles": [
+      "main",
+      "accessory"
+    ],
+    "level": "高级",
+    "equipment": "杠铃",
+    "force": "推",
+    "mechanic": "复合动作",
+    "primaryMuscles": [
+      "肩部"
+    ],
+    "secondaryMuscles": [
+      "股四头肌",
+      "肱三头肌"
+    ],
+    "instructionsZh": [
+      "双脚与髋同宽站稳，将杠铃置于肩前，肘部略朝前。",
+      "躯干保持直立，屈膝小幅下沉后迅速伸髋伸膝，以腿部发力带动杠铃。",
+      "继续将杠铃推至头顶并稳定站直，控制杠铃回到肩前。"
+    ],
+    "instructionsEn": [
+      "Stand with the bar resting across the front of the shoulders and feet about hip width apart.",
+      "Keeping the torso upright, dip slightly at the knees, then drive upward through the legs.",
+      "Press the bar overhead to a stable standing position and lower it under control to the shoulders."
+    ],
+    "startImage": "assets/exercise-images/barbell-push-press-0.jpg",
+    "endImage": "assets/exercise-images/barbell-push-press-1.jpg"
+  },
+  {
+    "id": "front-box-jump",
+    "nameZh": "正向箱跳",
+    "nameEn": "Front Box Jump",
+    "category": "腿部",
+    "libraryType": "resistance",
+    "movementPatterns": [
+      "power"
+    ],
+    "movementFamily": "power",
+    "roles": [
+      "main",
+      "accessory"
+    ],
+    "level": "初级",
+    "equipment": "其他",
+    "force": "推",
+    "mechanic": "复合动作",
+    "primaryMuscles": [
+      "腘绳肌"
+    ],
+    "secondaryMuscles": [
+      "髋外展肌群",
+      "髋内收肌群",
+      "小腿",
+      "臀肌",
+      "股四头肌"
+    ],
+    "instructionsZh": [
+      "选择稳固、适合自身能力的低箱，双脚与肩同宽站在箱前。",
+      "屈髋屈膝小幅预蹲并摆臂，快速蹬地跳至箱面。",
+      "双脚平稳落在箱面并控制膝髋，然后逐脚下箱，重新站稳再进行下一次。"
+    ],
+    "instructionsEn": [
+      "Begin with a box of an appropriate height 1-2 feet in front of you. Stand with your feet should width apart. This will be your starting position.",
+      "Perform a short squat in preparation for jumping, swinging your arms behind you.",
+      "Rebound out of this position, extending through the hips, knees, and ankles to jump as high as possible. Swing your arms forward and up.",
+      "Land on the box with the knees bent, absorbing the impact through the legs. You can jump from the box back to the ground, or preferably step down one leg at a time."
+    ],
+    "startImage": "assets/exercise-images/front-box-jump-0.jpg",
+    "endImage": "assets/exercise-images/front-box-jump-1.jpg"
+  },
+  {
+    "id": "freehand-jump-squat",
+    "nameZh": "徒手深蹲跳",
+    "nameEn": "Freehand Jump Squat",
+    "category": "腿部",
+    "libraryType": "resistance",
+    "movementPatterns": [
+      "power"
+    ],
+    "movementFamily": "power",
+    "roles": [
+      "main",
+      "accessory"
+    ],
+    "level": "中级",
+    "equipment": "徒手",
+    "force": "推",
+    "mechanic": "复合动作",
+    "primaryMuscles": [
+      "股四头肌"
+    ],
+    "secondaryMuscles": [
+      "小腿",
+      "臀肌",
+      "腘绳肌"
+    ],
+    "instructionsZh": [
+      "双脚与肩同宽站稳，收紧躯干并自然屈髋屈膝。",
+      "快速伸髋伸膝向上跳起，保持动作可控。",
+      "双脚轻柔落地，以髋膝弯曲缓冲；站稳后再进行下一次。"
+    ],
+    "instructionsEn": [
+      "Cross your arms over your chest.",
+      "With your head up and your back straight, position your feet at shoulder width.",
+      "Keeping your back straight and chest up, squat down as you inhale until your upper thighs are parallel, or lower, to the floor.",
+      "Now pressing mainly with the ball of your feet, jump straight up in the air as high as possible, using the thighs like springs. Exhale during this portion of the movement.",
+      "When you touch the floor again, immediately squat down and jump again.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "startImage": "assets/exercise-images/freehand-jump-squat-0.jpg",
+    "endImage": "assets/exercise-images/freehand-jump-squat-1.jpg"
+  },
+  {
+    "id": "medicine-ball-chest-pass",
+    "nameZh": "药球胸前爆发传球",
+    "nameEn": "Medicine Ball Chest Pass",
+    "category": "胸部",
+    "libraryType": "resistance",
+    "movementPatterns": [
+      "power"
+    ],
+    "movementFamily": "power",
+    "roles": [
+      "main",
+      "accessory"
+    ],
+    "level": "初级",
+    "equipment": "药球",
+    "force": "推",
+    "mechanic": "复合动作",
+    "primaryMuscles": [
+      "胸部"
+    ],
+    "secondaryMuscles": [
+      "肩部",
+      "肱三头肌"
+    ],
+    "instructionsZh": [
+      "面对可承受药球冲击的墙面或训练伙伴，双手持球于胸前，站稳。",
+      "向前快速伸展双臂，将药球由胸前传出。",
+      "安全接住回弹或伙伴传回的球，稳定身体后再重复。"
+    ],
+    "instructionsEn": [
+      "You will need a partner for this exercise. Lacking one, this movement can be performed against a wall.",
+      "Begin facing your partner holding the medicine ball at your torso with both hands.",
+      "Pull the ball to your chest, and reverse the motion by extending through the elbows. For sports applications, you can take a step as you throw.",
+      "Your partner should catch the ball, and throw it back to you.",
+      "Receive the throw with both hands at chest height."
+    ],
+    "startImage": "assets/exercise-images/medicine-ball-chest-pass-0.jpg",
+    "endImage": "assets/exercise-images/medicine-ball-chest-pass-1.jpg"
   }
 ]

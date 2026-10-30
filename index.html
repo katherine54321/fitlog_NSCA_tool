@@ -12458,7 +12458,7 @@
         if (other.length) groups.push([appLanguage === "en" ? "Other" : "其他", other]);
         const coveredGroups = groups.map(([title, muscles]) => [title, muscles.filter((muscle) => (counts.get(muscle) || 0) > 0)])
           .filter(([, muscles]) => muscles.length);
-        element.innerHTML = `<div class="plan-muscle-coverage-head"><h3>${appLanguage === "en" ? "Weekly muscle coverage" : "每周肌群覆盖"}</h3><span>${appLanguage === "en" ? `WEEK ${weekIndex + 1}` : `第 ${weekIndex + 1} 周`}</span></div>
+        element.innerHTML = `<div class="plan-muscle-coverage-head"><h3>${appLanguage === "en" ? "This week's muscle coverage" : "当周肌群覆盖"}</h3><span>${appLanguage === "en" ? `WEEK ${weekIndex + 1}` : `第 ${weekIndex + 1} 周`}</span></div>
           <p class="plan-muscle-coverage-note">${appLanguage === "en" ? "Planned sets by primary muscle. Unilateral sets count once; one set may cover multiple muscles." : "按动作主要肌群统计计划组数；单侧动作每侧一组计为一组，同一组可计入多个肌群。"}${unknown ? (appLanguage === "en" ? " Some exercises could not be classified." : " 部分动作缺少统计信息。") : ""}</p>
           <div class="plan-muscle-groups">${coveredGroups.map(([title, muscles]) => `<div class="plan-muscle-group"><h4>${title}</h4><div class="plan-muscle-items">${muscles.map((muscle) => {
             const sets = counts.get(muscle) || 0;
@@ -13813,6 +13813,18 @@
         `;
       }
 
+      function exerciseMovementFamilyLabel(exercise) {
+        const labels = {
+          power: ["爆发力", "Power/Olympic lifts"],
+          lower_push: ["下肢推", "Lower Body Push"],
+          lower_pull: ["下肢拉", "Lower Body Pull"],
+          upper_push: ["上肢推", "Upper Body Push"],
+          upper_pull: ["上肢拉", "Upper Body Pull"],
+          core: ["核心", "Core"]
+        };
+        return labels[exercise.movementFamily]?.[appLanguage === "en" ? 1 : 0] || (appLanguage === "en" ? "Not applicable" : "不适用");
+      }
+
       function renderExerciseDetail() {
         cleanupExerciseAnimations();
         const backLabel = exerciseDetailReturnHash === "workout-detail"
@@ -13842,7 +13854,7 @@
               <div class="exercise-detail-fact"><span>难度</span><b>${translateInterfaceText(exercise.level)}</b></div>
               <div class="exercise-detail-fact"><span>器械</span><b>${translateInterfaceText(exercise.equipment)}</b></div>
               <div class="exercise-detail-fact"><span>动作类型</span><b>${translateInterfaceText(exercise.mechanic)}</b></div>
-              <div class="exercise-detail-fact"><span>发力方式</span><b>${translateInterfaceText(exercise.force)}</b></div>
+              <div class="exercise-detail-fact"><span>${appLanguage === "en" ? "Movement pattern" : "动作模式"}</span><b>${exerciseMovementFamilyLabel(exercise)}</b></div>
             </div>
           </article>
           <article class="exercise-detail-card">
