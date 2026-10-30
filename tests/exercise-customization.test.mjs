@@ -55,6 +55,31 @@ test('completed workouts show a message before opening the replacement screen', 
   assert.equal(sandbox.window.location.hash, undefined);
 });
 
+test('an unfinished workout asks for replacement scope before opening exercise selection', () => {
+  const start = source.indexOf('function canReplaceWorkoutExercise()');
+  const end = source.indexOf('function replaceWorkoutExercise(exerciseId, scope', start);
+  const elements = Object.fromEntries(['#replacementScopeTitle', '#replacementScopeSummary', '[data-replacement-scope-cancel]'].map(key => [key, {}]));
+  const buttons = ['once', 'week', 'future'].map(scope => ({ dataset: { replacementScope: scope } }));
+  const dialog = { open: false, querySelector: selector => elements[selector], querySelectorAll: () => buttons, showModal() { this.open = true; } };
+  let chosen;
+  const sandbox = {
+    activeWorkoutDay: { id: 'day1', weekIndex: 0, dayIndex: 0, exercises: [{ exerciseId: 'old' }] },
+    completedPlanDays: [], exerciseReplacementContext: null, pendingReplacementScope: null,
+    libraryExerciseForWorkout: () => ({ id: 'old', category: '胸部' }),
+    resistanceExercises: [{ id: 'new', category: '胸部' }],
+    document: { querySelector: () => dialog }, appLanguage: 'zh', window: { alert() {}, location: {} },
+    replaceWorkoutExercise: (...args) => { chosen = args; }
+  };
+  vm.createContext(sandbox);
+  vm.runInContext(`${source.slice(start, end)}; openWorkoutExerciseReplacement(0);`, sandbox);
+  assert.equal(dialog.open, true);
+  assert.deepEqual(buttons.map(button => button.textContent), ['仅本次', '本周不再出现', '以后不再出现']);
+  assert.equal(sandbox.window.location.hash, undefined);
+  sandbox.pendingReplacementScope = 'week';
+  vm.runInContext("chooseWorkoutReplacement('new')", sandbox);
+  assert.deepEqual(chosen, ['new', 'week']);
+});
+
 const planLogHelperStart = source.indexOf("function hasRecordedPlanExerciseData(planLog)");
 const planLogHelperEnd = source.indexOf("function getWorkoutSetEntries", planLogHelperStart);
 const hasRecordedPlanExerciseData = new Function(

@@ -9161,7 +9161,7 @@
         adaptiveProgressionSetup.calibrations = {};
       }
       let exerciseReplacementContext = null;
-      let pendingReplacementExerciseId = null;
+      let pendingReplacementScope = null;
       let libraryVisibleCount = 20;
       let exerciseSearchTimer = null;
       let libraryImageObserver = null;
@@ -11653,16 +11653,12 @@
           currentExerciseId: currentExercise.id,
           category: currentExercise.category
         };
-        renderExerciseReplacementPage();
-        window.location.hash = "exercise-replace";
+        openReplacementScopeDialog();
       }
 
-      function chooseWorkoutReplacement(exerciseId) {
-        if (!exerciseReplacementContext || !activeWorkoutDay) return;
-        if (!canReplaceWorkoutExercise()) return;
-        const replacement = resistanceExercises.find((exercise) => exercise.id === exerciseId);
-        if (!replacement || replacement.category !== exerciseReplacementContext.category) return;
-        pendingReplacementExerciseId = exerciseId;
+      function openReplacementScopeDialog() {
+        if (!exerciseReplacementContext || !activeWorkoutDay || !canReplaceWorkoutExercise()) return;
+        pendingReplacementScope = null;
         const dialog = document.querySelector("#replacementScopeDialog");
         dialog.querySelector("#replacementScopeTitle").textContent = appLanguage === "en" ? "Apply replacement" : "选择替换范围";
         dialog.querySelector("#replacementScopeSummary").textContent = appLanguage === "en" ? "Future replacements apply to the rest of this plan. Completed or recorded workouts stay unchanged." : "后续替换仅适用于当前计划；已完成或已记录数据的训练不变。";
@@ -11671,7 +11667,14 @@
           : { once: "仅本次", week: "本周不再出现", future: "以后不再出现" };
         dialog.querySelectorAll("[data-replacement-scope]").forEach((button) => { button.textContent = labels[button.dataset.replacementScope]; });
         dialog.querySelector("[data-replacement-scope-cancel]").textContent = appLanguage === "en" ? "Cancel" : "取消";
-        dialog.showModal();
+        if (!dialog.open) dialog.showModal();
+      }
+
+      function chooseWorkoutReplacement(exerciseId) {
+        if (!exerciseReplacementContext || !activeWorkoutDay || !pendingReplacementScope || !canReplaceWorkoutExercise()) return;
+        const replacement = resistanceExercises.find((exercise) => exercise.id === exerciseId);
+        if (!replacement || replacement.category !== exerciseReplacementContext.category) return;
+        replaceWorkoutExercise(exerciseId, pendingReplacementScope);
       }
 
       function replaceWorkoutExercise(exerciseId, scope = "once") {
@@ -11711,6 +11714,7 @@
         savePlanExerciseReplacements();
         activeWorkoutDay = getWorkoutDay(weekIndex, dayIndex);
         exerciseReplacementContext = null;
+        pendingReplacementScope = null;
         renderWorkoutDetail();
         window.location.hash = "workout-detail";
         if (skipped) window.alert(appLanguage === "en" ? `${skipped} future workout(s) already contain the selected exercise and were not changed.` : `有 ${skipped} 个后续训练日已包含所选动作，未自动替换。`);
@@ -15058,6 +15062,7 @@
       exerciseReplacePage.addEventListener("click", (event) => {
         if (event.target.closest("[data-replacement-back]")) {
           exerciseReplacementContext = null;
+          pendingReplacementScope = null;
           window.location.hash = "workout-detail";
           return;
         }
@@ -15067,12 +15072,13 @@
 
       document.querySelector("#replacementScopeDialog").addEventListener("click", (event) => {
         const dialog = event.currentTarget;
-        if (event.target.closest("[data-replacement-scope-cancel]")) { dialog.close(); return; }
+        if (event.target.closest("[data-replacement-scope-cancel]")) { dialog.close(); exerciseReplacementContext = null; pendingReplacementScope = null; return; }
         const choice = event.target.closest("[data-replacement-scope]");
-        if (!choice || !pendingReplacementExerciseId) return;
+        if (!choice || !exerciseReplacementContext) return;
+        pendingReplacementScope = choice.dataset.replacementScope;
         dialog.close();
-        replaceWorkoutExercise(pendingReplacementExerciseId, choice.dataset.replacementScope);
-        pendingReplacementExerciseId = null;
+        renderExerciseReplacementPage();
+        window.location.hash = "exercise-replace";
       });
 
       setLogForm?.addEventListener("submit", (event) => {
