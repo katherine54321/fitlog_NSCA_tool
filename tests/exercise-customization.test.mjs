@@ -192,9 +192,10 @@ test("adaptive setup appears only for unrecorded exercises not covered by the cu
     "workout",
     "newExerciseIds",
     "completedPlanDays",
+    "today",
     `${source.slice(start, end)}; return shouldShowAdaptiveSetup(workout, newExerciseIds);`
-  )(adaptiveProgressionSetup, workout, newExerciseIds, completedPlanDays);
-  const workout = { id: "plan-a-w1-d1", planKey: "plan-a" };
+  )(adaptiveProgressionSetup, workout, newExerciseIds, completedPlanDays, '2026-10-31');
+  const workout = { id: "plan-a-w1-d1", planKey: "plan-a", date: '2026-10-31' };
   assert.equal(shouldShow(null, workout, []), false);
   assert.equal(shouldShow(null, workout, ["new-lift"]), true);
   assert.equal(shouldShow({ mode: "known" }, workout, ["new-lift"]), true);
@@ -204,6 +205,22 @@ test("adaptive setup appears only for unrecorded exercises not covered by the cu
   assert.equal(shouldShow({ mode: "skip", planKey: "plan-a", planDayId: workout.id, exerciseIds: ["new-lift"] }, workout, ["new-lift"]), false);
   assert.equal(shouldShow({ mode: "skip", planKey: "plan-a", planDayId: "plan-a-w1-d2", exerciseIds: ["new-lift"] }, workout, ["new-lift"]), true);
   assert.equal(shouldShow(null, workout, ["new-lift"], [workout.id]), false);
+  assert.equal(shouldShow(null, {...workout,date:'2026-11-01'}, ['new-lift']), false);
+  assert.equal(shouldShow(null, {...workout,date:'2026-10-30'}, ['new-lift']), false);
+});
+
+test('trial-set dialog cannot open for future, past or completed workouts', () => {
+  const start=source.indexOf('function openAdaptiveCalibrationDialog(');
+  const end=source.indexOf('function closeAdaptiveCalibrationDialog(',start);
+  assert.ok(start>=0&&end>start);
+  let opened=0,renders=0;
+  const context={today:'2026-10-31',activeWorkoutDay:{id:'day',date:'2026-11-01'},completedPlanDays:[],adaptiveCalibrationForcedExerciseIndex:null,
+    adaptiveCalibrationDialog:{open:false,showModal(){opened++;}},renderAdaptiveCalibrationDialog:()=>{renders++;}};
+  vm.createContext(context);vm.runInContext(`${source.slice(start,end)}\nthis.open=openAdaptiveCalibrationDialog;`,context);
+  context.open();assert.equal(opened,0);assert.equal(renders,0);
+  context.activeWorkoutDay.date='2026-10-30';context.open();assert.equal(opened,0);
+  context.activeWorkoutDay.date='2026-10-31';context.completedPlanDays=['day'];context.open();assert.equal(opened,0);
+  context.completedPlanDays=[];context.open();assert.equal(opened,1);assert.equal(renders,1);
 });
 
 test("trial-set guidance produces safe per-exercise calibration decisions", () => {

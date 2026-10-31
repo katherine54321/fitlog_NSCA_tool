@@ -5317,6 +5317,12 @@
         opacity: 1;
       }
 
+      .workout-complete.is-upcoming[disabled] {
+        color: var(--muted);
+        background: transparent;
+        border-color: var(--border-subtle);
+      }
+
       .set-log-submit {
         color: #39ff14;
         background: transparent;
@@ -11879,6 +11885,7 @@
 
       function shouldShowAdaptiveSetup(workout, newExerciseIds = getUnrecordedWorkoutExerciseIds(workout)) {
         if (!workout?.id || !workout?.planKey) return false;
+        if (workout.date !== today) return false;
         if (completedPlanDays.includes(workout.id)) return false;
         if (!newExerciseIds.length) return false;
         if (!adaptiveProgressionSetup || adaptiveProgressionSetup.planKey !== workout.planKey) return true;
@@ -11906,6 +11913,7 @@
       }
 
       function adaptiveModeBannerTemplate() {
+        if (activeWorkoutDay?.date !== today) return "";
         if (completedPlanDays.includes(activeWorkoutDay?.id)) return "";
         const unrecordedExerciseIds = getUnrecordedWorkoutExerciseIds(activeWorkoutDay);
         if (!adaptiveProgressionSetup
@@ -11929,7 +11937,7 @@
       }
 
       function setAdaptiveProgressionSetup(mode) {
-        if (!activeWorkoutDay || !["known", "guide", "skip"].includes(mode)) return;
+        if (!activeWorkoutDay || activeWorkoutDay.date !== today || completedPlanDays.includes(activeWorkoutDay.id) || !["known", "guide", "skip"].includes(mode)) return;
         const samePlan = adaptiveProgressionSetup?.planKey === activeWorkoutDay.planKey;
         const exerciseIds = getUnrecordedWorkoutExerciseIds(activeWorkoutDay);
         adaptiveProgressionSetup = {
@@ -11948,6 +11956,7 @@
       }
 
       function resetAdaptiveProgressionSetup() {
+        if (!activeWorkoutDay || activeWorkoutDay.date !== today || completedPlanDays.includes(activeWorkoutDay.id)) return;
         adaptiveProgressionSetup = {
           mode: "choose",
           planKey: activeWorkoutDay?.planKey || null,
@@ -12097,7 +12106,7 @@
       }
 
       function openAdaptiveCalibrationDialog(exerciseIndex = null, forceExercise = false) {
-        if (!adaptiveCalibrationDialog || !activeWorkoutDay) return;
+        if (!adaptiveCalibrationDialog || !activeWorkoutDay || activeWorkoutDay.date !== today || completedPlanDays.includes(activeWorkoutDay.id)) return;
         adaptiveCalibrationForcedExerciseIndex = forceExercise && Number.isInteger(exerciseIndex) ? exerciseIndex : null;
         renderAdaptiveCalibrationDialog(true);
         if (!adaptiveCalibrationDialog.open) adaptiveCalibrationDialog.showModal();
@@ -12176,7 +12185,7 @@
                 <button class="workout-overflow-toggle" type="button" data-toggle-workout-menu aria-expanded="false" aria-label="${appLanguage === "en" ? "More exercise options" : "更多动作操作"}">•••</button>
                 <div class="workout-overflow-menu" hidden>
                   <button type="button" data-replace-workout-exercise="${index}">${appLanguage === "en" ? "Replace exercise" : "更换动作"}</button>
-                  ${workoutCompleted ? "" : `<button type="button" data-recalibrate-workout-exercise="${index}">${appLanguage === "en" ? "Recalibrate starting load" : "重新校准起始重量"}</button>`}
+                  ${workoutCompleted || activeWorkoutDay?.date !== today ? "" : `<button type="button" data-recalibrate-workout-exercise="${index}">${appLanguage === "en" ? "Recalibrate starting load" : "重新校准起始重量"}</button>`}
                 </div>
               </div>
             </div>
@@ -12230,6 +12239,7 @@
         }
         const workout = activeWorkoutDay;
         const completed = completedPlanDays.includes(workout.id);
+        const upcoming = workout.date > today;
         const adjustments = loadPlanAdjustments(getProfile(), workout.plan);
         const skipped = adjustments.overrides[workout.id]?.status === "skipped";
         const paused = Boolean(adjustments.pausedAt);
@@ -12249,7 +12259,7 @@
           </div>
           ${completed
             ? missingDataIndexes.length ? `<div class="workout-missing-data"><span>${appLanguage === "en" ? `${missingDataIndexes.length} exercises have no logged loads and reps.` : `还有 ${missingDataIndexes.length} 个动作未记录重量与次数。`}</span><button type="button" data-open-missing-workout-log="${missingDataIndexes[0]}">${appLanguage === "en" ? "Add missing data" : "补录数据"}</button></div>` : ""
-            : `${adaptiveSetupCardTemplate(workout)}${adaptiveModeBannerTemplate()}`}
+            : `<div data-workout-adaptive-container>${adaptiveSetupCardTemplate(workout)}${adaptiveModeBannerTemplate()}</div>`}
           <div class="workout-flow">
             <h3 class="flow-heading">训练前热身</h3>
             <div class="workout-action-grid workout-preparation-grid">
@@ -12264,8 +12274,8 @@
               ${preparation.stretches.map((item, index) => workoutActionCardTemplate(item, index, "拉伸")).join("")}
             </div>
           </div>
-          <button class="primary-btn workout-complete" type="button" data-complete-workout ${completed || skipped || paused ? "disabled" : ""}>
-            ${appLanguage === "en" ? (completed ? "Completed" : "Complete workout") : (completed ? "已完成" : "完成训练")}
+          <button class="primary-btn workout-complete${upcoming && !completed ? " is-upcoming" : ""}" type="button" data-complete-workout ${completed || skipped || paused || upcoming ? "disabled" : ""}>
+            ${appLanguage === "en" ? (completed ? "Completed" : upcoming ? "Workout day has not started" : "Complete workout") : (completed ? "已完成" : upcoming ? "训练日尚未开始" : "完成训练")}
           </button>
         `;
         observeLibraryImages();
@@ -12375,6 +12385,7 @@
       }
 
       function recalibrateWorkoutExercise(exerciseIndex) {
+        if (!activeWorkoutDay || activeWorkoutDay.date !== today || completedPlanDays.includes(activeWorkoutDay.id)) return;
         const workoutExercise = workoutExerciseAt(exerciseIndex);
         if (!workoutExercise) return;
         adaptiveProgressionSetup = {
@@ -12770,6 +12781,8 @@
       function completeWorkoutDay() {
         if (!activeWorkoutDay || completedPlanDays.includes(activeWorkoutDay.id)) return;
         const completedAt = new Date();
+        const currentWorkout = getWorkoutDay(activeWorkoutDay.weekIndex, activeWorkoutDay.dayIndex);
+        if (!currentWorkout?.date || currentWorkout.id !== activeWorkoutDay.id || currentWorkout.date > formatLocalDate(completedAt)) return;
         completedPlanDays = [...completedPlanDays, activeWorkoutDay.id];
         saveCompletedPlanDays();
         recordFromWorkout(activeWorkoutDay, completedAt);
@@ -15395,6 +15408,21 @@
         const currentDate = formatLocalDate(new Date());
         if (currentDate === today) return false;
         today = currentDate;
+        const completeButton = workoutDetail.querySelector("[data-complete-workout]");
+        if (activeWorkoutDay && completeButton) {
+          const adjustments = loadPlanAdjustments(getProfile(), activeWorkoutDay.plan);
+          const completed = completedPlanDays.includes(activeWorkoutDay.id);
+          const skipped = adjustments.overrides[activeWorkoutDay.id]?.status === "skipped";
+          const upcoming = activeWorkoutDay.date > today;
+          completeButton.disabled = completed || skipped || Boolean(adjustments.pausedAt) || upcoming;
+          completeButton.classList.toggle("is-upcoming", upcoming && !completed);
+          completeButton.textContent = appLanguage === "en" ? (completed ? "Completed" : upcoming ? "Workout day has not started" : "Complete workout") : (completed ? "已完成" : upcoming ? "训练日尚未开始" : "完成训练");
+        }
+        if (activeWorkoutDay) {
+          const adaptiveContainer = workoutDetail.querySelector("[data-workout-adaptive-container]");
+          if (adaptiveContainer) adaptiveContainer.innerHTML = `${adaptiveSetupCardTemplate(activeWorkoutDay)}${adaptiveModeBannerTemplate()}`;
+          if (activeWorkoutDay.date !== today && adaptiveCalibrationDialog?.open) closeAdaptiveCalibrationDialog();
+        }
         if (initializedModules.has("plan") && !isEditingPlan) renderPlan();
         else if (initializedModules.has("home")) renderHome();
         if (initializedModules.has("records")) {

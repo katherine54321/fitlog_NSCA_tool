@@ -215,6 +215,7 @@ test("local date refresh updates initialized views without resetting an in-progr
   let simulatedDate='2026-10-28', planRenders=0, homeRenders=0, calendarRenders=0, volumeRenders=0;
   const context={today:'2026-10-28',Date:class { constructor(){this.value=simulatedDate;} },
     formatLocalDate:(date)=>date.value,initializedModules:new Set(['home','plan','records']),isEditingPlan:false,
+    workoutDetail:{querySelector:()=>null},activeWorkoutDay:null,
     renderPlan:()=>{planRenders++;},renderHome:()=>{homeRenders++;},
     renderRecordCalendar:()=>{calendarRenders++;},renderMuscleVolume:()=>{volumeRenders++;}};
   vm.createContext(context);
@@ -227,9 +228,41 @@ test("local date refresh updates initialized views without resetting an in-progr
   assert.equal(context.refresh(),false);
   context.isEditingPlan=true;simulatedDate='2026-10-30';
   assert.equal(context.refresh(),true);assert.equal(planRenders,1);assert.equal(homeRenders,1);
+  const button={disabled:true,textContent:'',classList:{toggle:(_name,value)=>{button.upcoming=value;}}};
+  const adaptiveContainer={innerHTML:''};
+  context.workoutDetail={querySelector:(selector)=>selector==='[data-workout-adaptive-container]'?adaptiveContainer:button};context.activeWorkoutDay={id:'next',date:'2026-10-31',plan:{}};
+  context.completedPlanDays=[];context.appLanguage='zh';context.getProfile=()=>({});context.loadPlanAdjustments=()=>({overrides:{},pausedAt:null});
+  context.adaptiveCalibrationDialog={open:false};context.adaptiveSetupCardTemplate=(w)=>w.date===context.today?'当天设置':'';context.adaptiveModeBannerTemplate=()=>'';
+  simulatedDate='2026-10-31';assert.equal(context.refresh(),true);assert.equal(button.disabled,false);assert.equal(button.textContent,'完成训练');
+  assert.equal(adaptiveContainer.innerHTML,'当天设置');
+  simulatedDate='2026-10-30';assert.equal(context.refresh(),true);assert.equal(button.disabled,true);assert.equal(button.textContent,'训练日尚未开始');
+  assert.equal(adaptiveContainer.innerHTML,'');
   assert.match(source,/document\.addEventListener\("visibilitychange"[\s\S]{0,180}refreshLocalDate/);
   assert.match(source,/window\.addEventListener\("pageshow", refreshLocalDate\)/);
   assert.match(source,/window\.setInterval\([\s\S]{0,100}refreshLocalDate\(\)[\s\S]{0,40}60000/);
+});
+
+test('future workout completion is disabled and cannot be saved before its scheduled date', () => {
+  const detailStart=source.indexOf('function renderWorkoutDetail() {');
+  const detailEnd=source.indexOf('function openWorkoutLogPanel(',detailStart);
+  const saveStart=source.indexOf('function completeWorkoutDay() {');
+  const saveEnd=source.indexOf('function formatPeriodIntensity(',saveStart);
+  assert.ok(detailStart>=0&&detailEnd>detailStart&&saveStart>=0&&saveEnd>saveStart);
+  let today='2026-10-28',saved=0;
+  const workout={id:'w1',date:'2026-10-29',weekIndex:0,dayIndex:0,title:'Day',name:'Workout',description:'',period:{},plan:{},exercises:[]};
+  const ctx={workoutDetail:{innerHTML:''},workoutDetailReturnHash:'plan',activeWorkoutDay:workout,completedPlanDays:[],today,appLanguage:'zh',records:[],
+    Date:class {},formatLocalDate:()=>today,getProfile:()=>({}),loadPlanAdjustments:()=>({overrides:{},pausedAt:null}),
+    getTargetedPreparation:()=>({warmups:[],stretches:[]}),adaptiveSetupCardTemplate:()=>'',adaptiveModeBannerTemplate:()=>'',
+    translateInterfaceText:x=>x,observeLibraryImages:()=>{},getWorkoutDay:()=>workout,
+    saveCompletedPlanDays:()=>{saved++;},recordFromWorkout:()=>{},syncCompletedWorkoutToDataLogs:()=>{},parseLocalDate:()=>new Date(),
+    window:{FitLogSync:{}},renderHome:()=>{},renderRecords:()=>{}};
+  vm.createContext(ctx);vm.runInContext(`${source.slice(detailStart,detailEnd)}\n${source.slice(saveStart,saveEnd)}\nthis.render=renderWorkoutDetail;this.complete=completeWorkoutDay;`,ctx);
+  ctx.render();assert.match(ctx.workoutDetail.innerHTML,/is-upcoming[^>]*disabled/);assert.match(ctx.workoutDetail.innerHTML,/训练日尚未开始/);
+  ctx.complete();assert.equal(saved,0);assert.equal(ctx.completedPlanDays.length,0);
+  ctx.appLanguage='en';ctx.render();assert.match(ctx.workoutDetail.innerHTML,/Workout day has not started/);
+  ctx.today=today='2026-10-29';ctx.appLanguage='zh';ctx.render();assert.match(ctx.workoutDetail.innerHTML,/完成训练/);assert.doesNotMatch(ctx.workoutDetail.innerHTML,/is-upcoming/);
+  ctx.complete();assert.equal(saved,1);assert.equal(ctx.completedPlanDays.length,1);
+  ctx.completedPlanDays=[];ctx.today=today='2026-10-30';ctx.complete();assert.equal(saved,2);
 });
 
 test("home presents an expired plan as the previous plan with its end date", () => {
