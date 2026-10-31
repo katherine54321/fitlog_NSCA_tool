@@ -9135,7 +9135,7 @@
       const adaptiveCalibrationSummary = document.querySelector("#adaptiveCalibrationSummary");
       const adaptiveCalibrationBody = document.querySelector("#adaptiveCalibrationBody");
       const adjustTrainingDays = document.querySelector("#adjustTrainingDays");
-      const today = formatLocalDate(new Date());
+      let today = formatLocalDate(new Date());
       const EXERCISE_PLACEHOLDER_IMAGE = "assets/exercise-placeholder.svg";
       const TRAINING_DAY_PREFERENCES_KEY = "fitlog-training-day-preferences";
       const PLAN_ADJUSTMENTS_KEY = "fitlog-plan-adjustments";
@@ -15390,6 +15390,28 @@
         const input = document.querySelector(selector);
         if (input.value !== "") input.value = String(displayWeight(Number(input.value)));
       });
+
+      function refreshLocalDate() {
+        const currentDate = formatLocalDate(new Date());
+        if (currentDate === today) return false;
+        today = currentDate;
+        if (initializedModules.has("plan") && !isEditingPlan) renderPlan();
+        else if (initializedModules.has("home")) renderHome();
+        if (initializedModules.has("records")) {
+          renderRecordCalendar();
+          renderMuscleVolume();
+        }
+        return true;
+      }
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") refreshLocalDate();
+      });
+      window.addEventListener("pageshow", refreshLocalDate);
+      window.addEventListener("focus", refreshLocalDate);
+      window.setInterval(() => {
+        if (document.visibilityState !== "hidden") refreshLocalDate();
+      }, 60000);
 
       applyLanguage(appLanguage, { persist: false, rerender: false, localize: false });
       const activeModuleId = syncModuleTabs() || "home";

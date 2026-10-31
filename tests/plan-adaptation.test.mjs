@@ -181,6 +181,12 @@ test("home offers low-emphasis schedule actions only for today's unfinished work
   context.render({}, { reps: "8-12", rest: "60s" }, true);
   assert.match(card.innerHTML, /Moved to tomorrow/);
   assert.match(card.innerHTML, /Training date: 2026-10-29/);
+  context.today = "2026-10-29";
+  context.render({}, { reps: "8-12", rest: "60s" }, true);
+  assert.match(card.innerHTML, /Start workout/);
+  assert.doesNotMatch(card.innerHTML, /Moved to tomorrow/);
+  assert.equal(dateLabel.textContent, "2026-10-29");
+  context.today = "2026-10-28";
   adjustments.overrides.today = { deferDays: 1 };
   context.render({}, { reps: "8-12", rest: "60s" }, true);
   assert.match(card.innerHTML, /Moved to tomorrow/);
@@ -200,6 +206,30 @@ test("home offers low-emphasis schedule actions only for today's unfinished work
   context.planHistory.push({ title: "Earlier plan", savedAt: "2026-09-25" });
   context.render({}, {}, false);
   assert.match(card.innerHTML, /Previous plan: Earlier plan · Ended 2026-09-25/);
+});
+
+test("local date refresh updates initialized views without resetting an in-progress plan edit", () => {
+  const start=source.indexOf('function refreshLocalDate() {');
+  const end=source.indexOf('document.addEventListener("visibilitychange"', start);
+  assert.ok(start>=0 && end>start);
+  let simulatedDate='2026-10-28', planRenders=0, homeRenders=0, calendarRenders=0, volumeRenders=0;
+  const context={today:'2026-10-28',Date:class { constructor(){this.value=simulatedDate;} },
+    formatLocalDate:(date)=>date.value,initializedModules:new Set(['home','plan','records']),isEditingPlan:false,
+    renderPlan:()=>{planRenders++;},renderHome:()=>{homeRenders++;},
+    renderRecordCalendar:()=>{calendarRenders++;},renderMuscleVolume:()=>{volumeRenders++;}};
+  vm.createContext(context);
+  vm.runInContext(`${source.slice(start,end)}\nthis.refresh=refreshLocalDate;`,context);
+  assert.equal(context.refresh(),false);
+  simulatedDate='2026-10-29';
+  assert.equal(context.refresh(),true);
+  assert.equal(context.today,'2026-10-29');
+  assert.equal(planRenders,1);assert.equal(calendarRenders,1);assert.equal(volumeRenders,1);
+  assert.equal(context.refresh(),false);
+  context.isEditingPlan=true;simulatedDate='2026-10-30';
+  assert.equal(context.refresh(),true);assert.equal(planRenders,1);assert.equal(homeRenders,1);
+  assert.match(source,/document\.addEventListener\("visibilitychange"[\s\S]{0,180}refreshLocalDate/);
+  assert.match(source,/window\.addEventListener\("pageshow", refreshLocalDate\)/);
+  assert.match(source,/window\.setInterval\([\s\S]{0,100}refreshLocalDate\(\)[\s\S]{0,40}60000/);
 });
 
 test("home presents an expired plan as the previous plan with its end date", () => {
