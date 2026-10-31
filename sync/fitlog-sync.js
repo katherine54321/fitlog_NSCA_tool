@@ -699,12 +699,10 @@
 
   function setOtpStep(active) {
     const emailInput = document.querySelector("#accountEmail");
-    const consent = document.querySelector("#accountConsent");
     const sendButton = document.querySelector("#accountSendCode");
     const otpStep = document.querySelector("#accountOtpStep");
     const otpInput = document.querySelector("#accountOtp");
     if (emailInput) emailInput.disabled = active;
-    if (consent) consent.disabled = active;
     if (sendButton) sendButton.hidden = active;
     if (otpStep) otpStep.hidden = !active;
     if (otpInput && !active) otpInput.value = "";
@@ -720,10 +718,15 @@
     };
     document.querySelector("#accountButton")?.addEventListener("click", openAccount);
     document.querySelector("#myAccountButton")?.addEventListener("click", openAccount);
+    document.querySelector("#accountEmailSignIn")?.addEventListener("click", () => {
+      const fields = document.querySelector("#accountEmailFields");
+      if (fields) fields.hidden = false;
+      setMessage("");
+      document.querySelector("#accountEmail")?.focus();
+    });
     document.querySelector("#accountSendCode")?.addEventListener("click", async () => {
       const email = document.querySelector("#accountEmail")?.value.trim().toLowerCase();
       if (!email) return setMessage(uiText("请输入有效邮箱。", "Enter a valid email address."));
-      if (!document.querySelector("#accountConsent")?.checked) return setMessage(uiText("请先阅读并同意隐私政策。", "Please read and accept the Privacy Policy first."));
       if (!configured()) return setMessage(uiText("云端服务尚未配置，请联系管理员。", "Cloud service is not configured. Contact the administrator."));
       pendingEmail = email;
       setOtpStep(true);
@@ -732,6 +735,7 @@
         await requestEmailOtp(email);
         setMessage(uiText("验证码已发送，请查看邮箱并在此输入。", "Code sent. Check your email and enter it here."));
       } catch (error) {
+        setOtpStep(false);
         setMessage(error.message || uiText("操作失败，请稍后重试。", "Something went wrong. Try again later."));
       }
     });
@@ -754,9 +758,13 @@
       setMessage(uiText("可重新填写邮箱并获取验证码。", "Enter another email to request a new code."));
     });
     document.querySelector("#accountAppleSignIn")?.addEventListener("click", async () => {
-      if (!document.querySelector("#accountConsent")?.checked) return setMessage(uiText("请先阅读并同意隐私政策。", "Please read and accept the Privacy Policy first."));
+      const button = document.querySelector("#accountAppleSignIn");
+      if (!configured()) return setMessage(uiText("云端服务尚未配置，请联系管理员。", "Cloud service is not configured. Contact the administrator."));
+      if (button?.disabled) return;
+      if (button) button.disabled = true;
       setMessage(uiText("正在使用 Apple 登录…", "Signing in with Apple…"));
       try { await signInWithApple(); } catch (error) { setMessage(error.message || uiText("Apple 登录失败。", "Apple sign-in failed.")); }
+      finally { if (button) button.disabled = false; }
     });
     document.querySelector("#accountLinkApple")?.addEventListener("click", async () => {
       setMessage(uiText("正在关联 Apple 账户…", "Linking Apple account…"));

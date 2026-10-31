@@ -4,6 +4,16 @@ import test from "node:test";
 import vm from "node:vm";
 
 const source = await readFile(new URL("../sync/fitlog-sync.js", import.meta.url), "utf8");
+const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+
+test("account dialog offers Apple first and defers the email fields", () => {
+  const dialog = html.slice(html.indexOf('<div id="accountSignedOut">'), html.indexOf('<p class="form-hint" id="accountMessage"'));
+  assert.ok(dialog.indexOf('id="accountAppleSignIn"') < dialog.indexOf('id="accountEmailSignIn"'));
+  assert.match(dialog, /id="accountEmailFields" hidden/);
+  assert.match(dialog, /data-i18n="signInConsent"/);
+  assert.match(dialog, /id="accountPrivacyLink"/);
+  assert.doesNotMatch(dialog, /appleid\.cdn-apple\.com|official-apple-button/);
+});
 
 test("sync remains account-scoped and never embeds privileged credentials", () => {
   assert.match(source, /const configured = \(\) => Boolean\(runtime\.supabaseUrl && runtime\.supabaseAnonKey\)/);
@@ -22,7 +32,7 @@ test("sync payload excludes its own credential and revision keys", () => {
   assert.match(source, /workout_exercises/);
   assert.match(source, /workout_sets/);
   assert.match(source, /functions\/v1\/delete-account/);
-  assert.match(source, /accountConsent/);
+  assert.match(source, /recordConsent\(\)/);
   assert.match(source, /policy_version: "2026-10-24"/);
 });
 
@@ -184,8 +194,11 @@ test("email code login reveals OTP input immediately and completes verification"
   assert.equal(page.elements.myAccountAction.textContent, "登录");
   await page.elements.myAccountButton.click();
   assert.equal(page.elements.accountDialog.open, true);
+  assert.equal(page.elements.accountEmailFields.hidden, true);
+  await page.elements.accountEmailSignIn.click();
+  assert.equal(page.elements.accountEmailFields.hidden, false);
+  assert.equal(page.elements.accountEmail.focused, true);
   page.elements.accountEmail.value = "USER@example.COM";
-  page.elements.accountConsent.checked = true;
 
   const sendPromise = page.elements.accountSendCode.click();
   assert.equal(page.elements.accountOtpStep.hidden, false);
@@ -226,7 +239,6 @@ test("Apple sign-in isolates the previous account's local training records", asy
   await page.elements.accountSignOut.click();
   assert.equal(page.localStorage.getItem("fitlog-records"), null);
   assert.equal(JSON.parse(page.localStorage.getItem("fitmine-local-scope-v1:user:user-123"))["fitlog-records"], "old account records");
-  page.elements.accountConsent.checked = true;
   await page.elements.accountAppleSignIn.click();
   assert.equal(JSON.parse(page.localStorage.getItem("fitlog-sync-session")).userId, "user-apple");
   const upload = page.fetchCalls.find((call) => call.url.includes("user_sync_snapshots?on_conflict") && JSON.parse(call.options.body).user_id === "user-apple");
@@ -237,6 +249,19 @@ test("Apple sign-in isolates the previous account's local training records", asy
   assert.equal(JSON.parse(tokenCall.options.body).nonce, "test-nonce");
 });
 
+test("Apple sign-in starts immediately and reports native authorization failures", async () => {
+  const page = createSyncClientHarness();
+  let calls = 0;
+  page.context.window.Capacitor.Plugins.FitMineAppleAuth.signIn = async () => { calls++; throw new Error("Authorization was canceled"); };
+  vm.runInNewContext(source, page.context);
+  await page.context.window.FitLogSync.init();
+  await page.elements.accountAppleSignIn.click();
+  assert.equal(calls, 1);
+  assert.equal(page.elements.accountMessage.textContent, "Authorization was canceled");
+  assert.equal(page.elements.accountAppleSignIn.disabled, false);
+  assert.equal(page.elements.accountEmailFields.hidden, true);
+});
+
 test("signing back into the same account restores its local records", async () => {
   const page = createSyncClientHarness({ appleUserId: "user-123" });
   page.localStorage.setItem("fitlog-sync-session", JSON.stringify({ accessToken: jwt({ sub: "user-123" }), refreshToken: "old-refresh", email: "old@example.com", userId: "user-123" }));
@@ -244,7 +269,6 @@ test("signing back into the same account restores its local records", async () =
   vm.runInNewContext(source, page.context);
   await page.context.window.FitLogSync.init();
   await page.elements.accountSignOut.click();
-  page.elements.accountConsent.checked = true;
   await page.elements.accountAppleSignIn.click();
   assert.equal(page.localStorage.getItem("fitlog-records"), "saved account records");
 });
@@ -290,7 +314,8 @@ function createSyncClientHarness(options = {}) {
     "accountSignedOut",
     "accountEmailValue",
     "accountEmail",
-    "accountConsent",
+    "accountEmailSignIn",
+    "accountEmailFields",
     "accountSendCode",
     "accountOtpStep",
     "accountOtp",
@@ -305,6 +330,7 @@ function createSyncClientHarness(options = {}) {
   ].map((id) => [id, createElement(id)]));
 
   elements.accountOtpStep.hidden = true;
+  elements.accountEmailFields.hidden = true;
   const localStorage = createLocalStorage();
   const accessToken = jwt({ sub: "user-123" });
 
