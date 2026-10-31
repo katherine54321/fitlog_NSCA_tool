@@ -1,0 +1,6 @@
+{
+  "romanian-deadlift": { "primaryMuscles": ["腘绳肌", "臀肌"] },
+  "sumo-deadlift": { "primaryMuscles": ["腘绳肌", "臀肌"] },
+  "kettlebell-one-legged-deadlift": { "primaryMuscles": ["腘绳肌", "臀肌"] },
+  "smith-machine-stiff-legged-deadlift": { "primaryMuscles": ["腘绳肌", "臀肌"] }
+}

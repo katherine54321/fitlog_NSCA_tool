@@ -566,11 +566,11 @@
     "force": "拉",
     "mechanic": "复合动作",
     "primaryMuscles": [
-      "腘绳肌"
+      "腘绳肌",
+      "臀肌"
     ],
     "secondaryMuscles": [
       "小腿",
-      "臀肌",
       "下背部"
     ],
     "instructionsZh": [
@@ -2014,12 +2014,12 @@
     "force": "拉",
     "mechanic": "复合动作",
     "primaryMuscles": [
-      "腘绳肌"
+      "腘绳肌",
+      "臀肌"
     ],
     "secondaryMuscles": [
       "髋内收肌群",
       "前臂",
-      "臀肌",
       "下背部",
       "中背部",
       "股四头肌",
@@ -5665,10 +5665,10 @@
     "force": "拉",
     "mechanic": "复合动作",
     "primaryMuscles": [
-      "腘绳肌"
+      "腘绳肌",
+      "臀肌"
     ],
     "secondaryMuscles": [
-      "臀肌",
       "下背部"
     ],
     "instructionsZh": [
@@ -5900,10 +5900,10 @@
     "force": "拉",
     "mechanic": "复合动作",
     "primaryMuscles": [
-      "腘绳肌"
+      "腘绳肌",
+      "臀肌"
     ],
     "secondaryMuscles": [
-      "臀肌",
       "下背部"
     ],
     "instructionsZh": [

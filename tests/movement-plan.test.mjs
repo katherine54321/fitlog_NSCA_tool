@@ -13,6 +13,79 @@ vm.createContext(ctx);
 vm.runInContext([fragment('function getGoalPrescription(', 'function parseLocalDate('),
   fragment('const focusAreaDefinitions = {','function getLegacyTargetedPreparation(')].join('\n'),ctx);
 
+test('v10 uses goal and experience volume ranges with reduced moderate risk targets',()=>{
+  const ranges={hypertrophy:{beginner:[8,10],intermediate:[10,16],advanced:[12,20]},strength:{beginner:[6,8],intermediate:[8,12],advanced:[10,16]},endurance:{beginner:[6,8],intermediate:[8,12],advanced:[10,14]}};
+  for(const [goal,levels] of Object.entries(ranges)) for(const [experience,[min,max]] of Object.entries(levels)) for(const risk of ['low','moderate']) {
+    const plan=ctx.buildPlan({goal,experience,days:4,planRuleVersion:10,focusArea:''},null);
+    plan.risk={level:risk};
+    const targets=plan.periodization.map((_,week)=>ctx.getWeeklyMuscleTarget(plan,week));
+    const offset=risk==='moderate'?2:0;
+    assert.ok(targets.every(n=>n>=min-offset && n<=max-offset));
+    assert.ok(targets[0]<=targets[1] && targets[1]<=targets[2] && targets[3]<=targets[1]);
+    assert.equal(ctx.getWeeklyLargeMuscleFloor(plan),min-offset);
+  }
+});
+
+test('v10 and v11 generate balanced volumes within limits and preserve the daily muscle cap',()=>{
+  for(const version of [10,11]) for(const goal of ['hypertrophy','strength','endurance']) for(const experience of ['beginner','intermediate','advanced']) for(const days of [2,3,4,6]) {
+    if(experience==='beginner' && days>3) continue;
+    for(const risk of ['low','moderate']) {
+      const plan=ctx.buildPlan({goal,experience,days,planRuleVersion:version,focusArea:''},null);
+      plan.risk={level:risk}; plan.exerciseSnapshot=[];
+      for(let week=0;week<4;week++) {
+        const generated=plan.split.map((_,day)=>ctx.getWorkoutExercises(day,plan,week));
+        const allocated=ctx.allocateWeeklyMuscleVolume(plan,week,generated);
+        const audit=ctx.auditWeeklyMuscleVolume(plan,week,allocated);
+        const upper=ctx.getWeeklyMajorMuscleRange(plan)[1];
+        assert.ok(Object.values(audit.counts).every(n=>n<=upper),`${goal}/${experience}/${days}/${risk}/${week}: ${JSON.stringify(audit)}`);
+        for(const day of allocated) {
+          const counts={};
+          for(const item of day) for(const group of ctx.getLargeMuscleGroups(library.find(e=>e.id===item.exerciseId)?.primaryMuscles)) counts[group]=(counts[group]||0)+item.sets;
+          assert.ok(Object.values(counts).every(n=>n<=(risk==='moderate'?7:10)),`${goal}/${experience}/${days}/${risk}/${week}: ${JSON.stringify(counts)}`);
+        }
+        plan.exerciseSnapshot.push(allocated);
+      }
+    }
+  }
+});
+
+test('v10 keeps the daily limit when an advanced three-day split cannot reach the weekly floor',()=>{
+  const plan=ctx.buildPlan({goal:'hypertrophy',experience:'advanced',days:3,planRuleVersion:10,focusArea:''},null);
+  const generated=plan.split.map((_,day)=>ctx.getWorkoutExercises(day,plan,0));
+  const audit=ctx.auditWeeklyMuscleVolume(plan,0,ctx.allocateWeeklyMuscleVolume(plan,0,generated));
+  assert.equal(audit.minimum,12);
+  assert.ok(audit.counts['腿部']<=10);
+  assert.ok(audit.belowMinimum.includes('腿部'));
+});
+
+test('v11 push pull legs assigns deadlifts to pull and knee and hip work to legs',()=>{
+  for(const goal of ['hypertrophy','strength','endurance']) for(const [experience,days] of [['advanced',3],['intermediate',5],['advanced',6]]) {
+    const plan=ctx.buildPlan({goal,experience,days,planRuleVersion:11,focusArea:''},null);
+    plan.exerciseSnapshot=[];
+    assert.match(plan.split[1][0],/背部与臀腿后侧/);
+    for(let week=0;week<4;week++) {
+      const generated=plan.split.map((_,day)=>ctx.getWorkoutExercises(day,plan,week));
+      for(let day=0;day<days;day++) {
+        const items=generated[day].map(item=>library.find(e=>e.id===item.exerciseId));
+        assert.ok(items.length && items.every(Boolean));
+        if(day%3===1) assert.ok(items.some(e=>e.movementPatterns.includes('hip_hinge') && e.nameZh.includes('硬拉') && e.primaryMuscles.includes('腘绳肌')));
+        if(day%3===2) for(const pattern of ['squat','hip_thrust_bridge','knee_flexion']) assert.ok(items.some(e=>e.movementPatterns.includes(pattern)),pattern);
+      }
+      const allocated=ctx.allocateWeeklyMuscleVolume(plan,week,generated);
+      if(goal==='hypertrophy' && experience==='advanced' && days===3 && week===0) assert.ok(ctx.auditWeeklyMuscleVolume(plan,week,allocated).counts['腿部']>=12);
+      plan.exerciseSnapshot.push(allocated);
+    }
+  }
+});
+
+test('deadlift sets count once toward both glutes and legs in weekly plan volume',()=>{
+  const plan=ctx.buildPlan({goal:'hypertrophy',experience:'advanced',days:3,planRuleVersion:11,focusArea:''},null);
+  for(const id of ['romanian-deadlift','sumo-deadlift','kettlebell-one-legged-deadlift','smith-machine-stiff-legged-deadlift']) {
+    const counts=ctx.auditWeeklyMuscleVolume(plan,0,[[{exerciseId:id,sets:3}]]).counts;
+    assert.equal(counts['臀部'],3,id);assert.equal(counts['腿部'],3,id);
+  }
+});
+
 test('v9 plans use risk-adjusted floors and cap weekly major-muscle sets',()=>{
   for(const goal of ['hypertrophy','strength','endurance']) for(const experience of ['beginner','intermediate','advanced']) for(let days=2;days<=6;days++) {
     if(experience==='beginner' && days>3) continue;
@@ -279,13 +352,13 @@ test('volume supplementation keeps core movement patterns and protects main exer
 });
 
 test('hip focus receives distributed direct sets and moderate risk reduces targets',()=>{
-  const plan=ctx.buildPlan({goal:'hypertrophy',experience:'advanced',days:4,planRuleVersion:4,focusArea:'glutes',focusPurpose:'hypertrophy'},null);
+  const plan=ctx.buildPlan({goal:'hypertrophy',experience:'advanced',days:4,planRuleVersion:11,focusArea:'glutes',focusPurpose:'hypertrophy'},null);
   const before=plan.split.map((_,day)=>ctx.getWorkoutExercises(day,plan,0));
   const result=ctx.allocateWeeklyMuscleVolume(plan,0,before);
   const perDay=result.map(items=>items.reduce((n,item)=>n+(ctx.resistanceExercises.find(e=>e.id===item.exerciseId).primaryMuscles.includes('臀肌')?item.sets:0),0));
   assert.ok(perDay.filter(Boolean).length>=2,JSON.stringify(perDay));
-  assert.ok(perDay.reduce((a,b)=>a+b,0)>=10);
-  assert.equal(ctx.getWeeklyMuscleTarget({...plan,risk:{level:'moderate'}},0),7);
+  assert.ok(perDay.reduce((a,b)=>a+b,0)>=10,JSON.stringify(result));
+  assert.equal(ctx.getWeeklyMuscleTarget({...plan,risk:{level:'moderate'}},0),10);
 });
 
 test('rotation preserves an exercise and records when its movement pattern has no alternative',()=>{
@@ -357,7 +430,7 @@ test('beginner recovery uses final exercise muscles, including replacements and 
 
 test('weekly planned muscle coverage counts sets once per side and applies replacements',()=>{
   const text=fragment('function getPlanMuscleCoverage(', 'function renderPlanMuscleCoverage(');
-  const catalog={lunge:{primaryMuscles:['股四头肌','臀肌']},row:{primaryMuscles:['中背部']},curl:{primaryMuscles:['肱二头肌']}};
+  const catalog={lunge:{primaryMuscles:['股四头肌','腘绳肌','臀肌']},row:{primaryMuscles:['中背部','背阔肌']},curl:{primaryMuscles:['肱二头肌','肱三头肌']}};
   const sandbox={getWorkoutExercises:(d)=>d===0?[{exerciseId:'lunge',sets:3},{exerciseId:'row',sets:2}]:[{exerciseId:'row',sets:4}],
     applyPlanExerciseReplacements:(id,items)=>id==='second'?[{exerciseId:'curl',sets:4}]:items,
     ensureUniqueWorkoutExercises:items=>items,getWorkoutLibraryExercise:item=>catalog[item.exerciseId],
@@ -365,9 +438,9 @@ test('weekly planned muscle coverage counts sets once per side and applies repla
   vm.createContext(sandbox);vm.runInContext(`${text}\nthis.coverage=getPlanMuscleCoverage;`,sandbox);
   const schedule=[{weekIndex:0,dayIndex:0,id:'first'},{weekIndex:0,dayIndex:1,id:'second'}];
   const result=sandbox.coverage({split:[[],[]]},0,schedule);
-  assert.equal(result.counts.get('股四头肌'),3);assert.equal(result.counts.get('臀肌'),3);
-  assert.equal(result.counts.get('中背部'),2);assert.equal(result.counts.get('肱二头肌'),4);
-  schedule[1].skipped=true;assert.equal(sandbox.coverage({split:[[],[]]},0,schedule).counts.has('肱二头肌'),false);
+  assert.equal(result.counts.get('腿部'),3);assert.equal(result.counts.get('臀部'),3);
+  assert.equal(result.counts.get('背部'),2);assert.equal(result.counts.get('手臂'),4);
+  schedule[1].skipped=true;assert.equal(sandbox.coverage({split:[[],[]]},0,schedule).counts.has('手臂'),false);
   assert.match(source, /<option value="power" disabled>爆发力[^<]*🔒/);
 });
 
@@ -381,6 +454,12 @@ test('weekly muscle coverage omits zero-set muscles and empty regions',()=>{
   assert.match(element.innerHTML,/当周肌群覆盖/);
   assert.match(element.innerHTML,/胸部/);assert.match(element.innerHTML,/3 组/);
   assert.doesNotMatch(element.innerHTML,/0 组|髋外展肌群|<h4>下肢<\/h4>/);
+  sandbox.getPlanMuscleCoverage=()=>({counts:new Map([['背部',4],['腿部',5],['核心',2]]),unknown:0});
+  sandbox.render({},0,[]);
+  assert.match(element.innerHTML,/is-upper"><h4>上肢/);
+  assert.match(element.innerHTML,/is-lower"><h4>下肢/);
+  assert.match(element.innerHTML,/is-core"><h4>核心/);
+  assert.match(source,/\.plan-muscle-group\.is-lower \.plan-muscle-item strong \{ color: var\(--brand-accent\);/);
   sandbox.getPlanMuscleCoverage=()=>({counts:new Map(),unknown:0});sandbox.render({},0,[]);
   assert.match(element.innerHTML,/本周暂无计划肌群数据/);
 });

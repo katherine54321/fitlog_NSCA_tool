@@ -10,6 +10,7 @@ const terms = JSON.parse(await readFile(join(root, "data", "exercise-terms.json"
 const expansion = JSON.parse(await readFile(join(root, "data", "exercise-expansion-v2.json"), "utf8"));
 const movementPatterns = JSON.parse(await readFile(join(root, "data", "exercise-movement-patterns.json"), "utf8"));
 const mechanicOverrides = JSON.parse(await readFile(join(root, "data", "exercise-mechanic-overrides.json"), "utf8"));
+const muscleOverrides = JSON.parse(await readFile(join(root, "data", "exercise-muscle-overrides.json"), "utf8"));
 const trainingClassification = JSON.parse(await readFile(join(root, "data", "exercise-training-classification.json"), "utf8"));
 const outputJson = join(root, "data", "exercises-v1.json");
 const outputScript = join(root, "data", "exercise-library-data.js");
@@ -106,8 +107,8 @@ for (const [id, config] of Object.entries(exerciseConfigs)) {
       equipment: config.equipment || translateEquipment(exercise.equipment),
       force: translate(exercise.force),
       mechanic: mechanicOverrides[id] || translate(exercise.mechanic),
-      primaryMuscles: (exercise.primaryMuscles || []).map(translate),
-      secondaryMuscles: (exercise.secondaryMuscles || []).map(translate),
+      primaryMuscles: muscleOverrides[id]?.primaryMuscles || (exercise.primaryMuscles || []).map(translate),
+      secondaryMuscles: (exercise.secondaryMuscles || []).map(translate).filter((muscle) => !muscleOverrides[id]?.primaryMuscles?.includes(muscle)),
       instructionsZh: config.instructionsZh,
       instructionsEn: config.instructionsEn || exercise.instructions,
       startImage: imagePaths[0] || null,

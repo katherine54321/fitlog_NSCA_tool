@@ -15,6 +15,20 @@ const exercises = JSON.parse(librarySource);
 const expansion = JSON.parse(expansionSource);
 const patterns = JSON.parse(patternsSource);
 
+test("reviewed deadlift muscle labels survive imports and reach the browser library", async () => {
+  const overrides = JSON.parse(await readFile(new URL("../data/exercise-muscle-overrides.json", import.meta.url), "utf8"));
+  const browser = { window: {} };
+  vm.runInNewContext(browserSource, browser);
+  for (const [id, { primaryMuscles }] of Object.entries(overrides)) {
+    const item = exercises.find((exercise) => exercise.id === id);
+    assert.deepEqual(item.primaryMuscles, primaryMuscles, id);
+    assert.ok(primaryMuscles.includes("臀肌") && primaryMuscles.includes("腘绳肌"), id);
+    assert.ok(!item.secondaryMuscles.includes("臀肌"), id);
+    assert.deepEqual(Array.from(browser.window.EXERCISE_LIBRARY_DATA.find((exercise) => exercise.id === id).primaryMuscles), primaryMuscles, id);
+  }
+  assert.match(importScript, /muscleOverrides\[id\]/);
+});
+
 test("reviewed exercise mechanics persist through the import pipeline", async () => {
   const overrides = JSON.parse(await readFile(new URL("../data/exercise-mechanic-overrides.json", import.meta.url), "utf8"));
   assert.equal(Object.keys(overrides).length, 5);

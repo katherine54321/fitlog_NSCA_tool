@@ -253,13 +253,17 @@ test('future workout completion is disabled and cannot be saved before its sched
   const ctx={workoutDetail:{innerHTML:''},workoutDetailReturnHash:'plan',activeWorkoutDay:workout,completedPlanDays:[],today,appLanguage:'zh',records:[],
     Date:class {},formatLocalDate:()=>today,getProfile:()=>({}),loadPlanAdjustments:()=>({overrides:{},pausedAt:null}),
     getTargetedPreparation:()=>({warmups:[],stretches:[]}),adaptiveSetupCardTemplate:()=>'',adaptiveModeBannerTemplate:()=>'',
-    translateInterfaceText:x=>x,observeLibraryImages:()=>{},getWorkoutDay:()=>workout,
+    translateInterfaceText:x=>x,escapeLogText:x=>x,observeLibraryImages:()=>{},getWorkoutDay:()=>workout,
     saveCompletedPlanDays:()=>{saved++;},recordFromWorkout:()=>{},syncCompletedWorkoutToDataLogs:()=>{},parseLocalDate:()=>new Date(),
     window:{FitLogSync:{}},renderHome:()=>{},renderRecords:()=>{}};
   vm.createContext(ctx);vm.runInContext(`${source.slice(detailStart,detailEnd)}\n${source.slice(saveStart,saveEnd)}\nthis.render=renderWorkoutDetail;this.complete=completeWorkoutDay;`,ctx);
   ctx.render();assert.match(ctx.workoutDetail.innerHTML,/is-upcoming[^>]*disabled/);assert.match(ctx.workoutDetail.innerHTML,/训练日尚未开始/);
+  assert.match(ctx.workoutDetail.innerHTML,/计划第1周 · 训练日1 · 2026-10-29/);
+  assert.doesNotMatch(ctx.workoutDetail.innerHTML,/计划日期|动作适应周|8-12 RM/);
   ctx.complete();assert.equal(saved,0);assert.equal(ctx.completedPlanDays.length,0);
   ctx.appLanguage='en';ctx.render();assert.match(ctx.workoutDetail.innerHTML,/Workout day has not started/);
+  assert.match(ctx.workoutDetail.innerHTML,/Plan week 1 · Training day 1 · 2026-10-29/);
+  assert.doesNotMatch(ctx.workoutDetail.innerHTML,/Scheduled date/);
   ctx.today=today='2026-10-29';ctx.appLanguage='zh';ctx.render();assert.match(ctx.workoutDetail.innerHTML,/完成训练/);assert.doesNotMatch(ctx.workoutDetail.innerHTML,/is-upcoming/);
   ctx.complete();assert.equal(saved,1);assert.equal(ctx.completedPlanDays.length,1);
   ctx.completedPlanDays=[];ctx.today=today='2026-10-30';ctx.complete();assert.equal(saved,2);
@@ -537,7 +541,7 @@ test("using a historical plan starts a new cycle with its saved plan settings", 
   assert.equal(archived, 1);
   assert.equal(stored.get("fitlog-plan-start-date"), "2026-10-28");
   assert.equal(stored.get("fitlog-plan-template"), "hypertrophy-3");
-  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), { ...entry.profile, planRuleVersion: 9, exerciseSnapshot: [[[{ name: "exercise" }]]], weeklyVolumeTargets: [10], weeklyVolumeAudit: [{ minimum: 6, counts: { 胸部: 4 }, belowMinimum: ['胸部'] }] });
+  assert.deepEqual(JSON.parse(stored.get("fitlog-profile")), { ...entry.profile, planRuleVersion: 11, exerciseSnapshot: [[[{ name: "exercise" }]]], weeklyVolumeTargets: [10], weeklyVolumeAudit: [{ minimum: 6, counts: { 胸部: 4 }, belowMinimum: ['胸部'] }] });
   assert.equal(context.activePlanWeekIndex, 0);
 });
 

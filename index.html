@@ -3027,6 +3027,11 @@
         margin: 0;
       }
 
+      .workout-overview .workout-date-label {
+        justify-self: start;
+        line-height: 1.4;
+      }
+
       .workout-flow {
         display: grid;
         gap: 8px;
@@ -6026,7 +6031,7 @@
       .plan-muscle-item { display: flex; justify-content: space-between; align-items: center; gap: 6px; min-width: 0; padding: 9px 11px; border-radius: 8px; background: rgba(0, 0, 0, .16); font-size: 13px; }
       .plan-muscle-item span { color: var(--text-secondary); overflow-wrap: anywhere; }
       .plan-muscle-item strong { color: var(--brand); white-space: nowrap; font-variant-numeric: tabular-nums; }
-      .plan-muscle-group:nth-child(2) .plan-muscle-item strong { color: var(--brand-accent); }
+      .plan-muscle-group.is-lower .plan-muscle-item strong { color: var(--brand-accent); }
       .plan-muscle-item.is-empty strong { color: var(--text-secondary); }
       .muscle-volume-empty { color: var(--text-secondary); font-size: 12px; }
       .workout-schedule-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
@@ -8251,6 +8256,8 @@
         ["下肢膝髋训练", "Lower-body knee and hip training"],
         ["上肢推训练", "Upper-body push"],
         ["上肢拉训练", "Upper-body pull"],
+        ["拉训练 · 背部与臀腿后侧", "Pull · back and posterior chain"],
+        ["硬拉、垂直拉、水平拉与手臂辅助", "Deadlift, vertical and horizontal pulls, and arm accessories"],
         ["膝主导、髋主导、水平推拉与躯干稳定", "Knee-dominant and hip-hinge movements, horizontal push/pull and trunk stability"],
         ["膝主导、髋主导、垂直推拉与躯干稳定", "Knee-dominant and hip-hinge movements, vertical push/pull and trunk stability"],
         ["水平推拉、垂直推拉与肩部辅助", "Horizontal and vertical push/pull with shoulder accessories"],
@@ -10329,7 +10336,7 @@
         const upper = ["上肢推拉训练", "水平推拉、垂直推拉与肩部辅助"];
         const lower = ["下肢膝髋训练", "膝主导、髋主导、腿后侧与小腿"];
         const push = ["上肢推训练", "胸部与肩部推举、胸部及手臂辅助"];
-        const pull = ["上肢拉训练", "垂直拉、水平拉、肩后侧与手臂辅助"];
+        const pull = ruleVersion >= 11 ? ["拉训练 · 背部与臀腿后侧", "硬拉、垂直拉、水平拉与手臂辅助"] : ["上肢拉训练", "垂直拉、水平拉、肩后侧与手臂辅助"];
         if (days >= 5 || (days === 3 && experience === "advanced" && (ruleVersion < 4 || ruleVersion >= 5))) return [push, pull, lower, push, pull, lower].slice(0, days);
         if (days === 4) return [upper, lower, upper, lower];
         return full.slice(0, days);
@@ -10887,8 +10894,8 @@
         if (ppl) {
           const group = dayIndex % 3;
           if (group === 0) return [slot("horizontal_push", "胸部"), slot("vertical_push", "肩部"), slot("shoulder_horizontal_adduction", "胸部"), slot("elbow_extension", "手臂")];
-          if (group === 1) return [slot("vertical_pull", "背部"), slot("horizontal_pull", "背部"), slot("shoulder_horizontal_abduction", "肩部"), slot("elbow_flexion", "手臂")];
-          return [slot("squat"), slot("hip_hinge"), slot("knee_flexion"), slot("calf_raise")];
+          if (group === 1) return [...(plan.ruleVersion >= 11 ? [{ pattern: "hip_hinge", deadlift: true }] : []), slot("vertical_pull", "背部"), slot("horizontal_pull", "背部"), slot("shoulder_horizontal_abduction", "肩部"), slot("elbow_flexion", "手臂")];
+          return [slot("squat"), slot(plan.ruleVersion >= 11 ? "hip_thrust_bridge" : "hip_hinge"), slot("knee_flexion"), slot("calf_raise")];
         }
         if (upperLower) {
           return dayIndex % 2 === 0
@@ -10956,10 +10963,11 @@
           .map((item) => resistanceExercises.find((exercise) => exercise.id === item.exerciseId))
           .filter(isMainMovementExercise).slice(0, 2).map((exercise) => exercise.id));
         let rotations = 0;
-        return movementDaySlots(plan, dayIndex).map(({ pattern, category }, slotIndex) => {
+        return movementDaySlots(plan, dayIndex).map(({ pattern, category, deadlift }, slotIndex) => {
           const candidates = resistanceExercises.filter((exercise) => exercise.movementPatterns?.includes(pattern)
             && (!category || exercise.category === category) && movementCandidateAllowed(exercise, plan)
-            && (!(plan.ruleVersion >= 8 && pattern === "hip_hinge") || exercise.primaryMuscles?.includes("臀肌"))
+            && (!deadlift || /硬拉/.test(exercise.nameZh))
+            && (!(plan.ruleVersion >= 8 && pattern === "hip_hinge" && !deadlift) || exercise.primaryMuscles?.includes("臀肌"))
             && !used.has(exercise.id) && !reservedBonusIds.has(exercise.id));
           const previous = previousExercises
             .filter((item) => !item.isFocusBonus)
@@ -11013,9 +11021,24 @@
         return orderMovementWorkout(applyFocusEmphasis(exercises, dayIndex, program, plan, period));
       }
 
+      function getWeeklyMajorMuscleRange(plan) {
+        const ranges = {
+          hypertrophy: { beginner: [8, 10], intermediate: [10, 16], advanced: [12, 20] },
+          strength: { beginner: [6, 8], intermediate: [8, 12], advanced: [10, 16] },
+          endurance: { beginner: [6, 8], intermediate: [8, 12], advanced: [10, 14] }
+        };
+        const [min, max] = ranges[plan.goal]?.[plan.experience] || ranges.hypertrophy.beginner;
+        const adjustment = plan.risk.level === "moderate" ? 2 : 0;
+        return [Math.max(1, min - adjustment), Math.max(1, max - adjustment)];
+      }
+
       // Product volume targets; these are planning estimates, not measured effective sets.
       function getWeeklyMuscleTarget(plan, weekIndex) {
         if (Array.isArray(plan.weeklyVolumeTargets) && Number.isFinite(plan.weeklyVolumeTargets[weekIndex])) return plan.weeklyVolumeTargets[weekIndex];
+        if (plan.ruleVersion >= 10) {
+          const [min, max] = getWeeklyMajorMuscleRange(plan);
+          return Math.round(min + (max - min) * ([0, 0.4, 0.7, 0][weekIndex] ?? 0));
+        }
         if (plan.ruleVersion >= 9) {
           const experienceAdjustment = plan.experience === "beginner" ? -2 : plan.experience === "advanced" ? 2 : 0;
           const goalAdjustment = plan.goal === "hypertrophy" ? 1 : plan.goal === "endurance" ? -1 : 0;
@@ -11060,6 +11083,9 @@
       }
 
       function getWeeklyLargeMuscleFloor(plan) {
+        if (plan.ruleVersion >= 10) {
+          return getWeeklyMajorMuscleRange(plan)[0];
+        }
         if (plan.ruleVersion >= 9) return plan.risk.level === "moderate" ? 4 : 6;
         const fullBody = plan.days === 2 || plan.experience === "beginner";
         return fullBody ? (plan.risk.level === "moderate" ? 4 : 6) : (plan.risk.level === "moderate" ? 2 : 4);
@@ -11123,11 +11149,12 @@
           (useLargeGroups ? groupedDailyCounts() : dailyCounts()).forEach((day) => day.forEach((n, m) => counts.set(m, (counts.get(m) || 0) + n)));
           return counts;
         };
+        const weeklyLimit = plan.ruleVersion >= 10 ? getWeeklyMajorMuscleRange(plan)[1] : 20;
         // Limit initial allocations before adding sets, including actions that count for two groups.
         if (plan.ruleVersion >= 9) {
           for (let guard = 0; guard < 400; guard++) {
             const weekly = weeklyCounts();
-            const over = [...weekly].find(([, count]) => count > 20)?.[0];
+            const over = [...weekly].find(([, count]) => count > weeklyLimit)?.[0];
             if (!over) break;
             const item = working.flat().reverse().find((entry) => entry.sets > 1 && targetMuscles(entry).includes(over));
             if (!item) break;
@@ -11141,7 +11168,7 @@
           const patterns = new Set(slots.map((slot) => slot.pattern));
           const allowed = new Set(patterns);
           if (patterns.has("squat")) allowed.add("knee_extension");
-          if (patterns.has("hip_hinge")) { allowed.add("hip_thrust_bridge"); allowed.add("hip_extension"); allowed.add("hip_abduction"); }
+          if (patterns.has("hip_hinge") || patterns.has("hip_thrust_bridge")) { allowed.add("hip_thrust_bridge"); allowed.add("hip_extension"); allowed.add("hip_abduction"); }
           if (patterns.has("horizontal_push") || patterns.has("vertical_push")) allowed.add("elbow_extension");
           if (patterns.has("horizontal_pull") || patterns.has("vertical_pull")) allowed.add("elbow_flexion");
           allowed.add("trunk_anti_rotation");
@@ -11164,7 +11191,7 @@
               if (total >= dayLimit || (targetDaily[dayIndex].get(muscle) || 0) >= muscleLimit) return;
               items.forEach((item) => {
                 if (item.sets >= exerciseLimit || !targetMuscles(item).includes(muscle)) return;
-                if (plan.ruleVersion >= 9 && targetMuscles(item).some((m) => (weekly.get(m) || 0) + 1 > 20)) return;
+                if (plan.ruleVersion >= 9 && targetMuscles(item).some((m) => (weekly.get(m) || 0) + 1 > weeklyLimit)) return;
                 if (muscles(item).some((m) => (daily[dayIndex].get(m) || 0) >= muscleLimit)) return;
                 if (useLargeGroups ? targetMuscles(item).some((m) => (targetDaily[dayIndex].get(m) || 0) >= muscleLimit)
                   : muscles(item).some((m) => (weekly.get(m) || 0) >= target)) return;
@@ -11175,7 +11202,7 @@
                 const candidates = resistanceExercises.filter((exercise) => !used.has(exercise.id) && (useLargeGroups ? getLargeMuscleGroups(exercise.primaryMuscles).includes(muscle) : exercise.primaryMuscles?.includes(muscle))
                   && movementCandidateAllowed(exercise, plan) && isAccessoryMovementExercise(exercise) && dayCanUse(dayIndex, exercise)
                   && exercise.primaryMuscles.every((m) => (daily[dayIndex].get(m) || 0) + initialSets <= muscleLimit && (useLargeGroups || (weekly.get(m) || 0) + initialSets <= target))
-                  && (plan.ruleVersion < 9 || getLargeMuscleGroups(exercise.primaryMuscles).every((m) => (weekly.get(m) || 0) + initialSets <= 20))
+                  && (plan.ruleVersion < 9 || getLargeMuscleGroups(exercise.primaryMuscles).every((m) => (weekly.get(m) || 0) + initialSets <= weeklyLimit))
                   && (!useLargeGroups || getLargeMuscleGroups(exercise.primaryMuscles).every((m) => (targetDaily[dayIndex].get(m) || 0) + initialSets <= muscleLimit)));
                 candidates.sort((a, b) => Number(favorites.has(b.id)) - Number(favorites.has(a.id)) || a.id.localeCompare(b.id));
                 if (total + initialSets <= dayLimit && candidates[0]) options.push({ dayIndex, exercise: candidates[0], total });
@@ -12251,10 +12278,9 @@
         workoutDetail.innerHTML = `
           <button class="settings-back" type="button" data-workout-back>← ${workoutBackLabel}</button>
           <div class="workout-overview">
-            <span class="chip">${appLanguage === "en" ? `Plan week ${workout.weekIndex + 1} · Training day ${workout.dayIndex + 1}` : workout.title}</span>
+            <span class="chip workout-date-label">${appLanguage === "en" ? `Plan week ${workout.weekIndex + 1} · Training day ${workout.dayIndex + 1}` : `计划第${workout.weekIndex + 1}周 · 训练日${workout.dayIndex + 1}`} · ${escapeLogText(workout.date)}</span>
             <h2>${translateInterfaceText(workout.name)}</h2>
             <p>${translateInterfaceText(workout.description)}</p>
-            <p class="muted">${appLanguage === "en" ? `Scheduled date ${workout.date} · ${translateInterfaceText(workout.period?.title || "当周训练")} · ${workout.period?.rm || workout.plan.rm}` : `计划日期 ${workout.date} · ${workout.period?.title || "当周训练"} · ${workout.period?.rm || workout.plan.rm}`}</p>
             ${skipped || paused ? `<p class="workout-schedule-note">${appLanguage === "en" ? (skipped ? "This workout is skipped." : "Plan is paused. Resume it from the Plan page.") : (skipped ? "本次训练已跳过。" : "计划已暂停，可在计划页恢复。")}</p>` : ""}
           </div>
           ${completed
@@ -12803,6 +12829,7 @@
 
       function getPlanMuscleCoverage(plan, weekIndex, schedule) {
         const counts = new Map();
+        const regions = { "胸部": "胸部", "背阔肌": "背部", "中背部": "背部", "斜方肌": "背部", "肩部": "肩部", "肱二头肌": "手臂", "肱三头肌": "手臂", "股四头肌": "腿部", "腘绳肌": "腿部", "小腿": "腿部", "臀肌": "臀部", "髋外展肌群": "臀部", "腹部肌群": "核心", "下背部": "核心" };
         let unknown = 0;
         plan.split.forEach((_, dayIndex) => {
           const day = schedule.find((item) => item.weekIndex === weekIndex && item.dayIndex === dayIndex);
@@ -12811,8 +12838,9 @@
           exercises.forEach((item) => {
             const muscles = getWorkoutLibraryExercise(item)?.primaryMuscles || [];
             const sets = getExerciseSetCount(item);
-            if (!muscles.length || !sets) { unknown++; return; }
-            [...new Set(muscles)].forEach((muscle) => counts.set(muscle, (counts.get(muscle) || 0) + sets));
+            const matched = [...new Set(muscles.map((muscle) => regions[muscle]).filter(Boolean))];
+            if (!sets || !matched.length || muscles.some((muscle) => !regions[muscle])) unknown++;
+            if (sets) matched.forEach((region) => counts.set(region, (counts.get(region) || 0) + sets));
           });
         });
         return { counts, unknown };
@@ -12823,21 +12851,13 @@
         if (!element) return;
         const { counts, unknown } = getPlanMuscleCoverage(plan, weekIndex, schedule);
         const groups = [
-          [appLanguage === "en" ? "Upper body" : "上肢", ["胸部", "背阔肌", "中背部", "肩部", "肱二头肌", "肱三头肌"]],
-          [appLanguage === "en" ? "Lower body" : "下肢", ["臀肌", "股四头肌", "腘绳肌", "髋外展肌群", "小腿"]],
-          [appLanguage === "en" ? "Core" : "核心", ["腹部肌群", "下背部"]]
-        ];
-        const known = new Set(groups.flatMap(([, muscles]) => muscles));
-        const other = [...counts.keys()].filter((muscle) => !known.has(muscle));
-        if (other.length) groups.push([appLanguage === "en" ? "Other" : "其他", other]);
-        const coveredGroups = groups.map(([title, muscles]) => [title, muscles.filter((muscle) => (counts.get(muscle) || 0) > 0)])
-          .filter(([, muscles]) => muscles.length);
+          { title: appLanguage === "en" ? "Upper body" : "上肢", type: "upper", regions: [["胸部", "Chest"], ["背部", "Back"], ["肩部", "Shoulders"], ["手臂", "Arms"]] },
+          { title: appLanguage === "en" ? "Lower body" : "下肢", type: "lower", regions: [["腿部", "Legs"], ["臀部", "Glutes"]] },
+          { title: appLanguage === "en" ? "Core" : "核心", type: "core", regions: [["核心", "Core"]] }
+        ].map((group) => ({ ...group, regions: group.regions.filter(([name]) => (counts.get(name) || 0) > 0) })).filter((group) => group.regions.length);
         element.innerHTML = `<div class="plan-muscle-coverage-head"><h3>${appLanguage === "en" ? "This week's muscle coverage" : "当周肌群覆盖"}</h3><span>${appLanguage === "en" ? `WEEK ${weekIndex + 1}` : `第 ${weekIndex + 1} 周`}</span></div>
           <p class="plan-muscle-coverage-note">${appLanguage === "en" ? "Planned sets by primary muscle. Unilateral sets count once; one set may cover multiple muscles." : "按动作主要肌群统计计划组数；单侧动作每侧一组计为一组，同一组可计入多个肌群。"}${unknown ? (appLanguage === "en" ? " Some exercises could not be classified." : " 部分动作缺少统计信息。") : ""}</p>
-          <div class="plan-muscle-groups">${coveredGroups.map(([title, muscles]) => `<div class="plan-muscle-group"><h4>${title}</h4><div class="plan-muscle-items">${muscles.map((muscle) => {
-            const sets = counts.get(muscle) || 0;
-            return `<div class="plan-muscle-item${sets ? "" : " is-empty"}"><span>${escapeLogText(translateInterfaceText(muscle))}</span><strong>${sets} ${appLanguage === "en" ? "sets" : "组"}</strong></div>`;
-          }).join("")}</div></div>`).join("") || `<p class="plan-muscle-coverage-note">${appLanguage === "en" ? "No planned muscle coverage for this week." : "本周暂无计划肌群数据。"}</p>`}</div>`;
+          <div class="plan-muscle-groups">${groups.length ? groups.map((group) => `<div class="plan-muscle-group is-${group.type}"><h4>${group.title}</h4><div class="plan-muscle-items">${group.regions.map(([name, english]) => `<div class="plan-muscle-item"><span>${appLanguage === "en" ? english : name}</span><strong>${counts.get(name)} ${appLanguage === "en" ? "sets" : "组"}</strong></div>`).join("")}</div></div>`).join("") : `<p class="plan-muscle-coverage-note">${appLanguage === "en" ? "No planned muscle coverage for this week." : "本周暂无计划肌群数据。"}</p>`}</div>`;
       }
 
       function renderPlan() {
@@ -13355,7 +13375,7 @@
           showPlanNotice("riskConfirmation");
           return false;
         }
-        const nextProfile = { ...getProfile(), planRuleVersion: 9, exerciseSnapshot: null, weeklyVolumeTargets: null };
+        const nextProfile = { ...getProfile(), planRuleVersion: 11, exerciseSnapshot: null, weeklyVolumeTargets: null };
         const nextPlan = buildPlan(nextProfile, templateId);
         nextProfile.weeklyVolumeTargets = nextPlan.periodization.map((_, weekIndex) => getWeeklyMuscleTarget(nextPlan, weekIndex));
         nextPlan.selectionFavoriteIds = typeof favoriteExerciseIds === "undefined" ? [] : [...favoriteExerciseIds];
