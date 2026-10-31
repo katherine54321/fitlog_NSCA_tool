@@ -4,6 +4,16 @@ import test from "node:test";
 
 const root = new URL("../", import.meta.url);
 
+test("iOS project and CocoaPods require iOS 15 or later", async () => {
+  const [project, podfile] = await Promise.all([
+    readFile(new URL("ios/App/App.xcodeproj/project.pbxproj", root), "utf8"),
+    readFile(new URL("ios/App/Podfile", root), "utf8"),
+  ]);
+  const targets = [...project.matchAll(/IPHONEOS_DEPLOYMENT_TARGET\s*=\s*(\d+(?:\.\d+)?);/g)].map((match) => Number(match[1]));
+  assert.ok(targets.length > 0 && targets.every((target) => target >= 15), `Project targets: ${targets}`);
+  assert.match(podfile, /platform\s+:ios,\s*['"]15\.0['"]/);
+});
+
 test("iOS target contains privacy manifest, branded app icon, and auth URL scheme", async () => {
   const [privacy, project, plist, icon, codemagic, sharedScheme, capacitorConfig] = await Promise.all([
     readFile(new URL("ios/App/App/PrivacyInfo.xcprivacy", root), "utf8"),
